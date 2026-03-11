@@ -52,7 +52,7 @@
   /* Direction nav */
   .direction-nav {
     display: flex; gap: 8px; justify-content: center;
-    padding: 20px 0 4px;
+    padding: 16px 0; background: var(--paper);
   }
   .direction-pill {
     font-family: var(--sans); font-size: 14px; font-weight: 500;
@@ -337,6 +337,12 @@
 </head>
 <body>
 
+<!-- Direction nav -->
+<div class="direction-nav" id="direction-nav">
+  <button class="direction-pill active" data-dir="outbound">Outbound &nbsp;LAX &rarr; VCE</button>
+  <button class="direction-pill" data-dir="return">Return &nbsp;IST &rarr; LAX</button>
+</div>
+
 <!-- Hero -->
 <div class="hero">
   <div class="hero-pill" id="countdown-pill">&#128336; <span id="countdown"></span> DAYS UNTIL JULY 3, 2026</div>
@@ -346,10 +352,6 @@
 </div>
 
 <div class="container">
-  <div class="direction-nav" id="direction-nav">
-    <button class="direction-pill active" data-dir="outbound">Outbound &nbsp;LAX &rarr; VCE</button>
-    <button class="direction-pill" data-dir="return">Return &nbsp;IST &rarr; LAX</button>
-  </div>
   <div class="tabs" id="tabs"></div>
   <div class="filters" id="filters"></div>
   <div id="flights"></div>
@@ -564,11 +566,32 @@
       .catch(function () { /* silent */ });
   }
 
+  function parseSheetRows(raw) {
+    // Apps Script returns a 2D array: first row is headers, rest are data
+    if (!Array.isArray(raw) || raw.length < 2) return [];
+    var headers = raw[0];
+    var hMap = {};
+    for (var h = 0; h < headers.length; h++) {
+      var key = String(headers[h]).toLowerCase().replace(/\s+/g, '_');
+      hMap[h] = key;
+    }
+    var rows = [];
+    for (var i = 1; i < raw.length; i++) {
+      var obj = {};
+      for (var j = 0; j < raw[i].length; j++) {
+        obj[hMap[j] || j] = raw[i][j];
+      }
+      rows.push(obj);
+    }
+    return rows;
+  }
+
   function fetchFamilyPicks() {
     fetch(SHEETS_URL + '?action=read')
       .then(function (r) { return r.json(); })
-      .then(function (rows) {
-        sheetRows = rows || [];
+      .then(function (raw) {
+        var rows = parseSheetRows(raw);
+        sheetRows = rows;
         renderFamilyPicks(rows);
         updateInterestLinks();
       })
