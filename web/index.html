@@ -314,7 +314,7 @@
 
   const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbz_rbdaEDR3aNeaFnRgV8mvvwNmGaOVVqah3B1MNAAO1Y4ldOjKoxtY8s0LxkYrU9ye/exec';
 
-  const GOOGLE_FLIGHTS_SEARCH = 'https://www.google.com/travel/flights?q=Flights+to+VCE+from+LAX+on+{date}+one+way';
+  const GOOGLE_FLIGHTS_FALLBACK = 'https://www.google.com/flights#search;f=LAX;t=VCE;d={date};tt=o;c=e;s=1';
 
   const FILTERS = [
     { id: 'all',       label: 'All' },
@@ -382,9 +382,9 @@
 
   function bookUrl(f) {
     if (f.booking_token) {
-      return 'https://www.google.com/travel/flights/booking?tfs=' + encodeURIComponent(f.booking_token);
+      return 'https://www.google.com/flights?booking_token=' + encodeURIComponent(f.booking_token);
     }
-    return GOOGLE_FLIGHTS_SEARCH.replace('{date}', f.search_date);
+    return GOOGLE_FLIGHTS_FALLBACK.replace('{date}', f.search_date);
   }
 
   function flightId(f) {

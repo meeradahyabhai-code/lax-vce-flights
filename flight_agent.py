@@ -306,6 +306,13 @@ def score_flights(flights: list[dict], test_mode: bool = False) -> list[dict]:
                   f"{bd['price']:>6.0f} {bd['airline']:>+9.0f} {bd['time']:>+6.0f} "
                   f"{bd['layover']:>+8.1f} {bd['speed']:>+6.0f} {bd['nonstop']:>+8.0f} "
                   f"{bd['total']:>8.1f}")
+        print(f"{'':=^110}")
+        # Booking tokens
+        print(f"\n{'BOOKING TOKENS':=^110}")
+        for f, bd in breakdowns:
+            token = f.get("booking_token", "")
+            status = token[:60] + "…" if token else "MISSING"
+            print(f"  {f['primary_airline']:<20} {f['departure_time'][:16]:<17} {status}")
         print(f"{'':=^110}\n")
 
     return flights
@@ -365,10 +372,10 @@ def _book_button(f: dict) -> str:
     """Dark 'Book' button linking to Google Flights booking page."""
     token = f.get("booking_token", "")
     if token:
-        book_url = f"https://www.google.com/travel/flights/booking?tfs={token}"
+        book_url = f"https://www.google.com/flights?booking_token={token}"
     else:
         search_date = f.get("search_date", "")
-        book_url = f"https://www.google.com/travel/flights?q=Flights+to+VCE+from+LAX+on+{search_date}+one+way"
+        book_url = f"https://www.google.com/flights#search;f=LAX;t=VCE;d={search_date};tt=o;c=e;s=1"
 
     btn = (
         f'<a href="{book_url}" target="_blank" style="display:inline-block;'
