@@ -23,15 +23,10 @@
   /* Hero */
   .hero {
     background:
-      repeating-linear-gradient(
-        135deg,
-        transparent,
-        transparent 2px,
-        rgba(180,160,130,0.02) 2px,
-        rgba(180,160,130,0.02) 4px
-      ),
-      radial-gradient(ellipse at 50% 40%, #ffffff 0%, #faf8f3 70%);
+      linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)),
+      url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600') center/cover no-repeat;
     text-align: center; padding: 100px 24px;
+    position: relative;
   }
   .hero-pill {
     display: inline-block;
@@ -61,12 +56,13 @@
   .tabs { display: flex; gap: 8px; margin: 24px 0 16px; flex-wrap: wrap; }
   .tab {
     font-family: var(--sans); font-size: 14px; font-weight: 500;
-    padding: 8px 20px; border-radius: 9999px; border: 1px solid var(--fog);
-    background: #fff; color: var(--ink); cursor: pointer; transition: all 0.15s;
+    padding: 8px 20px; border-radius: 0; border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent; color: #94a3b8; cursor: pointer; transition: all 0.15s;
   }
-  .tab:hover { border-color: var(--azure); color: var(--azure); }
+  .tab:hover { color: var(--ink); border-bottom-color: var(--fog); }
   .tab.active {
-    background: var(--azure); color: #fff; border-color: var(--azure);
+    background: transparent; color: var(--ink); border-bottom-color: var(--gold);
   }
 
   /* Filter bar */
@@ -83,10 +79,11 @@
 
   /* Flight card */
   .card {
-    background: #fff; border: 1px solid var(--fog); border-radius: 14px;
-    padding: 22px 24px; margin-bottom: 14px; transition: box-shadow 0.15s;
+    background: #fff; border: 1px solid var(--fog); border-radius: 16px;
+    padding: 28px; margin-bottom: 14px;
+    transition: box-shadow 0.2s, transform 0.2s;
   }
-  .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.09); transform: translateY(-3px); }
   .card.top-pick { border: 2px solid var(--gold-light); }
   .card-inner { display: flex; justify-content: space-between; gap: 16px; }
   .card-left { flex: 1; min-width: 0; }
@@ -114,8 +111,8 @@
   .layover { font-size: 12px; font-weight: 300; color: #94a3b8; }
 
   .price {
-    font-family: var(--serif); font-size: 36px; font-weight: 400;
-    color: var(--ink); letter-spacing: -1px; line-height: 1.1;
+    font-family: var(--serif); font-size: 40px; font-weight: 400;
+    color: #1a3a6b; letter-spacing: -1px; line-height: 1.1;
   }
   .est-main { font-size: 12px; font-weight: 300; color: #94a3b8; }
   .est-main-price {
@@ -143,10 +140,10 @@
 
   /* Date heading */
   .date-heading {
-    font-family: var(--serif); font-size: 24px; font-weight: 400;
+    font-family: var(--serif); font-size: 32px; font-weight: 400;
     color: var(--ink); letter-spacing: -0.3px; padding: 28px 0 10px;
   }
-  .date-count { font-size: 13px; font-weight: 300; color: #94a3b8; margin-left: 10px; }
+  .date-count { font-size: 12px; font-weight: 300; color: #b0b0c0; margin-left: 10px; }
 
   /* Footer */
   .footer {
