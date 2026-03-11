@@ -360,24 +360,12 @@ def _layover_info(f: dict) -> str:
     return f"{f['total_layover_min']}m layover"
 
 
-_AIRLINE_BOOK_URLS: dict[str, str] = {
-    "delta": "https://www.delta.com/us/en/flight-search/book-a-flight#/air/search/LAX/VCE/{date}/1/0/0/Coach",
-    "united": "https://www.united.com/en/us/flights/book/step/chooseflight?origin=LAX&destination=VCE&date={date}&cabinType=coach",
-    "american": "https://www.aa.com/booking/find-flights?origin=LAX&destination=VCE&departureDate={date}&cabinType=coach",
-    "british airways": "https://www.britishairways.com/en-us/flights/book/select?outboundAirport=LAX&inboundAirport=VCE&outboundDate={date}",
-    "air france": "https://www.airfrance.us/search/offer?origin=LAX&destination=VCE&outboundDate={date}",
-    "lufthansa": "https://www.lufthansa.com/us/en/flight-search?origin=LAX&dest=VCE&date={date}",
-    "klm": "https://www.klm.com/search/en-us?origin=LAX&destination=VCE&departureDate={date}",
-}
-_DEFAULT_BOOK_URL = "https://www.google.com/flights#search;f=LAX;t=VCE;d={date};tt=o"
-
-
 def _book_button(f: dict) -> str:
-    """Dark 'Book' button linking to the airline's own booking page."""
+    """Dark 'Book' button linking to Google Flights search."""
     search_date = f.get("search_date", "")
-    primary = f["primary_airline"].lower().strip()
-    url_template = _AIRLINE_BOOK_URLS.get(primary, _DEFAULT_BOOK_URL)
-    book_url = url_template.format(date=search_date)
+    book_url = (
+        f"https://www.google.com/travel/flights?q=Flights+to+VCE+from+LAX+on+{search_date}+one+way"
+    )
 
     btn = (
         f'<a href="{book_url}" target="_blank" style="display:inline-block;'

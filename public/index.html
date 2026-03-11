@@ -320,16 +320,7 @@
   const TRIP = new Date('2026-07-03T00:00:00');
   const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbz_rbdaEDR3aNeaFnRgV8mvvwNmGaOVVqah3B1MNAAO1Y4ldOjKoxtY8s0LxkYrU9ye/exec';
 
-  const AIRLINE_BOOK_URLS = {
-    'delta': 'https://www.delta.com/us/en/flight-search/book-a-flight#/air/search/LAX/VCE/{date}/1/0/0/Coach',
-    'united': 'https://www.united.com/en/us/flights/book/step/chooseflight?origin=LAX&destination=VCE&date={date}&cabinType=coach',
-    'american': 'https://www.aa.com/booking/find-flights?origin=LAX&destination=VCE&departureDate={date}&cabinType=coach',
-    'british airways': 'https://www.britishairways.com/en-us/flights/book/select?outboundAirport=LAX&inboundAirport=VCE&outboundDate={date}',
-    'air france': 'https://www.airfrance.us/search/offer?origin=LAX&destination=VCE&outboundDate={date}',
-    'lufthansa': 'https://www.lufthansa.com/us/en/flight-search?origin=LAX&dest=VCE&date={date}',
-    'klm': 'https://www.klm.com/search/en-us?origin=LAX&destination=VCE&departureDate={date}',
-  };
-  const DEFAULT_BOOK_URL = 'https://www.google.com/flights#search;f=LAX;t=VCE;d={date};tt=o';
+  const GOOGLE_FLIGHTS_URL = 'https://www.google.com/travel/flights?q=Flights+to+VCE+from+LAX+on+{date}+one+way';
 
   const FILTERS = [
     { id: 'all',       label: 'All' },
@@ -397,12 +388,9 @@
 
   function bookUrl(f) {
     const key = f.primary_airline.toLowerCase().trim();
-    const template = AIRLINE_BOOK_URLS[key] || DEFAULT_BOOK_URL;
-    const base = template.replace('{date}', f.search_date);
-    const sep = base.includes('?') ? '&' : '?';
-    const utm = 'utm_source=veniceair&utm_medium=email&utm_campaign=lax-vce-2026&utm_content=' +
+    const base = GOOGLE_FLIGHTS_URL.replace('{date}', f.search_date);
+    return base + '&utm_source=veniceair&utm_medium=email&utm_campaign=lax-vce-2026&utm_content=' +
       encodeURIComponent(key.replace(/\s+/g, '-') + '-' + f.search_date);
-    return base + sep + utm;
   }
 
   function flightId(f) {
