@@ -58,7 +58,7 @@
     font-family: var(--sans); font-size: 24px; font-weight: 500;
     padding: 8px 20px; border-radius: 0; border: none;
     border-bottom: 2px solid transparent;
-    background: transparent; color: #94a3b8; cursor: pointer; transition: all 0.15s;
+    background: transparent; color: #0d6e8a; cursor: pointer; transition: all 0.15s;
   }
   .tab:hover { color: var(--ink); border-bottom-color: var(--fog); }
   .tab.active {
@@ -120,7 +120,10 @@
     font-family: var(--serif); font-size: 18px; font-weight: 300; color: #64748b;
   }
   .basic-label { font-size: 12px; font-weight: 400; color: var(--gold); }
-  .score-label { font-size: 11px; font-weight: 300; color: #94a3b8; }
+  .score-label {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
   .book-btn {
     display: inline-block; margin-top: 10px;
     background: var(--ink); color: var(--paper);
@@ -395,6 +398,18 @@
     return isNaN(d) ? -1 : d.getHours();
   }
 
+  function scoreLabel(s) {
+    if (s < 200) return '\u2726 Excellent Choice';
+    if (s <= 400) return 'Solid Pick';
+    return 'Fair Option';
+  }
+
+  function scoreColor(s) {
+    if (s < 200) return '#b8953a';
+    if (s <= 400) return '#2a5298';
+    return '#8b8ba0';
+  }
+
   function bookUrl(f) {
     if (f.google_flights_url) return f.google_flights_url;
     return GOOGLE_FLIGHTS_FALLBACK.replace('{date}', f.search_date);
@@ -618,7 +633,7 @@
         '</div>' +
         '<div class="card-right">' +
           priceBlock +
-          '<div class="score-label">score ' + f.score + '</div>' +
+          '<div class="score-label" style="color:' + scoreColor(f.score) + '">' + scoreLabel(f.score) + '</div>' +
           '<button class="book-btn" data-flight="' + fData +
             '">Book &rarr;</button>' +
         '</div>' +

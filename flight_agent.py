@@ -492,6 +492,25 @@ def _book_buttons(f: dict) -> str:
     return book_btn + details_btn
 
 
+def _score_label(f: dict) -> str:
+    """Return a styled score label based on thresholds."""
+    score = f.get("score", 999)
+    if score < 200:
+        text = "&#10022; Excellent Choice"
+        color = "#b8953a"
+    elif score <= 400:
+        text = "Solid Pick"
+        color = "#2a5298"
+    else:
+        text = "Fair Option"
+        color = "#8b8ba0"
+    return (
+        f'<span style="font-family:{_SANS};font-size:11px;font-weight:500;'
+        f'letter-spacing:0.08em;text-transform:uppercase;'
+        f'color:{color};">{text}</span>'
+    )
+
+
 def _source_badge(f: dict) -> str:
     return (
         f'<span style="display:inline-block;background:#1a3a6b;color:#eeeef4;'
@@ -589,8 +608,7 @@ def _flight_card(f: dict, rank: int, is_top_pick: bool) -> str:
             <td style="vertical-align:top;text-align:right;width:42%;">
               {_price_block(f)}
               <br>
-              <span style="font-family:{_SANS};font-size:11px;font-weight:300;
-                           color:#94a3b8;">score {f.get("score", "")}</span>
+              {_score_label(f)}
               <br><br>
               {_book_buttons(f)}
             </td>
