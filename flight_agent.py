@@ -213,26 +213,32 @@ def normalize(raw_results: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 BASIC_ECONOMY_CARRIERS = {"american", "delta", "united"}
+BASIC_ECONOMY_MARKUP = 0.15  # Economy Main ≈ Basic + 15%
 
 
 def label_fare_types(flights: list[dict]) -> list[dict]:
-    """Label each flight as Basic Economy or Economy Main.
+    """Label fare types and estimate Economy Main pricing.
 
     Google Flights always shows the cheapest fare. For the US Big 3
-    (American, Delta, United) this is Basic Economy. All other carriers
-    are labeled Economy Main since their base fare typically includes
-    standard economy amenities.
+    (American, Delta, United) this is Basic Economy. We estimate
+    Economy Main at +15% and show it as the primary price, with the
+    actual Basic Economy price shown underneath.
+
+    Non-Big-3 carriers' base fare is Economy Main (standard cabin).
     """
     for f in flights:
         carrier = f["primary_airline"].lower().strip()
         if carrier in BASIC_ECONOMY_CARRIERS:
-            f["fare_type"] = "Basic Economy"
+            f["fare_type"] = "Economy Main"
+            f["basic_economy_price"] = f["price"]
+            f["economy_main_price"] = round(f["price"] * (1 + BASIC_ECONOMY_MARKUP))
         else:
             f["fare_type"] = "Economy Main"
-        f["economy_main_price"] = None
+            f["basic_economy_price"] = None
+            f["economy_main_price"] = None
 
-    basic = sum(1 for f in flights if f["fare_type"] == "Basic Economy")
-    print(f"[Fare] {basic} Basic Economy, {len(flights) - basic} Economy Main")
+    big3 = sum(1 for f in flights if f.get("basic_economy_price"))
+    print(f"[Fare] {big3} Big 3 (BE→Main est.), {len(flights) - big3} Economy Main")
     return flights
 
 
@@ -296,7 +302,7 @@ def dedup_flights(flights: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 AIRLINE_BONUSES: dict[str, int] = {
-    "delta": -250,
+    "delta": -300,
     "united": -220,
     "british airways": -180,
     "american": -180,
@@ -343,9 +349,9 @@ def score_flights(flights: list[dict], test_mode: bool = False) -> list[dict]:
         score += airline_bonus
         bd["airline"] = airline_bonus
 
-        # Time-of-day bonus: morning 6-10am or evening 6-9pm
+        # Time-of-day bonus: morning 6-10am or evening 5-9pm
         hour = _departure_hour(f)
-        time_bonus = -80 if hour is not None and (6 <= hour <= 10 or 18 <= hour <= 21) else 0
+        time_bonus = -80 if hour is not None and (6 <= hour <= 10 or 17 <= hour <= 21) else 0
         score += time_bonus
         bd["time"] = time_bonus
 
@@ -481,14 +487,7 @@ def _source_badge(f: dict) -> str:
 
 
 def _fare_badge(f: dict) -> str:
-    """Amber pill for Basic Economy, muted fog pill for Economy Main."""
-    if f.get("fare_type") == "Basic Economy":
-        return (
-            f'<span style="display:inline-block;background:#b8953a;color:#fff;'
-            f"font-family:{_SANS};font-size:10px;font-weight:500;"
-            f'padding:2px 8px;border-radius:9999px;letter-spacing:0.3px;'
-            f'vertical-align:middle;">Basic Economy</span>'
-        )
+    """Economy Main badge for all flights."""
     return (
         f'<span style="display:inline-block;background:#eeeef4;color:#0a0a0f;'
         f"font-family:{_SANS};font-size:10px;font-weight:500;"
@@ -498,26 +497,31 @@ def _fare_badge(f: dict) -> str:
 
 
 def _price_block(f: dict) -> str:
-    """Price in Cormorant Garamond 36px, with est. main line for Basic."""
-    is_basic = f.get("fare_type") == "Basic Economy"
-    main_price = f.get("economy_main_price")
+    """Price block — Economy Main as primary, Basic Economy underneath for Big 3."""
+    be_price = f.get("basic_economy_price")
+    main_est = f.get("economy_main_price")
 
-    price_html = (
-        f'<span style="font-family:{_SERIF};font-size:36px;font-weight:400;'
-        f'color:#0a0a0f;letter-spacing:-1px;line-height:1.1;">'
-        f'${f["price"]:,.0f}</span>'
-    )
-
-    if is_basic and main_price:
-        price_html += (
+    # For Big 3: show estimated Main as primary, actual BE underneath
+    if be_price and main_est:
+        price_html = (
+            f'<span style="font-family:{_SERIF};font-size:36px;font-weight:400;'
+            f'color:#0a0a0f;letter-spacing:-1px;line-height:1.1;">'
+            f'~${main_est:,.0f}</span>'
             f'<br>'
-            f'<span style="font-family:{_SANS};font-size:12px;font-weight:400;'
-            f'color:#b8953a;">Basic Economy</span>'
+            f'<span style="font-family:{_SANS};font-size:11px;font-weight:300;'
+            f'color:#94a3b8;">Est.&nbsp;Main&nbsp;Cabin</span>'
             f'<br>'
             f'<span style="font-family:{_SERIF};font-size:18px;font-weight:300;'
-            f'color:#64748b;">~${main_price:,.0f}</span>'
-            f'&nbsp;<span style="font-family:{_SANS};font-size:11px;'
-            f'font-weight:300;color:#94a3b8;">Est.&nbsp;Main</span>'
+            f'color:#64748b;">${be_price:,.0f}</span>'
+            f'&nbsp;<span style="font-family:{_SANS};font-size:11px;font-weight:400;'
+            f'color:#b8953a;">Basic Economy</span>'
+        )
+    else:
+        # Non-Big-3: price IS Economy Main
+        price_html = (
+            f'<span style="font-family:{_SERIF};font-size:36px;font-weight:400;'
+            f'color:#0a0a0f;letter-spacing:-1px;line-height:1.1;">'
+            f'${f["price"]:,.0f}</span>'
         )
 
     return price_html
@@ -738,6 +742,7 @@ def export_flights_json(flights: list[dict]) -> None:
                 "search_date": f["search_date"],
                 "fare_type": f.get("fare_type", "Economy Main"),
                 "economy_main_price": f.get("economy_main_price"),
+                "basic_economy_price": f.get("basic_economy_price"),
                 "google_flights_url": f.get("google_flights_url", ""),
                 "layover_info": _layover_info(f),
             }
@@ -807,14 +812,15 @@ if __name__ == "__main__":
 
     print(f"\n{'='*70}")
     for i, f in enumerate(flights[:10], 1):
-        fare = "BE" if f["fare_type"] == "Basic Economy" else "EM"
-        main = f"→${f['economy_main_price']}" if f["economy_main_price"] else ""
+        be = f.get("basic_economy_price")
+        main = f.get("economy_main_price")
+        price_str = f"${f['price']}" if not main else f"~${main} (BE ${be})"
         print(
             f"  {i}. {f['primary_airline']:<20} "
             f"dep {f['departure_time'][:16]:<17} "
             f"stops={f['stops']}  "
             f"layover={f['total_layover_min']}m  "
-            f"${f['price']:<6} {fare}{main:<10} "
+            f"{price_str:<22} "
             f"score={f['score']}"
         )
     print(f"{'='*70}")

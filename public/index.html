@@ -568,16 +568,17 @@
     const topBadge = isTopPick
       ? '<div><span class="badge badge-top">&#11088; TOP PICK</span></div>' : '';
 
-    const fareBadge = f.fare_type === 'Basic Economy'
-      ? '<span class="badge badge-basic">Basic Economy</span>'
-      : '<span class="badge badge-main">Economy Main</span>';
+    const fareBadge = '<span class="badge badge-main">Economy Main</span>';
 
-    let priceBlock = '<div class="price">$' + f.price.toLocaleString() + '</div>';
-    if (f.fare_type === 'Basic Economy' && f.economy_main_price) {
-      priceBlock += '<div class="basic-label">Basic Economy</div>';
-      priceBlock += '<div><span class="est-main-price">~$' +
-                    f.economy_main_price.toLocaleString() +
-                    '</span> <span class="est-main">Est. Main</span></div>';
+    let priceBlock;
+    if (f.basic_economy_price && f.economy_main_price) {
+      // Big 3: show estimated Main as primary, BE underneath
+      priceBlock = '<div class="price">~$' + f.economy_main_price.toLocaleString() + '</div>' +
+        '<div class="est-main">Est. Main Cabin</div>' +
+        '<div><span class="est-main-price">$' + f.basic_economy_price.toLocaleString() +
+        '</span> <span class="basic-label">Basic Economy</span></div>';
+    } else {
+      priceBlock = '<div class="price">$' + f.price.toLocaleString() + '</div>';
     }
 
     const stopsLabel = f.stops === 0 ? 'Nonstop' : f.stops + ' stop';
