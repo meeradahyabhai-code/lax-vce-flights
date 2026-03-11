@@ -491,39 +491,18 @@ def build_email_html(flights: list[dict]) -> str:
             else:
                 collapsed_cards += card
 
-        # Gmail-compatible toggle using checkbox + label + CSS sibling selector
         show_more = ""
-        if collapsed_cards:
-            remaining = len(group) - 3
-            plural = "s" if remaining != 1 else ""
-            cb_id = f"toggle-{dt_idx}"
+        if len(group) > 3:
+            web_url = f"https://lax-vce-flights.vercel.app/?date={dt}"
             show_more = f"""
-            <style>
-              #{cb_id}:checked ~ .more-{dt_idx} {{
-                display: block !important;
-              }}
-              #{cb_id}:checked ~ .lbl-{dt_idx} .show-txt {{
-                display: none !important;
-              }}
-              #{cb_id}:checked ~ .lbl-{dt_idx} .hide-txt {{
-                display: inline !important;
-              }}
-            </style>
-            <input type="checkbox" id="{cb_id}"
-                   style="display:none !important;max-height:0;visibility:hidden;">
-            <label for="{cb_id}" class="lbl-{dt_idx}"
-                   style="display:inline-block;cursor:pointer;color:#1a3a6b;
-                          font-family:{_SANS};font-weight:500;font-size:13px;
-                          padding:10px 0;">
-              <span class="show-txt"
-                    style="display:inline;">Show {remaining} more flight{plural} &#9660;</span>
-              <span class="hide-txt"
-                    style="display:none;">Hide extra flights &#9650;</span>
-            </label>
-            <div class="more-{dt_idx}"
-                 style="display:none;">
-              {collapsed_cards}
-            </div>"""
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td style="padding:4px 0 12px 0;">
+                <a href="{web_url}" target="_blank"
+                   style="font-family:{_SANS};font-size:13px;font-weight:500;
+                          color:#b8953a;text-decoration:none;">
+                  View all {len(group)} flights for {nice_date} &rarr;</a>
+              </td></tr>
+            </table>"""
 
         date_sections += f"""
         <table width="100%" cellpadding="0" cellspacing="0" border="0"

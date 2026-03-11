@@ -268,7 +268,10 @@
     const el = document.getElementById('tabs');
     if (!data) return;
     const dates = [...new Set(data.flights.map(f => f.search_date))].sort();
-    if (!activeDate) activeDate = dates[0];
+    if (!activeDate) {
+      const urlDate = new URLSearchParams(window.location.search).get('date');
+      activeDate = (urlDate && dates.includes(urlDate)) ? urlDate : dates[0];
+    }
     el.innerHTML = dates.map(d => {
       const label = new Date(d + 'T12:00:00').toLocaleDateString('en-US',
         { month: 'short', day: 'numeric' });
