@@ -49,6 +49,22 @@
     margin: 32px auto 0;
   }
 
+  /* Direction nav */
+  .direction-nav {
+    display: flex; gap: 8px; justify-content: center;
+    padding: 20px 0 4px;
+  }
+  .direction-pill {
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    padding: 8px 20px; border-radius: 9999px; cursor: pointer;
+    border: 1.5px solid var(--azure); transition: all 0.15s;
+    background: transparent; color: var(--azure);
+  }
+  .direction-pill:hover { background: rgba(26,58,107,0.06); }
+  .direction-pill.active {
+    background: var(--azure); color: #fff;
+  }
+
   /* Layout */
   .container { max-width: 680px; margin: 0 auto; padding: 0 16px 48px; }
 
@@ -112,7 +128,7 @@
   .layover { font-size: 12px; font-weight: 300; color: #94a3b8; }
 
   .price {
-    font-family: var(--serif); font-size: 32px; font-weight: 600;
+    font-family: var(--serif); font-size: 38px; font-weight: 600;
     color: #1a3a6b; letter-spacing: -1px; line-height: 1.1;
   }
   .est-main { font-size: 12px; font-weight: 300; color: #94a3b8; }
@@ -133,6 +149,49 @@
     border: none;
   }
   .book-btn:hover { background: var(--azure); }
+  .interest-link {
+    display: block; margin-top: 6px;
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    color: #2a5298; cursor: pointer; text-decoration: none;
+  }
+  .interest-link:hover { text-decoration: underline; }
+
+  /* Family interest modal */
+  .fi-modal { text-align: left; }
+  .fi-modal .modal-title { text-align: center; margin-bottom: 16px; }
+  .fi-summary {
+    background: var(--fog); border-radius: 10px; padding: 14px 18px;
+    margin-bottom: 20px;
+  }
+  .fi-summary .fi-airline {
+    font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--ink);
+  }
+  .fi-summary .fi-detail {
+    font-family: var(--sans); font-size: 13px; font-weight: 300; color: #64748b; margin-top: 2px;
+  }
+  .fi-summary .fi-price {
+    font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--azure); margin-top: 4px;
+  }
+  .fi-section-label {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    color: #94a3b8; letter-spacing: 0.5px; text-transform: uppercase;
+    margin-bottom: 6px; margin-top: 16px;
+  }
+  .fi-name-list {
+    font-family: var(--sans); font-size: 14px; font-weight: 400;
+    color: var(--ink); line-height: 1.8;
+  }
+  .fi-empty {
+    font-family: var(--sans); font-size: 13px; font-weight: 300;
+    color: #94a3b8; text-align: center; padding: 20px 0;
+  }
+  .fi-close-btn {
+    display: block; width: 100%; margin-top: 20px; padding: 10px 20px;
+    border-radius: 10px; font-family: var(--sans); font-size: 14px;
+    font-weight: 500; cursor: pointer; border: none;
+    background: var(--azure); color: #fff; transition: all 0.15s;
+  }
+  .fi-close-btn:hover { background: var(--lagoon); }
 
   /* Show more toggle */
   .show-more-btn {
@@ -271,7 +330,7 @@
     .airline-name { font-size: 16px; }
     .meta { font-size: 14px; }
     .layover { font-size: 13px; }
-    .price { font-size: 32px; }
+    .price { font-size: 38px; }
     .book-btn { display: block; width: 100%; text-align: center; margin-top: 8px; }
   }
 </style>
@@ -287,6 +346,10 @@
 </div>
 
 <div class="container">
+  <div class="direction-nav" id="direction-nav">
+    <button class="direction-pill active" data-dir="outbound">Outbound &nbsp;LAX &rarr; VCE</button>
+    <button class="direction-pill" data-dir="return">Return &nbsp;IST &rarr; LAX</button>
+  </div>
   <div class="tabs" id="tabs"></div>
   <div class="filters" id="filters"></div>
   <div id="flights"></div>
@@ -325,6 +388,15 @@
   </div>
 </div>
 
+<!-- Family interest modal -->
+<div class="modal-overlay" id="fi-modal">
+  <div class="modal fi-modal" style="max-width:400px;border-radius:20px;">
+    <div class="modal-title">Family Interest</div>
+    <div id="fi-modal-body"></div>
+    <button class="fi-close-btn" id="fi-close">Close</button>
+  </div>
+</div>
+
 <script>
 (function () {
   'use strict';
@@ -333,6 +405,20 @@
   const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwBSvTPQqbG3WZZAW3sTygBAinDOWZ4Nj-i8CHTKU_K0UfFM6LQFm8322xCNa1ufSsd/exec';
 
   const GOOGLE_FLIGHTS_FALLBACK = 'https://www.google.com/flights#search;f=LAX;t=VCE;d={date};tt=o;c=e;s=1';
+  const GOOGLE_FLIGHTS_RETURN_FALLBACK = 'https://www.google.com/flights#search;f=IST;t=LAX;d={date};tt=o;c=e;s=1';
+
+  const HEROES = {
+    outbound: {
+      image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600',
+      title: 'Cruise Bound',
+      subtitle: 'First stop &mdash; Venice, Italy'
+    },
+    return: {
+      image: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=1600&q=80',
+      title: 'Homeward Bound',
+      subtitle: 'Last stop &mdash; Istanbul, Turkey'
+    }
+  };
 
   const FILTERS = [
     { id: 'all',       label: 'All' },
@@ -346,10 +432,12 @@
   ];
 
   let data = null;
+  let activeDirection = 'outbound';
   let activeDate = null;
   let activeFilter = 'all';
   let expandedDates = new Set();
   let pendingBookFlight = null;
+  let sheetRows = [];
 
   // ---- User name ----
   function getUserName() {
@@ -412,7 +500,8 @@
 
   function bookUrl(f) {
     if (f.google_flights_url) return f.google_flights_url;
-    return GOOGLE_FLIGHTS_FALLBACK.replace('{date}', f.search_date);
+    var fallback = activeDirection === 'return' ? GOOGLE_FLIGHTS_RETURN_FALLBACK : GOOGLE_FLIGHTS_FALLBACK;
+    return fallback.replace('{date}', f.search_date);
   }
 
   function flightId(f) {
@@ -478,11 +567,89 @@
   function fetchFamilyPicks() {
     fetch(SHEETS_URL + '?action=read')
       .then(function (r) { return r.json(); })
-      .then(function (rows) { renderFamilyPicks(rows); })
+      .then(function (rows) {
+        sheetRows = rows || [];
+        renderFamilyPicks(rows);
+        updateInterestLinks();
+      })
       .catch(function () {
         document.getElementById('family-cards').innerHTML =
           '<div class="family-empty">Could not load family picks.</div>';
       });
+  }
+
+  function getFlightCounts(fid) {
+    var booked = [], interested = [];
+    for (var i = 0; i < sheetRows.length; i++) {
+      var r = sheetRows[i];
+      if (r.flight_id === fid) {
+        if (r.action === 'booked') booked.push(r.name || 'Someone');
+        else if (r.action === 'interested') interested.push(r.name || 'Someone');
+      }
+    }
+    return { booked: booked, interested: interested };
+  }
+
+  function updateInterestLinks() {
+    document.querySelectorAll('.interest-link[data-fid]').forEach(function (el) {
+      var fid = el.getAttribute('data-fid');
+      var counts = getFlightCounts(fid);
+      var parts = [];
+      if (counts.interested.length > 0) parts.push(counts.interested.length + ' interested');
+      if (counts.booked.length > 0) parts.push(counts.booked.length + ' booked');
+      el.textContent = parts.length > 0 ? parts.join(' \u00b7 ') : 'See family interest';
+    });
+  }
+
+  function showFamilyModal(fid, flightData) {
+    var counts = getFlightCounts(fid);
+    var body = document.getElementById('fi-modal-body');
+    var html = '';
+
+    // Flight summary
+    if (flightData) {
+      var niceDate = '';
+      try {
+        niceDate = new Date(flightData.search_date + 'T12:00:00').toLocaleDateString('en-US',
+          { month: 'short', day: 'numeric', weekday: 'short' });
+      } catch (e) { niceDate = flightData.search_date; }
+      html += '<div class="fi-summary">' +
+        '<div class="fi-airline">' + escHtml(flightData.primary_airline) + '</div>' +
+        '<div class="fi-detail">' + niceDate + ' &middot; ' +
+          fmtTime(flightData.departure_time) + ' &rarr; ' + fmtTime(flightData.arrival_time) + '</div>' +
+        '<div class="fi-price">$' + flightData.price.toLocaleString() + '</div>' +
+      '</div>';
+    }
+
+    if (counts.booked.length === 0 && counts.interested.length === 0) {
+      html += '<div class="fi-empty">Be the first to select this flight!</div>';
+    } else {
+      if (counts.booked.length > 0) {
+        html += '<div class="fi-section-label">Booked</div>';
+        html += '<div class="fi-name-list">' + counts.booked.map(function (n) {
+          return escHtml(n);
+        }).join('<br>') + '</div>';
+      }
+      if (counts.interested.length > 0) {
+        html += '<div class="fi-section-label">Interested</div>';
+        html += '<div class="fi-name-list">' + counts.interested.map(function (n) {
+          return escHtml(n);
+        }).join('<br>') + '</div>';
+      }
+    }
+
+    body.innerHTML = html;
+    document.getElementById('fi-modal').classList.add('active');
+  }
+
+  function setupFamilyModal() {
+    var overlay = document.getElementById('fi-modal');
+    document.getElementById('fi-close').addEventListener('click', function () {
+      overlay.classList.remove('active');
+    });
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
   }
 
   // ---- Book modal ----
@@ -541,6 +708,50 @@
     }
   }
 
+  // ---- Direction nav & hero ----
+  function getActiveFlights() {
+    if (!data) return [];
+    return activeDirection === 'return'
+      ? (data.return_flights || [])
+      : (data.outbound_flights || []);
+  }
+
+  function renderDirectionNav() {
+    document.querySelectorAll('.direction-pill').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.dir === activeDirection);
+    });
+  }
+
+  function setupDirectionNav() {
+    document.querySelectorAll('.direction-pill').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (activeDirection === btn.dataset.dir) return;
+        activeDirection = btn.dataset.dir;
+        activeDate = null;
+        activeFilter = 'all';
+        expandedDates.clear();
+        renderDirectionNav();
+        updateHero();
+        renderTabs();
+        renderFilters();
+        renderFlights();
+      });
+    });
+  }
+
+  function updateHero() {
+    var cfg = HEROES[activeDirection];
+    var hero = document.querySelector('.hero');
+    hero.style.backgroundImage =
+      'linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)), ' +
+      "url('" + cfg.image + "')";
+    hero.style.backgroundPosition = 'center';
+    hero.style.backgroundSize = 'cover';
+    hero.style.backgroundRepeat = 'no-repeat';
+    document.querySelector('.hero-title').innerHTML = cfg.title;
+    document.querySelector('.hero-subtitle').innerHTML = cfg.subtitle;
+  }
+
   // ---- Render ----
   function renderCountdown() {
     const d = daysToGo();
@@ -550,8 +761,9 @@
   function renderTabs() {
     const el = document.getElementById('tabs');
     if (!data) return;
-    const dates = [...new Set(data.flights.map(f => f.search_date))].sort();
-    if (!activeDate) {
+    var flights = getActiveFlights();
+    const dates = [...new Set(flights.map(f => f.search_date))].sort();
+    if (!activeDate || !dates.includes(activeDate)) {
       const urlDate = new URLSearchParams(window.location.search).get('date');
       activeDate = (urlDate && dates.includes(urlDate)) ? urlDate : dates[0];
     }
@@ -635,9 +847,23 @@
           priceBlock +
           '<button class="book-btn" data-flight="' + fData +
             '">Select Flight</button>' +
+          '<a class="interest-link" data-fid="' + escHtml(flightId(f)) +
+            '" data-flight="' + fData + '">See family interest</a>' +
         '</div>' +
       '</div>' +
     '</div>';
+  }
+
+  function attachInterestHandlers() {
+    document.querySelectorAll('.interest-link[data-fid]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.preventDefault();
+        var fid = el.getAttribute('data-fid');
+        var fd = JSON.parse(decodeURIComponent(el.getAttribute('data-flight')));
+        showFamilyModal(fid, fd);
+      });
+    });
+    updateInterestLinks();
   }
 
   function attachBookHandlers() {
@@ -654,7 +880,7 @@
     const el = document.getElementById('flights');
     if (!data) { el.innerHTML = '<div class="status">Loading flights&hellip;</div>'; return; }
 
-    const allForDate = data.flights
+    const allForDate = getActiveFlights()
       .filter(f => f.search_date === activeDate && passesFilter(f));
 
     if (allForDate.length === 0) {
@@ -688,6 +914,7 @@
 
     el.innerHTML = html;
     attachBookHandlers();
+    attachInterestHandlers();
 
     const moreBtn = document.getElementById('show-more');
     if (moreBtn) moreBtn.addEventListener('click', () => {
@@ -746,6 +973,8 @@
   async function init() {
     promptName();
     setupBookModal();
+    setupFamilyModal();
+    setupDirectionNav();
     renderCountdown();
     renderFilters();
     fetchFamilyPicks();
@@ -753,11 +982,19 @@
     // Auto-refresh family picks every 60s
     setInterval(fetchFamilyPicks, 60000);
 
+    // Check URL params for direction
+    var urlDir = new URLSearchParams(window.location.search).get('dir');
+    if (urlDir === 'return') {
+      activeDirection = 'return';
+      renderDirectionNav();
+      updateHero();
+    }
+
     document.getElementById('flights').innerHTML =
       '<div class="status">' +
         '<div class="loading-spinner"></div>' +
         '<div>Searching flights&hellip;</div>' +
-        '<div class="loading-sub">Checking 3 dates &times; nonstop + 1-stop</div>' +
+        '<div class="loading-sub">Checking outbound + return &times; nonstop + 1-stop</div>' +
       '</div>';
 
     // Try serverless API first, fall back to static JSON (local dev)
@@ -787,6 +1024,39 @@
     renderCountdown();
     renderTabs();
     renderFlights();
+
+    // Handle ?flight= URL param — find matching flight in either direction
+    var flightParam = new URLSearchParams(window.location.search).get('flight');
+    if (flightParam && data) {
+      var allFlights = (data.outbound_flights || []).concat(data.return_flights || []);
+      var match = allFlights.find(function (f) { return flightId(f) === flightParam; });
+      if (match) {
+        // Determine direction from match's search_date
+        var isReturn = (data.return_flights || []).some(function (f) {
+          return flightId(f) === flightParam;
+        });
+        if (isReturn && activeDirection !== 'return') {
+          activeDirection = 'return';
+          renderDirectionNav();
+          updateHero();
+        }
+        activeDate = match.search_date;
+        expandedDates.add(activeDate);
+        renderTabs();
+        renderFlights();
+        setTimeout(function () {
+          var links = document.querySelectorAll('.interest-link[data-fid]');
+          for (var i = 0; i < links.length; i++) {
+            if (links[i].getAttribute('data-fid') === flightParam) {
+              var card = links[i].closest('.card');
+              if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              showFamilyModal(flightParam, match);
+              break;
+            }
+          }
+        }, 300);
+      }
+    }
   }
 
   init();

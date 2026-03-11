@@ -7,6 +7,7 @@ import json
 import os
 import smtplib
 import sys
+import urllib.parse
 
 from dotenv import load_dotenv
 
@@ -28,25 +29,34 @@ TRIP_DATE = date(2026, 7, 3)
 TO_ADDRESS = "mdahya@gmail.com"
 
 DEPARTURE_DATES = ["2026-06-29", "2026-06-30", "2026-07-01"]
+RETURN_DATES = ["2026-07-13", "2026-07-14", "2026-07-15"]
+RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY", "")
 
 
 # ---------------------------------------------------------------------------
 # Source – Google Flights via SerpAPI (nonstop + 1-stop per date)
 # ---------------------------------------------------------------------------
 
-def search_serpapi() -> list[dict]:
+def search_serpapi(
+    origin: str = "LAX",
+    destination: str = "VCE",
+    dates: list[str] | None = None,
+) -> list[dict]:
     """Query Google Flights for each departure date with two calls each:
     one for nonstop only (stops=1) and one for max 1 stop (stops=2).
     Merge all raw results and return them for downstream dedup."""
+    if dates is None:
+        dates = DEPARTURE_DATES
+
     all_results: list[dict] = []
 
-    for dep_date in DEPARTURE_DATES:
+    for dep_date in dates:
         for stops_param in ("1", "2"):  # 1=nonstop, 2=1 stop or fewer
             params = {
                 "engine": "google_flights",
                 "api_key": SERPAPI_KEY,
-                "departure_id": "LAX",
-                "arrival_id": "VCE",
+                "departure_id": origin,
+                "arrival_id": destination,
                 "outbound_date": dep_date,
                 "type": "2",            # one-way
                 "travel_class": "1",    # economy
@@ -67,8 +77,61 @@ def search_serpapi() -> list[dict]:
                 flight["_search_date"] = dep_date
             all_results.extend(flights)
 
-    print(f"[SerpAPI] Google Flights returned {len(all_results)} results "
-          f"({len(DEPARTURE_DATES)} dates × 2 queries)")
+    route = f"{origin}→{destination}"
+    print(f"[SerpAPI] {route} returned {len(all_results)} results "
+          f"({len(dates)} dates × 2 queries)")
+    return all_results
+
+
+# ---------------------------------------------------------------------------
+# Source – Skyscanner via RapidAPI (return flights only)
+# ---------------------------------------------------------------------------
+
+def search_skyscanner(
+    origin: str = "IST",
+    destination: str = "LAX",
+    dates: list[str] | None = None,
+) -> list[dict]:
+    """Search Skyscanner via RapidAPI for one-way flights."""
+    if not RAPIDAPI_KEY:
+        print("[Skyscanner] RAPIDAPI_KEY not set — skipping")
+        return []
+
+    if dates is None:
+        dates = RETURN_DATES
+
+    all_results: list[dict] = []
+    headers = {
+        "X-RapidAPI-Key": RAPIDAPI_KEY,
+        "X-RapidAPI-Host": "sky-scanner3.p.rapidapi.com",
+    }
+
+    for dep_date in dates:
+        try:
+            resp = requests.get(
+                "https://sky-scanner3.p.rapidapi.com/flights/search-one-way",
+                headers=headers,
+                params={
+                    "fromEntityId": origin,
+                    "toEntityId": destination,
+                    "departDate": dep_date,
+                },
+                timeout=30,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+
+            itineraries = data.get("data", {}).get("itineraries", [])
+            for itin in itineraries:
+                itin["_source"] = "skyscanner"
+                itin["_search_date"] = dep_date
+            all_results.extend(itineraries)
+        except Exception as exc:
+            print(f"[Skyscanner] Error for {dep_date}: {exc}")
+
+    route = f"{origin}→{destination}"
+    print(f"[Skyscanner] {route} returned {len(all_results)} results "
+          f"({len(dates)} dates)")
     return all_results
 
 
@@ -204,9 +267,75 @@ def _normalize_serpapi(flight: dict) -> dict:
     }
 
 
+def _normalize_skyscanner(itin: dict) -> dict | None:
+    """Flatten a Skyscanner itinerary into the common schema."""
+    legs = itin.get("legs", [])
+    if not legs:
+        return None
+
+    leg = legs[0]  # one-way, only one leg
+    price_info = itin.get("price", {})
+    price = price_info.get("raw", 0)
+    if not price:
+        return None
+
+    segments = leg.get("segments", [])
+    carriers = leg.get("carriers", {}).get("marketing", [])
+    airlines = [c.get("name", "") for c in carriers]
+    primary_airline = airlines[0] if airlines else ""
+
+    dep_time = leg.get("departure", "")
+    arr_time = leg.get("arrival", "")
+    stops = leg.get("stopCount", 0)
+    duration = leg.get("durationInMinutes", 0)
+
+    # Build layover info from segments (compatible with _layover_info)
+    layovers = []
+    if stops > 0 and len(segments) > 1:
+        for i in range(len(segments) - 1):
+            arr_seg = segments[i].get("arrival", "")
+            dep_seg = segments[i + 1].get("departure", "")
+            conn_airport = segments[i].get("destination", {}).get(
+                "name",
+                segments[i].get("destination", {}).get("flightPlaceId", ""),
+            )
+            try:
+                arr_dt = datetime.fromisoformat(arr_seg)
+                dep_dt = datetime.fromisoformat(dep_seg)
+                layover_min = int((dep_dt - arr_dt).total_seconds() / 60)
+            except (ValueError, TypeError):
+                layover_min = 0
+            layovers.append({"name": conn_airport, "duration": layover_min})
+
+    total_layover_min = sum(lo["duration"] for lo in layovers)
+
+    return {
+        "primary_airline": primary_airline,
+        "airlines": airlines,
+        "departure_time": dep_time,
+        "arrival_time": arr_time,
+        "stops": stops,
+        "total_layover_min": total_layover_min,
+        "total_duration_min": duration,
+        "price": int(price),
+        "source": "skyscanner",
+        "search_date": itin.get("_search_date", ""),
+        "google_flights_url": "",
+        "raw": {"layovers": layovers},
+    }
+
+
 def normalize(raw_results: list[dict]) -> list[dict]:
-    """Convert raw SerpAPI results into a unified list."""
-    return [_normalize_serpapi(f) for f in raw_results]
+    """Convert raw results from any source into a unified list."""
+    normalized = []
+    for r in raw_results:
+        if r.get("_source") == "skyscanner":
+            n = _normalize_skyscanner(r)
+            if n:
+                normalized.append(n)
+        else:
+            normalized.append(_normalize_serpapi(r))
+    return normalized
 
 
 # ---------------------------------------------------------------------------
@@ -315,6 +444,22 @@ AIRLINE_BONUSES: dict[str, int] = {
     "alaska": -120,
 }
 
+RETURN_AIRLINE_BONUSES: dict[str, int] = {
+    "turkish airlines": -250,
+    "lufthansa": -200,
+    "air france": -200,
+    "klm": -200,
+    "delta": -160,
+    "united": -160,
+    "british airways": -180,
+    "american": -180,
+    "ita airways": -120,
+    "alaska": -120,
+}
+
+# Airlines whose nonstop flights get forced score=0 (automatic TOP PICK)
+AUTO_TOP_PICK_NONSTOP: set[str] = set()
+RETURN_AUTO_TOP_PICK_NONSTOP: set[str] = {"turkish airlines"}
 
 
 def _departure_hour(f: dict) -> int | None:
@@ -336,18 +481,39 @@ def _departure_hour(f: dict) -> int | None:
     return None
 
 
-def score_flights(flights: list[dict], test_mode: bool = False) -> list[dict]:
+def score_flights(
+    flights: list[dict],
+    test_mode: bool = False,
+    airline_bonuses: dict[str, int] | None = None,
+    auto_top_picks: set[str] | None = None,
+) -> list[dict]:
     """Assign a score to each flight (lower = better) and return sorted."""
+    if airline_bonuses is None:
+        airline_bonuses = AIRLINE_BONUSES
+    if auto_top_picks is None:
+        auto_top_picks = AUTO_TOP_PICK_NONSTOP
+
     breakdowns = []
 
     for f in flights:
+        primary = f["primary_airline"].lower().strip()
+
+        # Auto TOP PICK: nonstop flights by these airlines get score 0
+        if primary in auto_top_picks and f["stops"] == 0:
+            f["score"] = 0
+            breakdowns.append((f, {
+                "price": float(f["price"]), "airline": 0, "time": 0,
+                "layover": 0, "speed": 0, "nonstop": 0,
+                "total": 0, "auto_top": True,
+            }))
+            continue
+
         bd = {}  # breakdown dict for --test mode
         score = float(f["price"])
         bd["price"] = float(f["price"])
 
         # Airline bonus — use first leg's primary airline
-        primary = f["primary_airline"].lower().strip()
-        airline_bonus = AIRLINE_BONUSES.get(primary, 0)
+        airline_bonus = airline_bonuses.get(primary, 0)
         score += airline_bonus
         bd["airline"] = airline_bonus
 
@@ -419,7 +585,7 @@ def score_flights(flights: list[dict], test_mode: bool = False) -> list[dict]:
 
 _FONT_LINK = (
     '<link href="https://fonts.googleapis.com/css2?family='
-    'Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&'
+    'Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&'
     'family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">'
 )
 _SERIF = "'Cormorant Garamond',Georgia,'Times New Roman',serif"
@@ -489,7 +655,18 @@ def _book_buttons(f: dict) -> str:
         f'padding:8px 16px;border-radius:9999px;letter-spacing:0.3px;">'
         f'More Details</a>'
     )
-    return book_btn + details_btn
+
+    # "See who's interested" link — points to web page with flight param
+    flight_id = f"{f.get('primary_airline', '')}|{f.get('search_date', '')}|{f.get('price', '')}"
+    web_url = f"https://lax-vce-flights.vercel.app/?flight={urllib.parse.quote(flight_id, safe='')}"
+    interest_link = (
+        f'<br><a href="{web_url}" target="_blank" style="'
+        f"font-family:{_SANS};font-size:12px;font-weight:400;"
+        f'color:#2a5298;text-decoration:none;">'
+        f'See who\'s interested</a>'
+    )
+
+    return book_btn + details_btn + interest_link
 
 
 def _score_badge(f: dict) -> str:
@@ -527,7 +704,7 @@ def _price_block(f: dict) -> str:
     # For Big 3: show estimated Main as primary, actual BE underneath
     if be_price and main_est:
         price_html = (
-            f'<span style="font-family:{_SERIF};font-size:40px;font-weight:400;'
+            f'<span style="font-family:{_SERIF};font-size:38px;font-weight:600;'
             f'color:#1a3a6b;letter-spacing:-1px;line-height:1.1;">'
             f'~${main_est:,.0f}</span>'
             f'<br>'
@@ -542,7 +719,7 @@ def _price_block(f: dict) -> str:
     else:
         # Non-Big-3: price IS Economy Main
         price_html = (
-            f'<span style="font-family:{_SERIF};font-size:40px;font-weight:400;'
+            f'<span style="font-family:{_SERIF};font-size:38px;font-weight:600;'
             f'color:#1a3a6b;letter-spacing:-1px;line-height:1.1;">'
             f'${f["price"]:,.0f}</span>'
         )
@@ -610,40 +787,32 @@ def _today_pst() -> date:
     return datetime.now(ZoneInfo("America/Los_Angeles")).date()
 
 
-def build_email_html(flights: list[dict]) -> str:
-    """Build the full HTML email body from scored, sorted flights."""
-    today = _today_pst()
-    days_to_go = (TRIP_DATE - today).days
-
-    # Group by search_date
+def _build_date_sections(flights: list[dict], direction: str = "outbound") -> str:
+    """Build the per-date card sections for a list of flights."""
     by_date: dict[str, list[dict]] = defaultdict(list)
     for f in flights:
         by_date[f["search_date"]].append(f)
 
-    # Per-date top pick = rank 1 within that date
     top_picks: dict[str, int] = {}
     for dt, group in by_date.items():
         if group:
             top_picks[dt] = id(group[0])
 
-    # --- Date sections ---
     date_sections = ""
-    for dt_idx, dt in enumerate(sorted(by_date.keys())):
+    for dt in sorted(by_date.keys()):
         group = by_date[dt]
         nice_date = datetime.strptime(dt, "%Y-%m-%d").strftime("%A, %B %-d")
         visible_cards = ""
-        collapsed_cards = ""
         for i, f in enumerate(group):
             is_top = id(f) == top_picks.get(dt)
             card = _flight_card(f, i + 1, is_top)
             if i < 3:
                 visible_cards += card
-            else:
-                collapsed_cards += card
 
         show_more = ""
         if len(group) > 3:
-            web_url = f"https://lax-vce-flights.vercel.app/?date={dt}"
+            dir_param = f"&dir={direction}" if direction == "return" else ""
+            web_url = f"https://lax-vce-flights.vercel.app/?date={dt}{dir_param}"
             show_more = f"""
             <table width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr><td style="padding:4px 0 12px 0;">
@@ -668,6 +837,42 @@ def build_email_html(flights: list[dict]) -> str:
         {visible_cards}
         {show_more}
         """
+
+    return date_sections
+
+
+def build_email_html(
+    outbound: list[dict],
+    return_flights: list[dict] | None = None,
+) -> str:
+    """Build the full HTML email body from scored, sorted flights."""
+    today = _today_pst()
+    days_to_go = (TRIP_DATE - today).days
+
+    outbound_sections = _build_date_sections(outbound, "outbound")
+
+    return_section_html = ""
+    if return_flights:
+        return_date_sections = _build_date_sections(return_flights, "return")
+        return_section_html = f"""
+        <!-- Return section divider -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"
+               style="margin-top:40px;margin-bottom:8px;">
+          <tr><td style="padding:0;">
+            <table width="80" cellpadding="0" cellspacing="0" border="0" align="center">
+              <tr><td style="height:1px;background:#b8953a;font-size:1px;line-height:1px;">&nbsp;</td></tr>
+            </table>
+          </td></tr>
+          <tr><td align="center" style="padding:24px 0 4px 0;">
+            <span style="font-family:{_SERIF};font-size:32px;font-weight:300;
+                         font-style:italic;color:#1a3a6b;letter-spacing:-0.02em;">
+              Return Flights &mdash; IST to LAX</span>
+          </td></tr>
+        </table>
+        {return_date_sections}
+        """
+
+    total_flights = len(outbound) + len(return_flights or [])
 
     return f"""\
 <!DOCTYPE html>
@@ -716,7 +921,8 @@ def build_email_html(flights: list[dict]) -> str:
     <table width="640" cellpadding="0" cellspacing="0" border="0"
            style="max-width:640px;width:100%;">
       <tr><td style="padding:8px 0 48px 0;">
-        {date_sections}
+        {outbound_sections}
+        {return_section_html}
 
         <!-- Footer -->
         <table width="100%" cellpadding="0" cellspacing="0" border="0"
@@ -725,7 +931,7 @@ def build_email_html(flights: list[dict]) -> str:
             <span style="font-family:{_SANS};font-size:11px;font-weight:300;
                          color:#94a3b8;">
               Generated {today.strftime("%B %-d, %Y")} &middot;
-              {len(flights)} flights after filter &amp; dedup &middot;
+              {total_flights} flights after filter &amp; dedup &middot;
               Prices in USD
             </span>
           </td></tr>
@@ -744,35 +950,41 @@ def build_email_html(flights: list[dict]) -> str:
 # 5. JSON export for web dashboard
 # ---------------------------------------------------------------------------
 
-def export_flights_json(flights: list[dict]) -> None:
+def _flight_to_dict(f: dict) -> dict:
+    """Convert a scored flight to a JSON-serializable dict."""
+    return {
+        "primary_airline": f["primary_airline"],
+        "airlines": f["airlines"],
+        "departure_time": f["departure_time"],
+        "arrival_time": f["arrival_time"],
+        "stops": f["stops"],
+        "total_layover_min": f["total_layover_min"],
+        "total_duration_min": f["total_duration_min"],
+        "price": f["price"],
+        "score": f["score"],
+        "search_date": f["search_date"],
+        "fare_type": f.get("fare_type", "Economy Main"),
+        "economy_main_price": f.get("economy_main_price"),
+        "basic_economy_price": f.get("basic_economy_price"),
+        "google_flights_url": f.get("google_flights_url", ""),
+        "layover_info": _layover_info(f),
+    }
+
+
+def export_flights_json(
+    outbound: list[dict],
+    return_flights: list[dict] | None = None,
+) -> None:
     """Write scored flights to web/ and public/ as flights.json."""
     root = Path(__file__).parent
 
     today = _today_pst()
-    export = {
+    export: dict = {
         "generated": today.isoformat(),
         "days_to_go": (TRIP_DATE - today).days,
         "trip_date": TRIP_DATE.isoformat(),
-        "flights": [
-            {
-                "primary_airline": f["primary_airline"],
-                "airlines": f["airlines"],
-                "departure_time": f["departure_time"],
-                "arrival_time": f["arrival_time"],
-                "stops": f["stops"],
-                "total_layover_min": f["total_layover_min"],
-                "total_duration_min": f["total_duration_min"],
-                "price": f["price"],
-                "score": f["score"],
-                "search_date": f["search_date"],
-                "fare_type": f.get("fare_type", "Economy Main"),
-                "economy_main_price": f.get("economy_main_price"),
-                "basic_economy_price": f.get("basic_economy_price"),
-                "google_flights_url": f.get("google_flights_url", ""),
-                "layover_info": _layover_info(f),
-            }
-            for f in flights
-        ],
+        "outbound_flights": [_flight_to_dict(f) for f in outbound],
+        "return_flights": [_flight_to_dict(f) for f in (return_flights or [])],
     }
 
     for dirname in ("web", "public"):
@@ -782,7 +994,9 @@ def export_flights_json(flights: list[dict]) -> None:
         with open(out_path, "w") as fp:
             json.dump(export, fp, indent=2)
 
-    print(f"[Export] Wrote {len(flights)} flights to web/ and public/")
+    total = len(outbound) + len(return_flights or [])
+    print(f"[Export] Wrote {total} flights ({len(outbound)} outbound, "
+          f"{len(return_flights or [])} return) to web/ and public/")
 
 
 # ---------------------------------------------------------------------------
@@ -822,20 +1036,11 @@ def send_email(html: str) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    if not SERPAPI_KEY:
-        print("Error: SERPAPI_KEY not set")
-        raise SystemExit(1)
-
-    raw = search_serpapi()
-    flights = normalize(raw)
-    flights = filter_flights(flights)
-    flights = dedup_flights(flights)
-    flights = label_fare_types(flights)
-    test_mode = "--test" in sys.argv
-    flights = score_flights(flights, test_mode=test_mode)
-
+def _print_summary(label: str, flights: list[dict]) -> None:
+    """Print a summary table for a flight list."""
     print(f"\n{'='*70}")
+    print(f"  {label}")
+    print(f"{'='*70}")
     for i, f in enumerate(flights[:10], 1):
         be = f.get("basic_economy_price")
         main = f.get("economy_main_price")
@@ -850,13 +1055,47 @@ if __name__ == "__main__":
         )
     print(f"{'='*70}")
 
+
+if __name__ == "__main__":
+    if not SERPAPI_KEY:
+        print("Error: SERPAPI_KEY not set")
+        raise SystemExit(1)
+
+    test_mode = "--test" in sys.argv
+
+    # --- Outbound: LAX → VCE ---
+    raw_out = search_serpapi("LAX", "VCE", DEPARTURE_DATES)
+    outbound = normalize(raw_out)
+    outbound = filter_flights(outbound)
+    outbound = dedup_flights(outbound)
+    outbound = label_fare_types(outbound)
+    outbound = score_flights(outbound, test_mode=test_mode)
+
+    _print_summary("OUTBOUND — LAX → VCE", outbound)
+
+    # --- Return: IST → LAX ---
+    raw_ret = search_serpapi("IST", "LAX", RETURN_DATES)
+    raw_ret += search_skyscanner("IST", "LAX", RETURN_DATES)
+    ret = normalize(raw_ret)
+    ret = filter_flights(ret)
+    ret = dedup_flights(ret)
+    ret = label_fare_types(ret)
+    ret = score_flights(
+        ret,
+        test_mode=test_mode,
+        airline_bonuses=RETURN_AIRLINE_BONUSES,
+        auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
+    )
+
+    _print_summary("RETURN — IST → LAX", ret)
+
     # Export JSON for web dashboard
-    if flights:
-        export_flights_json(flights)
+    if outbound or ret:
+        export_flights_json(outbound, ret)
 
     # Build and send email
-    if flights:
-        html = build_email_html(flights)
+    if outbound or ret:
+        html = build_email_html(outbound, ret)
         if GMAIL_USER and GMAIL_APP_PASSWORD:
             send_email(html)
         else:

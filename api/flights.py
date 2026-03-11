@@ -13,11 +13,14 @@ from http.server import BaseHTTPRequestHandler
 # Allow imports from project root
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from datetime import date
-
 from flight_agent import (
+    AUTO_TOP_PICK_NONSTOP,
+    DEPARTURE_DATES,
+    RETURN_AIRLINE_BONUSES,
+    RETURN_AUTO_TOP_PICK_NONSTOP,
+    RETURN_DATES,
     TRIP_DATE,
-    _layover_info,
+    _flight_to_dict,
     _today_pst,
     dedup_flights,
     filter_flights,
@@ -25,49 +28,46 @@ from flight_agent import (
     normalize,
     score_flights,
     search_serpapi,
+    search_skyscanner,
 )
 
 
-def _build_payload(flights: list[dict]) -> dict:
+def _build_payload(outbound: list[dict], return_flights: list[dict]) -> dict:
     today = _today_pst()
     return {
         "generated": today.isoformat(),
         "days_to_go": (TRIP_DATE - today).days,
         "trip_date": TRIP_DATE.isoformat(),
-        "flights": [
-            {
-                "primary_airline": f["primary_airline"],
-                "airlines": f["airlines"],
-                "departure_time": f["departure_time"],
-                "arrival_time": f["arrival_time"],
-                "stops": f["stops"],
-                "total_layover_min": f["total_layover_min"],
-                "total_duration_min": f["total_duration_min"],
-                "price": f["price"],
-                "score": f["score"],
-                "search_date": f["search_date"],
-                "fare_type": f.get("fare_type", "Economy Main"),
-                "economy_main_price": f.get("economy_main_price"),
-                "basic_economy_price": f.get("basic_economy_price"),
-                "google_flights_url": f.get("google_flights_url", ""),
-                "layover_info": _layover_info(f),
-            }
-            for f in flights
-        ],
+        "outbound_flights": [_flight_to_dict(f) for f in outbound],
+        "return_flights": [_flight_to_dict(f) for f in return_flights],
     }
 
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
-            raw = search_serpapi()
-            flights = normalize(raw)
-            flights = filter_flights(flights)
-            flights = dedup_flights(flights)
-            flights = label_fare_types(flights)
-            flights = score_flights(flights)
+            # Outbound: LAX → VCE
+            raw_out = search_serpapi("LAX", "VCE", DEPARTURE_DATES)
+            outbound = normalize(raw_out)
+            outbound = filter_flights(outbound)
+            outbound = dedup_flights(outbound)
+            outbound = label_fare_types(outbound)
+            outbound = score_flights(outbound)
 
-            payload = _build_payload(flights)
+            # Return: IST → LAX
+            raw_ret = search_serpapi("IST", "LAX", RETURN_DATES)
+            raw_ret += search_skyscanner("IST", "LAX", RETURN_DATES)
+            ret = normalize(raw_ret)
+            ret = filter_flights(ret)
+            ret = dedup_flights(ret)
+            ret = label_fare_types(ret)
+            ret = score_flights(
+                ret,
+                airline_bonuses=RETURN_AIRLINE_BONUSES,
+                auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
+            )
+
+            payload = _build_payload(outbound, ret)
             body = json.dumps(payload, indent=2).encode()
 
             self.send_response(200)
