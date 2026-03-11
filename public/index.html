@@ -622,8 +622,12 @@
         setStoredOrigin(origin);
         activeOrigin = origin;
         hideOriginModal();
-        promptName();
-        onOriginChanged();
+        if (!data) {
+          startApp();
+        } else {
+          promptName();
+          onOriginChanged();
+        }
       });
     });
   }
