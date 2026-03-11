@@ -122,7 +122,8 @@
     background: var(--ink); color: var(--paper);
     font-family: var(--sans); font-size: 13px; font-weight: 500;
     text-decoration: none; padding: 8px 18px; border-radius: 8px;
-    letter-spacing: 0.3px; transition: background 0.15s;
+    letter-spacing: 0.3px; transition: background 0.15s; cursor: pointer;
+    border: none;
   }
   .book-btn:hover { background: var(--azure); }
 
@@ -149,6 +150,97 @@
 
   /* Loading / error */
   .status { text-align: center; padding: 60px 20px; color: #94a3b8; font-size: 14px; }
+
+  /* Modal overlay */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(10,10,15,0.55); backdrop-filter: blur(4px);
+    z-index: 1000; align-items: center; justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; padding: 32px 28px;
+    max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    text-align: center;
+  }
+  .modal-title {
+    font-family: var(--serif); font-size: 24px; font-weight: 400;
+    color: var(--ink); margin-bottom: 6px;
+  }
+  .modal-sub {
+    font-size: 13px; font-weight: 300; color: #94a3b8; margin-bottom: 20px;
+  }
+  .modal-input {
+    width: 100%; padding: 12px 16px; border: 1px solid var(--fog);
+    border-radius: 10px; font-family: var(--sans); font-size: 15px;
+    font-weight: 400; color: var(--ink); outline: none;
+    transition: border-color 0.15s;
+  }
+  .modal-input:focus { border-color: var(--azure); }
+  .modal-btn {
+    display: inline-block; margin-top: 16px; padding: 10px 28px;
+    border-radius: 9999px; font-family: var(--sans); font-size: 14px;
+    font-weight: 500; cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .modal-btn-primary {
+    background: var(--azure); color: #fff;
+  }
+  .modal-btn-primary:hover { background: var(--lagoon); }
+
+  /* Book modal */
+  .book-modal-summary {
+    background: var(--fog); border-radius: 10px; padding: 14px 18px;
+    margin-bottom: 20px; text-align: left;
+  }
+  .book-modal-summary .bm-airline {
+    font-size: 15px; font-weight: 500; color: var(--ink);
+  }
+  .book-modal-summary .bm-detail {
+    font-size: 13px; font-weight: 300; color: #64748b; margin-top: 2px;
+  }
+  .book-modal-summary .bm-price {
+    font-family: var(--serif); font-size: 24px; font-weight: 400;
+    color: var(--ink); margin-top: 4px;
+  }
+  .book-modal-actions { display: flex; flex-direction: column; gap: 10px; }
+  .bm-btn {
+    padding: 12px 20px; border-radius: 10px; font-family: var(--sans);
+    font-size: 14px; font-weight: 500; cursor: pointer; border: none;
+    transition: all 0.15s;
+  }
+  .bm-btn-book {
+    background: var(--azure); color: #fff;
+  }
+  .bm-btn-book:hover { background: var(--lagoon); }
+  .bm-btn-explore {
+    background: var(--fog); color: var(--ink);
+  }
+  .bm-btn-explore:hover { background: #e0e0ec; }
+
+  /* Family Picks section */
+  .family-section {
+    margin-top: 36px; padding-top: 28px;
+    border-top: 1px solid var(--fog);
+  }
+  .family-title {
+    font-family: var(--serif); font-size: 24px; font-weight: 400;
+    color: var(--ink); letter-spacing: -0.3px; margin-bottom: 16px;
+  }
+  .family-cards { display: flex; flex-direction: column; gap: 10px; }
+  .family-card {
+    background: #fff; border: 1px solid var(--fog); border-radius: 10px;
+    padding: 14px 18px; display: flex; align-items: center; gap: 12px;
+  }
+  .family-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .fc-icon { font-size: 22px; flex-shrink: 0; }
+  .fc-body { flex: 1; min-width: 0; }
+  .fc-text { font-size: 14px; font-weight: 400; color: var(--ink); }
+  .fc-text strong { font-weight: 500; }
+  .fc-time { font-size: 11px; font-weight: 300; color: #94a3b8; margin-top: 2px; }
+  .family-empty {
+    font-size: 13px; font-weight: 300; color: #94a3b8; text-align: center;
+    padding: 20px;
+  }
 
   @media (max-width: 500px) {
     .card-inner { flex-direction: column; }
@@ -181,13 +273,57 @@
   <!-- Flight list -->
   <div id="flights"></div>
 
+  <!-- Family Picks -->
+  <div class="family-section" id="family-section">
+    <div class="family-title">&#128104;&#8205;&#128105;&#8205;&#128103; Family Picks</div>
+    <div class="family-cards" id="family-cards">
+      <div class="family-empty">Loading family picks&hellip;</div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <div class="footer" id="footer"></div>
+</div>
+
+<!-- Name prompt modal -->
+<div class="modal-overlay" id="name-modal">
+  <div class="modal">
+    <div class="modal-title">Welcome to VeniceAir</div>
+    <div class="modal-sub">What's your name?</div>
+    <input class="modal-input" id="name-input" type="text" placeholder="e.g. Mom, Dad, Meera" maxlength="30" autocomplete="off">
+    <br>
+    <button class="modal-btn modal-btn-primary" id="name-submit">Let's go</button>
+  </div>
+</div>
+
+<!-- Book confirmation modal -->
+<div class="modal-overlay" id="book-modal">
+  <div class="modal">
+    <div class="modal-title">Ready to book?</div>
+    <div class="book-modal-summary" id="book-modal-summary"></div>
+    <div class="book-modal-actions">
+      <button class="bm-btn bm-btn-book" id="bm-book">&#9992;&#65039; I'm booking this!</button>
+      <button class="bm-btn bm-btn-explore" id="bm-explore">&#128064; Just exploring</button>
+    </div>
+  </div>
 </div>
 
 <script>
 (function () {
   'use strict';
+
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbz_rbdaEDR3aNeaFnRgV8mvvwNmGaOVVqah3B1MNAAO1Y4ldOjKoxtY8s0LxkYrU9ye/exec';
+
+  const AIRLINE_BOOK_URLS = {
+    'delta': 'https://www.delta.com/us/en/flight-search/book-a-flight#/air/search/LAX/VCE/{date}/1/0/0/Coach',
+    'united': 'https://www.united.com/en/us/flights/book/step/chooseflight?origin=LAX&destination=VCE&date={date}&cabinType=coach',
+    'american': 'https://www.aa.com/booking/find-flights?origin=LAX&destination=VCE&departureDate={date}&cabinType=coach',
+    'british airways': 'https://www.britishairways.com/en-us/flights/book/select?outboundAirport=LAX&inboundAirport=VCE&outboundDate={date}',
+    'air france': 'https://www.airfrance.us/search/offer?origin=LAX&destination=VCE&outboundDate={date}',
+    'lufthansa': 'https://www.lufthansa.com/us/en/flight-search?origin=LAX&dest=VCE&date={date}',
+    'klm': 'https://www.klm.com/search/en-us?origin=LAX&destination=VCE&departureDate={date}',
+  };
+  const DEFAULT_BOOK_URL = 'https://www.google.com/flights#search;f=LAX;t=VCE;d={date};tt=o';
 
   const FILTERS = [
     { id: 'all',       label: 'All' },
@@ -204,6 +340,32 @@
   let activeDate = null;
   let activeFilter = 'all';
   let expandedDates = new Set();
+  let pendingBookFlight = null;
+
+  // ---- User name ----
+  function getUserName() {
+    return localStorage.getItem('veniceair_user') || '';
+  }
+
+  function promptName() {
+    if (getUserName()) return;
+    const overlay = document.getElementById('name-modal');
+    const input = document.getElementById('name-input');
+    const btn = document.getElementById('name-submit');
+    overlay.classList.add('active');
+    input.focus();
+
+    function submit() {
+      const name = input.value.trim();
+      if (!name) { input.focus(); return; }
+      localStorage.setItem('veniceair_user', name);
+      overlay.classList.remove('active');
+    }
+    btn.addEventListener('click', submit);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') submit();
+    });
+  }
 
   // ---- Helpers ----
   function fmtTime(raw) {
@@ -228,8 +390,97 @@
   }
 
   function bookUrl(f) {
-    return 'https://www.google.com/flights#search;f=LAX;t=VCE;d=' +
-           f.search_date + ';tt=o';
+    const key = f.primary_airline.toLowerCase().trim();
+    const template = AIRLINE_BOOK_URLS[key] || DEFAULT_BOOK_URL;
+    const base = template.replace('{date}', f.search_date);
+    const sep = base.includes('?') ? '&' : '?';
+    const utm = 'utm_source=veniceair&utm_medium=email&utm_campaign=lax-vce-2026&utm_content=' +
+      encodeURIComponent(key.replace(/\s+/g, '-') + '-' + f.search_date);
+    return base + sep + utm;
+  }
+
+  function flightId(f) {
+    return f.primary_airline + '|' + f.search_date + '|' + f.price;
+  }
+
+  function timeAgo(ts) {
+    const now = Date.now();
+    const diff = now - new Date(ts).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    const days = Math.floor(hrs / 24);
+    return days + 'd ago';
+  }
+
+  // ---- Google Sheets ----
+  function logToSheets(action, flight) {
+    const name = getUserName() || 'Anonymous';
+    const params = new URLSearchParams({
+      name: name,
+      action: action,
+      airline: flight.primary_airline,
+      date: flight.search_date,
+      price: String(flight.price),
+      flightId: flightId(flight),
+    });
+    fetch(SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    }).catch(function () { /* silent */ });
+  }
+
+  function fetchFamilyPicks() {
+    fetch(SHEETS_URL + '?action=read')
+      .then(function (r) { return r.json(); })
+      .then(function (rows) { renderFamilyPicks(rows); })
+      .catch(function () {
+        document.getElementById('family-cards').innerHTML =
+          '<div class="family-empty">Could not load family picks.</div>';
+      });
+  }
+
+  // ---- Book modal ----
+  function showBookModal(f) {
+    pendingBookFlight = f;
+    const summary = document.getElementById('book-modal-summary');
+    const niceDate = new Date(f.search_date + 'T12:00:00').toLocaleDateString('en-US',
+      { month: 'short', day: 'numeric', weekday: 'short' });
+    summary.innerHTML =
+      '<div class="bm-airline">' + f.primary_airline + '</div>' +
+      '<div class="bm-detail">' + niceDate + ' &middot; ' +
+        fmtTime(f.departure_time) + ' &rarr; ' + fmtTime(f.arrival_time) + '</div>' +
+      '<div class="bm-price">$' + f.price.toLocaleString() + '</div>';
+    document.getElementById('book-modal').classList.add('active');
+  }
+
+  function setupBookModal() {
+    var overlay = document.getElementById('book-modal');
+    document.getElementById('bm-book').addEventListener('click', function () {
+      if (!pendingBookFlight) return;
+      logToSheets('booked', pendingBookFlight);
+      window.open(bookUrl(pendingBookFlight), '_blank');
+      overlay.classList.remove('active');
+      pendingBookFlight = null;
+      setTimeout(fetchFamilyPicks, 2000);
+    });
+    document.getElementById('bm-explore').addEventListener('click', function () {
+      if (!pendingBookFlight) return;
+      logToSheets('interested', pendingBookFlight);
+      window.open(bookUrl(pendingBookFlight), '_blank');
+      overlay.classList.remove('active');
+      pendingBookFlight = null;
+      setTimeout(fetchFamilyPicks, 2000);
+    });
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) {
+        overlay.classList.remove('active');
+        pendingBookFlight = null;
+      }
+    });
   }
 
   // ---- Filter logic ----
@@ -250,7 +501,7 @@
   // ---- Render ----
   function renderCountdown() {
     document.getElementById('countdown').textContent =
-      (data ? data.days_to_go : '—') + ' days';
+      (data ? data.days_to_go : '\u2014') + ' days';
   }
 
   function renderTabs() {
@@ -309,6 +560,15 @@
 
     const stopsLabel = f.stops === 0 ? 'Nonstop' : f.stops + ' stop';
 
+    const fData = encodeURIComponent(JSON.stringify({
+      primary_airline: f.primary_airline,
+      search_date: f.search_date,
+      price: f.price,
+      departure_time: f.departure_time,
+      arrival_time: f.arrival_time,
+      stops: f.stops,
+    }));
+
     return '<div class="card' + (isTopPick ? ' top-pick' : '') + '">' +
       topBadge +
       '<div class="card-inner">' +
@@ -325,16 +585,26 @@
         '<div class="card-right">' +
           priceBlock +
           '<div class="score-label">score ' + f.score + '</div>' +
-          '<a class="book-btn" href="' + bookUrl(f) +
-            '" target="_blank">Book &rarr;</a>' +
+          '<button class="book-btn" data-flight="' + fData +
+            '">Book &rarr;</button>' +
         '</div>' +
       '</div>' +
     '</div>';
   }
 
+  function attachBookHandlers() {
+    document.querySelectorAll('.book-btn[data-flight]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var fd = JSON.parse(decodeURIComponent(btn.getAttribute('data-flight')));
+        showBookModal(fd);
+      });
+    });
+  }
+
   function renderFlights() {
     const el = document.getElementById('flights');
-    if (!data) { el.innerHTML = '<div class="status">Loading flights…</div>'; return; }
+    if (!data) { el.innerHTML = '<div class="status">Loading flights&hellip;</div>'; return; }
 
     const allForDate = data.flights
       .filter(f => f.search_date === activeDate && passesFilter(f));
@@ -369,6 +639,7 @@
     }
 
     el.innerHTML = html;
+    attachBookHandlers();
 
     const moreBtn = document.getElementById('show-more');
     if (moreBtn) moreBtn.addEventListener('click', () => {
@@ -382,18 +653,59 @@
     renderFooter(allForDate.length);
   }
 
+  function renderFamilyPicks(rows) {
+    const el = document.getElementById('family-cards');
+    if (!rows || rows.length === 0) {
+      el.innerHTML = '<div class="family-empty">No picks yet. Be the first to book!</div>';
+      return;
+    }
+    var sorted = rows.slice().reverse();
+    el.innerHTML = sorted.map(function (r) {
+      var icon = r.action === 'booked' ? '&#9992;&#65039;' : '&#128064;';
+      var verb = r.action === 'booked' ? 'booked' : 'is interested in';
+      var niceDate = '';
+      try {
+        niceDate = new Date(r.date + 'T12:00:00').toLocaleDateString('en-US',
+          { month: 'short', day: 'numeric' });
+      } catch (e) { niceDate = r.date; }
+      var ago = r.timestamp ? timeAgo(r.timestamp) : '';
+      return '<div class="family-card">' +
+        '<div class="fc-icon">' + icon + '</div>' +
+        '<div class="fc-body">' +
+          '<div class="fc-text"><strong>' + escHtml(r.name) + '</strong> ' +
+            verb + ' <strong>' + escHtml(r.airline) + '</strong> on ' +
+            niceDate + ' for <strong>$' + Number(r.price).toLocaleString() + '</strong></div>' +
+          (ago ? '<div class="fc-time">' + ago + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function escHtml(s) {
+    var div = document.createElement('div');
+    div.textContent = s || '';
+    return div.innerHTML;
+  }
+
   function renderFooter(count) {
     document.getElementById('footer').textContent =
-      'Generated ' + (data ? data.generated : '') + ' · ' +
-      count + ' flights shown · Prices in USD';
+      'Generated ' + (data ? data.generated : '') + ' \u00b7 ' +
+      count + ' flights shown \u00b7 Prices in USD';
   }
 
   // ---- Init ----
   async function init() {
+    promptName();
+    setupBookModal();
     renderCountdown();
     renderFilters();
+    fetchFamilyPicks();
+
+    // Auto-refresh family picks every 60s
+    setInterval(fetchFamilyPicks, 60000);
+
     document.getElementById('flights').innerHTML =
-      '<div class="status">Loading flights…</div>';
+      '<div class="status">Loading flights&hellip;</div>';
 
     try {
       const resp = await fetch('flights.json');
@@ -401,7 +713,7 @@
       data = await resp.json();
     } catch (e) {
       document.getElementById('flights').innerHTML =
-        '<div class="status">Could not load flights.json — run flight_agent.py first.</div>';
+        '<div class="status">Could not load flights.json &mdash; run flight_agent.py first.</div>';
       return;
     }
 

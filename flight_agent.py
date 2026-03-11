@@ -5,6 +5,7 @@ Flight search module: LAX → VCE via SerpAPI (Google Flights).
 import json
 import os
 import smtplib
+import sys
 
 from dotenv import load_dotenv
 
@@ -221,7 +222,6 @@ AIRLINE_BONUSES: dict[str, int] = {
     "alaska": -120,
 }
 
-LONG_FLIGHT_THRESHOLD = 840  # 14 hours in minutes
 
 
 def _departure_hour(f: dict) -> int | None:
@@ -243,32 +243,70 @@ def _departure_hour(f: dict) -> int | None:
     return None
 
 
-def score_flights(flights: list[dict]) -> list[dict]:
+def score_flights(flights: list[dict], test_mode: bool = False) -> list[dict]:
     """Assign a score to each flight (lower = better) and return sorted."""
+    breakdowns = []
+
     for f in flights:
+        bd = {}  # breakdown dict for --test mode
         score = float(f["price"])
+        bd["price"] = float(f["price"])
 
         # Airline bonus — use first leg's primary airline
         primary = f["primary_airline"].lower().strip()
-        score += AIRLINE_BONUSES.get(primary, 0)
+        airline_bonus = AIRLINE_BONUSES.get(primary, 0)
+        score += airline_bonus
+        bd["airline"] = airline_bonus
 
         # Time-of-day bonus: morning 6-10am or evening 6-9pm
         hour = _departure_hour(f)
-        if hour is not None and (6 <= hour <= 10 or 18 <= hour <= 21):
-            score -= 80
+        time_bonus = -80 if hour is not None and (6 <= hour <= 10 or 18 <= hour <= 21) else 0
+        score += time_bonus
+        bd["time"] = time_bonus
 
         # Layover penalty: +0.5 per minute
-        score += f["total_layover_min"] * 0.5
+        layover_penalty = f["total_layover_min"] * 0.5
+        score += layover_penalty
+        bd["layover"] = round(layover_penalty, 1)
 
-        # Long-flight penalty: +0.3 per minute over 14h
+        # Speed bonus: total journey duration tiers
         duration = f["total_duration_min"]
-        if duration > LONG_FLIGHT_THRESHOLD:
-            score += (duration - LONG_FLIGHT_THRESHOLD) * 0.3
+        if duration < 960:        # under 16h
+            speed_bonus = -60
+        elif duration <= 1080:    # 16-18h
+            speed_bonus = -30
+        elif duration > 1200:     # over 20h
+            speed_bonus = 50
+        else:                     # 18-20h: no bonus/penalty
+            speed_bonus = 0
+        score += speed_bonus
+        bd["speed"] = speed_bonus
+
+        # Nonstop bonus
+        nonstop_bonus = -100 if f["stops"] == 0 else 0
+        score += nonstop_bonus
+        bd["nonstop"] = nonstop_bonus
 
         f["score"] = round(score, 2)
+        bd["total"] = f["score"]
+        breakdowns.append((f, bd))
 
     flights.sort(key=lambda f: f["score"])
     print(f"[Score] Top score: {flights[0]['score']}  Worst: {flights[-1]['score']}" if flights else "[Score] No flights")
+
+    if test_mode and breakdowns:
+        breakdowns.sort(key=lambda x: x[1]["total"])
+        print(f"\n{'SCORE BREAKDOWN':=^110}")
+        print(f"  {'Airline':<20} {'Dep Time':<17} {'Price':>6} {'AirBonus':>9} {'Time':>6} "
+              f"{'Layover':>8} {'Speed':>6} {'Nonstop':>8} {'TOTAL':>8}")
+        print(f"  {'-'*20} {'-'*17} {'-'*6} {'-'*9} {'-'*6} {'-'*8} {'-'*6} {'-'*8} {'-'*8}")
+        for f, bd in breakdowns:
+            print(f"  {f['primary_airline']:<20} {f['departure_time'][:16]:<17} "
+                  f"{bd['price']:>6.0f} {bd['airline']:>+9.0f} {bd['time']:>+6.0f} "
+                  f"{bd['layover']:>+8.1f} {bd['speed']:>+6.0f} {bd['nonstop']:>+8.0f} "
+                  f"{bd['total']:>8.1f}")
+        print(f"{'':=^110}\n")
+
     return flights
 
 
@@ -322,32 +360,33 @@ def _layover_info(f: dict) -> str:
     return f"{f['total_layover_min']}m layover"
 
 
-def _book_button(f: dict) -> str:
-    """Dark 'Book' button linking to Google Flights + Skyscanner."""
-    search_date = f.get("search_date", "")
-    sky_date = search_date[2:].replace("-", "") if search_date else ""
+_AIRLINE_BOOK_URLS: dict[str, str] = {
+    "delta": "https://www.delta.com/us/en/flight-search/book-a-flight#/air/search/LAX/VCE/{date}/1/0/0/Coach",
+    "united": "https://www.united.com/en/us/flights/book/step/chooseflight?origin=LAX&destination=VCE&date={date}&cabinType=coach",
+    "american": "https://www.aa.com/booking/find-flights?origin=LAX&destination=VCE&departureDate={date}&cabinType=coach",
+    "british airways": "https://www.britishairways.com/en-us/flights/book/select?outboundAirport=LAX&inboundAirport=VCE&outboundDate={date}",
+    "air france": "https://www.airfrance.us/search/offer?origin=LAX&destination=VCE&outboundDate={date}",
+    "lufthansa": "https://www.lufthansa.com/us/en/flight-search?origin=LAX&dest=VCE&date={date}",
+    "klm": "https://www.klm.com/search/en-us?origin=LAX&destination=VCE&departureDate={date}",
+}
+_DEFAULT_BOOK_URL = "https://www.google.com/flights#search;f=LAX;t=VCE;d={date};tt=o"
 
-    gf_url = (
-        f"https://www.google.com/flights#search;"
-        f"f=LAX;t=VCE;d={search_date};tt=o"
-    )
-    sky_url = (
-        f"https://www.skyscanner.com/transport/flights/lax/vce/{sky_date}/"
-    )
+
+def _book_button(f: dict) -> str:
+    """Dark 'Book' button linking to the airline's own booking page."""
+    search_date = f.get("search_date", "")
+    primary = f["primary_airline"].lower().strip()
+    url_template = _AIRLINE_BOOK_URLS.get(primary, _DEFAULT_BOOK_URL)
+    book_url = url_template.format(date=search_date)
 
     btn = (
-        f'<a href="{gf_url}" target="_blank" style="display:inline-block;'
+        f'<a href="{book_url}" target="_blank" style="display:inline-block;'
         f"background:#0a0a0f;color:#f8f8fc;font-family:{_SANS};"
         f'font-size:13px;font-weight:500;text-decoration:none;'
         f'padding:8px 18px;border-radius:8px;letter-spacing:0.3px;'
         f'margin-right:8px;">Book &rarr;</a>'
     )
-    link = (
-        f'<a href="{sky_url}" target="_blank" style="'
-        f"font-family:{_SANS};font-size:12px;font-weight:400;"
-        f'color:#0d6e8a;text-decoration:none;">Skyscanner</a>'
-    )
-    return btn + link
+    return btn
 
 
 def _source_badge(f: dict) -> str:
@@ -680,7 +719,8 @@ if __name__ == "__main__":
     flights = filter_flights(flights)
     flights = dedup_flights(flights)
     flights = label_fare_types(flights)
-    flights = score_flights(flights)
+    test_mode = "--test" in sys.argv
+    flights = score_flights(flights, test_mode=test_mode)
 
     print(f"\n{'='*70}")
     for i, f in enumerate(flights[:10], 1):

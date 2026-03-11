@@ -3,3 +3,4 @@ report.html
 __pycache__/
 web/flights.json
 public/flights.json
+.vercel
