@@ -461,7 +461,7 @@ def _layover_info(f: dict) -> str:
     return f"{f['total_layover_min']}m layover"
 
 
-SHEETS_URL = "https://script.google.com/macros/s/AKfycbz_rbdaEDR3aNeaFnRgV8mvvwNmGaOVVqah3B1MNAAO1Y4ldOjKoxtY8s0LxkYrU9ye/exec"
+SHEETS_URL = "https://script.google.com/macros/s/AKfycbwBSvTPQqbG3WZZAW3sTygBAinDOWZ4Nj-i8CHTKU_K0UfFM6LQFm8322xCNa1ufSsd/exec"
 
 
 def _tracking_pixel(f: dict, action: str) -> str:
@@ -542,8 +542,8 @@ def _price_block(f: dict) -> str:
     # For Big 3: show estimated Main as primary, actual BE underneath
     if be_price and main_est:
         price_html = (
-            f'<span style="font-family:{_SERIF};font-size:36px;font-weight:400;'
-            f'color:#0a0a0f;letter-spacing:-1px;line-height:1.1;">'
+            f'<span style="font-family:{_SERIF};font-size:40px;font-weight:400;'
+            f'color:#1a3a6b;letter-spacing:-1px;line-height:1.1;">'
             f'~${main_est:,.0f}</span>'
             f'<br>'
             f'<span style="font-family:{_SANS};font-size:11px;font-weight:300;'
@@ -557,8 +557,8 @@ def _price_block(f: dict) -> str:
     else:
         # Non-Big-3: price IS Economy Main
         price_html = (
-            f'<span style="font-family:{_SERIF};font-size:36px;font-weight:400;'
-            f'color:#0a0a0f;letter-spacing:-1px;line-height:1.1;">'
+            f'<span style="font-family:{_SERIF};font-size:40px;font-weight:400;'
+            f'color:#1a3a6b;letter-spacing:-1px;line-height:1.1;">'
             f'${f["price"]:,.0f}</span>'
         )
 
@@ -701,28 +701,28 @@ def build_email_html(flights: list[dict]) -> str:
 
 <!-- Hero -->
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td align="center" style="background:#faf8f3;padding:80px 24px;">
+  <tr><td align="center" style="background:#faf8f3;padding:100px 24px;">
     <!-- Countdown pill -->
     <span style="display:inline-block;
-                 background:#faf8f3;border:1px solid #b8953a;
-                 border-radius:9999px;padding:7px 22px;
-                 font-family:{_SANS};font-size:11px;font-weight:500;
-                 color:#b8953a;letter-spacing:1.2px;text-transform:uppercase;">
+                 background:rgba(184,149,58,0.06);border:1px solid rgba(184,149,58,0.35);
+                 border-radius:9999px;padding:5px 18px;
+                 font-family:{_SANS};font-size:10px;font-weight:500;
+                 color:#b8953a;letter-spacing:1.5px;text-transform:uppercase;">
       &#128336; {days_to_go} DAYS UNTIL JULY 3, 2026</span>
     <br><br>
     <!-- Headline -->
     <span style="font-family:{_SERIF};font-size:56px;font-weight:300;
                  font-style:italic;color:#1a3a6b;
-                 letter-spacing:-1px;line-height:1.2;">
+                 letter-spacing:-0.02em;line-height:1.1;">
       Cruise Bound</span>
     <br>
     <!-- Subtitle -->
-    <span style="font-family:{_SERIF};font-size:22px;font-weight:300;
-                 font-style:italic;color:#2a5298;line-height:1.6;">
+    <span style="font-family:{_SERIF};font-size:26px;font-weight:300;
+                 font-style:italic;color:#2a5298;line-height:1.5;">
       First stop &mdash; Venice, Italy</span>
     <br><br>
     <!-- Gold rule -->
-    <table width="120" cellpadding="0" cellspacing="0" border="0" align="center">
+    <table width="80" cellpadding="0" cellspacing="0" border="0" align="center">
       <tr><td style="height:1px;background:#b8953a;font-size:1px;line-height:1px;">&nbsp;</td></tr>
     </table>
   </td></tr>
