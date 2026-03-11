@@ -414,15 +414,38 @@
   }
 
   // ---- Google Sheets ----
+  function fmtSheetDate(dateStr) {
+    try {
+      return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US',
+        { month: 'long', day: 'numeric', year: 'numeric' });
+    } catch (e) { return dateStr; }
+  }
+
+  function fmtSheetTime(raw) {
+    if (!raw) return '';
+    return raw.replace('T', ' ').slice(11, 16);
+  }
+
+  function airlineLabel(flight) {
+    var a = flight.airlines || [];
+    if (a.length === 0) return flight.primary_airline || '';
+    var unique = a.filter(function (v, i, arr) { return arr.indexOf(v) === i; });
+    return unique.join(' + ');
+  }
+
   function logToSheets(action, flight) {
     const name = getUserName() || 'Anonymous';
     const params = new URLSearchParams({
       name: name,
       action: action,
-      airline: flight.primary_airline,
-      date: flight.search_date,
+      airline: airlineLabel(flight),
+      flight_date: fmtSheetDate(flight.search_date),
+      departure_time: fmtSheetTime(flight.departure_time),
+      arrival_time: fmtSheetTime(flight.arrival_time),
+      layover: flight.layover_info || 'Nonstop',
       price: String(flight.price),
-      flightId: flightId(flight),
+      fare_type: flight.fare_type || 'Economy Main',
+      flight_id: flightId(flight),
     });
     fetch(SHEETS_URL, {
       method: 'POST',
@@ -562,11 +585,14 @@
     // Encode flight data as data attributes for the book button
     const fData = encodeURIComponent(JSON.stringify({
       primary_airline: f.primary_airline,
+      airlines: f.airlines,
       search_date: f.search_date,
       price: f.price,
       departure_time: f.departure_time,
       arrival_time: f.arrival_time,
       stops: f.stops,
+      layover_info: f.layover_info,
+      fare_type: f.fare_type,
       google_flights_url: f.google_flights_url || '',
     }));
 
@@ -665,18 +691,14 @@
     el.innerHTML = sorted.map(function (r) {
       var icon = r.action === 'booked' ? '&#9992;&#65039;' : '&#128064;';
       var verb = r.action === 'booked' ? 'booked' : 'is interested in';
-      var niceDate = '';
-      try {
-        niceDate = new Date(r.date + 'T12:00:00').toLocaleDateString('en-US',
-          { month: 'short', day: 'numeric' });
-      } catch (e) { niceDate = r.date; }
+      var dateLabel = r.flight_date || r.date || '';
       var ago = r.timestamp ? timeAgo(r.timestamp) : '';
       return '<div class="family-card">' +
         '<div class="fc-icon">' + icon + '</div>' +
         '<div class="fc-body">' +
           '<div class="fc-text"><strong>' + escHtml(r.name) + '</strong> ' +
             verb + ' <strong>' + escHtml(r.airline) + '</strong> on ' +
-            niceDate + ' for <strong>$' + Number(r.price).toLocaleString() + '</strong></div>' +
+            escHtml(dateLabel) + ' for <strong>$' + Number(r.price).toLocaleString() + '</strong></div>' +
           (ago ? '<div class="fc-time">' + ago + '</div>' : '') +
         '</div>' +
       '</div>';
