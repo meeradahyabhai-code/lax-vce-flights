@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Dahyabhai Cruise Flights — LAX → VCE Flights</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #0a0a0f;
@@ -104,14 +104,15 @@
   }
 
   .times {
-    font-family: var(--serif); font-size: 26px; font-weight: 400;
-    color: var(--ink); letter-spacing: -0.5px; line-height: 1.7;
+    font-family: var(--serif); font-size: 26px; font-weight: 600;
+    color: #0a0a0f; letter-spacing: -0.5px; line-height: 1.7;
+    white-space: nowrap;
   }
   .meta { font-size: 13px; font-weight: 300; color: var(--lagoon); }
   .layover { font-size: 12px; font-weight: 300; color: #94a3b8; }
 
   .price {
-    font-family: var(--serif); font-size: 40px; font-weight: 400;
+    font-family: var(--serif); font-size: 32px; font-weight: 600;
     color: #1a3a6b; letter-spacing: -1px; line-height: 1.1;
   }
   .est-main { font-size: 12px; font-weight: 300; color: #94a3b8; }
@@ -259,7 +260,7 @@
   @media (max-width: 600px) {
     .card-inner { flex-direction: column; }
     .card-right { text-align: left; }
-    .times { font-size: 28px; white-space: nowrap; }
+    .times { font-size: 26px; }
     .airline-name { font-size: 16px; }
     .meta { font-size: 14px; }
     .layover { font-size: 13px; }
