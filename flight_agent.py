@@ -7,7 +7,6 @@ import json
 import os
 import smtplib
 import sys
-from urllib.parse import quote
 
 from dotenv import load_dotenv
 
@@ -461,27 +460,12 @@ def _layover_info(f: dict) -> str:
     return f"{f['total_layover_min']}m layover"
 
 
-SHEETS_URL = "https://script.google.com/macros/s/AKfycbwBSvTPQqbG3WZZAW3sTygBAinDOWZ4Nj-i8CHTKU_K0UfFM6LQFm8322xCNa1ufSsd/exec"
-
-
-def _tracking_pixel(f: dict, action: str) -> str:
-    """Build a 1x1 tracking pixel URL that logs to Google Sheets."""
-    airline = quote(f.get("primary_airline", ""), safe="")
-    flight_date = quote(f.get("search_date", ""), safe="")
-    price = f.get("price", 0)
-    fid = quote(f"{f.get('primary_airline', '')}|{f.get('search_date', '')}|{price}", safe="")
-    return (
-        f"{SHEETS_URL}?name=email_user&action={action}"
-        f"&airline={airline}&flight_date={flight_date}"
-        f"&price={price}&flight_id={fid}"
-    )
-
-
 def _book_buttons(f: dict) -> str:
-    """Two side-by-side pill buttons: 'Book Now' and 'More Details'.
+    """Two side-by-side pill buttons linking directly to booking.
 
-    Each wraps a tracking pixel (1x1 img) so the click logs to Google Sheets,
-    then opens the booking URL.
+    Email cannot run JavaScript, so click tracking happens only on the
+    web page (via the book modal). Email buttons link straight to Google
+    Flights to avoid phantom entries on email open.
     """
     gf_url = f.get("google_flights_url", "")
     if gf_url:
@@ -490,17 +474,12 @@ def _book_buttons(f: dict) -> str:
         search_date = f.get("search_date", "")
         book_url = f"https://www.google.com/flights#search;f=LAX;t=VCE;d={search_date};tt=o;c=e;s=1"
 
-    booked_pixel = _tracking_pixel(f, "booked")
-    interested_pixel = _tracking_pixel(f, "interested")
-
     book_btn = (
         f'<a href="{book_url}" target="_blank" style="display:inline-block;'
         f"background:#1a3a6b;color:#ffffff;font-family:{_SANS};"
         f'font-size:12px;font-weight:500;text-decoration:none;'
         f'padding:8px 16px;border-radius:9999px;letter-spacing:0.3px;'
         f'margin-right:6px;">'
-        f'<img src="{booked_pixel}" width="1" height="1" '
-        f'style="display:none;" alt="">'
         f'Book Now</a>'
     )
     details_btn = (
@@ -508,8 +487,6 @@ def _book_buttons(f: dict) -> str:
         f"background:#eeeef4;color:#0a0a0f;font-family:{_SANS};"
         f'font-size:12px;font-weight:500;text-decoration:none;'
         f'padding:8px 16px;border-radius:9999px;letter-spacing:0.3px;">'
-        f'<img src="{interested_pixel}" width="1" height="1" '
-        f'style="display:none;" alt="">'
         f'More Details</a>'
     )
     return book_btn + details_btn

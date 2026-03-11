@@ -442,11 +442,8 @@
       fare_type: flight.fare_type || 'Economy Main',
       flight_id: flightId(flight),
     });
-    fetch(SHEETS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params.toString(),
-    }).catch(function () { /* silent */ });
+    fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' })
+      .catch(function () { /* silent */ });
   }
 
   function fetchFamilyPicks() {
