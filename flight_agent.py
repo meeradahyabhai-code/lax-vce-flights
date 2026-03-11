@@ -213,37 +213,23 @@ def normalize(raw_results: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 BASIC_ECONOMY_CARRIERS = {"american", "delta", "united"}
-BASIC_ECONOMY_MARKUP = 0.08  # estimated Economy Main = Basic + 8%
 
 
 def label_fare_types(flights: list[dict]) -> list[dict]:
     """Label each flight as Basic Economy or Economy Main.
 
-    Heuristic: US Big 3 carriers sell Basic Economy as their cheapest fare.
-    For each airline + date, the lowest price is tagged Basic Economy;
-    higher-priced flights from the same airline on the same date are Economy Main.
-    Non-Big-3 carriers are always Economy Main.
+    Google Flights always shows the cheapest fare. For the US Big 3
+    (American, Delta, United) this is Basic Economy. All other carriers
+    are labeled Economy Main since their base fare typically includes
+    standard economy amenities.
     """
-    # Find the minimum price per (airline, date) for Big 3 carriers
-    min_price: dict[tuple[str, str], float] = {}
     for f in flights:
         carrier = f["primary_airline"].lower().strip()
-        if carrier not in BASIC_ECONOMY_CARRIERS:
-            continue
-        key = (carrier, f["search_date"])
-        if key not in min_price or f["price"] < min_price[key]:
-            min_price[key] = f["price"]
-
-    for f in flights:
-        carrier = f["primary_airline"].lower().strip()
-        key = (carrier, f["search_date"])
-
-        if carrier in BASIC_ECONOMY_CARRIERS and f["price"] == min_price.get(key):
+        if carrier in BASIC_ECONOMY_CARRIERS:
             f["fare_type"] = "Basic Economy"
-            f["economy_main_price"] = round(f["price"] * (1 + BASIC_ECONOMY_MARKUP))
         else:
             f["fare_type"] = "Economy Main"
-            f["economy_main_price"] = None
+        f["economy_main_price"] = None
 
     basic = sum(1 for f in flights if f["fare_type"] == "Basic Economy")
     print(f"[Fare] {basic} Basic Economy, {len(flights) - basic} Economy Main")

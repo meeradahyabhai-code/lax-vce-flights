@@ -689,16 +689,20 @@
     // Show newest first
     var sorted = rows.slice().reverse();
     el.innerHTML = sorted.map(function (r) {
+      if (!r.name && !r.airline) return '';  // skip empty rows
       var icon = r.action === 'booked' ? '&#9992;&#65039;' : '&#128064;';
       var verb = r.action === 'booked' ? 'booked' : 'is interested in';
       var dateLabel = r.flight_date || r.date || '';
+      var priceNum = Number(r.price);
+      var priceStr = isNaN(priceNum) ? '' : ' for <strong>$' + priceNum.toLocaleString() + '</strong>';
       var ago = r.timestamp ? timeAgo(r.timestamp) : '';
       return '<div class="family-card">' +
         '<div class="fc-icon">' + icon + '</div>' +
         '<div class="fc-body">' +
-          '<div class="fc-text"><strong>' + escHtml(r.name) + '</strong> ' +
-            verb + ' <strong>' + escHtml(r.airline) + '</strong> on ' +
-            escHtml(dateLabel) + ' for <strong>$' + Number(r.price).toLocaleString() + '</strong></div>' +
+          '<div class="fc-text"><strong>' + escHtml(r.name || 'Someone') + '</strong> ' +
+            verb + ' <strong>' + escHtml(r.airline || 'a flight') + '</strong>' +
+            (dateLabel ? ' on ' + escHtml(dateLabel) : '') +
+            priceStr + '</div>' +
           (ago ? '<div class="fc-time">' + ago + '</div>' : '') +
         '</div>' +
       '</div>';
