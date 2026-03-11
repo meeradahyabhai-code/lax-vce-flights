@@ -22,41 +22,28 @@
 
   /* Hero */
   .hero {
-    background: linear-gradient(180deg, #faf8f3 0%, #f0ebe0 100%);
-    text-align: center; padding: 0; position: relative;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0;
-  }
-  .hero-rule { height: 1px; background: var(--gold); }
-  .hero-inner {
-    position: relative; z-index: 1;
-    padding: 48px 24px 44px;
-  }
-  .hero-icon { font-size: 28px; color: var(--gold); line-height: 1; }
-  .hero-title {
-    font-family: var(--serif); font-size: clamp(34px, 7vw, 44px);
-    font-weight: 300; font-style: italic; color: #1a1a1a;
-    letter-spacing: -0.5px; line-height: 1.4; margin-top: 8px;
-  }
-  .hero-countdown {
-    font-family: var(--serif); font-size: clamp(40px, 8vw, 52px);
-    font-weight: 400; color: var(--gold); letter-spacing: -2px;
-    line-height: 1.3;
-  }
-  .hero-countdown-sub {
-    font-family: var(--sans); font-size: 16px; font-weight: 300;
-    color: var(--gold);
+    background: #faf8f3;
+    text-align: center; padding: 80px 24px;
   }
   .hero-pill {
-    display: inline-block; margin-top: 16px;
+    display: inline-block;
     background: #faf8f3; border: 1px solid var(--gold);
     border-radius: 9999px; padding: 7px 22px;
-    font-size: 12px; font-weight: 400; color: #1a1a1a;
-    letter-spacing: 0.6px;
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    color: var(--gold); letter-spacing: 1.2px; text-transform: uppercase;
+  }
+  .hero-title {
+    font-family: var(--serif); font-size: clamp(48px, 10vw, 72px);
+    font-weight: 300; font-style: italic; color: #1a3a6b;
+    letter-spacing: -1px; line-height: 1.2; margin-top: 20px;
+  }
+  .hero-subtitle {
+    font-family: var(--serif); font-size: 22px; font-weight: 300;
+    font-style: italic; color: #2a5298; line-height: 1.6; margin-top: 4px;
+  }
+  .hero-rule {
+    width: 120px; height: 1px; background: var(--gold);
+    margin: 24px auto 0;
   }
 
   /* Layout */
@@ -276,16 +263,9 @@
 
 <!-- Hero -->
 <div class="hero">
-  <div class="hero-rule"></div>
-  <div class="hero-inner">
-    <div class="hero-icon">&#9992;</div>
-    <div class="hero-title">Venice Bound</div>
-    <div>
-      <span class="hero-countdown" id="countdown"></span>
-      <span class="hero-countdown-sub">&middot; July 3, 2026</span>
-    </div>
-    <div class="hero-pill">LAX &rarr; VCE &nbsp;&middot;&nbsp; Economy &nbsp;&middot;&nbsp; Max 1 Stop</div>
-  </div>
+  <div class="hero-pill" id="countdown-pill">&#128336; <span id="countdown"></span> DAYS UNTIL JULY 3, 2026</div>
+  <div class="hero-title">Cruise Bound</div>
+  <div class="hero-subtitle">First stop &mdash; Venice, Italy</div>
   <div class="hero-rule"></div>
 </div>
 
@@ -423,9 +403,9 @@
   }
 
   function daysToGo() {
-    const now = new Date();
-    now.setHours(0,0,0,0);
-    return Math.ceil((TRIP - now) / 86400000);
+    const pst = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+    pst.setHours(0,0,0,0);
+    return Math.ceil((TRIP - pst) / 86400000);
   }
 
   // ---- Google Sheets ----
@@ -537,8 +517,8 @@
 
   // ---- Render ----
   function renderCountdown() {
-    const d = data ? data.days_to_go : daysToGo();
-    document.getElementById('countdown').textContent = d + ' days';
+    const d = daysToGo();
+    document.getElementById('countdown').textContent = d;
   }
 
   function renderTabs() {

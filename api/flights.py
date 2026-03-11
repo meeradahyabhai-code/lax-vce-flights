@@ -18,6 +18,7 @@ from datetime import date
 from flight_agent import (
     TRIP_DATE,
     _layover_info,
+    _today_pst,
     dedup_flights,
     filter_flights,
     label_fare_types,
@@ -28,7 +29,7 @@ from flight_agent import (
 
 
 def _build_payload(flights: list[dict]) -> dict:
-    today = date.today()
+    today = _today_pst()
     return {
         "generated": today.isoformat(),
         "days_to_go": (TRIP_DATE - today).days,

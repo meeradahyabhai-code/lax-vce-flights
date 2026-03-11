@@ -7,6 +7,7 @@ import json
 import os
 import smtplib
 import sys
+from urllib.parse import quote
 
 from dotenv import load_dotenv
 
@@ -16,6 +17,7 @@ from datetime import date, datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -459,8 +461,28 @@ def _layover_info(f: dict) -> str:
     return f"{f['total_layover_min']}m layover"
 
 
-def _book_button(f: dict) -> str:
-    """Dark 'Book' button linking to Google Flights booking page."""
+SHEETS_URL = "https://script.google.com/macros/s/AKfycbz_rbdaEDR3aNeaFnRgV8mvvwNmGaOVVqah3B1MNAAO1Y4ldOjKoxtY8s0LxkYrU9ye/exec"
+
+
+def _tracking_pixel(f: dict, action: str) -> str:
+    """Build a 1x1 tracking pixel URL that logs to Google Sheets."""
+    airline = quote(f.get("primary_airline", ""), safe="")
+    flight_date = quote(f.get("search_date", ""), safe="")
+    price = f.get("price", 0)
+    fid = quote(f"{f.get('primary_airline', '')}|{f.get('search_date', '')}|{price}", safe="")
+    return (
+        f"{SHEETS_URL}?name=email_user&action={action}"
+        f"&airline={airline}&flight_date={flight_date}"
+        f"&price={price}&flight_id={fid}"
+    )
+
+
+def _book_buttons(f: dict) -> str:
+    """Two side-by-side pill buttons: 'Book Now' and 'More Details'.
+
+    Each wraps a tracking pixel (1x1 img) so the click logs to Google Sheets,
+    then opens the booking URL.
+    """
     gf_url = f.get("google_flights_url", "")
     if gf_url:
         book_url = gf_url
@@ -468,14 +490,29 @@ def _book_button(f: dict) -> str:
         search_date = f.get("search_date", "")
         book_url = f"https://www.google.com/flights#search;f=LAX;t=VCE;d={search_date};tt=o;c=e;s=1"
 
-    btn = (
+    booked_pixel = _tracking_pixel(f, "booked")
+    interested_pixel = _tracking_pixel(f, "interested")
+
+    book_btn = (
         f'<a href="{book_url}" target="_blank" style="display:inline-block;'
-        f"background:#0a0a0f;color:#f8f8fc;font-family:{_SANS};"
-        f'font-size:13px;font-weight:500;text-decoration:none;'
-        f'padding:8px 18px;border-radius:8px;letter-spacing:0.3px;'
-        f'margin-right:8px;">Book &rarr;</a>'
+        f"background:#1a3a6b;color:#ffffff;font-family:{_SANS};"
+        f'font-size:12px;font-weight:500;text-decoration:none;'
+        f'padding:8px 16px;border-radius:9999px;letter-spacing:0.3px;'
+        f'margin-right:6px;">'
+        f'<img src="{booked_pixel}" width="1" height="1" '
+        f'style="display:none;" alt="">'
+        f'Book Now</a>'
     )
-    return btn
+    details_btn = (
+        f'<a href="{book_url}" target="_blank" style="display:inline-block;'
+        f"background:#eeeef4;color:#0a0a0f;font-family:{_SANS};"
+        f'font-size:12px;font-weight:500;text-decoration:none;'
+        f'padding:8px 16px;border-radius:9999px;letter-spacing:0.3px;">'
+        f'<img src="{interested_pixel}" width="1" height="1" '
+        f'style="display:none;" alt="">'
+        f'More Details</a>'
+    )
+    return book_btn + details_btn
 
 
 def _source_badge(f: dict) -> str:
@@ -578,7 +615,7 @@ def _flight_card(f: dict, rank: int, is_top_pick: bool) -> str:
               <span style="font-family:{_SANS};font-size:11px;font-weight:300;
                            color:#94a3b8;">score {f.get("score", "")}</span>
               <br><br>
-              {_book_button(f)}
+              {_book_buttons(f)}
             </td>
           </tr>
         </table>
@@ -586,9 +623,14 @@ def _flight_card(f: dict, rank: int, is_top_pick: bool) -> str:
     </table>"""
 
 
+def _today_pst() -> date:
+    """Return today's date in Pacific time."""
+    return datetime.now(ZoneInfo("America/Los_Angeles")).date()
+
+
 def build_email_html(flights: list[dict]) -> str:
     """Build the full HTML email body from scored, sorted flights."""
-    today = date.today()
+    today = _today_pst()
     days_to_go = (TRIP_DATE - today).days
 
     # Group by search_date
@@ -659,40 +701,28 @@ def build_email_html(flights: list[dict]) -> str:
 
 <!-- Hero -->
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td align="center"
-          style="background:linear-gradient(180deg,#faf8f3 0%,#f0ebe0 100%);
-                 padding:0;">
-    <!-- Top gold rule -->
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
-      <tr><td style="height:1px;background:#b8953a;font-size:1px;line-height:1px;">&nbsp;</td></tr>
-    </table>
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
-      <tr><td align="center" style="padding:48px 24px 44px 24px;">
-        <span style="font-size:28px;color:#b8953a;line-height:1;">&#9992;</span>
-        <br>
-        <span style="font-family:{_SERIF};font-size:44px;font-weight:300;
-                     font-style:italic;color:#1a1a1a;
-                     letter-spacing:-0.5px;line-height:1.4;">
-          Venice Bound</span>
-        <br>
-        <span style="font-family:{_SERIF};font-size:48px;font-weight:400;
-                     color:#b8953a;letter-spacing:-2px;line-height:1.3;">
-          {days_to_go} days</span>
-        <span style="font-family:{_SANS};font-size:16px;font-weight:300;
-                     color:#b8953a;">&nbsp;&middot;&nbsp;July 3, 2026</span>
-        <br><br>
-        <span style="display:inline-block;
-                     background:#faf8f3;
-                     border:1px solid #b8953a;
-                     border-radius:9999px;padding:7px 22px;
-                     font-family:{_SANS};font-size:12px;font-weight:400;
-                     color:#1a1a1a;letter-spacing:0.6px;">
-          LAX &rarr; VCE &nbsp;&middot;&nbsp; Economy &nbsp;&middot;&nbsp; Max 1 Stop
-        </span>
-      </td></tr>
-    </table>
-    <!-- Bottom gold rule -->
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="background:#faf8f3;padding:80px 24px;">
+    <!-- Countdown pill -->
+    <span style="display:inline-block;
+                 background:#faf8f3;border:1px solid #b8953a;
+                 border-radius:9999px;padding:7px 22px;
+                 font-family:{_SANS};font-size:11px;font-weight:500;
+                 color:#b8953a;letter-spacing:1.2px;text-transform:uppercase;">
+      &#128336; {days_to_go} DAYS UNTIL JULY 3, 2026</span>
+    <br><br>
+    <!-- Headline -->
+    <span style="font-family:{_SERIF};font-size:56px;font-weight:300;
+                 font-style:italic;color:#1a3a6b;
+                 letter-spacing:-1px;line-height:1.2;">
+      Cruise Bound</span>
+    <br>
+    <!-- Subtitle -->
+    <span style="font-family:{_SERIF};font-size:22px;font-weight:300;
+                 font-style:italic;color:#2a5298;line-height:1.6;">
+      First stop &mdash; Venice, Italy</span>
+    <br><br>
+    <!-- Gold rule -->
+    <table width="120" cellpadding="0" cellspacing="0" border="0" align="center">
       <tr><td style="height:1px;background:#b8953a;font-size:1px;line-height:1px;">&nbsp;</td></tr>
     </table>
   </td></tr>
@@ -736,7 +766,7 @@ def export_flights_json(flights: list[dict]) -> None:
     """Write scored flights to web/ and public/ as flights.json."""
     root = Path(__file__).parent
 
-    today = date.today()
+    today = _today_pst()
     export = {
         "generated": today.isoformat(),
         "days_to_go": (TRIP_DATE - today).days,
@@ -779,7 +809,7 @@ def export_flights_json(flights: list[dict]) -> None:
 
 def send_email(html: str) -> None:
     """Send the flight report via Gmail SMTP over SSL."""
-    today = date.today()
+    today = _today_pst()
     days_to_go = (TRIP_DATE - today).days
 
     subject = (
