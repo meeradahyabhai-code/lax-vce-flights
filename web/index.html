@@ -381,9 +381,7 @@
   }
 
   function bookUrl(f) {
-    if (f.booking_token) {
-      return 'https://www.google.com/flights?booking_token=' + encodeURIComponent(f.booking_token);
-    }
+    if (f.google_flights_url) return f.google_flights_url;
     return GOOGLE_FLIGHTS_FALLBACK.replace('{date}', f.search_date);
   }
 
@@ -555,7 +553,7 @@
       departure_time: f.departure_time,
       arrival_time: f.arrival_time,
       stops: f.stops,
-      booking_token: f.booking_token || '',
+      google_flights_url: f.google_flights_url || '',
     }));
 
     return '<div class="card' + (isTopPick ? ' top-pick' : '') + '">' +

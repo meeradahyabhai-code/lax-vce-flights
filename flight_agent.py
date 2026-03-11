@@ -2,6 +2,7 @@
 Flight search module: LAX → VCE via SerpAPI (Google Flights).
 """
 
+import base64
 import json
 import os
 import smtplib
@@ -74,6 +75,101 @@ def search_serpapi() -> list[dict]:
 # Normalisation
 # ---------------------------------------------------------------------------
 
+def _pb_varint(value: int) -> bytes:
+    """Encode an integer as a protobuf varint."""
+    parts = []
+    while value > 0x7F:
+        parts.append((value & 0x7F) | 0x80)
+        value >>= 7
+    parts.append(value)
+    return bytes(parts)
+
+
+def _pb_field(field_num: int, wire_type: int, data) -> bytes:
+    """Encode a single protobuf field."""
+    tag = _pb_varint((field_num << 3) | wire_type)
+    if wire_type == 0:  # varint
+        return tag + _pb_varint(data)
+    # wire_type == 2: length-delimited
+    if isinstance(data, str):
+        data = data.encode()
+    return tag + _pb_varint(len(data)) + data
+
+
+def _build_google_flights_url(flight: dict) -> str:
+    """Build a Google Flights deep link URL for a specific flight itinerary."""
+    segments = flight.get("flights", [])
+    if not segments:
+        return ""
+
+    # Map airline names to IATA codes
+    AIRLINE_CODES = {
+        "delta": "DL", "united": "UA", "american": "AA",
+        "british airways": "BA", "air france": "AF", "lufthansa": "LH",
+        "klm": "KL", "ita airways": "AZ", "ita": "AZ", "alaska": "AS",
+        "virgin atlantic": "VS", "tap air portugal": "TP", "iberia": "IB",
+        "swiss": "LX", "austrian": "OS", "condor": "DE", "finnair": "AY",
+        "air canada": "AC", "aer lingus": "EI", "turkish airlines": "TK",
+        "qatar airways": "QR", "emirates": "EK", "etihad": "EY",
+        "singapore airlines": "SQ", "cathay pacific": "CX",
+        "scandinavian airlines": "SK", "lot polish": "LO", "norse": "N0",
+        "icelandair": "FI", "jetblue": "B6", "frontier": "F9",
+        "spirit": "NK", "sun country": "SY", "play": "OG",
+    }
+
+    seg_list = []
+    for seg in segments:
+        dep = seg.get("departure_airport", {})
+        arr = seg.get("arrival_airport", {})
+        origin = dep.get("id", "")
+        dest = arr.get("id", "")
+        dep_date = dep.get("time", "")[:10]  # YYYY-MM-DD
+
+        # Extract airline code from flight_number (e.g., "DL 290") or airline name
+        fn = seg.get("flight_number", "")
+        if fn and " " in fn:
+            airline_code = fn.split()[0]
+            flight_num = fn.split()[-1]
+        else:
+            airline_name = seg.get("airline", "").lower().strip()
+            airline_code = AIRLINE_CODES.get(airline_name, "")
+            flight_num = fn
+
+        if not all([origin, dest, dep_date, airline_code, flight_num]):
+            return ""
+        seg_list.append((origin, dep_date, dest, airline_code, flight_num))
+
+    # Build protobuf
+    itin = _pb_field(2, 2, seg_list[0][1])  # departure date
+    for origin, dep_date, dest, ac, fnum in seg_list:
+        seg_pb = (
+            _pb_field(1, 2, origin) +
+            _pb_field(2, 2, dep_date) +
+            _pb_field(3, 2, dest) +
+            _pb_field(5, 2, ac) +
+            _pb_field(6, 2, fnum)
+        )
+        itin += _pb_field(4, 2, seg_pb)
+
+    first_origin = seg_list[0][0]
+    final_dest = seg_list[-1][2]
+    itin += _pb_field(13, 2, _pb_field(1, 0, 1) + _pb_field(2, 2, first_origin))
+    itin += _pb_field(14, 2, _pb_field(1, 0, 1) + _pb_field(2, 2, final_dest))
+
+    tfs = (
+        _pb_field(1, 0, 28) +   # unknown constant
+        _pb_field(2, 0, 2) +    # one-way
+        _pb_field(3, 2, itin) +
+        _pb_field(8, 2, b"\x01") +
+        _pb_field(9, 0, 1) +
+        _pb_field(14, 0, 1) +
+        _pb_field(19, 0, 2)     # economy
+    )
+
+    tfs_b64 = base64.b64encode(tfs).decode().rstrip("=")
+    return f"https://www.google.com/travel/flights?tfs={tfs_b64}&tfu=EgIIAQ"
+
+
 def _normalize_serpapi(flight: dict) -> dict:
     """Flatten a SerpAPI flight object into a common schema."""
     segments = flight.get("flights", [])
@@ -89,6 +185,8 @@ def _normalize_serpapi(flight: dict) -> dict:
     layovers = flight.get("layovers", [])
     total_layover_min = sum(lo.get("duration", 0) for lo in layovers)
 
+    google_flights_url = _build_google_flights_url(flight)
+
     return {
         "primary_airline": primary_airline,
         "airlines": airlines,
@@ -100,7 +198,7 @@ def _normalize_serpapi(flight: dict) -> dict:
         "price": flight.get("price", 0),
         "source": "serpapi",
         "search_date": flight.get("_search_date", ""),
-        "booking_token": flight.get("booking_token", ""),
+        "google_flights_url": google_flights_url,
         "raw": flight,
     }
 
@@ -307,11 +405,11 @@ def score_flights(flights: list[dict], test_mode: bool = False) -> list[dict]:
                   f"{bd['layover']:>+8.1f} {bd['speed']:>+6.0f} {bd['nonstop']:>+8.0f} "
                   f"{bd['total']:>8.1f}")
         print(f"{'':=^110}")
-        # Booking tokens
-        print(f"\n{'BOOKING TOKENS':=^110}")
+        # Google Flights deep links
+        print(f"\n{'GOOGLE FLIGHTS DEEP LINKS':=^110}")
         for f, bd in breakdowns:
-            token = f.get("booking_token", "")
-            status = token[:60] + "…" if token else "MISSING"
+            url = f.get("google_flights_url", "")
+            status = url[:90] + "…" if url else "MISSING"
             print(f"  {f['primary_airline']:<20} {f['departure_time'][:16]:<17} {status}")
         print(f"{'':=^110}\n")
 
@@ -370,9 +468,9 @@ def _layover_info(f: dict) -> str:
 
 def _book_button(f: dict) -> str:
     """Dark 'Book' button linking to Google Flights booking page."""
-    token = f.get("booking_token", "")
-    if token:
-        book_url = f"https://www.google.com/flights?booking_token={token}"
+    gf_url = f.get("google_flights_url", "")
+    if gf_url:
+        book_url = gf_url
     else:
         search_date = f.get("search_date", "")
         book_url = f"https://www.google.com/flights#search;f=LAX;t=VCE;d={search_date};tt=o;c=e;s=1"
@@ -654,7 +752,7 @@ def export_flights_json(flights: list[dict]) -> None:
                 "search_date": f["search_date"],
                 "fare_type": f.get("fare_type", "Economy Main"),
                 "economy_main_price": f.get("economy_main_price"),
-                "booking_token": f.get("booking_token", ""),
+                "google_flights_url": f.get("google_flights_url", ""),
                 "layover_info": _layover_info(f),
             }
             for f in flights
