@@ -347,7 +347,7 @@ BASIC_TO_MAIN_ADDER = 100  # Economy Main ≈ Basic Economy + $100 for intl flig
 
 
 def label_fare_types(flights: list[dict]) -> list[dict]:
-    """Label fare types and estimate Economy Main pricing.
+    """Label fare types and populate all fare-class price fields.
 
     Google Flights always shows the cheapest fare. For the US Big 3
     (American, Delta, United) this is Basic Economy. We estimate
@@ -356,19 +356,31 @@ def label_fare_types(flights: list[dict]) -> list[dict]:
     Economy price shown underneath.
 
     Non-Big-3 carriers' base fare is Economy Main (standard cabin).
+
+    Premium economy and business/first prices are populated from raw
+    API data when available, otherwise set to None.
     """
     for f in flights:
         carrier = f["primary_airline"].lower().strip()
+        raw = f.get("raw", {})
+
+        # Extract premium/business prices from raw SerpAPI data if present
+        premium_price = raw.get("premium_economy_price") or None
+        business_price = raw.get("business_price") or None
+
         if carrier in BASIC_ECONOMY_CARRIERS:
             f["fare_type"] = "Economy Main"
             f["basic_economy_price"] = f["price"]
             f["economy_main_price"] = f["price"] + BASIC_TO_MAIN_ADDER
         else:
             f["fare_type"] = "Economy Main"
-            f["basic_economy_price"] = None
-            f["economy_main_price"] = None
+            f["basic_economy_price"] = f["price"]
+            f["economy_main_price"] = f["price"]
 
-    big3 = sum(1 for f in flights if f.get("basic_economy_price"))
+        f["premium_economy_price"] = premium_price
+        f["business_price"] = business_price
+
+    big3 = sum(1 for f in flights if f["primary_airline"].lower().strip() in BASIC_ECONOMY_CARRIERS)
     print(f"[Fare] {big3} Big 3 (BE→Main est.), {len(flights) - big3} Economy Main")
     return flights
 
@@ -460,6 +472,72 @@ RETURN_AIRLINE_BONUSES: dict[str, int] = {
 # Airlines whose nonstop flights get forced score=0 (automatic TOP PICK)
 AUTO_TOP_PICK_NONSTOP: set[str] = set()
 RETURN_AUTO_TOP_PICK_NONSTOP: set[str] = {"turkish airlines"}
+
+# ---------------------------------------------------------------------------
+# Per-origin airline bonuses (AKL, ATL)
+# ---------------------------------------------------------------------------
+
+AKL_OUTBOUND_BONUSES: dict[str, int] = {
+    "singapore airlines": -280,
+    "emirates": -260,
+    "qatar airways": -260,
+    "etihad": -240,
+    "lufthansa": -160,
+    "air france": -160,
+    "klm": -160,
+}
+
+AKL_RETURN_BONUSES: dict[str, int] = {
+    "emirates": -280,
+    "qatar airways": -280,
+    "singapore airlines": -260,
+    "etihad": -240,
+}
+AKL_RETURN_AUTO_TOP_PICK: set[str] = set()
+
+ATL_OUTBOUND_BONUSES: dict[str, int] = {
+    "delta": -300,
+    "united": -220,
+    "american": -180,
+    "british airways": -160,
+    "lufthansa": -160,
+    "air france": -160,
+}
+
+ATL_RETURN_BONUSES: dict[str, int] = {
+    "turkish airlines": -250,
+    "delta": -220,
+    "united": -180,
+}
+ATL_RETURN_AUTO_TOP_PICK: set[str] = {"turkish airlines"}
+
+# ---------------------------------------------------------------------------
+# Route definitions
+# ---------------------------------------------------------------------------
+
+ROUTES = [
+    {
+        "origin": "LAX",
+        "outbound": {"from": "LAX", "to": "VCE", "dates": DEPARTURE_DATES,
+                      "bonuses": AIRLINE_BONUSES, "auto_top": AUTO_TOP_PICK_NONSTOP},
+        "return": {"from": "IST", "to": "LAX", "dates": RETURN_DATES,
+                   "bonuses": RETURN_AIRLINE_BONUSES, "auto_top": RETURN_AUTO_TOP_PICK_NONSTOP},
+    },
+    {
+        "origin": "AKL",
+        "outbound": {"from": "AKL", "to": "VCE", "dates": DEPARTURE_DATES,
+                      "bonuses": AKL_OUTBOUND_BONUSES, "auto_top": set()},
+        "return": {"from": "IST", "to": "AKL", "dates": RETURN_DATES,
+                   "bonuses": AKL_RETURN_BONUSES, "auto_top": AKL_RETURN_AUTO_TOP_PICK},
+    },
+    {
+        "origin": "ATL",
+        "outbound": {"from": "ATL", "to": "VCE", "dates": DEPARTURE_DATES,
+                      "bonuses": ATL_OUTBOUND_BONUSES, "auto_top": set()},
+        "return": {"from": "IST", "to": "ATL", "dates": RETURN_DATES,
+                   "bonuses": ATL_RETURN_BONUSES, "auto_top": ATL_RETURN_AUTO_TOP_PICK},
+    },
+]
 
 
 def _departure_hour(f: dict) -> int | None:
@@ -966,26 +1044,30 @@ def _flight_to_dict(f: dict) -> dict:
         "fare_type": f.get("fare_type", "Economy Main"),
         "economy_main_price": f.get("economy_main_price"),
         "basic_economy_price": f.get("basic_economy_price"),
+        "premium_economy_price": f.get("premium_economy_price"),
+        "business_price": f.get("business_price"),
         "google_flights_url": f.get("google_flights_url", ""),
         "layover_info": _layover_info(f),
     }
 
 
 def export_flights_json(
-    outbound: list[dict],
-    return_flights: list[dict] | None = None,
+    results: dict[str, dict[str, list[dict]]],
 ) -> None:
-    """Write scored flights to web/ and public/ as flights.json."""
+    """Write scored flights to web/ and public/ as flights.json (multi-origin)."""
     root = Path(__file__).parent
-
     today = _today_pst()
-    export: dict = {
-        "generated": today.isoformat(),
-        "days_to_go": (TRIP_DATE - today).days,
-        "trip_date": TRIP_DATE.isoformat(),
-        "outbound_flights": [_flight_to_dict(f) for f in outbound],
-        "return_flights": [_flight_to_dict(f) for f in (return_flights or [])],
-    }
+
+    export: dict = {}
+    for origin, directions in results.items():
+        export[origin] = {}
+        for direction, flights in directions.items():
+            export[origin][direction] = {
+                "generated": today.isoformat(),
+                "days_to_go": (TRIP_DATE - today).days,
+                "trip_date": TRIP_DATE.isoformat(),
+                "flights": [_flight_to_dict(f) for f in flights],
+            }
 
     for dirname in ("web", "public"):
         out_dir = root / dirname
@@ -994,9 +1076,8 @@ def export_flights_json(
         with open(out_path, "w") as fp:
             json.dump(export, fp, indent=2)
 
-    total = len(outbound) + len(return_flights or [])
-    print(f"[Export] Wrote {total} flights ({len(outbound)} outbound, "
-          f"{len(return_flights or [])} return) to web/ and public/")
+    total = sum(len(fl) for d in results.values() for fl in d.values())
+    print(f"[Export] Wrote {total} flights across {len(results)} origins to web/ and public/")
 
 
 # ---------------------------------------------------------------------------
@@ -1062,40 +1143,52 @@ if __name__ == "__main__":
         raise SystemExit(1)
 
     test_mode = "--test" in sys.argv
+    all_results: dict[str, dict[str, list]] = {}
 
-    # --- Outbound: LAX → VCE ---
-    raw_out = search_serpapi("LAX", "VCE", DEPARTURE_DATES)
-    outbound = normalize(raw_out)
-    outbound = filter_flights(outbound)
-    outbound = dedup_flights(outbound)
-    outbound = label_fare_types(outbound)
-    outbound = score_flights(outbound, test_mode=test_mode)
+    for route in ROUTES:
+        origin = route["origin"]
+        all_results[origin] = {}
 
-    _print_summary("OUTBOUND — LAX → VCE", outbound)
+        # --- Outbound ---
+        out_cfg = route["outbound"]
+        raw_out = search_serpapi(out_cfg["from"], out_cfg["to"], out_cfg["dates"])
+        outbound = normalize(raw_out)
+        outbound = filter_flights(outbound)
+        outbound = dedup_flights(outbound)
+        outbound = label_fare_types(outbound)
+        outbound = score_flights(
+            outbound, test_mode=test_mode,
+            airline_bonuses=out_cfg["bonuses"],
+            auto_top_picks=out_cfg["auto_top"],
+        )
+        all_results[origin]["outbound"] = outbound
+        _print_summary(f"OUTBOUND — {out_cfg['from']} → {out_cfg['to']}", outbound)
 
-    # --- Return: IST → LAX ---
-    raw_ret = search_serpapi("IST", "LAX", RETURN_DATES)
-    raw_ret += search_skyscanner("IST", "LAX", RETURN_DATES)
-    ret = normalize(raw_ret)
-    ret = filter_flights(ret)
-    ret = dedup_flights(ret)
-    ret = label_fare_types(ret)
-    ret = score_flights(
-        ret,
-        test_mode=test_mode,
-        airline_bonuses=RETURN_AIRLINE_BONUSES,
-        auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
-    )
-
-    _print_summary("RETURN — IST → LAX", ret)
+        # --- Return ---
+        ret_cfg = route["return"]
+        raw_ret = search_serpapi(ret_cfg["from"], ret_cfg["to"], ret_cfg["dates"])
+        if origin == "LAX":
+            raw_ret += search_skyscanner(ret_cfg["from"], ret_cfg["to"], ret_cfg["dates"])
+        ret = normalize(raw_ret)
+        ret = filter_flights(ret)
+        ret = dedup_flights(ret)
+        ret = label_fare_types(ret)
+        ret = score_flights(
+            ret, test_mode=test_mode,
+            airline_bonuses=ret_cfg["bonuses"],
+            auto_top_picks=ret_cfg["auto_top"],
+        )
+        all_results[origin]["return"] = ret
+        _print_summary(f"RETURN — {ret_cfg['from']} → {ret_cfg['to']}", ret)
 
     # Export JSON for web dashboard
-    if outbound or ret:
-        export_flights_json(outbound, ret)
+    export_flights_json(all_results)
 
-    # Build and send email
-    if outbound or ret:
-        html = build_email_html(outbound, ret)
+    # Build and send email (LAX only)
+    lax_out = all_results.get("LAX", {}).get("outbound", [])
+    lax_ret = all_results.get("LAX", {}).get("return", [])
+    if lax_out or lax_ret:
+        html = build_email_html(lax_out, lax_ret)
         if GMAIL_USER and GMAIL_APP_PASSWORD:
             send_email(html)
         else:

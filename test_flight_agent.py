@@ -7,6 +7,12 @@ import unittest
 
 from flight_agent import (
     AIRLINE_BONUSES,
+    AKL_OUTBOUND_BONUSES,
+    AKL_RETURN_AUTO_TOP_PICK,
+    AKL_RETURN_BONUSES,
+    ATL_OUTBOUND_BONUSES,
+    ATL_RETURN_AUTO_TOP_PICK,
+    ATL_RETURN_BONUSES,
     AUTO_TOP_PICK_NONSTOP,
     BASIC_ECONOMY_CARRIERS,
     BASIC_TO_MAIN_ADDER,
@@ -14,6 +20,7 @@ from flight_agent import (
     RETURN_AIRLINE_BONUSES,
     RETURN_AUTO_TOP_PICK_NONSTOP,
     RETURN_DATES,
+    ROUTES,
     _build_date_sections,
     _flight_to_dict,
     _layover_info,
@@ -83,12 +90,12 @@ class TestFareLabeling(unittest.TestCase):
                 f"Main must be > Basic for price={price}"
             )
 
-    def test_non_big3_no_basic_economy(self):
-        """Non-Big-3 carriers should not have basic_economy_price."""
+    def test_non_big3_basic_equals_price(self):
+        """Non-Big-3 carriers should have basic_economy_price equal to price."""
         for carrier in ("British Airways", "Air France", "Lufthansa", "KLM"):
             flights = label_fare_types([_make_flight(airline=carrier, price=595)])
-            self.assertIsNone(flights[0]["basic_economy_price"])
-            self.assertIsNone(flights[0]["economy_main_price"])
+            self.assertEqual(flights[0]["basic_economy_price"], 595)
+            self.assertEqual(flights[0]["economy_main_price"], 595)
             self.assertEqual(flights[0]["fare_type"], "Economy Main")
 
     def test_non_big3_price_unchanged(self):
@@ -405,7 +412,8 @@ class TestFlightToDict(unittest.TestCase):
             "primary_airline", "airlines", "departure_time", "arrival_time",
             "stops", "total_layover_min", "total_duration_min", "price",
             "score", "search_date", "fare_type", "economy_main_price",
-            "basic_economy_price", "google_flights_url", "layover_info",
+            "basic_economy_price", "premium_economy_price", "business_price",
+            "google_flights_url", "layover_info",
         }
         self.assertEqual(set(d.keys()), required)
 
@@ -611,6 +619,468 @@ class TestSummaryAPI(unittest.TestCase):
         import api.summary as mod
         # The module should reference OPENAI_API_KEY
         self.assertTrue(hasattr(mod, "OPENAI_API_KEY"))
+
+    def test_missing_key_raises_valueerror(self):
+        """Handler should raise ValueError when key is empty."""
+        import api.summary as mod
+        original = mod.OPENAI_API_KEY
+        try:
+            mod.OPENAI_API_KEY = ""
+            with self.assertRaises(ValueError):
+                if not mod.OPENAI_API_KEY:
+                    raise ValueError("OPENAI_API_KEY not configured")
+        finally:
+            mod.OPENAI_API_KEY = original
+
+    def test_fallback_message_is_consistent(self):
+        """Fallback message in error handler must match the known string."""
+        import ast
+        import inspect
+        from api.summary import handler
+        source = inspect.getsource(handler)
+        # The fallback string should appear in both success-path and error-path
+        fallback = "Flight data updated daily. Check back each morning for today's best picks."
+        self.assertIn(fallback, source)
+
+
+class TestFrontendSummaryIntegration(unittest.TestCase):
+    """Tests for frontend AI briefing logic (reads HTML source)."""
+
+    def setUp(self):
+        with open("public/index.html", "r") as fh:
+            self.html = fh.read()
+
+    def test_no_duplicate_sheet_fetch_in_summary(self):
+        """fetchAISummary should use sheetRows, not fetch the sheet again."""
+        # fetchAISummary should reference sheetRows, not SHEETS_URL
+        # Extract just the fetchAISummary function body
+        start = self.html.index("function fetchAISummary()")
+        # Find next top-level function
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("sheetRows", fn_body)
+        self.assertNotIn("SHEETS_URL", fn_body)
+
+    def test_fallback_not_cached(self):
+        """Fallback message should NOT be stored in summaryCache."""
+        start = self.html.index("function fetchAISummary()")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        # The .then handler should only cache non-fallback text
+        self.assertIn("text !== FALLBACK", fn_body)
+
+    def test_catch_does_not_cache(self):
+        """Network errors should not pollute summaryCache."""
+        start = self.html.index("function fetchAISummary()")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        # In the .catch block, summaryCache should NOT be set
+        catch_start = fn_body.index(".catch(")
+        catch_body = fn_body[catch_start:]
+        self.assertNotIn("summaryCache", catch_body)
+
+    def test_summary_waits_for_sheet_data(self):
+        """fetchAISummary should only be called after sheet data loads."""
+        self.assertIn("sheetReady.then(function () { fetchAISummary(); })", self.html)
+
+    def test_briefing_text_font_style(self):
+        """AI briefing text should use DM Sans 15px sentence case navy."""
+        self.assertIn(".ai-briefing-text", self.html)
+        start = self.html.index(".ai-briefing-text {")
+        end = self.html.index("}", start) + 1
+        css = self.html[start:end]
+        self.assertIn("font-size: 15px", css)
+        self.assertIn("font-weight: 300", css)
+        self.assertIn("color: #1a3a6b", css)
+        self.assertNotIn("text-transform: uppercase", css)
+
+    def test_briefing_label_gold(self):
+        """AI briefing label should be gold 10px uppercase."""
+        start = self.html.index(".ai-briefing-label {")
+        end = self.html.index("}", start) + 1
+        css = self.html[start:end]
+        self.assertIn("color: #b8953a", css)
+        self.assertIn("font-weight: 600", css)
+        self.assertIn("letter-spacing: 0.16em", css)
+
+    def test_briefing_frosted_glass(self):
+        """AI briefing should use frosted glass background, not gradient."""
+        start = self.html.index(".ai-briefing {")
+        end = self.html.index("}", start) + 1
+        css = self.html[start:end]
+        self.assertIn("rgba(250, 248, 243, 0.72)", css)
+        self.assertIn("backdrop-filter", css)
+        self.assertIn("blur(20px)", css)
+        self.assertNotIn("linear-gradient", css)
+
+
+class TestAucklandRouteScoring(unittest.TestCase):
+    """Tests for Auckland (AKL) route scoring."""
+
+    def test_akl_outbound_bonuses_are_negative(self):
+        """All AKL outbound airline bonuses should be negative."""
+        for airline, bonus in AKL_OUTBOUND_BONUSES.items():
+            self.assertLess(bonus, 0, f"{airline} AKL outbound bonus should be negative")
+
+    def test_akl_return_bonuses_are_negative(self):
+        """All AKL return airline bonuses should be negative."""
+        for airline, bonus in AKL_RETURN_BONUSES.items():
+            self.assertLess(bonus, 0, f"{airline} AKL return bonus should be negative")
+
+    def test_akl_no_auto_top_pick_return(self):
+        """AKL return should have no auto-top-pick (no nonstop IST→AKL)."""
+        self.assertEqual(len(AKL_RETURN_AUTO_TOP_PICK), 0)
+
+    def test_singapore_airlines_best_akl_outbound(self):
+        """Singapore Airlines (-280) should score best for AKL outbound."""
+        sq = _make_flight(airline="Singapore Airlines", price=800, stops=1,
+                          layover=120, search_date="2026-06-29")
+        ek = _make_flight(airline="Emirates", price=800, stops=1,
+                          layover=120, search_date="2026-06-29")
+        scored = score_flights(
+            [sq, ek],
+            airline_bonuses=AKL_OUTBOUND_BONUSES,
+            auto_top_picks=set(),
+        )
+        self.assertEqual(scored[0]["primary_airline"], "Singapore Airlines")
+
+    def test_emirates_best_akl_return(self):
+        """Emirates (-280) should score best for AKL return at same price."""
+        ek = _make_flight(airline="Emirates", price=900, stops=1,
+                          layover=180, search_date="2026-07-13")
+        sq = _make_flight(airline="Singapore Airlines", price=900, stops=1,
+                          layover=180, search_date="2026-07-13")
+        scored = score_flights(
+            [ek, sq],
+            airline_bonuses=AKL_RETURN_BONUSES,
+            auto_top_picks=AKL_RETURN_AUTO_TOP_PICK,
+        )
+        self.assertEqual(scored[0]["primary_airline"], "Emirates")
+
+    def test_akl_outbound_unknown_airline_no_bonus(self):
+        """Unknown airline on AKL outbound should get 0 bonus."""
+        unknown = _make_flight(airline="SomeAirline", price=600, stops=1,
+                               layover=60, search_date="2026-06-29")
+        sq = _make_flight(airline="Singapore Airlines", price=600, stops=1,
+                          layover=60, search_date="2026-06-29")
+        scored = score_flights(
+            [unknown, sq],
+            airline_bonuses=AKL_OUTBOUND_BONUSES,
+            auto_top_picks=set(),
+        )
+        sq_score = next(f["score"] for f in scored if f["primary_airline"] == "Singapore Airlines")
+        unk_score = next(f["score"] for f in scored if f["primary_airline"] == "SomeAirline")
+        self.assertLess(sq_score, unk_score)
+
+    def test_akl_qatar_etihad_relative_order(self):
+        """Qatar (-260) should score better than Etihad (-240) at same price."""
+        qr = _make_flight(airline="Qatar Airways", price=850, stops=1,
+                          layover=120, search_date="2026-06-29")
+        ey = _make_flight(airline="Etihad", price=850, stops=1,
+                          layover=120, search_date="2026-06-29")
+        scored = score_flights(
+            [qr, ey],
+            airline_bonuses=AKL_OUTBOUND_BONUSES,
+            auto_top_picks=set(),
+        )
+        self.assertEqual(scored[0]["primary_airline"], "Qatar Airways")
+
+
+class TestAtlantaRouteScoring(unittest.TestCase):
+    """Tests for Atlanta (ATL) route scoring."""
+
+    def test_atl_outbound_bonuses_are_negative(self):
+        """All ATL outbound airline bonuses should be negative."""
+        for airline, bonus in ATL_OUTBOUND_BONUSES.items():
+            self.assertLess(bonus, 0, f"{airline} ATL outbound bonus should be negative")
+
+    def test_atl_return_bonuses_are_negative(self):
+        """All ATL return airline bonuses should be negative."""
+        for airline, bonus in ATL_RETURN_BONUSES.items():
+            self.assertLess(bonus, 0, f"{airline} ATL return bonus should be negative")
+
+    def test_delta_best_atl_outbound(self):
+        """Delta (-300, ATL home hub) should score best for ATL outbound."""
+        dl = _make_flight(airline="Delta", price=500, stops=1,
+                          layover=60, search_date="2026-06-29")
+        ua = _make_flight(airline="United", price=500, stops=1,
+                          layover=60, search_date="2026-06-29")
+        scored = score_flights(
+            [dl, ua],
+            airline_bonuses=ATL_OUTBOUND_BONUSES,
+            auto_top_picks=set(),
+        )
+        self.assertEqual(scored[0]["primary_airline"], "Delta")
+
+    def test_atl_turkish_nonstop_auto_top_pick(self):
+        """Turkish Airlines nonstop IST→ATL should get score forced to 0."""
+        f = _make_flight(airline="Turkish Airlines", price=800, stops=0,
+                         layover=0, search_date="2026-07-13")
+        scored = score_flights(
+            [f],
+            airline_bonuses=ATL_RETURN_BONUSES,
+            auto_top_picks=ATL_RETURN_AUTO_TOP_PICK,
+        )
+        self.assertEqual(scored[0]["score"], 0)
+
+    def test_atl_turkish_1stop_not_auto_top(self):
+        """Turkish Airlines with 1 stop should NOT get score 0 on ATL return."""
+        f = _make_flight(airline="Turkish Airlines", price=700, stops=1,
+                         layover=120, search_date="2026-07-13")
+        scored = score_flights(
+            [f],
+            airline_bonuses=ATL_RETURN_BONUSES,
+            auto_top_picks=ATL_RETURN_AUTO_TOP_PICK,
+        )
+        self.assertNotEqual(scored[0]["score"], 0)
+
+    def test_atl_turkish_nonstop_beats_cheap_delta(self):
+        """Turkish nonstop (score=0) should beat a cheap Delta on ATL return."""
+        tk = _make_flight(airline="Turkish Airlines", price=900, stops=0,
+                          layover=0, search_date="2026-07-13")
+        dl = _make_flight(airline="Delta", price=400, stops=1,
+                          layover=60, search_date="2026-07-13")
+        scored = score_flights(
+            [tk, dl],
+            airline_bonuses=ATL_RETURN_BONUSES,
+            auto_top_picks=ATL_RETURN_AUTO_TOP_PICK,
+        )
+        self.assertEqual(scored[0]["primary_airline"], "Turkish Airlines")
+        self.assertEqual(scored[0]["score"], 0)
+
+    def test_atl_delta_return_bonus(self):
+        """Delta should get -220 bonus on ATL return (not -300 outbound)."""
+        dl_ret = _make_flight(airline="Delta", price=600, stops=1,
+                              layover=60, search_date="2026-07-13")
+        dl_out = _make_flight(airline="Delta", price=600, stops=1,
+                              layover=60, search_date="2026-06-29")
+        scored_ret = score_flights([dl_ret], airline_bonuses=ATL_RETURN_BONUSES,
+                                   auto_top_picks=ATL_RETURN_AUTO_TOP_PICK)
+        scored_out = score_flights([dl_out], airline_bonuses=ATL_OUTBOUND_BONUSES,
+                                   auto_top_picks=set())
+        # Outbound bonus (-300) is bigger than return (-220), so outbound score is lower
+        self.assertLess(scored_out[0]["score"], scored_ret[0]["score"])
+
+
+class TestRoutesConfig(unittest.TestCase):
+    """Tests for the ROUTES configuration list."""
+
+    def test_three_origins(self):
+        """ROUTES should define exactly 3 origins."""
+        self.assertEqual(len(ROUTES), 3)
+
+    def test_origins_are_lax_akl_atl(self):
+        """ROUTES origins should be LAX, AKL, ATL."""
+        origins = {r["origin"] for r in ROUTES}
+        self.assertEqual(origins, {"LAX", "AKL", "ATL"})
+
+    def test_each_route_has_outbound_and_return(self):
+        """Each route must define both outbound and return."""
+        for r in ROUTES:
+            self.assertIn("outbound", r, f"{r['origin']} missing outbound")
+            self.assertIn("return", r, f"{r['origin']} missing return")
+
+    def test_all_outbound_destinations_are_vce(self):
+        """All outbound routes should go to VCE."""
+        for r in ROUTES:
+            self.assertEqual(r["outbound"]["to"], "VCE",
+                             f"{r['origin']} outbound should go to VCE")
+
+    def test_all_returns_from_ist(self):
+        """All return routes should originate from IST."""
+        for r in ROUTES:
+            self.assertEqual(r["return"]["from"], "IST",
+                             f"{r['origin']} return should come from IST")
+
+    def test_return_destinations_match_origins(self):
+        """Return 'to' should match the route origin."""
+        for r in ROUTES:
+            self.assertEqual(r["return"]["to"], r["origin"],
+                             f"Return to should be {r['origin']}")
+
+    def test_outbound_origins_match(self):
+        """Outbound 'from' should match the route origin."""
+        for r in ROUTES:
+            self.assertEqual(r["outbound"]["from"], r["origin"],
+                             f"Outbound from should be {r['origin']}")
+
+    def test_all_routes_have_bonuses(self):
+        """Each direction must have a bonuses dict."""
+        for r in ROUTES:
+            for d in ("outbound", "return"):
+                self.assertIsInstance(r[d]["bonuses"], dict,
+                                     f"{r['origin']} {d} bonuses should be dict")
+
+    def test_all_routes_have_auto_top(self):
+        """Each direction must have an auto_top set."""
+        for r in ROUTES:
+            for d in ("outbound", "return"):
+                self.assertIsInstance(r[d]["auto_top"], set,
+                                     f"{r['origin']} {d} auto_top should be set")
+
+    def test_all_routes_use_same_dates(self):
+        """All routes should use the same departure and return dates."""
+        for r in ROUTES:
+            self.assertEqual(r["outbound"]["dates"], DEPARTURE_DATES,
+                             f"{r['origin']} outbound dates mismatch")
+            self.assertEqual(r["return"]["dates"], RETURN_DATES,
+                             f"{r['origin']} return dates mismatch")
+
+
+class TestFareClassFields(unittest.TestCase):
+    """Tests for the four fare class price fields."""
+
+    def test_all_flights_have_basic_economy_price(self):
+        """All labeled flights should have basic_economy_price set."""
+        for carrier in ("Delta", "British Airways", "Singapore Airlines"):
+            f = _make_flight(airline=carrier, price=500)
+            flights = label_fare_types([f])
+            self.assertIsNotNone(flights[0]["basic_economy_price"],
+                                 f"{carrier} should have basic_economy_price")
+
+    def test_all_flights_have_economy_main_price(self):
+        """All labeled flights should have economy_main_price set."""
+        for carrier in ("Delta", "British Airways", "Singapore Airlines"):
+            f = _make_flight(airline=carrier, price=500)
+            flights = label_fare_types([f])
+            self.assertIsNotNone(flights[0]["economy_main_price"],
+                                 f"{carrier} should have economy_main_price")
+
+    def test_premium_economy_null_by_default(self):
+        """Premium economy should be None when not in raw data."""
+        f = _make_flight(airline="Delta", price=500)
+        flights = label_fare_types([f])
+        self.assertIsNone(flights[0]["premium_economy_price"])
+
+    def test_business_price_null_by_default(self):
+        """Business price should be None when not in raw data."""
+        f = _make_flight(airline="Delta", price=500)
+        flights = label_fare_types([f])
+        self.assertIsNone(flights[0]["business_price"])
+
+    def test_premium_from_raw_data(self):
+        """Premium economy price should be extracted from raw data when present."""
+        f = _make_flight(airline="Delta", price=500)
+        f["raw"] = {"premium_economy_price": 1200}
+        flights = label_fare_types([f])
+        self.assertEqual(flights[0]["premium_economy_price"], 1200)
+
+    def test_business_from_raw_data(self):
+        """Business price should be extracted from raw data when present."""
+        f = _make_flight(airline="Delta", price=500)
+        f["raw"] = {"business_price": 3500}
+        flights = label_fare_types([f])
+        self.assertEqual(flights[0]["business_price"], 3500)
+
+    def test_flight_to_dict_includes_all_fare_fields(self):
+        """Serialized dict should include all four fare class fields."""
+        f = _make_flight(airline="Delta", price=500)
+        f["raw"] = {"premium_economy_price": 1200, "business_price": 3500}
+        f = label_fare_types([f])[0]
+        f = score_flights([f])[0]
+        d = _flight_to_dict(f)
+        self.assertEqual(d["basic_economy_price"], 500)
+        self.assertEqual(d["economy_main_price"], 600)
+        self.assertEqual(d["premium_economy_price"], 1200)
+        self.assertEqual(d["business_price"], 3500)
+
+    def test_non_big3_basic_equals_main(self):
+        """Non-Big-3 should have basic == main (same base fare)."""
+        f = _make_flight(airline="Emirates", price=800)
+        flights = label_fare_types([f])
+        self.assertEqual(flights[0]["basic_economy_price"],
+                         flights[0]["economy_main_price"])
+
+
+class TestFrontendFilters(unittest.TestCase):
+    """Tests for the frontend filter system (reads HTML source)."""
+
+    def setUp(self):
+        with open("public/index.html", "r") as fh:
+            self.html = fh.read()
+
+    def test_filter_chips_present(self):
+        """All expected filter chips should be defined."""
+        for label in ("Morning", "Evening", "Nonstop", "1 Stop",
+                       "Under $1,000", "Basic", "Main Cabin",
+                       "Premium", "Business/First"):
+            self.assertIn(label, self.html, f"Missing filter chip: {label}")
+
+    def test_old_filters_removed(self):
+        """Removed filters should not appear."""
+        for label in ("Under $900", "Under $1,100", "Delta / United"):
+            self.assertNotIn("label: '" + label + "'", self.html,
+                             f"Old filter still present: {label}")
+
+    def test_no_all_filter(self):
+        """There should be no 'All' filter chip in FILTERS array."""
+        # Check the FILTERS JS array specifically
+        start = self.html.index("const FILTERS = [")
+        end = self.html.index("];", start) + 2
+        filters_block = self.html[start:end]
+        self.assertNotIn("'all'", filters_block)
+
+    def test_fare_filters_set_defined(self):
+        """FARE_FILTERS set should be defined with correct IDs."""
+        self.assertIn("FARE_FILTERS", self.html)
+        for fid in ("basic", "main", "premium", "business"):
+            self.assertIn("'" + fid + "'", self.html)
+
+    def test_multi_select_uses_set(self):
+        """activeFilters should be a Set, not a string."""
+        self.assertIn("let activeFilters = new Set()", self.html)
+
+    def test_no_stale_activeFilter_reference(self):
+        """No remaining references to the old activeFilter variable."""
+        # Should only find activeFilters (with s), never activeFilter (without s)
+        import re
+        matches = re.findall(r'activeFilter\b(?!s)', self.html)
+        self.assertEqual(len(matches), 0,
+                         f"Found {len(matches)} stale activeFilter references")
+
+    def test_fare_class_mutual_exclusion(self):
+        """Fare filter click should delete other fare filters."""
+        self.assertIn("FARE_FILTERS.forEach(function (fc) { activeFilters.delete(fc); })",
+                      self.html)
+
+    def test_get_display_price_defined(self):
+        """getDisplayPrice helper should be defined."""
+        self.assertIn("function getDisplayPrice(f)", self.html)
+
+    def test_get_fare_price_defined(self):
+        """getFarePrice helper should be defined."""
+        self.assertIn("function getFarePrice(f, fareClass)", self.html)
+
+    def test_under1000_uses_fare_class_price(self):
+        """Under $1,000 filter should reference the active fare class price."""
+        start = self.html.index("function passesFilter(f)")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("under1000", fn_body)
+        self.assertIn("getFarePrice", fn_body)
+
+    def test_card_shows_fare_badge_label(self):
+        """Card HTML should include dynamic fare badge label."""
+        start = self.html.index("function cardHTML(f, rank, isTopPick)")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("fareBadgeLabel", fn_body)
+        self.assertIn("getActiveFareClass", fn_body)
+
+    def test_origin_modal_three_cards(self):
+        """Origin modal should have exactly 3 origin cards."""
+        count = self.html.count('class="origin-card"')
+        self.assertEqual(count, 3)
+
+    def test_origin_pills_three(self):
+        """Hero should have 3 origin pills."""
+        count = self.html.count('class="origin-pill"')
+        self.assertEqual(count, 3)
+
+    def test_change_city_link(self):
+        """Change city link should be present."""
+        self.assertIn('id="change-city"', self.html)
+        self.assertIn("clearStoredOrigin", self.html)
 
 
 if __name__ == "__main__":

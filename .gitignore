@@ -4,3 +4,4 @@ __pycache__/
 web/flights.json
 public/flights.json
 .vercel
+.env*.local

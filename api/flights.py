@@ -14,11 +14,7 @@ from http.server import BaseHTTPRequestHandler
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flight_agent import (
-    AUTO_TOP_PICK_NONSTOP,
-    DEPARTURE_DATES,
-    RETURN_AIRLINE_BONUSES,
-    RETURN_AUTO_TOP_PICK_NONSTOP,
-    RETURN_DATES,
+    ROUTES,
     TRIP_DATE,
     _flight_to_dict,
     _today_pst,
@@ -32,42 +28,43 @@ from flight_agent import (
 )
 
 
-def _build_payload(outbound: list[dict], return_flights: list[dict]) -> dict:
+def _run_route(route_cfg: dict) -> dict:
+    """Run the full pipeline for one origin and return {outbound: {...}, return: {...}}."""
     today = _today_pst()
-    return {
-        "generated": today.isoformat(),
-        "days_to_go": (TRIP_DATE - today).days,
-        "trip_date": TRIP_DATE.isoformat(),
-        "outbound_flights": [_flight_to_dict(f) for f in outbound],
-        "return_flights": [_flight_to_dict(f) for f in return_flights],
-    }
+    origin = route_cfg["origin"]
+    result = {}
+
+    for direction in ("outbound", "return"):
+        cfg = route_cfg[direction]
+        raw = search_serpapi(cfg["from"], cfg["to"], cfg["dates"])
+        if origin == "LAX" and direction == "return":
+            raw += search_skyscanner(cfg["from"], cfg["to"], cfg["dates"])
+        flights = normalize(raw)
+        flights = filter_flights(flights)
+        flights = dedup_flights(flights)
+        flights = label_fare_types(flights)
+        flights = score_flights(
+            flights,
+            airline_bonuses=cfg["bonuses"],
+            auto_top_picks=cfg["auto_top"],
+        )
+        result[direction] = {
+            "generated": today.isoformat(),
+            "days_to_go": (TRIP_DATE - today).days,
+            "trip_date": TRIP_DATE.isoformat(),
+            "flights": [_flight_to_dict(f) for f in flights],
+        }
+
+    return result
 
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
-            # Outbound: LAX → VCE
-            raw_out = search_serpapi("LAX", "VCE", DEPARTURE_DATES)
-            outbound = normalize(raw_out)
-            outbound = filter_flights(outbound)
-            outbound = dedup_flights(outbound)
-            outbound = label_fare_types(outbound)
-            outbound = score_flights(outbound)
+            payload = {}
+            for route in ROUTES:
+                payload[route["origin"]] = _run_route(route)
 
-            # Return: IST → LAX
-            raw_ret = search_serpapi("IST", "LAX", RETURN_DATES)
-            raw_ret += search_skyscanner("IST", "LAX", RETURN_DATES)
-            ret = normalize(raw_ret)
-            ret = filter_flights(ret)
-            ret = dedup_flights(ret)
-            ret = label_fare_types(ret)
-            ret = score_flights(
-                ret,
-                airline_bonuses=RETURN_AIRLINE_BONUSES,
-                auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
-            )
-
-            payload = _build_payload(outbound, ret)
             body = json.dumps(payload, indent=2).encode()
 
             self.send_response(200)

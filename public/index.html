@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dahyabhai Cruise Flights — LAX → VCE Flights</title>
+<title>Dahyabhai Cruise Flights</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -20,7 +20,52 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-weight: 400; }
 
-  /* Hero */
+  /* ── Origin selection modal ── */
+  .origin-modal {
+    position: fixed; inset: 0; z-index: 2000;
+    background: #faf8f3;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; padding: 24px;
+  }
+  .origin-modal.hidden { display: none; }
+  .origin-modal-title {
+    font-family: var(--serif); font-size: clamp(28px, 6vw, 42px);
+    font-weight: 300; font-style: italic; color: var(--azure);
+    letter-spacing: -0.02em; margin-bottom: 8px; text-align: center;
+  }
+  .origin-modal-sub {
+    font-family: var(--sans); font-size: 15px; font-weight: 300;
+    color: #94a3b8; margin-bottom: 36px; text-align: center;
+  }
+  .origin-cards {
+    display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    max-width: 720px; width: 100%;
+  }
+  .origin-card {
+    background: #fff; border: 1px solid var(--fog); border-radius: 16px;
+    padding: 28px 32px; cursor: pointer; text-align: center;
+    flex: 1; min-width: 180px; max-width: 220px;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .origin-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.10);
+    border-color: var(--azure);
+  }
+  .origin-card-city {
+    font-family: var(--serif); font-size: 28px; font-weight: 400;
+    color: var(--azure); margin-bottom: 4px;
+  }
+  .origin-card-code {
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  @media (max-width: 600px) {
+    .origin-cards { flex-direction: column; align-items: center; }
+    .origin-card { max-width: 100%; width: 100%; }
+  }
+
+  /* ── Hero ── */
   .hero {
     background:
       linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)),
@@ -49,10 +94,10 @@
     margin: 32px auto 0;
   }
 
-  /* Direction nav — inside hero */
+  /* Direction nav */
   .direction-nav {
     display: flex; gap: 8px; justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
   }
   .direction-pill {
     font-family: var(--sans); font-size: 14px; font-weight: 500;
@@ -65,26 +110,54 @@
     background: var(--azure); color: #fff;
   }
 
-  /* AI Briefing card */
+  /* Origin pills */
+  .origin-nav {
+    display: flex; gap: 6px; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .origin-pill {
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    padding: 5px 14px; border-radius: 9999px; cursor: pointer;
+    border: 1px solid var(--fog); transition: all 0.15s;
+    background: #fff; color: var(--ink); letter-spacing: 0.3px;
+  }
+  .origin-pill:hover { border-color: var(--azure); color: var(--azure); }
+  .origin-pill.active {
+    background: var(--azure); color: #fff; border-color: var(--azure);
+  }
+
+  /* Change city link */
+  .change-city {
+    font-family: var(--sans); font-size: 11px; font-weight: 400;
+    color: #94a3b8; cursor: pointer; text-decoration: none;
+    position: absolute; top: 16px; right: 20px;
+    transition: color 0.15s;
+  }
+  .change-city:hover { color: var(--azure); text-decoration: underline; }
+
+  /* AI Briefing */
   .ai-briefing {
-    max-width: 680px; margin: 28px auto 0; padding: 24px 28px;
-    background: linear-gradient(135deg, rgba(26,58,107,0.88), rgba(13,110,138,0.85), rgba(184,149,58,0.75));
-    border: 1px solid rgba(184,149,58,0.3);
-    border-radius: 16px; text-align: left;
+    max-width: 640px; margin: 28px auto 0; padding: 24px 28px;
+    background: rgba(250, 248, 243, 0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(26, 58, 107, 0.12);
+    border-radius: 20px; text-align: left;
+    box-shadow: 0 4px 24px rgba(10, 10, 15, 0.08);
   }
   .ai-briefing-label {
-    font-family: var(--sans); font-size: 10px; font-weight: 500;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: rgba(255,255,255,0.5); margin-bottom: 8px;
+    font-family: var(--sans); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: #b8953a; margin-bottom: 8px;
   }
   .ai-briefing-text {
-    font-family: var(--serif); font-size: 20px; font-weight: 300;
-    font-style: italic; color: #fff; line-height: 1.7;
+    font-family: var(--sans); font-size: 15px; font-weight: 300;
+    color: #1a3a6b; line-height: 1.8;
   }
   .ai-briefing-shimmer {
     height: 80px; border-radius: 8px;
     background: linear-gradient(90deg,
-      rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 75%);
+      rgba(26,58,107,0.04) 25%, rgba(26,58,107,0.10) 50%, rgba(26,58,107,0.04) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
   }
@@ -93,8 +166,8 @@
     100% { background-position: -200% 0; }
   }
   @media (max-width: 600px) {
-    .ai-briefing { padding: 16px; margin-left: 0; margin-right: 0; }
-    .ai-briefing-text { font-size: 17px; }
+    .ai-briefing { padding: 18px 20px; margin-left: 0; margin-right: 0; }
+    .ai-briefing-text { font-size: 14px; }
   }
 
   /* Layout */
@@ -369,11 +442,40 @@
 </head>
 <body>
 
+<!-- Origin selection modal -->
+<div class="origin-modal" id="origin-modal">
+  <div class="origin-modal-title">Where are you flying from?</div>
+  <div class="origin-modal-sub">We'll show you the best flights for your journey</div>
+  <div class="origin-cards">
+    <div class="origin-card" data-origin="LAX">
+      <div class="origin-card-city">Los Angeles</div>
+      <div class="origin-card-code">LAX</div>
+    </div>
+    <div class="origin-card" data-origin="AKL">
+      <div class="origin-card-city">Auckland</div>
+      <div class="origin-card-code">AKL</div>
+    </div>
+    <div class="origin-card" data-origin="ATL">
+      <div class="origin-card-city">Atlanta</div>
+      <div class="origin-card-code">ATL</div>
+    </div>
+  </div>
+</div>
+
+<!-- Page content (hidden until origin selected) -->
+<div id="page-content" style="display:none;">
+
 <!-- Hero -->
 <div class="hero">
+  <a class="change-city" id="change-city">Change city</a>
   <div class="direction-nav" id="direction-nav">
-    <button class="direction-pill active" data-dir="outbound">Outbound &nbsp;LAX &rarr; VCE</button>
-    <button class="direction-pill" data-dir="return">Return &nbsp;IST &rarr; LAX</button>
+    <button class="direction-pill active" data-dir="outbound">Outbound</button>
+    <button class="direction-pill" data-dir="return">Return</button>
+  </div>
+  <div class="origin-nav" id="origin-nav">
+    <button class="origin-pill" data-origin="LAX">LAX</button>
+    <button class="origin-pill" data-origin="AKL">AKL</button>
+    <button class="origin-pill" data-origin="ATL">ATL</button>
   </div>
   <div class="hero-pill" id="countdown-pill">&#128336; <span id="countdown"></span> DAYS UNTIL JULY 3, 2026</div>
   <div class="hero-title">Cruise Bound</div>
@@ -402,6 +504,8 @@
 
   <div class="footer" id="footer"></div>
 </div>
+
+</div><!-- /page-content -->
 
 <!-- Name prompt modal -->
 <div class="modal-overlay" id="name-modal">
@@ -442,8 +546,17 @@
   const TRIP = new Date('2026-07-03T00:00:00');
   const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwBSvTPQqbG3WZZAW3sTygBAinDOWZ4Nj-i8CHTKU_K0UfFM6LQFm8322xCNa1ufSsd/exec';
 
-  const GOOGLE_FLIGHTS_FALLBACK = 'https://www.google.com/flights#search;f=LAX;t=VCE;d={date};tt=o;c=e;s=1';
-  const GOOGLE_FLIGHTS_RETURN_FALLBACK = 'https://www.google.com/flights#search;f=IST;t=LAX;d={date};tt=o;c=e;s=1';
+  const ORIGINS = {
+    LAX: { city: 'Los Angeles', code: 'LAX' },
+    AKL: { city: 'Auckland', code: 'AKL' },
+    ATL: { city: 'Atlanta', code: 'ATL' },
+  };
+
+  const ROUTE_LABELS = {
+    LAX: { outbound: 'LAX \u2192 VCE', return: 'IST \u2192 LAX' },
+    AKL: { outbound: 'AKL \u2192 VCE', return: 'IST \u2192 AKL' },
+    ATL: { outbound: 'ATL \u2192 VCE', return: 'IST \u2192 ATL' },
+  };
 
   const HEROES = {
     outbound: {
@@ -459,24 +572,69 @@
   };
 
   const FILTERS = [
-    { id: 'all',       label: 'All' },
-    { id: 'morning',   label: 'Morning' },
-    { id: 'evening',   label: 'Evening' },
-    { id: 'nonstop',   label: 'Nonstop' },
-    { id: '1stop',     label: '1 Stop' },
-    { id: 'under900',  label: 'Under $900' },
-    { id: 'under1100', label: 'Under $1,100' },
-    { id: 'dua',       label: 'Delta / United' },
+    { id: 'morning',   label: 'Morning',        group: 'general' },
+    { id: 'evening',   label: 'Evening',         group: 'general' },
+    { id: 'nonstop',   label: 'Nonstop',         group: 'general' },
+    { id: '1stop',     label: '1 Stop',           group: 'general' },
+    { id: 'under1000', label: 'Under $1,000',    group: 'general' },
+    { id: 'basic',     label: 'Basic',            group: 'fare' },
+    { id: 'main',      label: 'Main Cabin',       group: 'fare' },
+    { id: 'premium',   label: 'Premium',          group: 'fare' },
+    { id: 'business',  label: 'Business/First',   group: 'fare' },
   ];
+  const FARE_FILTERS = new Set(['basic', 'main', 'premium', 'business']);
 
-  let data = null;
+  let data = null;          // full multi-origin payload
+  let activeOrigin = 'LAX';
   let activeDirection = 'outbound';
   let activeDate = null;
-  let activeFilter = 'all';
+  let activeFilters = new Set();
   let expandedDates = new Set();
   let pendingBookFlight = null;
   let sheetRows = [];
-  var summaryCache = {};  // { outbound: "...", return: "..." }
+  var summaryCache = {};  // keyed by "origin|direction"
+
+  // ---- Origin persistence ----
+  function getStoredOrigin() {
+    return localStorage.getItem('dcf_origin') || '';
+  }
+  function setStoredOrigin(code) {
+    localStorage.setItem('dcf_origin', code);
+  }
+  function clearStoredOrigin() {
+    localStorage.removeItem('dcf_origin');
+  }
+
+  function showOriginModal() {
+    document.getElementById('origin-modal').classList.remove('hidden');
+    document.getElementById('page-content').style.display = 'none';
+  }
+
+  function hideOriginModal() {
+    document.getElementById('origin-modal').classList.add('hidden');
+    document.getElementById('page-content').style.display = '';
+  }
+
+  function setupOriginModal() {
+    document.querySelectorAll('.origin-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var origin = card.dataset.origin;
+        setStoredOrigin(origin);
+        activeOrigin = origin;
+        hideOriginModal();
+        promptName();
+        onOriginChanged();
+      });
+    });
+  }
+
+  function setupChangeCity() {
+    document.getElementById('change-city').addEventListener('click', function (e) {
+      e.preventDefault();
+      clearStoredOrigin();
+      showOriginModal();
+    });
+  }
 
   // ---- User name ----
   function getUserName() {
@@ -485,14 +643,14 @@
 
   function promptName() {
     if (getUserName()) return;
-    const overlay = document.getElementById('name-modal');
-    const input = document.getElementById('name-input');
-    const btn = document.getElementById('name-submit');
+    var overlay = document.getElementById('name-modal');
+    var input = document.getElementById('name-input');
+    var btn = document.getElementById('name-submit');
     overlay.classList.add('active');
     input.focus();
 
     function submit() {
-      const name = input.value.trim();
+      var name = input.value.trim();
       if (!name) { input.focus(); return; }
       localStorage.setItem('veniceair_user', name);
       overlay.classList.remove('active');
@@ -505,23 +663,23 @@
 
   // ---- Helpers ----
   function fmtTime(raw) {
-    const clean = raw.replace('T', ' ').slice(0, 16);
-    const d = new Date(clean.replace(' ', 'T'));
+    var clean = raw.replace('T', ' ').slice(0, 16);
+    var d = new Date(clean.replace(' ', 'T'));
     if (isNaN(d)) return raw.slice(0, 16);
-    let h = d.getHours(), m = d.getMinutes();
-    const ampm = h >= 12 ? 'PM' : 'AM';
+    var h = d.getHours(), m = d.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
     h = h % 12 || 12;
     return h + ':' + String(m).padStart(2, '0') + ' ' + ampm;
   }
 
   function fmtDuration(min) {
-    const h = Math.floor(min / 60), m = min % 60;
+    var h = Math.floor(min / 60), m = min % 60;
     return h ? h + 'h ' + m + 'm' : m + 'm';
   }
 
   function depHour(f) {
-    const clean = f.departure_time.replace('T', ' ').slice(0, 16);
-    const d = new Date(clean.replace(' ', 'T'));
+    var clean = f.departure_time.replace('T', ' ').slice(0, 16);
+    var d = new Date(clean.replace(' ', 'T'));
     return isNaN(d) ? -1 : d.getHours();
   }
 
@@ -539,8 +697,11 @@
 
   function bookUrl(f) {
     if (f.google_flights_url) return f.google_flights_url;
-    var fallback = activeDirection === 'return' ? GOOGLE_FLIGHTS_RETURN_FALLBACK : GOOGLE_FLIGHTS_FALLBACK;
-    return fallback.replace('{date}', f.search_date);
+    var labels = ROUTE_LABELS[activeOrigin] || ROUTE_LABELS.LAX;
+    var route = labels[activeDirection] || '';
+    var parts = route.split(' \u2192 ');
+    var from = parts[0] || 'LAX', to = parts[1] || 'VCE';
+    return 'https://www.google.com/flights#search;f=' + from + ';t=' + to + ';d=' + f.search_date + ';tt=o;c=e;s=1';
   }
 
   function flightId(f) {
@@ -548,21 +709,35 @@
   }
 
   function timeAgo(ts) {
-    const now = Date.now();
-    const diff = now - new Date(ts).getTime();
-    const mins = Math.floor(diff / 60000);
+    var now = Date.now();
+    var diff = now - new Date(ts).getTime();
+    var mins = Math.floor(diff / 60000);
     if (mins < 1) return 'just now';
     if (mins < 60) return mins + 'm ago';
-    const hrs = Math.floor(mins / 60);
+    var hrs = Math.floor(mins / 60);
     if (hrs < 24) return hrs + 'h ago';
-    const days = Math.floor(hrs / 24);
+    var days = Math.floor(hrs / 24);
     return days + 'd ago';
   }
 
   function daysToGo() {
-    const pst = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+    var pst = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
     pst.setHours(0,0,0,0);
     return Math.ceil((TRIP - pst) / 86400000);
+  }
+
+  // ---- Data access (multi-origin) ----
+  function getOriginData() {
+    if (!data) return null;
+    return data[activeOrigin] || null;
+  }
+
+  function getActiveFlights() {
+    var od = getOriginData();
+    if (!od) return [];
+    var dirData = od[activeDirection];
+    if (!dirData) return [];
+    return dirData.flights || [];
   }
 
   // ---- Google Sheets ----
@@ -586,16 +761,17 @@
   }
 
   function logToSheets(action, flight) {
-    const name = getUserName() || 'Anonymous';
-    const params = new URLSearchParams({
+    var name = getUserName() || 'Anonymous';
+    var params = new URLSearchParams({
       name: name,
+      origin: activeOrigin,
       action: action,
       airline: airlineLabel(flight),
       flight_date: fmtSheetDate(flight.search_date),
       departure_time: fmtSheetTime(flight.departure_time),
       arrival_time: fmtSheetTime(flight.arrival_time),
       layover: flight.layover_info || 'Nonstop',
-      price: String(flight.price),
+      price: String(flight.economy_main_price || flight.price),
       fare_type: flight.fare_type || 'Economy Main',
       flight_id: flightId(flight),
     });
@@ -604,7 +780,6 @@
   }
 
   function parseSheetRows(raw) {
-    // Apps Script returns a 2D array: first row is headers, rest are data
     if (!Array.isArray(raw) || raw.length < 2) return [];
     var headers = raw[0];
     var hMap = {};
@@ -624,7 +799,7 @@
   }
 
   function fetchFamilyPicks() {
-    fetch(SHEETS_URL + '?action=read')
+    return fetch(SHEETS_URL + '?action=read')
       .then(function (r) { return r.json(); })
       .then(function (raw) {
         var rows = parseSheetRows(raw);
@@ -666,7 +841,6 @@
     var body = document.getElementById('fi-modal-body');
     var html = '';
 
-    // Flight summary
     if (flightData) {
       var niceDate = '';
       try {
@@ -715,8 +889,8 @@
   // ---- Book modal ----
   function showBookModal(f) {
     pendingBookFlight = f;
-    const summary = document.getElementById('book-modal-summary');
-    const niceDate = new Date(f.search_date + 'T12:00:00').toLocaleDateString('en-US',
+    var summary = document.getElementById('book-modal-summary');
+    var niceDate = new Date(f.search_date + 'T12:00:00').toLocaleDateString('en-US',
       { month: 'short', day: 'numeric', weekday: 'short' });
     summary.innerHTML =
       '<div class="bm-airline">' + f.primary_airline + '</div>' +
@@ -734,7 +908,6 @@
       window.open(bookUrl(pendingBookFlight), '_blank');
       overlay.classList.remove('active');
       pendingBookFlight = null;
-      // Refresh picks after a short delay for the sheet to update
       setTimeout(fetchFamilyPicks, 2000);
     });
     document.getElementById('bm-explore').addEventListener('click', function () {
@@ -754,31 +927,62 @@
   }
 
   // ---- Filter logic ----
-  function passesFilter(f) {
-    const h = depHour(f);
-    switch (activeFilter) {
-      case 'morning':   return h >= 6 && h <= 10;
-      case 'evening':   return h >= 18 && h <= 21;
-      case 'nonstop':   return f.stops === 0;
-      case '1stop':     return f.stops === 1;
-      case 'under900':  return f.price < 900;
-      case 'under1100': return f.price < 1100;
-      case 'dua':       return /^(delta|united)$/i.test(f.primary_airline);
-      default:          return true;
+  function getActiveFareClass() {
+    for (var fc of FARE_FILTERS) {
+      if (activeFilters.has(fc)) return fc;
+    }
+    return null;
+  }
+
+  function getFarePrice(f, fareClass) {
+    switch (fareClass) {
+      case 'basic':    return f.basic_economy_price;
+      case 'main':     return f.economy_main_price;
+      case 'premium':  return f.premium_economy_price;
+      case 'business': return f.business_price;
+      default:         return f.basic_economy_price || f.price;
     }
   }
 
-  // ---- Direction nav & hero ----
-  function getActiveFlights() {
-    if (!data) return [];
-    return activeDirection === 'return'
-      ? (data.return_flights || [])
-      : (data.outbound_flights || []);
+  function getDisplayPrice(f) {
+    var fc = getActiveFareClass();
+    if (!fc) return f.basic_economy_price || f.price;
+    return getFarePrice(f, fc);
   }
 
+  function passesFilter(f) {
+    // Fare class filter — hide card if no data for selected fare class
+    var fc = getActiveFareClass();
+    if (fc) {
+      var farePrice = getFarePrice(f, fc);
+      if (farePrice == null) return false;
+    }
+
+    var h = depHour(f);
+    if (activeFilters.has('morning') && !(h >= 6 && h <= 10)) return false;
+    if (activeFilters.has('evening') && !(h >= 18 && h <= 21)) return false;
+    if (activeFilters.has('nonstop') && f.stops !== 0) return false;
+    if (activeFilters.has('1stop') && f.stops !== 1) return false;
+    if (activeFilters.has('under1000')) {
+      var price = fc ? getFarePrice(f, fc) : (f.basic_economy_price || f.price);
+      if (price == null || price >= 1000) return false;
+    }
+    return true;
+  }
+
+  // ---- Direction nav & hero ----
   function renderDirectionNav() {
+    var labels = ROUTE_LABELS[activeOrigin] || ROUTE_LABELS.LAX;
     document.querySelectorAll('.direction-pill').forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.dir === activeDirection);
+      var dir = btn.dataset.dir;
+      btn.classList.toggle('active', dir === activeDirection);
+      btn.innerHTML = (dir === 'outbound' ? 'Outbound &nbsp;' : 'Return &nbsp;') + labels[dir];
+    });
+  }
+
+  function renderOriginNav() {
+    document.querySelectorAll('.origin-pill').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.origin === activeOrigin);
     });
   }
 
@@ -788,7 +992,7 @@
         if (activeDirection === btn.dataset.dir) return;
         activeDirection = btn.dataset.dir;
         activeDate = null;
-        activeFilter = 'all';
+        activeFilters.clear();
         expandedDates.clear();
         renderDirectionNav();
         updateHero();
@@ -797,6 +1001,30 @@
         renderFlights();
       });
     });
+  }
+
+  function setupOriginNav() {
+    document.querySelectorAll('.origin-pill').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var origin = btn.dataset.origin;
+        if (activeOrigin === origin) return;
+        activeOrigin = origin;
+        setStoredOrigin(origin);
+        onOriginChanged();
+      });
+    });
+  }
+
+  function onOriginChanged() {
+    activeDate = null;
+    activeFilters.clear();
+    expandedDates.clear();
+    renderOriginNav();
+    renderDirectionNav();
+    updateHero();
+    renderTabs();
+    renderFilters();
+    renderFlights();
   }
 
   function updateHero() {
@@ -814,10 +1042,15 @@
   }
 
   // ---- AI Briefing ----
+  function summaryKey() {
+    return activeOrigin + '|' + activeDirection;
+  }
+
   function renderAIBriefing() {
     var el = document.getElementById('ai-briefing-text');
-    if (summaryCache[activeDirection]) {
-      el.innerHTML = summaryCache[activeDirection];
+    var key = summaryKey();
+    if (summaryCache[key]) {
+      el.innerHTML = summaryCache[key];
       return;
     }
     el.innerHTML = '<div class="ai-briefing-shimmer"></div>';
@@ -826,25 +1059,34 @@
 
   function fetchAISummary() {
     var dir = activeDirection;
-    if (summaryCache[dir]) { renderAIBriefing(); return; }
+    var origin = activeOrigin;
+    var key = origin + '|' + dir;
+    if (summaryCache[key]) { renderAIBriefing(); return; }
 
-    var flights = dir === 'return'
-      ? (data.return_flights || [])
-      : (data.outbound_flights || []);
+    var flights = getActiveFlights();
     if (flights.length === 0) {
-      summaryCache[dir] = 'Flight data updated daily. Check back each morning for today\'s best picks.';
+      summaryCache[key] = 'Flight data updated daily. Check back each morning for today\'s best picks.';
       renderAIBriefing();
       return;
     }
 
-    // Filter family picks relevant to this direction's dates
     var dirDates = flights.map(function (f) { return f.search_date; });
     var picks = sheetRows.filter(function (r) {
-      // Match by flight_id containing one of the direction's dates
       for (var i = 0; i < dirDates.length; i++) {
         if (r.flight_id && r.flight_id.indexOf(dirDates[i]) !== -1) return true;
       }
       return false;
+    });
+
+    var summaryFlights = flights.slice(0, 15).map(function (f) {
+      return {
+        primary_airline: f.primary_airline,
+        search_date: f.search_date,
+        departure_time: f.departure_time,
+        stops: f.stops,
+        price: f.economy_main_price || f.price,
+        score: f.score
+      };
     });
 
     fetch('/api/summary', {
@@ -852,44 +1094,56 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         direction: dir,
-        flights: flights.slice(0, 15),
+        origin: origin,
+        flights: summaryFlights,
         family_picks: picks.slice(0, 20),
       }),
     })
     .then(function (r) { return r.json(); })
     .then(function (res) {
-      summaryCache[dir] = res.summary || 'Flight data updated daily. Check back each morning for today\'s best picks.';
-      if (activeDirection === dir) renderAIBriefing();
+      var FALLBACK = 'Flight data updated daily. Check back each morning for today\'s best picks.';
+      var text = res.summary || FALLBACK;
+      if (text !== FALLBACK) summaryCache[key] = text;
+      var el = document.getElementById('ai-briefing-text');
+      if (summaryKey() === key) el.innerHTML = text;
     })
     .catch(function () {
-      summaryCache[dir] = 'Flight data updated daily. Check back each morning for today\'s best picks.';
-      if (activeDirection === dir) renderAIBriefing();
+      var el = document.getElementById('ai-briefing-text');
+      if (summaryKey() === key) el.innerHTML = 'Flight data updated daily. Check back each morning for today\'s best picks.';
     });
   }
 
   // ---- Render ----
   function renderCountdown() {
-    const d = daysToGo();
+    var d = daysToGo();
     document.getElementById('countdown').textContent = d;
   }
 
   function renderTabs() {
-    const el = document.getElementById('tabs');
+    var el = document.getElementById('tabs');
     if (!data) return;
     var flights = getActiveFlights();
-    const dates = [...new Set(flights.map(f => f.search_date))].sort();
-    if (!activeDate || !dates.includes(activeDate)) {
-      const urlDate = new URLSearchParams(window.location.search).get('date');
-      activeDate = (urlDate && dates.includes(urlDate)) ? urlDate : dates[0];
+    var dates = [];
+    var seen = {};
+    for (var i = 0; i < flights.length; i++) {
+      if (!seen[flights[i].search_date]) {
+        seen[flights[i].search_date] = true;
+        dates.push(flights[i].search_date);
+      }
     }
-    el.innerHTML = dates.map(d => {
-      const label = new Date(d + 'T12:00:00').toLocaleDateString('en-US',
+    dates.sort();
+    if (!activeDate || dates.indexOf(activeDate) === -1) {
+      var urlDate = new URLSearchParams(window.location.search).get('date');
+      activeDate = (urlDate && dates.indexOf(urlDate) !== -1) ? urlDate : dates[0];
+    }
+    el.innerHTML = dates.map(function (d) {
+      var label = new Date(d + 'T12:00:00').toLocaleDateString('en-US',
         { month: 'short', day: 'numeric' });
-      const cls = d === activeDate ? 'tab active' : 'tab';
+      var cls = d === activeDate ? 'tab active' : 'tab';
       return '<button class="' + cls + '" data-date="' + d + '">' + label + '</button>';
     }).join('');
-    el.querySelectorAll('.tab').forEach(btn => {
-      btn.addEventListener('click', () => {
+    el.querySelectorAll('.tab').forEach(function (btn) {
+      btn.addEventListener('click', function () {
         activeDate = btn.dataset.date;
         expandedDates.clear();
         renderTabs(); renderFlights();
@@ -898,14 +1152,31 @@
   }
 
   function renderFilters() {
-    const el = document.getElementById('filters');
-    el.innerHTML = FILTERS.map(f => {
-      const cls = f.id === activeFilter ? 'filter-btn active' : 'filter-btn';
-      return '<button class="' + cls + '" data-fid="' + f.id + '">' + f.label + '</button>';
+    var el = document.getElementById('filters');
+    el.innerHTML = FILTERS.map(function (f) {
+      var cls = activeFilters.has(f.id) ? 'filter-btn active' : 'filter-btn';
+      return '<button class="' + cls + '" data-fid="' + f.id + '" data-group="' + f.group + '">' + f.label + '</button>';
     }).join('');
-    el.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        activeFilter = btn.dataset.fid;
+    el.querySelectorAll('.filter-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var fid = btn.dataset.fid;
+        var group = btn.dataset.group;
+        if (group === 'fare') {
+          // Fare class filters are mutually exclusive — toggle or switch
+          if (activeFilters.has(fid)) {
+            activeFilters.delete(fid);
+          } else {
+            FARE_FILTERS.forEach(function (fc) { activeFilters.delete(fc); });
+            activeFilters.add(fid);
+          }
+        } else {
+          // General filters toggle freely
+          if (activeFilters.has(fid)) {
+            activeFilters.delete(fid);
+          } else {
+            activeFilters.add(fid);
+          }
+        }
         expandedDates.clear();
         renderFilters(); renderFlights();
       });
@@ -913,26 +1184,39 @@
   }
 
   function cardHTML(f, rank, isTopPick) {
-    const topBadge = isTopPick
+    var topBadge = isTopPick
       ? '<div><span class="badge badge-top">&#11088; TOP PICK</span></div>' : '';
 
-    const fareBadge = '<span class="badge badge-main">Economy Main</span>';
+    var fc = getActiveFareClass();
+    var fareLabels = {
+      basic: 'Basic Economy', main: 'Main Cabin',
+      premium: 'Premium Economy', business: 'Business/First'
+    };
+    var fareBadgeLabel = fc ? fareLabels[fc] : 'Basic Economy';
+    var fareBadge = '<span class="badge badge-main">' + fareBadgeLabel + '</span>';
 
-    let priceBlock;
-    if (f.basic_economy_price && f.economy_main_price) {
-      // Big 3: show estimated Main as primary, BE underneath
-      priceBlock = '<div class="price">~$' + f.economy_main_price.toLocaleString() + '</div>' +
-        '<div class="est-main">Est. Main Cabin</div>' +
-        '<div><span class="est-main-price">$' + f.basic_economy_price.toLocaleString() +
-        '</span> <span class="basic-label">Basic Economy</span></div>';
+    var displayPrice = getDisplayPrice(f);
+    var priceBlock;
+    if (!fc || fc === 'basic') {
+      // Default / Basic: show basic price, with main estimate underneath for Big 3
+      if (f.basic_economy_price && f.economy_main_price && f.basic_economy_price !== f.economy_main_price) {
+        priceBlock = '<div class="price">$' + f.basic_economy_price.toLocaleString() + '</div>' +
+          '<div class="est-main">Basic Economy</div>' +
+          '<div><span class="est-main-price">~$' + f.economy_main_price.toLocaleString() +
+          '</span> <span class="basic-label">Main Cabin est.</span></div>';
+      } else {
+        priceBlock = '<div class="price">$' + (displayPrice || f.price).toLocaleString() + '</div>';
+      }
     } else {
-      priceBlock = '<div class="price">$' + f.price.toLocaleString() + '</div>';
+      // Specific fare class selected — show that price prominently
+      var prefix = (fc === 'main' && f.basic_economy_price !== f.economy_main_price) ? '~' : '';
+      priceBlock = '<div class="price">' + prefix + '$' + displayPrice.toLocaleString() + '</div>' +
+        '<div class="est-main">' + fareBadgeLabel + '</div>';
     }
 
-    const stopsLabel = f.stops === 0 ? 'Nonstop' : f.stops + ' stop';
+    var stopsLabel = f.stops === 0 ? 'Nonstop' : f.stops + ' stop';
 
-    // Encode flight data as data attributes for the book button
-    const fData = encodeURIComponent(JSON.stringify({
+    var fData = encodeURIComponent(JSON.stringify({
       primary_airline: f.primary_airline,
       airlines: f.airlines,
       search_date: f.search_date,
@@ -992,11 +1276,11 @@
   }
 
   function renderFlights() {
-    const el = document.getElementById('flights');
+    var el = document.getElementById('flights');
     if (!data) { el.innerHTML = '<div class="status">Loading flights&hellip;</div>'; return; }
 
-    const allForDate = getActiveFlights()
-      .filter(f => f.search_date === activeDate && passesFilter(f));
+    var allForDate = getActiveFlights()
+      .filter(function (f) { return f.search_date === activeDate && passesFilter(f); });
 
     if (allForDate.length === 0) {
       el.innerHTML = '<div class="status">No flights match these filters.</div>';
@@ -1004,18 +1288,18 @@
       return;
     }
 
-    const niceDate = new Date(activeDate + 'T12:00:00').toLocaleDateString('en-US',
+    var niceDate = new Date(activeDate + 'T12:00:00').toLocaleDateString('en-US',
       { weekday: 'long', month: 'long', day: 'numeric' });
 
-    const isExpanded = expandedDates.has(activeDate);
-    const visible = isExpanded ? allForDate : allForDate.slice(0, 3);
-    const remaining = allForDate.length - 3;
+    var isExpanded = expandedDates.has(activeDate);
+    var visible = isExpanded ? allForDate : allForDate.slice(0, 3);
+    var remaining = allForDate.length - 3;
 
-    let html = '<div class="date-heading">' + niceDate +
+    var html = '<div class="date-heading">' + niceDate +
                '<span class="date-count">' + allForDate.length +
                ' flight' + (allForDate.length !== 1 ? 's' : '') + '</span></div>';
 
-    visible.forEach((f, i) => {
+    visible.forEach(function (f, i) {
       html += cardHTML(f, i + 1, i === 0);
     });
 
@@ -1031,12 +1315,12 @@
     attachBookHandlers();
     attachInterestHandlers();
 
-    const moreBtn = document.getElementById('show-more');
-    if (moreBtn) moreBtn.addEventListener('click', () => {
+    var moreBtn = document.getElementById('show-more');
+    if (moreBtn) moreBtn.addEventListener('click', function () {
       expandedDates.add(activeDate); renderFlights();
     });
-    const lessBtn = document.getElementById('show-less');
-    if (lessBtn) lessBtn.addEventListener('click', () => {
+    var lessBtn = document.getElementById('show-less');
+    if (lessBtn) lessBtn.addEventListener('click', function () {
       expandedDates.delete(activeDate); renderFlights();
     });
 
@@ -1044,25 +1328,32 @@
   }
 
   function renderFamilyPicks(rows) {
-    const el = document.getElementById('family-cards');
+    var el = document.getElementById('family-cards');
     if (!rows || rows.length === 0) {
       el.innerHTML = '<div class="family-empty">No picks yet. Be the first to book!</div>';
       return;
     }
-    // Show newest first
     var sorted = rows.slice().reverse();
     el.innerHTML = sorted.map(function (r) {
-      if (!r.name && !r.airline) return '';  // skip empty rows
+      if (!r.name && !r.airline) return '';
       var icon = r.action === 'booked' ? '&#9992;&#65039;' : '&#128064;';
       var verb = r.action === 'booked' ? 'booked' : 'is interested in';
       var dateLabel = r.flight_date || r.date || '';
-      var priceNum = Number(r.price);
-      var priceStr = isNaN(priceNum) ? '' : ' for <strong>$' + priceNum.toLocaleString() + '</strong>';
+      var displayPrice = Number(r.price);
+      if (data && r.flight_id) {
+        var allFlights = getAllFlightsFlat();
+        var match = allFlights.find(function (f) {
+          return (f.primary_airline + '|' + f.search_date + '|' + f.price) === r.flight_id;
+        });
+        if (match && match.economy_main_price) displayPrice = match.economy_main_price;
+      }
+      var priceStr = isNaN(displayPrice) ? '' : ' for <strong>$' + displayPrice.toLocaleString() + '</strong>';
       var ago = r.timestamp ? timeAgo(r.timestamp) : '';
+      var originLabel = r.origin ? ' <span style="color:#94a3b8;font-size:11px;">(' + escHtml(r.origin) + ')</span>' : '';
       return '<div class="family-card">' +
         '<div class="fc-icon">' + icon + '</div>' +
         '<div class="fc-body">' +
-          '<div class="fc-text"><strong>' + escHtml(r.name || 'Someone') + '</strong> ' +
+          '<div class="fc-text"><strong>' + escHtml(r.name || 'Someone') + '</strong>' + originLabel + ' ' +
             verb + ' <strong>' + escHtml(r.airline || 'a flight') + '</strong>' +
             (dateLabel ? ' on ' + escHtml(dateLabel) : '') +
             priceStr + '</div>' +
@@ -1072,6 +1363,20 @@
     }).join('');
   }
 
+  function getAllFlightsFlat() {
+    if (!data) return [];
+    var all = [];
+    Object.keys(data).forEach(function (origin) {
+      var od = data[origin];
+      ['outbound', 'return'].forEach(function (dir) {
+        if (od[dir] && od[dir].flights) {
+          all = all.concat(od[dir].flights);
+        }
+      });
+    });
+    return all;
+  }
+
   function escHtml(s) {
     var div = document.createElement('div');
     div.textContent = s || '';
@@ -1079,22 +1384,42 @@
   }
 
   function renderFooter(count) {
-    const gen = data ? data.generated : '';
+    var od = getOriginData();
+    var gen = od && od.outbound ? od.outbound.generated : '';
     document.getElementById('footer').textContent =
       'Generated ' + gen + ' \u00b7 ' + count + ' flights shown \u00b7 Prices in USD';
   }
 
   // ---- Init ----
   async function init() {
-    promptName();
+    setupOriginModal();
+    setupChangeCity();
     setupBookModal();
     setupFamilyModal();
     setupDirectionNav();
-    renderCountdown();
-    renderFilters();
-    fetchFamilyPicks();
+    setupOriginNav();
 
-    // Auto-refresh family picks every 60s
+    // Check stored origin
+    var stored = getStoredOrigin();
+    if (stored && ORIGINS[stored]) {
+      activeOrigin = stored;
+      hideOriginModal();
+    } else {
+      showOriginModal();
+      return; // Wait for origin selection before loading data
+    }
+
+    startApp();
+  }
+
+  async function startApp() {
+    promptName();
+    renderCountdown();
+    renderOriginNav();
+    renderDirectionNav();
+    renderFilters();
+    var sheetReady = fetchFamilyPicks();
+
     setInterval(fetchFamilyPicks, 60000);
 
     // Check URL params for direction
@@ -1109,11 +1434,11 @@
       '<div class="status">' +
         '<div class="loading-spinner"></div>' +
         '<div>Searching flights&hellip;</div>' +
-        '<div class="loading-sub">Checking outbound + return &times; nonstop + 1-stop</div>' +
+        '<div class="loading-sub">Checking all routes &times; nonstop + 1-stop</div>' +
       '</div>';
 
-    // Try serverless API first, fall back to static JSON (local dev)
-    let resp;
+    // Try serverless API first, fall back to static JSON
+    var resp;
     try {
       resp = await fetch('/api/flights');
       if (!resp.ok) throw new Error('API ' + resp.status);
@@ -1130,6 +1455,28 @@
     }
 
     data = await resp.json();
+
+    // Handle legacy format (flat outbound_flights/return_flights) — wrap into LAX
+    if (data.outbound_flights || data.return_flights) {
+      var legacy = data;
+      data = {
+        LAX: {
+          outbound: {
+            generated: legacy.generated || '',
+            days_to_go: legacy.days_to_go || 0,
+            trip_date: legacy.trip_date || '',
+            flights: legacy.outbound_flights || [],
+          },
+          return: {
+            generated: legacy.generated || '',
+            days_to_go: legacy.days_to_go || 0,
+            trip_date: legacy.trip_date || '',
+            flights: legacy.return_flights || [],
+          }
+        }
+      };
+    }
+
     if (data.error) {
       document.getElementById('flights').innerHTML =
         '<div class="status">API error: ' + data.error + '</div>';
@@ -1139,20 +1486,28 @@
     renderCountdown();
     renderTabs();
     renderFlights();
-    fetchAISummary();
+    sheetReady.then(function () { fetchAISummary(); });
 
-    // Handle ?flight= URL param — find matching flight in either direction
+    // Handle ?flight= URL param
     var flightParam = new URLSearchParams(window.location.search).get('flight');
     if (flightParam && data) {
-      var allFlights = (data.outbound_flights || []).concat(data.return_flights || []);
+      var allFlights = getAllFlightsFlat();
       var match = allFlights.find(function (f) { return flightId(f) === flightParam; });
       if (match) {
-        // Determine direction from match's search_date
-        var isReturn = (data.return_flights || []).some(function (f) {
-          return flightId(f) === flightParam;
+        // Try to find which origin+direction this flight belongs to
+        var found = false;
+        Object.keys(data).forEach(function (origin) {
+          ['outbound', 'return'].forEach(function (dir) {
+            var flights = (data[origin][dir] || {}).flights || [];
+            if (flights.some(function (f) { return flightId(f) === flightParam; })) {
+              activeOrigin = origin;
+              activeDirection = dir;
+              found = true;
+            }
+          });
         });
-        if (isReturn && activeDirection !== 'return') {
-          activeDirection = 'return';
+        if (found) {
+          renderOriginNav();
           renderDirectionNav();
           updateHero();
         }

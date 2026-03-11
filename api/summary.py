@@ -56,8 +56,18 @@ class handler(BaseHTTPRequestHandler):
                     f"for ${p.get('price', '?')}"
                 )
 
-            route = "IST to LAX" if direction == "return" else "LAX to VCE"
+            origin = payload.get("origin", "LAX")
+            route_map = {
+                "LAX": {"outbound": "LAX to VCE", "return": "IST to LAX"},
+                "AKL": {"outbound": "AKL to VCE", "return": "IST to AKL"},
+                "ATL": {"outbound": "ATL to VCE", "return": "IST to ATL"},
+            }
+            city_names = {"LAX": "Los Angeles", "AKL": "Auckland", "ATL": "Atlanta"}
+            route = route_map.get(origin, route_map["LAX"]).get(direction, "LAX to VCE")
+            city = city_names.get(origin, origin)
+
             user_msg = (
+                f"Origin city: {city}\n"
                 f"Direction: {route}\n\n"
                 f"Available flights (sorted by score, lower=better):\n"
                 + "\n".join(flight_lines)
@@ -97,7 +107,7 @@ class handler(BaseHTTPRequestHandler):
 
         except Exception as exc:
             out = json.dumps({
-                "summary": "Flight data updated daily. Check back each morning for today's best picks."
+                "summary": "Flight data updated daily. Check back each morning for today's best picks.",
             }).encode()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
