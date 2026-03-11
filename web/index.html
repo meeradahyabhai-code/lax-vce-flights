@@ -22,28 +22,36 @@
 
   /* Hero */
   .hero {
-    background: #faf8f3;
-    text-align: center; padding: 80px 24px;
+    background:
+      repeating-linear-gradient(
+        135deg,
+        transparent,
+        transparent 2px,
+        rgba(180,160,130,0.02) 2px,
+        rgba(180,160,130,0.02) 4px
+      ),
+      radial-gradient(ellipse at 50% 40%, #ffffff 0%, #faf8f3 70%);
+    text-align: center; padding: 100px 24px;
   }
   .hero-pill {
     display: inline-block;
-    background: #faf8f3; border: 1px solid var(--gold);
-    border-radius: 9999px; padding: 7px 22px;
-    font-family: var(--sans); font-size: 11px; font-weight: 500;
-    color: var(--gold); letter-spacing: 1.2px; text-transform: uppercase;
+    background: rgba(184,149,58,0.06); border: 1px solid rgba(184,149,58,0.35);
+    border-radius: 9999px; padding: 5px 18px;
+    font-family: var(--sans); font-size: 10px; font-weight: 500;
+    color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase;
   }
   .hero-title {
-    font-family: var(--serif); font-size: clamp(48px, 10vw, 72px);
+    font-family: var(--serif); font-size: clamp(56px, 12vw, 96px);
     font-weight: 300; font-style: italic; color: #1a3a6b;
-    letter-spacing: -1px; line-height: 1.2; margin-top: 20px;
+    letter-spacing: -0.02em; line-height: 1.1; margin-top: 24px;
   }
   .hero-subtitle {
-    font-family: var(--serif); font-size: 22px; font-weight: 300;
-    font-style: italic; color: #2a5298; line-height: 1.6; margin-top: 4px;
+    font-family: var(--serif); font-size: 26px; font-weight: 300;
+    font-style: italic; color: #2a5298; line-height: 1.5; margin-top: 6px;
   }
   .hero-rule {
-    width: 120px; height: 1px; background: var(--gold);
-    margin: 24px auto 0;
+    width: 80px; height: 1px; background: var(--gold);
+    margin: 32px auto 0;
   }
 
   /* Layout */
