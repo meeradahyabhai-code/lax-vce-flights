@@ -1,5 +1,8 @@
-"""Unit tests for flight_agent.py pricing, scoring, fare labeling, and return flights."""
+"""Unit tests for flight_agent.py pricing, scoring, fare labeling, return flights,
+JSON export, email HTML, and summary API.
+"""
 
+import json
 import unittest
 
 from flight_agent import (
@@ -7,10 +10,17 @@ from flight_agent import (
     AUTO_TOP_PICK_NONSTOP,
     BASIC_ECONOMY_CARRIERS,
     BASIC_TO_MAIN_ADDER,
+    DEPARTURE_DATES,
     RETURN_AIRLINE_BONUSES,
     RETURN_AUTO_TOP_PICK_NONSTOP,
     RETURN_DATES,
+    _build_date_sections,
+    _flight_to_dict,
+    _layover_info,
     _normalize_skyscanner,
+    build_email_html,
+    dedup_flights,
+    filter_flights,
     label_fare_types,
     normalize,
     score_flights,
@@ -380,6 +390,227 @@ class TestSkyscannerNormalize(unittest.TestCase):
         """Skyscanner results should have empty google_flights_url."""
         result = _normalize_skyscanner(self._make_skyscanner_itin())
         self.assertEqual(result["google_flights_url"], "")
+
+
+class TestFlightToDict(unittest.TestCase):
+    """Tests for _flight_to_dict serialization."""
+
+    def test_all_required_keys_present(self):
+        """Serialized flight dict must contain all required keys."""
+        f = _make_flight(airline="Delta", price=500)
+        f = label_fare_types([f])[0]
+        f = score_flights([f])[0]
+        d = _flight_to_dict(f)
+        required = {
+            "primary_airline", "airlines", "departure_time", "arrival_time",
+            "stops", "total_layover_min", "total_duration_min", "price",
+            "score", "search_date", "fare_type", "economy_main_price",
+            "basic_economy_price", "google_flights_url", "layover_info",
+        }
+        self.assertEqual(set(d.keys()), required)
+
+    def test_raw_field_excluded(self):
+        """Serialized dict should not include the bulky 'raw' field."""
+        f = _make_flight()
+        f = label_fare_types([f])[0]
+        f = score_flights([f])[0]
+        d = _flight_to_dict(f)
+        self.assertNotIn("raw", d)
+
+    def test_price_is_numeric(self):
+        """Price in serialized dict must be numeric."""
+        f = _make_flight(price=427)
+        f = label_fare_types([f])[0]
+        f = score_flights([f])[0]
+        d = _flight_to_dict(f)
+        self.assertIsInstance(d["price"], (int, float))
+
+    def test_layover_info_for_nonstop(self):
+        """Nonstop flights should have 'Nonstop' as layover_info."""
+        f = _make_flight(stops=0, layover=0)
+        self.assertEqual(_layover_info(f), "Nonstop")
+
+    def test_layover_info_for_connection(self):
+        """Flight with layover data should include airport name."""
+        f = _make_flight(stops=1, layover=150)
+        f["raw"] = {"layovers": [{"name": "Paris CDG", "duration": 150}]}
+        info = _layover_info(f)
+        self.assertIn("Paris CDG", info)
+        self.assertIn("2h 30m", info)
+
+
+class TestEmailHTML(unittest.TestCase):
+    """Tests for build_email_html output."""
+
+    def _scored_flights(self, dates, airline_bonuses=None, auto_top_picks=None):
+        """Build a set of scored flights for given dates."""
+        flights = []
+        for dt in dates:
+            flights.append(_make_flight(airline="Delta", price=500, search_date=dt))
+            flights.append(_make_flight(airline="United", price=600, search_date=dt))
+        flights = label_fare_types(flights)
+        return score_flights(flights, airline_bonuses=airline_bonuses,
+                             auto_top_picks=auto_top_picks)
+
+    def test_outbound_only_email(self):
+        """Email with only outbound flights should contain outbound dates."""
+        outbound = self._scored_flights(DEPARTURE_DATES)
+        html = build_email_html(outbound)
+        self.assertIn("Cruise Bound", html)
+        self.assertIn("June 29", html)
+        self.assertNotIn("Return Flights", html)
+
+    def test_outbound_plus_return_email(self):
+        """Email with both should contain outbound and return sections."""
+        outbound = self._scored_flights(DEPARTURE_DATES)
+        ret = self._scored_flights(
+            RETURN_DATES,
+            airline_bonuses=RETURN_AIRLINE_BONUSES,
+            auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
+        )
+        html = build_email_html(outbound, ret)
+        self.assertIn("Cruise Bound", html)
+        self.assertIn("Return Flights", html)
+        self.assertIn("IST to LAX", html)
+        self.assertIn("July 13", html)
+
+    def test_email_has_select_flight_buttons(self):
+        """Email cards should contain 'Select Flight' CTA."""
+        outbound = self._scored_flights(["2026-06-29"])
+        html = build_email_html(outbound)
+        self.assertIn("Select Flight", html)
+
+    def test_email_has_see_whos_interested_link(self):
+        """Email cards should contain 'See who's interested' deep link."""
+        outbound = self._scored_flights(["2026-06-29"])
+        html = build_email_html(outbound)
+        self.assertIn("See who", html)
+        self.assertIn("interested", html)
+
+    def test_email_has_score_badges(self):
+        """Email should contain score label badges."""
+        outbound = self._scored_flights(["2026-06-29"])
+        html = build_email_html(outbound)
+        # Should contain at least one of the score labels
+        has_label = ("Excellent Choice" in html or
+                     "Solid Pick" in html or
+                     "Fair Option" in html)
+        self.assertTrue(has_label, "Email should contain a score label")
+
+    def test_email_price_font_size_38(self):
+        """Email price block should use 38px font size."""
+        outbound = self._scored_flights(["2026-06-29"])
+        html = build_email_html(outbound)
+        self.assertIn("font-size:38px", html)
+
+    def test_email_total_flights_count(self):
+        """Footer should show total flight count across both directions."""
+        outbound = self._scored_flights(DEPARTURE_DATES)
+        ret = self._scored_flights(RETURN_DATES)
+        html = build_email_html(outbound, ret)
+        total = len(outbound) + len(ret)
+        self.assertIn(str(total), html)
+
+
+class TestFilterAndDedup(unittest.TestCase):
+    """Tests for filter_flights and dedup_flights."""
+
+    def test_blocked_airlines_removed(self):
+        """Budget carriers should be filtered out."""
+        flights = [
+            _make_flight(airline="Spirit", price=200),
+            _make_flight(airline="Delta", price=500),
+        ]
+        filtered = filter_flights(flights)
+        airlines = [f["primary_airline"] for f in filtered]
+        self.assertNotIn("Spirit", airlines)
+        self.assertIn("Delta", airlines)
+
+    def test_2plus_stops_removed(self):
+        """Flights with 2+ stops should be filtered out."""
+        flights = [
+            _make_flight(stops=2, layover=200),
+            _make_flight(stops=1, layover=60),
+            _make_flight(stops=0, layover=0),
+        ]
+        filtered = filter_flights(flights)
+        self.assertEqual(len(filtered), 2)
+
+    def test_dedup_keeps_cheapest(self):
+        """Dedup should keep the cheapest of duplicate flights."""
+        flights = [
+            _make_flight(airline="Delta", price=500, dep="2026-06-29 17:55"),
+            _make_flight(airline="Delta", price=450, dep="2026-06-29 17:55"),
+        ]
+        deduped = dedup_flights(flights)
+        self.assertEqual(len(deduped), 1)
+        self.assertEqual(deduped[0]["price"], 450)
+
+    def test_different_times_not_deduped(self):
+        """Flights at different times should not be merged."""
+        flights = [
+            _make_flight(airline="Delta", price=500, dep="2026-06-29 08:00"),
+            _make_flight(airline="Delta", price=500, dep="2026-06-29 17:55"),
+        ]
+        deduped = dedup_flights(flights)
+        self.assertEqual(len(deduped), 2)
+
+
+class TestDateSections(unittest.TestCase):
+    """Tests for _build_date_sections email helper."""
+
+    def test_sections_contain_date_headings(self):
+        """Each date should get its own heading in the email."""
+        flights = [
+            _make_flight(search_date="2026-06-29"),
+            _make_flight(search_date="2026-06-30"),
+        ]
+        flights = label_fare_types(flights)
+        flights = score_flights(flights)
+        html = _build_date_sections(flights, "outbound")
+        self.assertIn("June 29", html)
+        self.assertIn("June 30", html)
+
+    def test_show_more_link_when_over_3(self):
+        """Dates with >3 flights should get a 'View all' link."""
+        flights = [_make_flight(search_date="2026-06-29", price=p)
+                   for p in (400, 500, 600, 700)]
+        flights = label_fare_types(flights)
+        flights = score_flights(flights)
+        html = _build_date_sections(flights, "outbound")
+        self.assertIn("View all 4 flights", html)
+
+    def test_return_direction_param_in_link(self):
+        """Return date sections should include dir=return in web link."""
+        flights = [_make_flight(search_date="2026-07-13", price=p)
+                   for p in (400, 500, 600, 700)]
+        flights = label_fare_types(flights)
+        flights = score_flights(flights)
+        html = _build_date_sections(flights, "return")
+        self.assertIn("dir=return", html)
+
+
+class TestSummaryAPI(unittest.TestCase):
+    """Tests for the summary API endpoint logic (unit-level, no live API calls)."""
+
+    def test_system_prompt_content(self):
+        """System prompt should mention Indian family and cruise trip."""
+        from api.summary import SYSTEM_PROMPT
+        self.assertIn("Indian family", SYSTEM_PROMPT)
+        self.assertIn("cruise trip", SYSTEM_PROMPT)
+        self.assertIn("2-3 sentences", SYSTEM_PROMPT)
+        self.assertIn("No emojis", SYSTEM_PROMPT)
+
+    def test_system_prompt_no_bullets(self):
+        """System prompt should explicitly forbid bullet points."""
+        from api.summary import SYSTEM_PROMPT
+        self.assertIn("No bullet points", SYSTEM_PROMPT)
+
+    def test_openai_key_env_var_name(self):
+        """API should read from OPENAI_API_KEY env var."""
+        import api.summary as mod
+        # The module should reference OPENAI_API_KEY
+        self.assertTrue(hasattr(mod, "OPENAI_API_KEY"))
 
 
 if __name__ == "__main__":
