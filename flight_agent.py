@@ -480,7 +480,7 @@ def _book_buttons(f: dict) -> str:
         f'font-size:12px;font-weight:500;text-decoration:none;'
         f'padding:8px 16px;border-radius:9999px;letter-spacing:0.3px;'
         f'margin-right:6px;">'
-        f'Book Now</a>'
+        f'Select Flight</a>'
     )
     details_btn = (
         f'<a href="{book_url}" target="_blank" style="display:inline-block;'
