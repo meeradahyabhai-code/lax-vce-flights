@@ -623,7 +623,7 @@
       '<div class="card-inner">' +
         '<div class="card-left">' +
           '<span class="airline-name">' + f.primary_airline + '</span> ' +
-          '<span class="badge badge-source">Google Flights</span> ' +
+          '<span class="badge" style="background:#b8953a;color:#f8f8fc;">' + scoreLabel(f.score) + '</span> ' +
           fareBadge +
           '<div class="times"><span class="dep-time">' + fmtTime(f.departure_time) +
             ' &rarr;</span> <span class="arr-time">' + fmtTime(f.arrival_time) + '</span></div>' +
@@ -633,7 +633,6 @@
         '</div>' +
         '<div class="card-right">' +
           priceBlock +
-          '<div class="score-label" style="color:' + scoreColor(f.score) + '">' + scoreLabel(f.score) + '</div>' +
           '<button class="book-btn" data-flight="' + fData +
             '">Select Flight</button>' +
         '</div>' +

@@ -492,31 +492,20 @@ def _book_buttons(f: dict) -> str:
     return book_btn + details_btn
 
 
-def _score_label(f: dict) -> str:
-    """Return a styled score label based on thresholds."""
+def _score_badge(f: dict) -> str:
+    """Return a badge-styled score label based on thresholds."""
     score = f.get("score", 999)
     if score < 200:
         text = "&#10022; Excellent Choice"
-        color = "#b8953a"
     elif score <= 400:
         text = "Solid Pick"
-        color = "#2a5298"
     else:
         text = "Fair Option"
-        color = "#8b8ba0"
     return (
-        f'<span style="font-family:{_SANS};font-size:11px;font-weight:500;'
-        f'letter-spacing:0.08em;text-transform:uppercase;'
-        f'color:{color};">{text}</span>'
-    )
-
-
-def _source_badge(f: dict) -> str:
-    return (
-        f'<span style="display:inline-block;background:#1a3a6b;color:#eeeef4;'
+        f'<span style="display:inline-block;background:#b8953a;color:#f8f8fc;'
         f"font-family:{_SANS};font-size:10px;font-weight:500;"
         f'padding:2px 8px;border-radius:9999px;letter-spacing:0.4px;'
-        f'vertical-align:middle;">Google Flights</span>'
+        f'vertical-align:middle;">{text}</span>'
     )
 
 
@@ -592,7 +581,7 @@ def _flight_card(f: dict, rank: int, is_top_pick: bool) -> str:
             <td style="vertical-align:top;width:58%;">
               <span style="font-family:{_SANS};font-size:16px;font-weight:500;
                            color:#0a0a0f;">{f["primary_airline"]}</span>
-              &nbsp;{_source_badge(f)}
+              &nbsp;{_score_badge(f)}
               &nbsp;{_fare_badge(f)}
               <br>
               <span style="font-family:{_SERIF};font-size:26px;font-weight:400;
@@ -607,8 +596,6 @@ def _flight_card(f: dict, rank: int, is_top_pick: bool) -> str:
             </td>
             <td style="vertical-align:top;text-align:right;width:42%;">
               {_price_block(f)}
-              <br>
-              {_score_label(f)}
               <br><br>
               {_book_buttons(f)}
             </td>
