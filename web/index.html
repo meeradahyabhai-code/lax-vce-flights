@@ -106,8 +106,8 @@
   .times {
     font-family: var(--serif); font-size: 26px; font-weight: 600;
     color: #0a0a0f; letter-spacing: -0.5px; line-height: 1.7;
-    white-space: nowrap;
   }
+  .times .arr-time { display: inline; }
   .meta { font-size: 13px; font-weight: 300; color: var(--lagoon); }
   .layover { font-size: 12px; font-weight: 300; color: #94a3b8; }
 
@@ -247,14 +247,18 @@
   }
 
   @media (max-width: 600px) {
-    .card-inner { flex-direction: row; }
-    .card-right { text-align: right; width: 130px; flex-shrink: 0; }
-    .card-left { flex: 1; min-width: 0; }
-    .times { font-size: 26px; }
+    .card { padding: 16px; }
+    .card-inner { flex-direction: row; gap: 10px; }
+    .card-left { flex: 1; min-width: 0; max-width: 58%; }
+    .card-right { text-align: right; min-width: 130px; flex-shrink: 0; }
+    .times { font-size: 28px; }
+    .times .dep-time { display: block; }
+    .times .arr-time { display: block; }
     .airline-name { font-size: 16px; }
     .meta { font-size: 14px; }
     .layover { font-size: 13px; }
     .price { font-size: 32px; }
+    .book-btn { display: block; width: 100%; text-align: center; margin-top: 8px; }
   }
 </style>
 </head>
@@ -597,8 +601,8 @@
           '<span class="airline-name">' + f.primary_airline + '</span> ' +
           '<span class="badge badge-source">Google Flights</span> ' +
           fareBadge +
-          '<div class="times">' + fmtTime(f.departure_time) +
-            ' &rarr; ' + fmtTime(f.arrival_time) + '</div>' +
+          '<div class="times"><span class="dep-time">' + fmtTime(f.departure_time) +
+            ' &rarr;</span> <span class="arr-time">' + fmtTime(f.arrival_time) + '</span></div>' +
           '<div class="meta">' + fmtDuration(f.total_duration_min) +
             ' &middot; ' + stopsLabel + '</div>' +
           '<div class="layover">' + f.layover_info + '</div>' +

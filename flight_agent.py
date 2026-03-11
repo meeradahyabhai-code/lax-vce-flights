@@ -578,7 +578,7 @@ def _flight_card(f: dict, rank: int, is_top_pick: bool) -> str:
               <br>
               <span style="font-family:{_SERIF};font-size:26px;font-weight:400;
                            color:#0a0a0f;letter-spacing:-0.5px;line-height:1.7;">
-                {dep} &rarr; {arr}</span>
+                {dep} &rarr;<br>{arr}</span>
               <br>
               <span style="font-family:{_SANS};font-size:13px;font-weight:300;
                            color:#0d6e8a;">{duration} &middot; {stops_label}</span>
