@@ -213,7 +213,7 @@ def normalize(raw_results: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 BASIC_ECONOMY_CARRIERS = {"american", "delta", "united"}
-BASIC_ECONOMY_MARKUP = 0.15  # Economy Main ≈ Basic + 15%
+BASIC_TO_MAIN_ADDER = 100  # Economy Main ≈ Basic Economy + $100 for intl flights
 
 
 def label_fare_types(flights: list[dict]) -> list[dict]:
@@ -221,8 +221,9 @@ def label_fare_types(flights: list[dict]) -> list[dict]:
 
     Google Flights always shows the cheapest fare. For the US Big 3
     (American, Delta, United) this is Basic Economy. We estimate
-    Economy Main at +15% and show it as the primary price, with the
-    actual Basic Economy price shown underneath.
+    Economy Main by adding a flat $100 — typical for international
+    routes — and show it as the primary price, with the actual Basic
+    Economy price shown underneath.
 
     Non-Big-3 carriers' base fare is Economy Main (standard cabin).
     """
@@ -231,7 +232,7 @@ def label_fare_types(flights: list[dict]) -> list[dict]:
         if carrier in BASIC_ECONOMY_CARRIERS:
             f["fare_type"] = "Economy Main"
             f["basic_economy_price"] = f["price"]
-            f["economy_main_price"] = round(f["price"] * (1 + BASIC_ECONOMY_MARKUP))
+            f["economy_main_price"] = f["price"] + BASIC_TO_MAIN_ADDER
         else:
             f["fare_type"] = "Economy Main"
             f["basic_economy_price"] = None
@@ -659,29 +660,41 @@ def build_email_html(flights: list[dict]) -> str:
 <!-- Hero -->
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr><td align="center"
-          style="background:linear-gradient(160deg,#0a0a2e 0%,#1a3a6b 45%,#0d6e8a 100%);
-                 padding:56px 24px 48px 24px;">
-    <span style="font-size:40px;line-height:1;">&#128674;</span>
-    <br>
-    <span style="font-family:{_SERIF};font-size:42px;font-weight:300;
-                 font-style:italic;color:#ffffff;
-                 letter-spacing:-0.5px;line-height:1.3;">
-      Venice Bound</span>
-    <br>
-    <span style="font-family:{_SERIF};font-size:56px;font-weight:400;
-                 color:#d4af6a;letter-spacing:-2px;line-height:1.4;">
-      {days_to_go} days</span>
-    <span style="font-family:{_SANS};font-size:18px;font-weight:300;
-                 color:#d4af6a;">&nbsp;&middot;&nbsp;July 3, 2026</span>
-    <br><br>
-    <span style="display:inline-block;
-                 background:rgba(255,255,255,0.08);
-                 border:1px solid rgba(255,255,255,0.15);
-                 border-radius:9999px;padding:7px 22px;
-                 font-family:{_SANS};font-size:12px;font-weight:400;
-                 color:rgba(255,255,255,0.7);letter-spacing:0.6px;">
-      LAX &rarr; VCE &nbsp;&middot;&nbsp; Economy &nbsp;&middot;&nbsp; Max 1 Stop
-    </span>
+          style="background:linear-gradient(180deg,#faf8f3 0%,#f0ebe0 100%);
+                 padding:0;">
+    <!-- Top gold rule -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td style="height:1px;background:#b8953a;font-size:1px;line-height:1px;">&nbsp;</td></tr>
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td align="center" style="padding:48px 24px 44px 24px;">
+        <span style="font-size:28px;color:#b8953a;line-height:1;">&#9992;</span>
+        <br>
+        <span style="font-family:{_SERIF};font-size:44px;font-weight:300;
+                     font-style:italic;color:#1a1a1a;
+                     letter-spacing:-0.5px;line-height:1.4;">
+          Venice Bound</span>
+        <br>
+        <span style="font-family:{_SERIF};font-size:48px;font-weight:400;
+                     color:#b8953a;letter-spacing:-2px;line-height:1.3;">
+          {days_to_go} days</span>
+        <span style="font-family:{_SANS};font-size:16px;font-weight:300;
+                     color:#b8953a;">&nbsp;&middot;&nbsp;July 3, 2026</span>
+        <br><br>
+        <span style="display:inline-block;
+                     background:#faf8f3;
+                     border:1px solid #b8953a;
+                     border-radius:9999px;padding:7px 22px;
+                     font-family:{_SANS};font-size:12px;font-weight:400;
+                     color:#1a1a1a;letter-spacing:0.6px;">
+          LAX &rarr; VCE &nbsp;&middot;&nbsp; Economy &nbsp;&middot;&nbsp; Max 1 Stop
+        </span>
+      </td></tr>
+    </table>
+    <!-- Bottom gold rule -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td style="height:1px;background:#b8953a;font-size:1px;line-height:1px;">&nbsp;</td></tr>
+    </table>
   </td></tr>
 </table>
 
