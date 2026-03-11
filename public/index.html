@@ -55,7 +55,7 @@
   /* Date tabs */
   .tabs { display: flex; gap: 8px; margin: 24px 0 16px; flex-wrap: wrap; }
   .tab {
-    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    font-family: var(--sans); font-size: 24px; font-weight: 500;
     padding: 8px 20px; border-radius: 0; border: none;
     border-bottom: 2px solid transparent;
     background: transparent; color: #94a3b8; cursor: pointer; transition: all 0.15s;
@@ -258,8 +258,9 @@
   }
 
   @media (max-width: 600px) {
-    .card-inner { flex-direction: column; }
-    .card-right { text-align: left; }
+    .card-inner { flex-direction: row; }
+    .card-right { text-align: right; width: 130px; flex-shrink: 0; }
+    .card-left { flex: 1; min-width: 0; }
     .times { font-size: 26px; }
     .airline-name { font-size: 16px; }
     .meta { font-size: 14px; }
