@@ -314,7 +314,7 @@
 
   const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbz_rbdaEDR3aNeaFnRgV8mvvwNmGaOVVqah3B1MNAAO1Y4ldOjKoxtY8s0LxkYrU9ye/exec';
 
-  const GOOGLE_FLIGHTS_URL = 'https://www.google.com/travel/flights?q=Flights+to+VCE+from+LAX+on+{date}+one+way';
+  const GOOGLE_FLIGHTS_SEARCH = 'https://www.google.com/travel/flights?q=Flights+to+VCE+from+LAX+on+{date}+one+way';
 
   const FILTERS = [
     { id: 'all',       label: 'All' },
@@ -381,10 +381,10 @@
   }
 
   function bookUrl(f) {
-    const key = f.primary_airline.toLowerCase().trim();
-    const base = GOOGLE_FLIGHTS_URL.replace('{date}', f.search_date);
-    return base + '&utm_source=veniceair&utm_medium=email&utm_campaign=lax-vce-2026&utm_content=' +
-      encodeURIComponent(key.replace(/\s+/g, '-') + '-' + f.search_date);
+    if (f.booking_token) {
+      return 'https://www.google.com/travel/flights/booking?tfs=' + encodeURIComponent(f.booking_token);
+    }
+    return GOOGLE_FLIGHTS_SEARCH.replace('{date}', f.search_date);
   }
 
   function flightId(f) {
@@ -555,6 +555,7 @@
       departure_time: f.departure_time,
       arrival_time: f.arrival_time,
       stops: f.stops,
+      booking_token: f.booking_token || '',
     }));
 
     return '<div class="card' + (isTopPick ? ' top-pick' : '') + '">' +

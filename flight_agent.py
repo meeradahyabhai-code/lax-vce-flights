@@ -100,6 +100,7 @@ def _normalize_serpapi(flight: dict) -> dict:
         "price": flight.get("price", 0),
         "source": "serpapi",
         "search_date": flight.get("_search_date", ""),
+        "booking_token": flight.get("booking_token", ""),
         "raw": flight,
     }
 
@@ -361,11 +362,13 @@ def _layover_info(f: dict) -> str:
 
 
 def _book_button(f: dict) -> str:
-    """Dark 'Book' button linking to Google Flights search."""
-    search_date = f.get("search_date", "")
-    book_url = (
-        f"https://www.google.com/travel/flights?q=Flights+to+VCE+from+LAX+on+{search_date}+one+way"
-    )
+    """Dark 'Book' button linking to Google Flights booking page."""
+    token = f.get("booking_token", "")
+    if token:
+        book_url = f"https://www.google.com/travel/flights/booking?tfs={token}"
+    else:
+        search_date = f.get("search_date", "")
+        book_url = f"https://www.google.com/travel/flights?q=Flights+to+VCE+from+LAX+on+{search_date}+one+way"
 
     btn = (
         f'<a href="{book_url}" target="_blank" style="display:inline-block;'
@@ -644,6 +647,7 @@ def export_flights_json(flights: list[dict]) -> None:
                 "search_date": f["search_date"],
                 "fare_type": f.get("fare_type", "Economy Main"),
                 "economy_main_price": f.get("economy_main_price"),
+                "booking_token": f.get("booking_token", ""),
                 "layover_info": _layover_info(f),
             }
             for f in flights

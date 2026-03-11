@@ -47,6 +47,7 @@ def _build_payload(flights: list[dict]) -> dict:
                 "search_date": f["search_date"],
                 "fare_type": f.get("fare_type", "Economy Main"),
                 "economy_main_price": f.get("economy_main_price"),
+                "booking_token": f.get("booking_token", ""),
                 "layover_info": _layover_info(f),
             }
             for f in flights
