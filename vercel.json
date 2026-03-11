@@ -1,0 +1,13 @@
+{
+  "buildCommand": "",
+  "installCommand": "pip install -r requirements.txt",
+  "functions": {
+    "api/flights.py": {
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/((?!api/).*)", "destination": "/public/$1" }
+  ]
+}

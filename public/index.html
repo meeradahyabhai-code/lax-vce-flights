@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VeniceAir — LAX → VCE Flights</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0f;
+    --azure: #1a3a6b;
+    --lagoon: #0d6e8a;
+    --gold: #b8953a;
+    --gold-light: #d4af6a;
+    --fog: #eeeef4;
+    --paper: #f8f8fc;
+    --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-weight: 400; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(160deg, #0a0a2e 0%, var(--azure) 45%, var(--lagoon) 100%);
+    text-align: center; padding: 56px 24px 48px;
+  }
+  .hero-icon { font-size: 40px; line-height: 1; }
+  .hero-title {
+    font-family: var(--serif); font-size: clamp(32px, 6vw, 42px);
+    font-weight: 300; font-style: italic; color: #fff;
+    letter-spacing: -0.5px; line-height: 1.3; margin-top: 8px;
+  }
+  .hero-countdown {
+    font-family: var(--serif); font-size: clamp(40px, 8vw, 56px);
+    font-weight: 400; color: var(--gold-light); letter-spacing: -2px;
+    line-height: 1.3;
+  }
+  .hero-countdown-sub {
+    font-family: var(--sans); font-size: 18px; font-weight: 300;
+    color: var(--gold-light);
+  }
+  .hero-pill {
+    display: inline-block; margin-top: 16px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 9999px; padding: 7px 22px;
+    font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.7);
+    letter-spacing: 0.6px;
+  }
+
+  /* Layout */
+  .container { max-width: 680px; margin: 0 auto; padding: 0 16px 48px; }
+
+  /* Date tabs */
+  .tabs { display: flex; gap: 8px; margin: 24px 0 16px; flex-wrap: wrap; }
+  .tab {
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    padding: 8px 20px; border-radius: 9999px; border: 1px solid var(--fog);
+    background: #fff; color: var(--ink); cursor: pointer; transition: all 0.15s;
+  }
+  .tab:hover { border-color: var(--azure); color: var(--azure); }
+  .tab.active {
+    background: var(--azure); color: #fff; border-color: var(--azure);
+  }
+
+  /* Filter bar */
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-btn {
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    padding: 5px 14px; border-radius: 9999px; border: 1px solid var(--fog);
+    background: #fff; color: var(--ink); cursor: pointer; transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--lagoon); color: var(--lagoon); }
+  .filter-btn.active {
+    background: var(--lagoon); color: #fff; border-color: var(--lagoon);
+  }
+
+  /* Flight card */
+  .card {
+    background: #fff; border: 1px solid var(--fog); border-radius: 14px;
+    padding: 22px 24px; margin-bottom: 14px; transition: box-shadow 0.15s;
+  }
+  .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .card.top-pick { border: 2px solid var(--gold-light); }
+  .card-inner { display: flex; justify-content: space-between; gap: 16px; }
+  .card-left { flex: 1; min-width: 0; }
+  .card-right { text-align: right; flex-shrink: 0; }
+
+  .airline-name { font-size: 16px; font-weight: 500; color: var(--ink); }
+  .badge {
+    display: inline-block; font-size: 10px; font-weight: 500;
+    padding: 2px 8px; border-radius: 9999px; letter-spacing: 0.3px;
+    vertical-align: middle;
+  }
+  .badge-source { background: var(--azure); color: var(--fog); }
+  .badge-basic { background: var(--gold); color: #fff; }
+  .badge-main { background: var(--fog); color: var(--ink); }
+  .badge-top {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #fff; font-weight: 500; padding: 3px 12px; margin-bottom: 8px;
+  }
+
+  .times {
+    font-family: var(--serif); font-size: 26px; font-weight: 400;
+    color: var(--ink); letter-spacing: -0.5px; line-height: 1.7;
+  }
+  .meta { font-size: 13px; font-weight: 300; color: var(--lagoon); }
+  .layover { font-size: 12px; font-weight: 300; color: #94a3b8; }
+
+  .price {
+    font-family: var(--serif); font-size: 36px; font-weight: 400;
+    color: var(--ink); letter-spacing: -1px; line-height: 1.1;
+  }
+  .est-main { font-size: 12px; font-weight: 300; color: #94a3b8; }
+  .est-main-price {
+    font-family: var(--serif); font-size: 18px; font-weight: 300; color: #64748b;
+  }
+  .basic-label { font-size: 12px; font-weight: 400; color: var(--gold); }
+  .score-label { font-size: 11px; font-weight: 300; color: #94a3b8; }
+  .book-btn {
+    display: inline-block; margin-top: 10px;
+    background: var(--ink); color: var(--paper);
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    text-decoration: none; padding: 8px 18px; border-radius: 8px;
+    letter-spacing: 0.3px; transition: background 0.15s;
+  }
+  .book-btn:hover { background: var(--azure); }
+
+  /* Show more toggle */
+  .show-more-btn {
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    color: var(--azure); background: none; border: none; cursor: pointer;
+    padding: 10px 0;
+  }
+  .show-more-btn:hover { color: var(--lagoon); }
+
+  /* Date heading */
+  .date-heading {
+    font-family: var(--serif); font-size: 24px; font-weight: 400;
+    color: var(--ink); letter-spacing: -0.3px; padding: 28px 0 10px;
+  }
+  .date-count { font-size: 13px; font-weight: 300; color: #94a3b8; margin-left: 10px; }
+
+  /* Footer */
+  .footer {
+    margin-top: 36px; border-top: 1px solid var(--fog); padding: 20px 0;
+    text-align: center; font-size: 11px; font-weight: 300; color: #94a3b8;
+  }
+
+  /* Loading */
+  .status { text-align: center; padding: 60px 20px; color: #94a3b8; font-size: 14px; }
+  .loading-spinner {
+    display: inline-block; width: 28px; height: 28px;
+    border: 3px solid var(--fog); border-top-color: var(--azure);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-sub {
+    font-family: var(--sans); font-size: 12px; font-weight: 300;
+    color: #b0b0c0; margin-top: 8px;
+  }
+
+  @media (max-width: 500px) {
+    .card-inner { flex-direction: column; }
+    .card-right { text-align: left; }
+    .times { font-size: 22px; }
+    .price { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-icon">&#128674;</div>
+  <div class="hero-title">Venice Bound</div>
+  <div>
+    <span class="hero-countdown" id="countdown"></span>
+    <span class="hero-countdown-sub">&middot; July 3, 2026</span>
+  </div>
+  <div class="hero-pill">LAX &rarr; VCE &nbsp;&middot;&nbsp; Economy &nbsp;&middot;&nbsp; Max 1 Stop</div>
+</div>
+
+<div class="container">
+  <div class="tabs" id="tabs"></div>
+  <div class="filters" id="filters"></div>
+  <div id="flights"></div>
+  <div class="footer" id="footer"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const TRIP = new Date('2026-07-03T00:00:00');
+  const FILTERS = [
+    { id: 'all',       label: 'All' },
+    { id: 'morning',   label: 'Morning' },
+    { id: 'evening',   label: 'Evening' },
+    { id: 'nonstop',   label: 'Nonstop' },
+    { id: '1stop',     label: '1 Stop' },
+    { id: 'under900',  label: 'Under $900' },
+    { id: 'under1100', label: 'Under $1,100' },
+    { id: 'dua',       label: 'Delta / United' },
+  ];
+
+  let data = null;
+  let activeDate = null;
+  let activeFilter = 'all';
+  let expandedDates = new Set();
+
+  // ---- Helpers ----
+  function fmtTime(raw) {
+    const clean = raw.replace('T', ' ').slice(0, 16);
+    const d = new Date(clean.replace(' ', 'T'));
+    if (isNaN(d)) return raw.slice(0, 16);
+    let h = d.getHours(), m = d.getMinutes();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + String(m).padStart(2, '0') + ' ' + ampm;
+  }
+
+  function fmtDuration(min) {
+    const h = Math.floor(min / 60), m = min % 60;
+    return h ? h + 'h ' + m + 'm' : m + 'm';
+  }
+
+  function depHour(f) {
+    const clean = f.departure_time.replace('T', ' ').slice(0, 16);
+    const d = new Date(clean.replace(' ', 'T'));
+    return isNaN(d) ? -1 : d.getHours();
+  }
+
+  function bookUrl(f) {
+    return 'https://www.google.com/flights#search;f=LAX;t=VCE;d=' +
+           f.search_date + ';tt=o';
+  }
+
+  function daysToGo() {
+    const now = new Date();
+    now.setHours(0,0,0,0);
+    return Math.ceil((TRIP - now) / 86400000);
+  }
+
+  // ---- Filter logic ----
+  function passesFilter(f) {
+    const h = depHour(f);
+    switch (activeFilter) {
+      case 'morning':   return h >= 6 && h <= 10;
+      case 'evening':   return h >= 18 && h <= 21;
+      case 'nonstop':   return f.stops === 0;
+      case '1stop':     return f.stops === 1;
+      case 'under900':  return f.price < 900;
+      case 'under1100': return f.price < 1100;
+      case 'dua':       return /^(delta|united)$/i.test(f.primary_airline);
+      default:          return true;
+    }
+  }
+
+  // ---- Render ----
+  function renderCountdown() {
+    const d = data ? data.days_to_go : daysToGo();
+    document.getElementById('countdown').textContent = d + ' days';
+  }
+
+  function renderTabs() {
+    const el = document.getElementById('tabs');
+    if (!data) return;
+    const dates = [...new Set(data.flights.map(f => f.search_date))].sort();
+    if (!activeDate) activeDate = dates[0];
+    el.innerHTML = dates.map(d => {
+      const label = new Date(d + 'T12:00:00').toLocaleDateString('en-US',
+        { month: 'short', day: 'numeric' });
+      const cls = d === activeDate ? 'tab active' : 'tab';
+      return '<button class="' + cls + '" data-date="' + d + '">' + label + '</button>';
+    }).join('');
+    el.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeDate = btn.dataset.date;
+        expandedDates.clear();
+        renderTabs(); renderFlights();
+      });
+    });
+  }
+
+  function renderFilters() {
+    const el = document.getElementById('filters');
+    el.innerHTML = FILTERS.map(f => {
+      const cls = f.id === activeFilter ? 'filter-btn active' : 'filter-btn';
+      return '<button class="' + cls + '" data-fid="' + f.id + '">' + f.label + '</button>';
+    }).join('');
+    el.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeFilter = btn.dataset.fid;
+        expandedDates.clear();
+        renderFilters(); renderFlights();
+      });
+    });
+  }
+
+  function cardHTML(f, rank, isTopPick) {
+    const topBadge = isTopPick
+      ? '<div><span class="badge badge-top">&#11088; TOP PICK</span></div>' : '';
+
+    const fareBadge = f.fare_type === 'Basic Economy'
+      ? '<span class="badge badge-basic">Basic Economy</span>'
+      : '<span class="badge badge-main">Economy Main</span>';
+
+    let priceBlock = '<div class="price">$' + f.price.toLocaleString() + '</div>';
+    if (f.fare_type === 'Basic Economy' && f.economy_main_price) {
+      priceBlock += '<div class="basic-label">Basic Economy</div>';
+      priceBlock += '<div><span class="est-main-price">~$' +
+                    f.economy_main_price.toLocaleString() +
+                    '</span> <span class="est-main">Est. Main</span></div>';
+    }
+
+    const stopsLabel = f.stops === 0 ? 'Nonstop' : f.stops + ' stop';
+
+    return '<div class="card' + (isTopPick ? ' top-pick' : '') + '">' +
+      topBadge +
+      '<div class="card-inner">' +
+        '<div class="card-left">' +
+          '<span class="airline-name">' + f.primary_airline + '</span> ' +
+          '<span class="badge badge-source">Google Flights</span> ' +
+          fareBadge +
+          '<div class="times">' + fmtTime(f.departure_time) +
+            ' &rarr; ' + fmtTime(f.arrival_time) + '</div>' +
+          '<div class="meta">' + fmtDuration(f.total_duration_min) +
+            ' &middot; ' + stopsLabel + '</div>' +
+          '<div class="layover">' + f.layover_info + '</div>' +
+        '</div>' +
+        '<div class="card-right">' +
+          priceBlock +
+          '<div class="score-label">score ' + f.score + '</div>' +
+          '<a class="book-btn" href="' + bookUrl(f) +
+            '" target="_blank">Book &rarr;</a>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderFlights() {
+    const el = document.getElementById('flights');
+    if (!data) { el.innerHTML = '<div class="status">Loading flights…</div>'; return; }
+
+    const allForDate = data.flights
+      .filter(f => f.search_date === activeDate && passesFilter(f));
+
+    if (allForDate.length === 0) {
+      el.innerHTML = '<div class="status">No flights match these filters.</div>';
+      renderFooter(0);
+      return;
+    }
+
+    const niceDate = new Date(activeDate + 'T12:00:00').toLocaleDateString('en-US',
+      { weekday: 'long', month: 'long', day: 'numeric' });
+
+    const isExpanded = expandedDates.has(activeDate);
+    const visible = isExpanded ? allForDate : allForDate.slice(0, 3);
+    const remaining = allForDate.length - 3;
+
+    let html = '<div class="date-heading">' + niceDate +
+               '<span class="date-count">' + allForDate.length +
+               ' flight' + (allForDate.length !== 1 ? 's' : '') + '</span></div>';
+
+    visible.forEach((f, i) => {
+      html += cardHTML(f, i + 1, i === 0);
+    });
+
+    if (remaining > 0 && !isExpanded) {
+      html += '<button class="show-more-btn" id="show-more">Show ' +
+              remaining + ' more flight' + (remaining !== 1 ? 's' : '') +
+              ' &#9660;</button>';
+    } else if (isExpanded && remaining > 0) {
+      html += '<button class="show-more-btn" id="show-less">Hide extra flights &#9650;</button>';
+    }
+
+    el.innerHTML = html;
+
+    const moreBtn = document.getElementById('show-more');
+    if (moreBtn) moreBtn.addEventListener('click', () => {
+      expandedDates.add(activeDate); renderFlights();
+    });
+    const lessBtn = document.getElementById('show-less');
+    if (lessBtn) lessBtn.addEventListener('click', () => {
+      expandedDates.delete(activeDate); renderFlights();
+    });
+
+    renderFooter(allForDate.length);
+  }
+
+  function renderFooter(count) {
+    const gen = data ? data.generated : '';
+    document.getElementById('footer').textContent =
+      'Generated ' + gen + ' · ' + count + ' flights shown · Prices in USD';
+  }
+
+  // ---- Init ----
+  async function init() {
+    renderCountdown();
+    renderFilters();
+
+    document.getElementById('flights').innerHTML =
+      '<div class="status">' +
+        '<div class="loading-spinner"></div>' +
+        '<div>Searching flights…</div>' +
+        '<div class="loading-sub">Checking 3 dates × nonstop + 1-stop</div>' +
+      '</div>';
+
+    // Try serverless API first, fall back to static JSON (local dev)
+    let resp;
+    try {
+      resp = await fetch('/api/flights');
+      if (!resp.ok) throw new Error('API ' + resp.status);
+    } catch (e) {
+      try {
+        resp = await fetch('flights.json');
+        if (!resp.ok) throw new Error('JSON ' + resp.status);
+      } catch (e2) {
+        document.getElementById('flights').innerHTML =
+          '<div class="status">Could not load flight data.<br>' +
+          '<span class="loading-sub">Run flight_agent.py or deploy to Vercel.</span></div>';
+        return;
+      }
+    }
+
+    data = await resp.json();
+    if (data.error) {
+      document.getElementById('flights').innerHTML =
+        '<div class="status">API error: ' + data.error + '</div>';
+      return;
+    }
+
+    renderCountdown();
+    renderTabs();
+    renderFlights();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
