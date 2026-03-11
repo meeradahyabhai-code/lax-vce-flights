@@ -1,12 +1,18 @@
-"""Unit tests for flight_agent.py pricing, scoring, and fare labeling."""
+"""Unit tests for flight_agent.py pricing, scoring, fare labeling, and return flights."""
 
 import unittest
 
 from flight_agent import (
     AIRLINE_BONUSES,
+    AUTO_TOP_PICK_NONSTOP,
     BASIC_ECONOMY_CARRIERS,
     BASIC_TO_MAIN_ADDER,
+    RETURN_AIRLINE_BONUSES,
+    RETURN_AUTO_TOP_PICK_NONSTOP,
+    RETURN_DATES,
+    _normalize_skyscanner,
     label_fare_types,
+    normalize,
     score_flights,
 )
 
@@ -196,6 +202,184 @@ class TestPriceGuardrails(unittest.TestCase):
             f = _make_flight(airline="American", price=price)
             flights = label_fare_types([f])
             self.assertGreaterEqual(flights[0]["economy_main_price"], price)
+
+
+class TestReturnScoring(unittest.TestCase):
+    """Tests for return-flight scoring (IST → LAX)."""
+
+    def test_return_bonuses_are_negative(self):
+        """All return airline bonuses should be negative."""
+        for airline, bonus in RETURN_AIRLINE_BONUSES.items():
+            self.assertLess(bonus, 0, f"{airline} return bonus should be negative")
+
+    def test_turkish_nonstop_auto_top_pick(self):
+        """Turkish Airlines nonstop should get score forced to 0."""
+        f = _make_flight(airline="Turkish Airlines", price=700, stops=0,
+                         layover=0, search_date="2026-07-13")
+        scored = score_flights(
+            [f],
+            airline_bonuses=RETURN_AIRLINE_BONUSES,
+            auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
+        )
+        self.assertEqual(scored[0]["score"], 0)
+
+    def test_turkish_1stop_not_auto_top(self):
+        """Turkish Airlines with 1 stop should NOT get score 0."""
+        f = _make_flight(airline="Turkish Airlines", price=700, stops=1,
+                         layover=120, search_date="2026-07-13")
+        scored = score_flights(
+            [f],
+            airline_bonuses=RETURN_AIRLINE_BONUSES,
+            auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
+        )
+        self.assertNotEqual(scored[0]["score"], 0)
+
+    def test_turkish_1stop_gets_return_bonus(self):
+        """Turkish Airlines 1-stop should use the -250 return bonus."""
+        tk = _make_flight(airline="Turkish Airlines", price=600, stops=1,
+                          layover=90, search_date="2026-07-13")
+        generic = _make_flight(airline="SomeAirline", price=600, stops=1,
+                               layover=90, search_date="2026-07-13")
+        scored = score_flights(
+            [tk, generic],
+            airline_bonuses=RETURN_AIRLINE_BONUSES,
+            auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
+        )
+        tk_score = next(f["score"] for f in scored if f["primary_airline"] == "Turkish Airlines")
+        gen_score = next(f["score"] for f in scored if f["primary_airline"] == "SomeAirline")
+        self.assertLess(tk_score, gen_score)
+
+    def test_turkish_nonstop_beats_everything(self):
+        """Turkish nonstop (score=0) should beat any other flight."""
+        tk_nonstop = _make_flight(airline="Turkish Airlines", price=900, stops=0,
+                                  layover=0, search_date="2026-07-13")
+        cheap = _make_flight(airline="Lufthansa", price=400, stops=1,
+                             layover=60, search_date="2026-07-13")
+        scored = score_flights(
+            [tk_nonstop, cheap],
+            airline_bonuses=RETURN_AIRLINE_BONUSES,
+            auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
+        )
+        self.assertEqual(scored[0]["primary_airline"], "Turkish Airlines")
+        self.assertEqual(scored[0]["score"], 0)
+
+    def test_outbound_has_no_auto_top_picks(self):
+        """Outbound scoring should have no auto-top-pick airlines."""
+        self.assertEqual(len(AUTO_TOP_PICK_NONSTOP), 0)
+
+    def test_return_dates_are_july(self):
+        """Return dates should be July 13-15, 2026."""
+        self.assertEqual(RETURN_DATES, ["2026-07-13", "2026-07-14", "2026-07-15"])
+
+    def test_return_scoring_uses_custom_bonuses(self):
+        """Lufthansa should get -200 bonus in return scoring (not -160 outbound)."""
+        lh = _make_flight(airline="Lufthansa", price=600, stops=1,
+                          layover=60, search_date="2026-07-13")
+        scored_return = score_flights(
+            [lh],
+            airline_bonuses=RETURN_AIRLINE_BONUSES,
+            auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
+        )
+        scored_outbound = score_flights(
+            [_make_flight(airline="Lufthansa", price=600, stops=1,
+                          layover=60, search_date="2026-06-29")],
+        )
+        # Return bonus (-200) is bigger than outbound (-160), so return score is lower
+        self.assertLess(scored_return[0]["score"], scored_outbound[0]["score"])
+
+
+class TestSkyscannerNormalize(unittest.TestCase):
+    """Tests for Skyscanner result normalization."""
+
+    def _make_skyscanner_itin(self, **overrides):
+        """Build a minimal Skyscanner itinerary dict."""
+        itin = {
+            "_source": "skyscanner",
+            "_search_date": "2026-07-13",
+            "price": {"raw": 650, "formatted": "$650"},
+            "legs": [{
+                "origin": {"id": "IST", "name": "Istanbul Airport"},
+                "destination": {"id": "LAX", "name": "Los Angeles"},
+                "departure": "2026-07-13T22:00:00",
+                "arrival": "2026-07-14T03:30:00",
+                "durationInMinutes": 810,
+                "stopCount": 0,
+                "carriers": {"marketing": [{"name": "Turkish Airlines"}]},
+                "segments": [{
+                    "origin": {"flightPlaceId": "IST"},
+                    "destination": {"flightPlaceId": "LAX"},
+                    "departure": "2026-07-13T22:00:00",
+                    "arrival": "2026-07-14T03:30:00",
+                    "marketingCarrier": {"name": "Turkish Airlines", "alternateId": "TK"},
+                    "flightNumber": "9",
+                }],
+            }],
+        }
+        itin.update(overrides)
+        return itin
+
+    def test_basic_normalization(self):
+        """Skyscanner itinerary should normalize to common schema."""
+        result = _normalize_skyscanner(self._make_skyscanner_itin())
+        self.assertIsNotNone(result)
+        self.assertEqual(result["primary_airline"], "Turkish Airlines")
+        self.assertEqual(result["price"], 650)
+        self.assertEqual(result["stops"], 0)
+        self.assertEqual(result["search_date"], "2026-07-13")
+        self.assertEqual(result["source"], "skyscanner")
+
+    def test_no_legs_returns_none(self):
+        """Itinerary with no legs should return None."""
+        result = _normalize_skyscanner({"legs": [], "_search_date": "2026-07-13",
+                                         "price": {"raw": 500}})
+        self.assertIsNone(result)
+
+    def test_zero_price_returns_none(self):
+        """Itinerary with price 0 should return None."""
+        itin = self._make_skyscanner_itin()
+        itin["price"] = {"raw": 0}
+        result = _normalize_skyscanner(itin)
+        self.assertIsNone(result)
+
+    def test_1stop_layover_computed(self):
+        """1-stop itinerary should compute layover duration from segments."""
+        itin = self._make_skyscanner_itin()
+        itin["legs"][0]["stopCount"] = 1
+        itin["legs"][0]["segments"] = [
+            {
+                "origin": {"flightPlaceId": "IST"},
+                "destination": {"flightPlaceId": "LHR", "name": "London Heathrow"},
+                "departure": "2026-07-13T22:00:00",
+                "arrival": "2026-07-14T01:00:00",
+            },
+            {
+                "origin": {"flightPlaceId": "LHR"},
+                "destination": {"flightPlaceId": "LAX"},
+                "departure": "2026-07-14T03:00:00",
+                "arrival": "2026-07-14T06:30:00",
+            },
+        ]
+        result = _normalize_skyscanner(itin)
+        self.assertEqual(result["stops"], 1)
+        self.assertEqual(result["total_layover_min"], 120)  # 2h layover
+
+    def test_normalize_routes_skyscanner_source(self):
+        """normalize() should detect _source=skyscanner and use Skyscanner normalizer."""
+        itin = self._make_skyscanner_itin()
+        results = normalize([itin])
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["source"], "skyscanner")
+        self.assertEqual(results[0]["primary_airline"], "Turkish Airlines")
+
+    def test_duration_preserved(self):
+        """Duration in minutes should be preserved from legs."""
+        result = _normalize_skyscanner(self._make_skyscanner_itin())
+        self.assertEqual(result["total_duration_min"], 810)
+
+    def test_google_flights_url_empty(self):
+        """Skyscanner results should have empty google_flights_url."""
+        result = _normalize_skyscanner(self._make_skyscanner_itin())
+        self.assertEqual(result["google_flights_url"], "")
 
 
 if __name__ == "__main__":

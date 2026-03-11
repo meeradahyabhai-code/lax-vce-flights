@@ -4,6 +4,9 @@
   "functions": {
     "api/flights.py": {
       "maxDuration": 60
+    },
+    "api/summary.py": {
+      "maxDuration": 20
     }
   },
   "rewrites": [

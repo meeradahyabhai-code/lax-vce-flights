@@ -49,10 +49,10 @@
     margin: 32px auto 0;
   }
 
-  /* Direction nav */
+  /* Direction nav — inside hero */
   .direction-nav {
     display: flex; gap: 8px; justify-content: center;
-    padding: 16px 0; background: var(--paper);
+    margin-bottom: 20px;
   }
   .direction-pill {
     font-family: var(--sans); font-size: 14px; font-weight: 500;
@@ -63,6 +63,38 @@
   .direction-pill:hover { background: rgba(26,58,107,0.06); }
   .direction-pill.active {
     background: var(--azure); color: #fff;
+  }
+
+  /* AI Briefing card */
+  .ai-briefing {
+    max-width: 680px; margin: 28px auto 0; padding: 24px 28px;
+    background: linear-gradient(135deg, rgba(26,58,107,0.88), rgba(13,110,138,0.85), rgba(184,149,58,0.75));
+    border: 1px solid rgba(184,149,58,0.3);
+    border-radius: 16px; text-align: left;
+  }
+  .ai-briefing-label {
+    font-family: var(--sans); font-size: 10px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.5); margin-bottom: 8px;
+  }
+  .ai-briefing-text {
+    font-family: var(--serif); font-size: 20px; font-weight: 300;
+    font-style: italic; color: #fff; line-height: 1.7;
+  }
+  .ai-briefing-shimmer {
+    height: 80px; border-radius: 8px;
+    background: linear-gradient(90deg,
+      rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  @media (max-width: 600px) {
+    .ai-briefing { padding: 16px; margin-left: 0; margin-right: 0; }
+    .ai-briefing-text { font-size: 17px; }
   }
 
   /* Layout */
@@ -337,18 +369,22 @@
 </head>
 <body>
 
-<!-- Direction nav -->
-<div class="direction-nav" id="direction-nav">
-  <button class="direction-pill active" data-dir="outbound">Outbound &nbsp;LAX &rarr; VCE</button>
-  <button class="direction-pill" data-dir="return">Return &nbsp;IST &rarr; LAX</button>
-</div>
-
 <!-- Hero -->
 <div class="hero">
+  <div class="direction-nav" id="direction-nav">
+    <button class="direction-pill active" data-dir="outbound">Outbound &nbsp;LAX &rarr; VCE</button>
+    <button class="direction-pill" data-dir="return">Return &nbsp;IST &rarr; LAX</button>
+  </div>
   <div class="hero-pill" id="countdown-pill">&#128336; <span id="countdown"></span> DAYS UNTIL JULY 3, 2026</div>
   <div class="hero-title">Cruise Bound</div>
   <div class="hero-subtitle">First stop &mdash; Venice, Italy</div>
   <div class="hero-rule"></div>
+  <div class="ai-briefing" id="ai-briefing">
+    <div class="ai-briefing-label">Today's AI Briefing</div>
+    <div class="ai-briefing-text" id="ai-briefing-text">
+      <div class="ai-briefing-shimmer"></div>
+    </div>
+  </div>
 </div>
 
 <div class="container">
@@ -440,6 +476,7 @@
   let expandedDates = new Set();
   let pendingBookFlight = null;
   let sheetRows = [];
+  var summaryCache = {};  // { outbound: "...", return: "..." }
 
   // ---- User name ----
   function getUserName() {
@@ -773,6 +810,61 @@
     hero.style.backgroundRepeat = 'no-repeat';
     document.querySelector('.hero-title').innerHTML = cfg.title;
     document.querySelector('.hero-subtitle').innerHTML = cfg.subtitle;
+    renderAIBriefing();
+  }
+
+  // ---- AI Briefing ----
+  function renderAIBriefing() {
+    var el = document.getElementById('ai-briefing-text');
+    if (summaryCache[activeDirection]) {
+      el.innerHTML = summaryCache[activeDirection];
+      return;
+    }
+    el.innerHTML = '<div class="ai-briefing-shimmer"></div>';
+    if (data) fetchAISummary();
+  }
+
+  function fetchAISummary() {
+    var dir = activeDirection;
+    if (summaryCache[dir]) { renderAIBriefing(); return; }
+
+    var flights = dir === 'return'
+      ? (data.return_flights || [])
+      : (data.outbound_flights || []);
+    if (flights.length === 0) {
+      summaryCache[dir] = 'Flight data updated daily. Check back each morning for today\'s best picks.';
+      renderAIBriefing();
+      return;
+    }
+
+    // Filter family picks relevant to this direction's dates
+    var dirDates = flights.map(function (f) { return f.search_date; });
+    var picks = sheetRows.filter(function (r) {
+      // Match by flight_id containing one of the direction's dates
+      for (var i = 0; i < dirDates.length; i++) {
+        if (r.flight_id && r.flight_id.indexOf(dirDates[i]) !== -1) return true;
+      }
+      return false;
+    });
+
+    fetch('/api/summary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        direction: dir,
+        flights: flights.slice(0, 15),
+        family_picks: picks.slice(0, 20),
+      }),
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+      summaryCache[dir] = res.summary || 'Flight data updated daily. Check back each morning for today\'s best picks.';
+      if (activeDirection === dir) renderAIBriefing();
+    })
+    .catch(function () {
+      summaryCache[dir] = 'Flight data updated daily. Check back each morning for today\'s best picks.';
+      if (activeDirection === dir) renderAIBriefing();
+    });
   }
 
   // ---- Render ----
@@ -1047,6 +1139,7 @@
     renderCountdown();
     renderTabs();
     renderFlights();
+    fetchAISummary();
 
     // Handle ?flight= URL param — find matching flight in either direction
     var flightParam = new URLSearchParams(window.location.search).get('flight');
