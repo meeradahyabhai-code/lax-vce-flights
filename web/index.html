@@ -269,6 +269,9 @@
     color: #2a5298; cursor: pointer; text-decoration: none;
   }
   .interest-link:hover { text-decoration: underline; }
+  .interest-link.has-picks {
+    font-weight: 600; font-size: 13px; color: #1a7f37;
+  }
 
   /* Family interest modal */
   .fi-modal { text-align: left; }
@@ -852,11 +855,19 @@
     return (fid || '').replace(/^[A-Z]{3}:/, '');
   }
 
+  function flightIdPrefix(fid) {
+    // Extract "Airline|date" from "Airline|date|price" — price-agnostic matching
+    var parts = (fid || '').split('|');
+    return parts.length >= 2 ? parts[0] + '|' + parts[1] : fid;
+  }
+
   function getFlightCounts(fid) {
+    var prefix = flightIdPrefix(fid);
     var booked = [], interested = [];
     for (var i = 0; i < sheetRows.length; i++) {
       var r = sheetRows[i];
-      if (stripOriginPrefix(r.flight_id) === fid || r.flight_id === fid) {
+      var sheetFid = stripOriginPrefix(r.flight_id);
+      if (flightIdPrefix(sheetFid) === prefix || flightIdPrefix(r.flight_id) === prefix) {
         if (r.action === 'booked') booked.push(r.name || 'Someone');
         else if (r.action === 'interested') interested.push(r.name || 'Someone');
       }
@@ -871,7 +882,13 @@
       var parts = [];
       if (counts.interested.length > 0) parts.push(counts.interested.length + ' interested');
       if (counts.booked.length > 0) parts.push(counts.booked.length + ' booked');
-      el.textContent = parts.length > 0 ? parts.join(' \u00b7 ') : 'See family interest';
+      if (parts.length > 0) {
+        el.textContent = parts.join(' \u00b7 ');
+        el.classList.add('has-picks');
+      } else {
+        el.textContent = 'See family interest';
+        el.classList.remove('has-picks');
+      }
     });
   }
 

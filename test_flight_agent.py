@@ -1386,5 +1386,48 @@ class TestFrontendFilters(unittest.TestCase):
         self.assertIn("clearStoredOrigin", self.html)
 
 
+class TestFamilyPickMatching(unittest.TestCase):
+    """Tests for price-agnostic family pick matching on flight cards."""
+
+    def setUp(self):
+        with open("public/index.html", "r") as fh:
+            self.html = fh.read()
+
+    def test_flight_id_prefix_function_exists(self):
+        """flightIdPrefix function should exist for price-agnostic matching."""
+        self.assertIn("function flightIdPrefix(fid)", self.html)
+
+    def test_get_flight_counts_uses_prefix_matching(self):
+        """getFlightCounts should use flightIdPrefix for price-agnostic matching."""
+        self.assertIn("flightIdPrefix(sheetFid)", self.html)
+        self.assertIn("flightIdPrefix(r.flight_id)", self.html)
+
+    def test_prefix_extracts_airline_and_date(self):
+        """flightIdPrefix should extract airline|date from airline|date|price."""
+        self.assertIn("parts[0] + '|' + parts[1]", self.html)
+
+    def test_has_picks_css_class(self):
+        """Cards with family picks should get has-picks styling."""
+        self.assertIn(".has-picks", self.html)
+        self.assertIn("has-picks", self.html)
+
+    def test_has_picks_added_when_counts_exist(self):
+        """interest-link should get has-picks class when counts > 0."""
+        self.assertIn("el.classList.add('has-picks')", self.html)
+
+    def test_has_picks_removed_when_no_counts(self):
+        """interest-link should lose has-picks class when counts are 0."""
+        self.assertIn("el.classList.remove('has-picks')", self.html)
+
+    def test_strip_origin_prefix_still_used(self):
+        """stripOriginPrefix should still be used for origin-prefixed flight_ids."""
+        self.assertIn("stripOriginPrefix(r.flight_id)", self.html)
+
+    def test_interest_link_on_every_card(self):
+        """Every card should have an interest-link element."""
+        self.assertIn('class="interest-link"', self.html)
+        self.assertIn('data-fid=', self.html)
+
+
 if __name__ == "__main__":
     unittest.main()
