@@ -14,9 +14,11 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 SYSTEM_PROMPT = (
     "You are a warm, concise flight briefing assistant for an Indian family "
-    "planning a cruise trip. Write exactly 2-3 sentences summarizing: the best "
+    "planning a cruise trip. All prices shown are Economy Main cabin fares. "
+    "Write exactly 2-3 sentences summarizing: the best "
     "available flight today and why, whether nonstop is available, which date is "
-    "cheapest, and which flights family members have shown interest in or booked. "
+    "cheapest, and which flights family members have picked (mention airline and "
+    "when they arrive/depart, NOT the price they paid). "
     "Use first names from the data. Tone: warm, clear, like a helpful travel agent. "
     "No jargon. No bullet points. No emojis."
 )
@@ -50,10 +52,12 @@ class handler(BaseHTTPRequestHandler):
 
             pick_lines = []
             for p in family_picks[:20]:
+                arrival = p.get("arrival_time", "")
+                arr_str = f" arriving {arrival[:16]}" if arrival else ""
                 pick_lines.append(
                     f"{p.get('name', '?')} {p.get('action', '?')} "
-                    f"{p.get('airline', '?')} on {p.get('flight_date', '?')} "
-                    f"for ${p.get('price', '?')}"
+                    f"{p.get('airline', '?')} on {p.get('flight_date', '?')}"
+                    f"{arr_str}"
                 )
 
             origin = payload.get("origin", "LAX")
@@ -61,8 +65,9 @@ class handler(BaseHTTPRequestHandler):
                 "LAX": {"outbound": "LAX to VCE", "return": "IST to LAX"},
                 "AKL": {"outbound": "AKL to VCE", "return": "IST to AKL"},
                 "ATL": {"outbound": "ATL to VCE", "return": "IST to ATL"},
+                "YVR": {"outbound": "YVR to VCE", "return": "IST to YVR"},
             }
-            city_names = {"LAX": "Los Angeles", "AKL": "Auckland", "ATL": "Atlanta"}
+            city_names = {"LAX": "Los Angeles", "AKL": "Auckland", "ATL": "Atlanta", "YVR": "Vancouver"}
             route = route_map.get(origin, route_map["LAX"]).get(direction, "LAX to VCE")
             city = city_names.get(origin, origin)
 

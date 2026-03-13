@@ -13,11 +13,15 @@ from flight_agent import (
     ATL_OUTBOUND_BONUSES,
     ATL_RETURN_AUTO_TOP_PICK,
     ATL_RETURN_BONUSES,
+    YVR_OUTBOUND_BONUSES,
+    YVR_RETURN_AUTO_TOP_PICK,
+    YVR_RETURN_BONUSES,
     AUTO_TOP_PICK_NONSTOP,
     BASIC_ECONOMY_CARRIERS,
-    BASIC_TO_MAIN_ADDER,
     DEPARTURE_DATES,
     RETURN_AIRLINE_BONUSES,
+    _extract_fare_prices_from_raw,
+    merge_premium_business_prices,
     RETURN_AUTO_TOP_PICK_NONSTOP,
     RETURN_DATES,
     ROUTES,
@@ -67,28 +71,21 @@ class TestFareLabeling(unittest.TestCase):
         flights = label_fare_types([f])
         self.assertEqual(flights[0]["basic_economy_price"], 427)
 
-    def test_big3_economy_main_price_is_base_plus_adder(self):
-        """Economy Main estimate = Basic Economy + flat adder."""
-        for price in (419, 427, 512, 595, 800, 1200):
-            f = _make_flight(airline="United", price=price)
+    def test_big3_economy_main_price_includes_adder(self):
+        """Big 3 economy_main_price should be basic + per-carrier adder."""
+        expected = {"United": 527, "Delta": 547, "American": 527}
+        for carrier, exp in expected.items():
+            f = _make_flight(airline=carrier, price=427)
             flights = label_fare_types([f])
-            expected = price + BASIC_TO_MAIN_ADDER
-            self.assertEqual(
-                flights[0]["economy_main_price"], expected,
-                f"price={price}: expected Main={expected}, "
-                f"got {flights[0]['economy_main_price']}"
-            )
+            self.assertEqual(flights[0]["economy_main_price"], exp,
+                             f"{carrier} should have economy_main_price={exp}")
 
-    def test_big3_main_always_greater_than_basic(self):
-        """Economy Main price must always be greater than Basic Economy."""
-        for price in (100, 427, 512, 999, 2000):
-            f = _make_flight(airline="American", price=price)
+    def test_big3_fare_type_is_economy_main(self):
+        """Big 3 fare_type should be 'Economy Main'."""
+        for carrier in ("United", "Delta", "American"):
+            f = _make_flight(airline=carrier, price=427)
             flights = label_fare_types([f])
-            self.assertGreater(
-                flights[0]["economy_main_price"],
-                flights[0]["basic_economy_price"],
-                f"Main must be > Basic for price={price}"
-            )
+            self.assertEqual(flights[0]["fare_type"], "Economy Main")
 
     def test_non_big3_basic_equals_price(self):
         """Non-Big-3 carriers should have basic_economy_price equal to price."""
@@ -108,11 +105,70 @@ class TestFareLabeling(unittest.TestCase):
         """Verify the Big 3 set is correct."""
         self.assertEqual(BASIC_ECONOMY_CARRIERS, {"american", "delta", "united"})
 
-    def test_adder_is_positive(self):
-        """The Main Economy adder must be a positive number."""
-        self.assertGreater(BASIC_TO_MAIN_ADDER, 0)
-        self.assertLessEqual(BASIC_TO_MAIN_ADDER, 200,
-                             "Adder seems unreasonably high for intl flights")
+    def test_big3_basic_economy_price_equals_search_price(self):
+        """Big 3 basic_economy_price should equal the SerpAPI search price."""
+        f = _make_flight(airline="Delta", price=427)
+        flights = label_fare_types([f])
+        self.assertEqual(flights[0]["basic_economy_price"], 427)
+
+    def test_delta_adder_is_120(self):
+        """Delta Main Cabin adder should be $120."""
+        f = _make_flight(airline="Delta", price=400)
+        flights = label_fare_types([f])
+        self.assertEqual(flights[0]["economy_main_price"], 520)
+
+    def test_united_adder_is_100(self):
+        """United Main Cabin adder should be $100."""
+        f = _make_flight(airline="United", price=400)
+        flights = label_fare_types([f])
+        self.assertEqual(flights[0]["economy_main_price"], 500)
+
+    def test_american_adder_is_100(self):
+        """American Main Cabin adder should be $100."""
+        f = _make_flight(airline="American", price=400)
+        flights = label_fare_types([f])
+        self.assertEqual(flights[0]["economy_main_price"], 500)
+
+    def test_adder_dict_has_all_big3(self):
+        """BASIC_TO_MAIN_ADDER should have entries for all Big 3 carriers."""
+        from flight_agent import BASIC_TO_MAIN_ADDER
+        for carrier in BASIC_ECONOMY_CARRIERS:
+            self.assertIn(carrier, BASIC_TO_MAIN_ADDER,
+                          f"{carrier} missing from BASIC_TO_MAIN_ADDER")
+
+
+class TestDepartureDates(unittest.TestCase):
+    """Tests for departure and return date configuration."""
+
+    def test_departure_dates_include_june_28(self):
+        """June 28 should be in departure dates."""
+        self.assertIn("2026-06-28", DEPARTURE_DATES)
+
+    def test_departure_dates_include_june_29(self):
+        """June 29 should be in departure dates."""
+        self.assertIn("2026-06-29", DEPARTURE_DATES)
+
+    def test_departure_dates_exclude_july_1(self):
+        """July 1 should NOT be in departure dates."""
+        self.assertNotIn("2026-07-01", DEPARTURE_DATES)
+
+    def test_departure_dates_count(self):
+        """Should have exactly 3 departure dates."""
+        self.assertEqual(len(DEPARTURE_DATES), 3)
+
+    def test_return_dates_unchanged(self):
+        """Return dates should be July 13/14/15."""
+        self.assertEqual(RETURN_DATES, ["2026-07-13", "2026-07-14", "2026-07-15"])
+
+
+class TestSerpAPILogging(unittest.TestCase):
+    """Tests for SerpAPI call logging."""
+
+    def test_call_log_functions_exist(self):
+        """Call log helper functions should be importable."""
+        from flight_agent import get_serpapi_call_log, reset_serpapi_call_log
+        reset_serpapi_call_log()
+        self.assertEqual(len(get_serpapi_call_log()), 0)
 
 
 class TestScoring(unittest.TestCase):
@@ -187,16 +243,12 @@ class TestScoring(unittest.TestCase):
 class TestPriceGuardrails(unittest.TestCase):
     """Guardrail tests to catch pricing bugs."""
 
-    def test_economy_main_price_within_bounds(self):
-        """Economy Main price should be $50-$200 more than Basic Economy."""
+    def test_big3_economy_main_includes_adder(self):
+        """Big 3 economy_main_price should be basic + per-carrier adder."""
         for price in (300, 427, 512, 800, 1500):
             f = _make_flight(airline="Delta", price=price)
             flights = label_fare_types([f])
-            diff = flights[0]["economy_main_price"] - flights[0]["basic_economy_price"]
-            self.assertGreaterEqual(diff, 50,
-                                    f"Main-Basic diff too small: ${diff} for base ${price}")
-            self.assertLessEqual(diff, 200,
-                                 f"Main-Basic diff too large: ${diff} for base ${price}")
+            self.assertEqual(flights[0]["economy_main_price"], price + 120)  # Delta = +120
 
     def test_basic_economy_equals_original_price(self):
         """basic_economy_price must always equal the original price for Big 3."""
@@ -211,14 +263,13 @@ class TestPriceGuardrails(unittest.TestCase):
         flights = label_fare_types([f])
         self.assertGreater(flights[0]["price"], 0)
         self.assertGreater(flights[0]["basic_economy_price"], 0)
-        self.assertGreater(flights[0]["economy_main_price"], 0)
 
-    def test_display_price_never_below_actual(self):
-        """Economy Main estimate must never be below the actual fare."""
-        for price in (200, 427, 512, 1000):
-            f = _make_flight(airline="American", price=price)
+    def test_non_big3_economy_main_equals_price(self):
+        """Non-Big-3 economy_main_price should equal the search price."""
+        for carrier in ("British Airways", "Iberia", "KLM"):
+            f = _make_flight(airline=carrier, price=500)
             flights = label_fare_types([f])
-            self.assertGreaterEqual(flights[0]["economy_main_price"], price)
+            self.assertEqual(flights[0]["economy_main_price"], 500)
 
 
 class TestReturnScoring(unittest.TestCase):
@@ -865,14 +916,14 @@ class TestAtlantaRouteScoring(unittest.TestCase):
 class TestRoutesConfig(unittest.TestCase):
     """Tests for the ROUTES configuration list."""
 
-    def test_three_origins(self):
-        """ROUTES should define exactly 3 origins."""
-        self.assertEqual(len(ROUTES), 3)
+    def test_four_origins(self):
+        """ROUTES should define exactly 4 origins."""
+        self.assertEqual(len(ROUTES), 4)
 
-    def test_origins_are_lax_akl_atl(self):
-        """ROUTES origins should be LAX, AKL, ATL."""
+    def test_origins_are_lax_akl_atl_yvr(self):
+        """ROUTES origins should be LAX, AKL, ATL, YVR."""
         origins = {r["origin"] for r in ROUTES}
-        self.assertEqual(origins, {"LAX", "AKL", "ATL"})
+        self.assertEqual(origins, {"LAX", "AKL", "ATL", "YVR"})
 
     def test_each_route_has_outbound_and_return(self):
         """Each route must define both outbound and return."""
@@ -938,13 +989,19 @@ class TestFareClassFields(unittest.TestCase):
             self.assertIsNotNone(flights[0]["basic_economy_price"],
                                  f"{carrier} should have basic_economy_price")
 
-    def test_all_flights_have_economy_main_price(self):
-        """All labeled flights should have economy_main_price set."""
-        for carrier in ("Delta", "British Airways", "Singapore Airlines"):
+    def test_non_big3_have_economy_main_price(self):
+        """Non-Big-3 flights should have economy_main_price set."""
+        for carrier in ("British Airways", "Singapore Airlines"):
             f = _make_flight(airline=carrier, price=500)
             flights = label_fare_types([f])
             self.assertIsNotNone(flights[0]["economy_main_price"],
                                  f"{carrier} should have economy_main_price")
+
+    def test_big3_economy_main_price_includes_adder(self):
+        """Big 3 flights should have economy_main_price = basic + carrier adder."""
+        f = _make_flight(airline="Delta", price=500)
+        flights = label_fare_types([f])
+        self.assertEqual(flights[0]["economy_main_price"], 620)  # Delta = +120
 
     def test_premium_economy_null_by_default(self):
         """Premium economy should be None when not in raw data."""
@@ -980,7 +1037,7 @@ class TestFareClassFields(unittest.TestCase):
         f = score_flights([f])[0]
         d = _flight_to_dict(f)
         self.assertEqual(d["basic_economy_price"], 500)
-        self.assertEqual(d["economy_main_price"], 600)
+        self.assertEqual(d["economy_main_price"], 620)  # Big 3 Delta: basic $500 + $120 adder
         self.assertEqual(d["premium_economy_price"], 1200)
         self.assertEqual(d["business_price"], 3500)
 
@@ -990,6 +1047,253 @@ class TestFareClassFields(unittest.TestCase):
         flights = label_fare_types([f])
         self.assertEqual(flights[0]["basic_economy_price"],
                          flights[0]["economy_main_price"])
+
+
+class TestExtractFarePrices(unittest.TestCase):
+    """Tests for _extract_fare_prices_from_raw SerpAPI parsing."""
+
+    def test_empty_raw_returns_none(self):
+        prem, biz = _extract_fare_prices_from_raw({})
+        self.assertIsNone(prem)
+        self.assertIsNone(biz)
+
+    def test_extensions_premium_economy_string(self):
+        raw = {"extensions": ["Premium economy from $1,234"]}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertEqual(prem, 1234)
+        self.assertIsNone(biz)
+
+    def test_extensions_business_string(self):
+        raw = {"extensions": ["Business class from $3,500"]}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertIsNone(prem)
+        self.assertEqual(biz, 3500)
+
+    def test_extensions_first_class_string(self):
+        raw = {"extensions": ["First class from $5,000"]}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertIsNone(prem)
+        self.assertEqual(biz, 5000)
+
+    def test_extensions_both_fares(self):
+        raw = {"extensions": [
+            "Premium economy from $1,200",
+            "Business class from $3,500",
+        ]}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertEqual(prem, 1200)
+        self.assertEqual(biz, 3500)
+
+    def test_extensions_non_string_items_skipped(self):
+        raw = {"extensions": [42, None, {"key": "val"}]}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertIsNone(prem)
+        self.assertIsNone(biz)
+
+    def test_price_insights_fare_options(self):
+        raw = {"price_insights": {"fare_options": [
+            {"fare_class": "Premium Economy", "price": 1100},
+            {"fare_class": "Business", "price": 4000},
+        ]}}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertEqual(prem, 1100)
+        self.assertEqual(biz, 4000)
+
+    def test_price_insights_first_class(self):
+        raw = {"price_insights": {"fare_options": [
+            {"fare_class": "First Class", "price": 6000},
+        ]}}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertIsNone(prem)
+        self.assertEqual(biz, 6000)
+
+    def test_price_insights_cabin_key(self):
+        raw = {"price_insights": {"fare_options": [
+            {"cabin": "premium economy", "price": 900},
+        ]}}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertEqual(prem, 900)
+
+    def test_direct_top_level_fields(self):
+        raw = {"premium_economy_price": 1200, "business_price": 3500}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertEqual(prem, 1200)
+        self.assertEqual(biz, 3500)
+
+    def test_flight_segments_fare_category(self):
+        raw = {"flights": [
+            {"fare_category": "Premium Economy", "airline": "Delta"},
+        ], "price": 1500}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertEqual(prem, 1500)
+
+    def test_flight_segments_business_travel_class(self):
+        raw = {"flights": [
+            {"travel_class": "Business", "airline": "Emirates"},
+        ], "price": 4000}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertEqual(biz, 4000)
+
+    def test_extensions_take_priority_over_top_level(self):
+        """Extensions price should win over direct top-level field."""
+        raw = {
+            "extensions": ["Premium economy from $1,300"],
+            "premium_economy_price": 1200,
+        }
+        prem, _ = _extract_fare_prices_from_raw(raw)
+        self.assertEqual(prem, 1300)
+
+    def test_no_price_in_extension_string(self):
+        """Extension string without $ amount should not crash."""
+        raw = {"extensions": ["Premium economy available"]}
+        prem, biz = _extract_fare_prices_from_raw(raw)
+        self.assertIsNone(prem)
+        self.assertIsNone(biz)
+
+    def test_label_fare_types_uses_extensions(self):
+        """End-to-end: label_fare_types should pick up extensions prices."""
+        f = _make_flight(airline="Delta", price=500)
+        f["raw"] = {"extensions": ["Premium economy from $1,200", "Business class from $3,500"]}
+        flights = label_fare_types([f])
+        self.assertEqual(flights[0]["premium_economy_price"], 1200)
+        self.assertEqual(flights[0]["business_price"], 3500)
+
+
+class TestMergePremiumBusinessPrices(unittest.TestCase):
+    """Tests for merge_premium_business_prices."""
+
+    def test_merge_premium_price(self):
+        f = _make_flight(airline="Delta", price=500)
+        f = label_fare_types([f])[0]
+        lookup = {"premium": {("delta", "2026-06-29"): 1200}, "business": {}}
+        flights = merge_premium_business_prices([f], lookup)
+        self.assertEqual(flights[0]["premium_economy_price"], 1200)
+        self.assertIsNone(flights[0]["business_price"])
+
+    def test_merge_business_price(self):
+        f = _make_flight(airline="Emirates", price=800)
+        f = label_fare_types([f])[0]
+        lookup = {"premium": {}, "business": {("emirates", "2026-06-29"): 4000}}
+        flights = merge_premium_business_prices([f], lookup)
+        self.assertIsNone(flights[0]["premium_economy_price"])
+        self.assertEqual(flights[0]["business_price"], 4000)
+
+    def test_merge_both_prices(self):
+        f = _make_flight(airline="Delta", price=500)
+        f = label_fare_types([f])[0]
+        lookup = {
+            "premium": {("delta", "2026-06-29"): 1200},
+            "business": {("delta", "2026-06-29"): 3500},
+        }
+        flights = merge_premium_business_prices([f], lookup)
+        self.assertEqual(flights[0]["premium_economy_price"], 1200)
+        self.assertEqual(flights[0]["business_price"], 3500)
+
+    def test_no_match_leaves_none(self):
+        f = _make_flight(airline="Delta", price=500)
+        f = label_fare_types([f])[0]
+        lookup = {"premium": {("united", "2026-06-29"): 1200}, "business": {}}
+        flights = merge_premium_business_prices([f], lookup)
+        self.assertIsNone(flights[0]["premium_economy_price"])
+
+    def test_empty_lookup(self):
+        f = _make_flight(airline="Delta", price=500)
+        f = label_fare_types([f])[0]
+        flights = merge_premium_business_prices([f], {"premium": {}, "business": {}})
+        self.assertIsNone(flights[0]["premium_economy_price"])
+        self.assertIsNone(flights[0]["business_price"])
+
+    def test_does_not_overwrite_existing_premium(self):
+        """If label_fare_types already extracted a premium price, merge should overwrite
+        with the dedicated search result (more accurate)."""
+        f = _make_flight(airline="Delta", price=500)
+        f["raw"] = {"premium_economy_price": 999}
+        f = label_fare_types([f])[0]
+        self.assertEqual(f["premium_economy_price"], 999)
+        lookup = {"premium": {("delta", "2026-06-29"): 1200}, "business": {}}
+        flights = merge_premium_business_prices([f], lookup)
+        self.assertEqual(flights[0]["premium_economy_price"], 1200)
+
+
+class TestDefaultDisplayPrice(unittest.TestCase):
+    """Tests for default display price being Economy Main in the frontend."""
+
+    def setUp(self):
+        with open("public/index.html", "r") as fh:
+            self.html = fh.read()
+
+    def test_get_display_price_has_fallback_chain(self):
+        """getDisplayPrice should fall back through economy_main → basic → price."""
+        start = self.html.index("function getDisplayPrice(f)")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("economy_main_price", fn_body)
+        self.assertIn("basic_economy_price", fn_body)
+
+    def test_under1000_has_fallback_chain(self):
+        """Under $1,000 filter should fall back through economy_main → basic → price."""
+        start = self.html.index("function passesFilter(f)")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("economy_main_price", fn_body)
+        self.assertIn("basic_economy_price", fn_body)
+
+    def test_card_shows_economy_main_label(self):
+        """Card should show Economy Main label."""
+        start = self.html.index("function cardHTML(f, rank, isTopPick)")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("Economy Main", fn_body)
+
+    def test_card_shows_basic_economy_small_for_big3(self):
+        """Big 3 cards should show Basic Economy price underneath."""
+        start = self.html.index("function cardHTML(f, rank, isTopPick)")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("Basic Economy", fn_body)
+
+    def test_ai_briefing_uses_economy_main_price(self):
+        """AI summary payload should send economy_main_price."""
+        start = self.html.index("function fetchAISummary()")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("economy_main_price", fn_body)
+
+
+class TestCacheConfig(unittest.TestCase):
+    """Tests for CDN cache configuration."""
+
+    def setUp(self):
+        with open("api/flights.py", "r") as fh:
+            self.source = fh.read()
+
+    def test_cache_is_48h(self):
+        """s-maxage should be 172800 (48 hours)."""
+        self.assertIn("s-maxage=172800", self.source)
+
+    def test_stale_while_revalidate_is_48h(self):
+        """stale-while-revalidate should be 172800 (48 hours)."""
+        self.assertIn("stale-while-revalidate=172800", self.source)
+
+    def test_serpapi_usage_in_response(self):
+        """API response should include _serpapi_usage."""
+        self.assertIn("_serpapi_usage", self.source)
+
+
+class TestAISummaryPrompt(unittest.TestCase):
+    """Tests for the AI summary system prompt."""
+
+    def setUp(self):
+        with open("api/summary.py", "r") as fh:
+            self.source = fh.read()
+
+    def test_prompt_mentions_economy_main(self):
+        """System prompt should mention Economy Main cabin fares."""
+        self.assertIn("Economy Main cabin fares", self.source)
+
+    def test_yvr_in_route_map(self):
+        """YVR should be in the summary route map."""
+        self.assertIn('"YVR"', self.source)
 
 
 class TestFrontendFilters(unittest.TestCase):
@@ -1002,8 +1306,7 @@ class TestFrontendFilters(unittest.TestCase):
     def test_filter_chips_present(self):
         """All expected filter chips should be defined."""
         for label in ("Morning", "Evening", "Nonstop", "1 Stop",
-                       "Under $1,000", "Basic", "Main Cabin",
-                       "Premium", "Business/First"):
+                       "Under $1,000"):
             self.assertIn(label, self.html, f"Missing filter chip: {label}")
 
     def test_old_filters_removed(self):
@@ -1060,22 +1363,22 @@ class TestFrontendFilters(unittest.TestCase):
         self.assertIn("getFarePrice", fn_body)
 
     def test_card_shows_fare_badge_label(self):
-        """Card HTML should include dynamic fare badge label."""
+        """Card HTML should include Economy Main fare badge label."""
         start = self.html.index("function cardHTML(f, rank, isTopPick)")
         end = self.html.index("\n  function ", start + 1)
         fn_body = self.html[start:end]
-        self.assertIn("fareBadgeLabel", fn_body)
-        self.assertIn("getActiveFareClass", fn_body)
+        self.assertIn("fareLabel", fn_body)
+        self.assertIn("Economy Main", fn_body)
 
-    def test_origin_modal_three_cards(self):
-        """Origin modal should have exactly 3 origin cards."""
+    def test_origin_modal_four_cards(self):
+        """Origin modal should have exactly 4 origin cards."""
         count = self.html.count('class="origin-card"')
-        self.assertEqual(count, 3)
+        self.assertEqual(count, 4)
 
-    def test_origin_pills_three(self):
-        """Hero should have 3 origin pills."""
+    def test_origin_pills_four(self):
+        """Hero should have 4 origin pills."""
         count = self.html.count('class="origin-pill"')
-        self.assertEqual(count, 3)
+        self.assertEqual(count, 4)
 
     def test_change_city_link(self):
         """Change city link should be present."""

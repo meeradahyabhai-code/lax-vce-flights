@@ -3,7 +3,7 @@
   "installCommand": "pip install -r requirements.txt",
   "functions": {
     "api/flights.py": {
-      "maxDuration": 60
+      "maxDuration": 180
     },
     "api/summary.py": {
       "maxDuration": 20

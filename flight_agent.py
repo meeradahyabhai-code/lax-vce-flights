@@ -28,7 +28,7 @@ GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
 TRIP_DATE = date(2026, 7, 3)
 TO_ADDRESS = "mdahya@gmail.com"
 
-DEPARTURE_DATES = ["2026-06-29", "2026-06-30", "2026-07-01"]
+DEPARTURE_DATES = ["2026-06-28", "2026-06-29", "2026-06-30"]
 RETURN_DATES = ["2026-07-13", "2026-07-14", "2026-07-15"]
 RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY", "")
 
@@ -37,21 +37,47 @@ RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY", "")
 # Source – Google Flights via SerpAPI (nonstop + 1-stop per date)
 # ---------------------------------------------------------------------------
 
+# Global SerpAPI call counter for logging/budgeting
+_serpapi_call_log: list[dict] = []
+
+
+def get_serpapi_call_log() -> list[dict]:
+    """Return the call log and total count."""
+    return list(_serpapi_call_log)
+
+
+def reset_serpapi_call_log():
+    """Reset the call log (call at start of each API request)."""
+    _serpapi_call_log.clear()
+
+
 def search_serpapi(
     origin: str = "LAX",
     destination: str = "VCE",
     dates: list[str] | None = None,
+    travel_class: str = "1",
+    max_stops: int = 1,
+    min_stops: int = 0,
 ) -> list[dict]:
-    """Query Google Flights for each departure date with two calls each:
-    one for nonstop only (stops=1) and one for max 1 stop (stops=2).
-    Merge all raw results and return them for downstream dedup."""
+    """Query Google Flights for each departure date.
+
+    Makes one call per stops level (nonstop, 1-stop, optionally 2-stop).
+    SerpAPI stops param: "1"=nonstop, "2"=up to 1 stop, "3"=up to 2 stops.
+    min_stops skips lower levels (e.g., min_stops=1 skips nonstop search).
+
+    travel_class: "1"=economy, "2"=premium economy, "3"=business, "4"=first
+    """
     if dates is None:
         dates = DEPARTURE_DATES
+
+    class_labels = {"1": "economy", "2": "premium_economy", "3": "business", "4": "first"}
+    # SerpAPI stops: "1"=nonstop, "2"=≤1 stop, "3"=≤2 stops
+    stops_params = [str(i) for i in range(min_stops + 1, max_stops + 2)]
 
     all_results: list[dict] = []
 
     for dep_date in dates:
-        for stops_param in ("1", "2"):  # 1=nonstop, 2=1 stop or fewer
+        for stops_param in stops_params:
             params = {
                 "engine": "google_flights",
                 "api_key": SERPAPI_KEY,
@@ -59,7 +85,7 @@ def search_serpapi(
                 "arrival_id": destination,
                 "outbound_date": dep_date,
                 "type": "2",            # one-way
-                "travel_class": "1",    # economy
+                "travel_class": travel_class,
                 "adults": "1",
                 "stops": stops_param,
                 "currency": "USD",
@@ -72,15 +98,96 @@ def search_serpapi(
             data = resp.json()
 
             flights = data.get("best_flights", []) + data.get("other_flights", [])
+            _serpapi_call_log.append({
+                "route": f"{origin}→{destination}",
+                "date": dep_date,
+                "stops": stops_param,
+                "class": class_labels.get(travel_class, "economy"),
+                "results": len(flights),
+            })
+            print(f"[SerpAPI #{len(_serpapi_call_log)}] "
+                  f"{origin}→{destination} {dep_date} "
+                  f"stops={stops_param} → {len(flights)} flights")
             for flight in flights:
                 flight["_source"] = "serpapi"
                 flight["_search_date"] = dep_date
+                flight["_travel_class"] = class_labels.get(travel_class, "economy")
             all_results.extend(flights)
 
     route = f"{origin}→{destination}"
-    print(f"[SerpAPI] {route} returned {len(all_results)} results "
+    cls_label = class_labels.get(travel_class, travel_class)
+    print(f"[SerpAPI] {route} ({cls_label}) returned {len(all_results)} results "
           f"({len(dates)} dates × 2 queries)")
     return all_results
+
+
+def search_premium_business_prices(
+    origin: str,
+    destination: str,
+    dates: list[str],
+) -> dict[str, dict[tuple[str, str], int]]:
+    """Search for premium economy and business class prices.
+
+    Runs premium and business searches in parallel.
+    Returns a dict with keys 'premium' and 'business', each mapping
+    (airline_lower, search_date) -> cheapest_price for that class.
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    result: dict[str, dict[tuple[str, str], int]] = {
+        "premium": {},
+        "business": {},
+    }
+
+    def _search_class(class_key: str, travel_class: str) -> tuple[str, list[dict]]:
+        raw = search_serpapi(origin, destination, dates, travel_class=travel_class)
+        return class_key, raw
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        futures = [
+            pool.submit(_search_class, "premium", "2"),
+            pool.submit(_search_class, "business", "3"),
+        ]
+        for fut in as_completed(futures):
+            try:
+                class_key, raw = fut.result()
+                for flight_raw in raw:
+                    segments = flight_raw.get("flights", [])
+                    airline = (segments[0].get("airline", "") if segments else "").lower().strip()
+                    date = flight_raw.get("_search_date", "")
+                    price = flight_raw.get("price", 0)
+                    if airline and date and price:
+                        key = (airline, date)
+                        if key not in result[class_key] or price < result[class_key][key]:
+                            result[class_key][key] = price
+            except Exception as exc:
+                print(f"[SerpAPI] premium/business search failed for {origin}→{destination}: {exc}")
+
+    prem_count = len(result["premium"])
+    biz_count = len(result["business"])
+    print(f"[Premium/Business] {origin}→{destination}: {prem_count} premium, {biz_count} business prices")
+    return result
+
+
+def merge_premium_business_prices(
+    flights: list[dict],
+    price_lookup: dict[str, dict[tuple[str, str], int]],
+) -> list[dict]:
+    """Merge premium economy and business prices into economy flights."""
+    for f in flights:
+        airline = f["primary_airline"].lower().strip()
+        date = f.get("search_date", "")
+        key = (airline, date)
+
+        if key in price_lookup.get("premium", {}):
+            f["premium_economy_price"] = price_lookup["premium"][key]
+        if key in price_lookup.get("business", {}):
+            f["business_price"] = price_lookup["business"][key]
+
+    prem = sum(1 for f in flights if f.get("premium_economy_price"))
+    biz = sum(1 for f in flights if f.get("business_price"))
+    print(f"[Merge] {prem}/{len(flights)} flights got premium, {biz}/{len(flights)} got business prices")
+    return flights
 
 
 # ---------------------------------------------------------------------------
@@ -343,35 +450,105 @@ def normalize(raw_results: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 BASIC_ECONOMY_CARRIERS = {"american", "delta", "united"}
-BASIC_TO_MAIN_ADDER = 100  # Economy Main ≈ Basic Economy + $100 for intl flights
+BASIC_TO_MAIN_ADDER = {
+    "delta": 120,
+    "united": 100,
+    "american": 100,
+}
+
+
+def _extract_fare_prices_from_raw(raw: dict) -> tuple:
+    """Extract premium economy and business/first prices from SerpAPI raw data.
+
+    SerpAPI may include fare info in several places:
+    - extensions: list of strings like "Premium economy from $1,234"
+    - price_insights.fare_options: list of {fare_class, price}
+    - flights[].fare_category or fare_info fields
+    Returns (premium_price, business_price) or (None, None).
+    """
+    premium_price = None
+    business_price = None
+
+    # 1. Check extensions array for fare price strings
+    extensions = raw.get("extensions", [])
+    if isinstance(extensions, list):
+        for ext in extensions:
+            if not isinstance(ext, str):
+                continue
+            ext_lower = ext.lower()
+            # Look for patterns like "Premium economy from $1,234"
+            if "premium" in ext_lower and "economy" in ext_lower:
+                premium_price = _parse_price_from_string(ext)
+            elif "business" in ext_lower or "first" in ext_lower:
+                business_price = _parse_price_from_string(ext)
+
+    # 2. Check price_insights.fare_options
+    price_insights = raw.get("price_insights", {})
+    if isinstance(price_insights, dict):
+        fare_options = price_insights.get("fare_options", [])
+        if isinstance(fare_options, list):
+            for opt in fare_options:
+                if not isinstance(opt, dict):
+                    continue
+                fc = (opt.get("fare_class") or opt.get("cabin") or "").lower()
+                p = opt.get("price")
+                if p and "premium" in fc:
+                    premium_price = premium_price or p
+                elif p and ("business" in fc or "first" in fc):
+                    business_price = business_price or p
+
+    # 3. Check top-level premium_economy_price / business_price (direct fields)
+    if not premium_price and raw.get("premium_economy_price"):
+        premium_price = raw["premium_economy_price"]
+    if not business_price and raw.get("business_price"):
+        business_price = raw["business_price"]
+
+    # 4. Check nested flight segments for fare_category
+    for seg in raw.get("flights", []):
+        if not isinstance(seg, dict):
+            continue
+        fc = (seg.get("fare_category") or seg.get("travel_class") or "").lower()
+        if "premium" in fc and not premium_price:
+            premium_price = raw.get("price")
+        elif ("business" in fc or "first" in fc) and not business_price:
+            business_price = raw.get("price")
+
+    return premium_price, business_price
+
+
+def _parse_price_from_string(s: str):
+    """Extract a numeric price from a string like 'Premium economy from $1,234'."""
+    import re
+    match = re.search(r"\$[\d,]+", s)
+    if match:
+        try:
+            return int(match.group().replace("$", "").replace(",", ""))
+        except ValueError:
+            pass
+    return None
 
 
 def label_fare_types(flights: list[dict]) -> list[dict]:
     """Label fare types and populate all fare-class price fields.
 
-    Google Flights always shows the cheapest fare. For the US Big 3
-    (American, Delta, United) this is Basic Economy. We estimate
-    Economy Main by adding a flat $100 — typical for international
-    routes — and show it as the primary price, with the actual Basic
-    Economy price shown underneath.
+    Google Flights returns the cheapest economy fare. For the US Big 3
+    (American, Delta, United) this is Basic Economy — economy_main_price
+    is estimated as basic + per-carrier adder (BASIC_TO_MAIN_ADDER).
 
-    Non-Big-3 carriers' base fare is Economy Main (standard cabin).
-
-    Premium economy and business/first prices are populated from raw
-    API data when available, otherwise set to None.
+    Non-Big-3 carriers' base fare is Economy Main (standard cabin), so
+    basic_economy_price and economy_main_price are both set to the search price.
     """
     for f in flights:
         carrier = f["primary_airline"].lower().strip()
         raw = f.get("raw", {})
 
-        # Extract premium/business prices from raw SerpAPI data if present
-        premium_price = raw.get("premium_economy_price") or None
-        business_price = raw.get("business_price") or None
+        # Extract premium/business prices from raw SerpAPI data
+        premium_price, business_price = _extract_fare_prices_from_raw(raw)
 
         if carrier in BASIC_ECONOMY_CARRIERS:
             f["fare_type"] = "Economy Main"
             f["basic_economy_price"] = f["price"]
-            f["economy_main_price"] = f["price"] + BASIC_TO_MAIN_ADDER
+            f["economy_main_price"] = f["price"] + BASIC_TO_MAIN_ADDER.get(carrier, 100)
         else:
             f["fare_type"] = "Economy Main"
             f["basic_economy_price"] = f["price"]
@@ -381,7 +558,10 @@ def label_fare_types(flights: list[dict]) -> list[dict]:
         f["business_price"] = business_price
 
     big3 = sum(1 for f in flights if f["primary_airline"].lower().strip() in BASIC_ECONOMY_CARRIERS)
-    print(f"[Fare] {big3} Big 3 (BE→Main est.), {len(flights) - big3} Economy Main")
+    prem = sum(1 for f in flights if f.get("premium_economy_price"))
+    biz = sum(1 for f in flights if f.get("business_price"))
+    print(f"[Fare] {big3} Big 3 (Basic Economy), {len(flights) - big3} Economy, "
+          f"{prem} w/ premium, {biz} w/ business")
     return flights
 
 
@@ -396,20 +576,18 @@ BLOCKED_AIRLINES = {
 }
 
 
-def filter_flights(flights: list[dict]) -> list[dict]:
-    """Remove budget carriers and anything with more than 1 stop."""
+def filter_flights(flights: list[dict], max_stops: int = 1) -> list[dict]:
+    """Remove budget carriers and anything with more than max_stops stops."""
     kept: list[dict] = []
     for f in flights:
-        # Check stop count
-        if f["stops"] > 1:
+        if f["stops"] > max_stops:
             continue
-        # Check all airlines on the itinerary
         if any(a.lower() in BLOCKED_AIRLINES for a in f["airlines"]):
             continue
         kept.append(f)
 
     removed = len(flights) - len(kept)
-    print(f"[Filter] Kept {len(kept)} flights, removed {removed}")
+    print(f"[Filter] Kept {len(kept)} flights, removed {removed} (max_stops={max_stops})")
     return kept
 
 
@@ -511,6 +689,25 @@ ATL_RETURN_BONUSES: dict[str, int] = {
 }
 ATL_RETURN_AUTO_TOP_PICK: set[str] = {"turkish airlines"}
 
+# ---- Vancouver (YVR) ----
+YVR_OUTBOUND_BONUSES: dict[str, int] = {
+    "air canada": -300,
+    "lufthansa": -200,
+    "british airways": -180,
+    "klm": -180,
+    "air france": -180,
+    "swiss": -160,
+    "turkish airlines": -160,
+}
+
+YVR_RETURN_BONUSES: dict[str, int] = {
+    "turkish airlines": -280,
+    "air canada": -260,
+    "lufthansa": -200,
+    "british airways": -180,
+}
+YVR_RETURN_AUTO_TOP_PICK: set[str] = {"turkish airlines"}
+
 # ---------------------------------------------------------------------------
 # Route definitions
 # ---------------------------------------------------------------------------
@@ -526,9 +723,11 @@ ROUTES = [
     {
         "origin": "AKL",
         "outbound": {"from": "AKL", "to": "VCE", "dates": DEPARTURE_DATES,
-                      "bonuses": AKL_OUTBOUND_BONUSES, "auto_top": set()},
+                      "bonuses": AKL_OUTBOUND_BONUSES, "auto_top": set(),
+                      "max_stops": 2, "min_stops": 1},
         "return": {"from": "IST", "to": "AKL", "dates": RETURN_DATES,
-                   "bonuses": AKL_RETURN_BONUSES, "auto_top": AKL_RETURN_AUTO_TOP_PICK},
+                   "bonuses": AKL_RETURN_BONUSES, "auto_top": AKL_RETURN_AUTO_TOP_PICK,
+                   "max_stops": 2, "min_stops": 1},
     },
     {
         "origin": "ATL",
@@ -536,6 +735,15 @@ ROUTES = [
                       "bonuses": ATL_OUTBOUND_BONUSES, "auto_top": set()},
         "return": {"from": "IST", "to": "ATL", "dates": RETURN_DATES,
                    "bonuses": ATL_RETURN_BONUSES, "auto_top": ATL_RETURN_AUTO_TOP_PICK},
+    },
+    {
+        "origin": "YVR",
+        "outbound": {"from": "YVR", "to": "VCE", "dates": DEPARTURE_DATES,
+                      "bonuses": YVR_OUTBOUND_BONUSES, "auto_top": set(),
+                      "min_stops": 1},
+        "return": {"from": "IST", "to": "YVR", "dates": RETURN_DATES,
+                   "bonuses": YVR_RETURN_BONUSES, "auto_top": YVR_RETURN_AUTO_TOP_PICK,
+                   "min_stops": 1},
     },
 ]
 
@@ -1151,9 +1359,12 @@ if __name__ == "__main__":
 
         # --- Outbound ---
         out_cfg = route["outbound"]
-        raw_out = search_serpapi(out_cfg["from"], out_cfg["to"], out_cfg["dates"])
+        out_ms = out_cfg.get("max_stops", 1)
+        out_mins = out_cfg.get("min_stops", 0)
+        raw_out = search_serpapi(out_cfg["from"], out_cfg["to"], out_cfg["dates"],
+                                 max_stops=out_ms, min_stops=out_mins)
         outbound = normalize(raw_out)
-        outbound = filter_flights(outbound)
+        outbound = filter_flights(outbound, max_stops=out_ms)
         outbound = dedup_flights(outbound)
         outbound = label_fare_types(outbound)
         outbound = score_flights(
@@ -1166,11 +1377,14 @@ if __name__ == "__main__":
 
         # --- Return ---
         ret_cfg = route["return"]
-        raw_ret = search_serpapi(ret_cfg["from"], ret_cfg["to"], ret_cfg["dates"])
+        ret_ms = ret_cfg.get("max_stops", 1)
+        ret_mins = ret_cfg.get("min_stops", 0)
+        raw_ret = search_serpapi(ret_cfg["from"], ret_cfg["to"], ret_cfg["dates"],
+                                 max_stops=ret_ms, min_stops=ret_mins)
         if origin == "LAX":
             raw_ret += search_skyscanner(ret_cfg["from"], ret_cfg["to"], ret_cfg["dates"])
         ret = normalize(raw_ret)
-        ret = filter_flights(ret)
+        ret = filter_flights(ret, max_stops=ret_ms)
         ret = dedup_flights(ret)
         ret = label_fare_types(ret)
         ret = score_flights(
