@@ -1289,7 +1289,10 @@
       .then(function (result) {
         multiCityCache[key] = result;
         mcLoading = false;
+        // Clear stale summary cache so AI briefing refreshes with new results
+        delete summaryCache[activeOrigin + '|multicity'];
         renderFlights();
+        renderAIBriefing();
       })
       .catch(function (err) {
         mcLoading = false;
@@ -1488,6 +1491,12 @@
 
     var flights = getActiveFlights();
     if (flights.length === 0) {
+      // For multicity, don't cache the fallback — results haven't been searched yet
+      if (dir === 'multicity') {
+        var el2 = document.getElementById('ai-briefing-text');
+        if (summaryKey() === key) el2.innerHTML = 'Search for multi-city flights to see today\'s AI briefing.';
+        return;
+      }
       summaryCache[key] = 'Flight data updated daily. Check back each morning for today\'s best picks.';
       renderAIBriefing();
       return;

@@ -133,9 +133,9 @@ def search_serpapi_multicity(
     """Search Google Flights for multi-city itineraries (origin→dest + return_from→origin).
 
     Uses SerpAPI type=3 (multi-city) with multi_city_json parameter.
-    Makes one call per stops level (nonstop, 1-stop, optionally 2-stop).
+    SerpAPI does not reliably support the `stops` parameter for type=3,
+    so we make a single call and let the pipeline filter by max_stops.
     """
-    stops_params = [str(i) for i in range(min_stops + 1, max_stops + 2)]
     all_results: list[dict] = []
 
     multi_city_json = json.dumps([
@@ -143,41 +143,41 @@ def search_serpapi_multicity(
         {"departure_id": return_from, "arrival_id": origin, "date": return_date},
     ])
 
-    for stops_param in stops_params:
-        params = {
-            "engine": "google_flights",
-            "api_key": SERPAPI_KEY,
-            "type": "3",
-            "multi_city_json": multi_city_json,
-            "travel_class": "1",
-            "adults": "1",
-            "stops": stops_param,
-            "currency": "USD",
-        }
+    params = {
+        "engine": "google_flights",
+        "api_key": SERPAPI_KEY,
+        "type": "3",
+        "multi_city_json": multi_city_json,
+        "travel_class": "1",
+        "adults": "1",
+        "currency": "USD",
+    }
 
-        resp = requests.get(
-            "https://serpapi.com/search", params=params, timeout=30,
-        )
-        resp.raise_for_status()
-        data = resp.json()
+    resp = requests.get(
+        "https://serpapi.com/search", params=params, timeout=30,
+    )
+    resp.raise_for_status()
+    data = resp.json()
 
-        flights = data.get("best_flights", []) + data.get("other_flights", [])
-        _serpapi_call_log.append({
-            "route": f"{origin}↔{dest}+{return_from} (multi)",
-            "date": f"{outbound_date}/{return_date}",
-            "stops": stops_param,
-            "class": "economy",
-            "results": len(flights),
-        })
-        print(f"[SerpAPI #{len(_serpapi_call_log)}] "
-              f"{origin}↔{dest}+{return_from} {outbound_date}/{return_date} "
-              f"stops={stops_param} → {len(flights)} flights")
-        for flight in flights:
-            flight["_source"] = "serpapi_multicity"
-            flight["_search_date"] = outbound_date
-            flight["_outbound_date"] = outbound_date
-            flight["_return_date"] = return_date
-        all_results.extend(flights)
+    flights = data.get("best_flights", []) + data.get("other_flights", [])
+    _serpapi_call_log.append({
+        "route": f"{origin}↔{dest}+{return_from} (multi)",
+        "date": f"{outbound_date}/{return_date}",
+        "stops": "all",
+        "class": "economy",
+        "results": len(flights),
+    })
+    print(f"[SerpAPI #{len(_serpapi_call_log)}] "
+          f"{origin}↔{dest}+{return_from} {outbound_date}/{return_date} "
+          f"→ {len(flights)} flights")
+    for flight in flights:
+        flight["_source"] = "serpapi_multicity"
+        flight["_search_date"] = outbound_date
+        flight["_outbound_date"] = outbound_date
+        flight["_return_date"] = return_date
+        flight["_dest"] = dest
+        flight["_return_from"] = return_from
+    all_results.extend(flights)
 
     route = f"{origin}↔{dest}+{return_from}"
     print(f"[SerpAPI] {route} (multi-city) returned {len(all_results)} results")
@@ -190,17 +190,47 @@ def _normalize_serpapi_multicity(flight: dict, outbound_date: str, return_date: 
     if not segments:
         return _normalize_serpapi(flight)
 
-    # Split segments at the leg boundary: find where we arrive at VCE
-    # and the next segment departs from IST (or another city)
+    dest = flight.get("_dest", "VCE")
+    return_from = flight.get("_return_from", "IST")
+
+    # Strategy 1: Find where a segment arrives at dest (e.g. VCE)
     split_idx = None
     for i, seg in enumerate(segments):
         arr_id = seg.get("arrival_airport", {}).get("id", "")
-        if arr_id == "VCE" and i < len(segments) - 1:
+        if arr_id == dest and i < len(segments) - 1:
             split_idx = i + 1
             break
 
+    # Strategy 2: Find where a segment departs from return_from (e.g. IST)
     if split_idx is None:
-        # Fallback: split in half if we can't find VCE boundary
+        for i, seg in enumerate(segments):
+            dep_id = seg.get("departure_airport", {}).get("id", "")
+            if dep_id == return_from and i > 0:
+                split_idx = i
+                break
+
+    # Strategy 3: Use departure dates — the first segment departing on return_date
+    if split_idx is None:
+        for i, seg in enumerate(segments):
+            dep_time = seg.get("departure_airport", {}).get("time", "")
+            if dep_time.startswith(return_date) and i > 0:
+                split_idx = i
+                break
+
+    # Strategy 4: Use SerpAPI layovers array — find the longest gap (between legs)
+    if split_idx is None:
+        raw_layovers = flight.get("layovers", [])
+        if raw_layovers and len(segments) > 1:
+            max_dur = -1
+            max_idx = -1
+            for i, lo in enumerate(raw_layovers):
+                if lo.get("duration", 0) > max_dur:
+                    max_dur = lo["duration"]
+                    max_idx = i
+            if max_idx >= 0 and max_idx + 1 < len(segments):
+                split_idx = max_idx + 1
+
+    if split_idx is None:
         if len(segments) >= 2:
             split_idx = len(segments) // 2
         else:
