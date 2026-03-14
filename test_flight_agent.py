@@ -29,6 +29,7 @@ from flight_agent import (
     _flight_to_dict,
     _layover_info,
     _normalize_skyscanner,
+    _normalize_serpapi_multicity,
     build_email_html,
     dedup_flights,
     filter_flights,
@@ -1387,29 +1388,31 @@ class TestFrontendFilters(unittest.TestCase):
 
 
 class TestFamilyPickMatching(unittest.TestCase):
-    """Tests for price-agnostic family pick matching on flight cards."""
+    """Tests for family pick matching on flight cards."""
 
     def setUp(self):
         with open("public/index.html", "r") as fh:
             self.html = fh.read()
 
-    def test_flight_id_prefix_function_exists(self):
-        """flightIdPrefix function should exist for price-agnostic matching."""
-        self.assertIn("function flightIdPrefix(fid)", self.html)
+    def test_flight_match_key_function_exists(self):
+        """flightMatchKey function should exist for airline+date+time matching."""
+        self.assertIn("function flightMatchKey(fid, depTime)", self.html)
 
-    def test_get_flight_counts_uses_prefix_matching(self):
-        """getFlightCounts should use flightIdPrefix for price-agnostic matching."""
-        self.assertIn("flightIdPrefix(sheetFid)", self.html)
-        self.assertIn("flightIdPrefix(r.flight_id)", self.html)
+    def test_get_flight_counts_uses_match_key(self):
+        """getFlightCounts should use flightMatchKey for matching."""
+        self.assertIn("flightMatchKey(sheetFid, r.departure_time)", self.html)
 
-    def test_prefix_extracts_airline_and_date(self):
-        """flightIdPrefix should extract airline|date from airline|date|price."""
-        self.assertIn("parts[0] + '|' + parts[1]", self.html)
+    def test_get_flight_counts_accepts_dep_time(self):
+        """getFlightCounts should accept departure time parameter."""
+        self.assertIn("function getFlightCounts(fid, depTime)", self.html)
+
+    def test_interest_link_carries_dep_time(self):
+        """Interest link should carry data-dep attribute for departure time."""
+        self.assertIn('data-dep="', self.html)
 
     def test_has_picks_css_class(self):
         """Cards with family picks should get has-picks styling."""
         self.assertIn(".has-picks", self.html)
-        self.assertIn("has-picks", self.html)
 
     def test_has_picks_added_when_counts_exist(self):
         """interest-link should get has-picks class when counts > 0."""
@@ -1427,6 +1430,236 @@ class TestFamilyPickMatching(unittest.TestCase):
         """Every card should have an interest-link element."""
         self.assertIn('class="interest-link"', self.html)
         self.assertIn('data-fid=', self.html)
+
+    def test_family_picks_use_api_flight_times(self):
+        """Family picks should prefer API flight data times over sheet times."""
+        self.assertIn("matchedFlight", self.html)
+        self.assertIn("matchedFlight.departure_time", self.html)
+        self.assertIn("matchedFlight.arrival_time", self.html)
+
+    def test_family_picks_timezone_from_origin(self):
+        """Family picks should derive timezone from departure city."""
+        self.assertIn("info.tzDep", self.html)
+        self.assertIn("info.tzArr", self.html)
+
+
+class TestMultiCityNormalization(unittest.TestCase):
+    """Tests for _normalize_serpapi_multicity()."""
+
+    def _make_raw_multicity(self, out_airline="Delta", ret_airline="Turkish Airlines",
+                            out_stops=1, ret_stops=0, price=1200):
+        """Build a raw SerpAPI multi-city flight with outbound and return segments."""
+        segments = []
+        # Outbound leg: LAX -> (CDG) -> VCE
+        segments.append({
+            "airline": out_airline,
+            "flight_number": "DL 290",
+            "departure_airport": {"id": "LAX", "time": "2026-06-29 18:00"},
+            "arrival_airport": {"id": "CDG", "time": "2026-06-30 12:00"},
+            "duration": 600,
+        })
+        if out_stops > 0:
+            segments.append({
+                "airline": "Air France",
+                "flight_number": "AF 1526",
+                "departure_airport": {"id": "CDG", "time": "2026-06-30 14:30"},
+                "arrival_airport": {"id": "VCE", "time": "2026-06-30 16:00"},
+                "duration": 90,
+            })
+        else:
+            # Make the first segment go direct to VCE
+            segments[0]["arrival_airport"] = {"id": "VCE", "time": "2026-06-30 12:00"}
+        # Return leg: IST -> origin
+        if ret_stops == 0:
+            segments.append({
+                "airline": ret_airline,
+                "flight_number": "TK 10",
+                "departure_airport": {"id": "IST", "time": "2026-07-14 10:15"},
+                "arrival_airport": {"id": "LAX", "time": "2026-07-14 15:30"},
+                "duration": 780,
+            })
+        else:
+            segments.append({
+                "airline": ret_airline,
+                "flight_number": "TK 1867",
+                "departure_airport": {"id": "IST", "time": "2026-07-14 10:15"},
+                "arrival_airport": {"id": "FRA", "time": "2026-07-14 12:30"},
+                "duration": 195,
+            })
+            segments.append({
+                "airline": "Lufthansa",
+                "flight_number": "LH 450",
+                "departure_airport": {"id": "FRA", "time": "2026-07-14 14:00"},
+                "arrival_airport": {"id": "LAX", "time": "2026-07-14 17:00"},
+                "duration": 660,
+            })
+
+        return {
+            "flights": segments,
+            "price": price,
+            "total_duration": sum(s["duration"] for s in segments),
+            "_source": "serpapi_multicity",
+            "_search_date": "2026-06-29",
+            "_outbound_date": "2026-06-29",
+            "_return_date": "2026-07-14",
+        }
+
+    def test_splits_legs_at_vce(self):
+        """Should split segments at VCE arrival boundary."""
+        raw = self._make_raw_multicity()
+        result = _normalize_serpapi_multicity(raw, "2026-06-29", "2026-07-14")
+        self.assertEqual(result["type"], "multi_city")
+        self.assertIn("return_leg", result)
+        # Outbound: 2 segments (LAX->CDG, CDG->VCE) = 1 stop
+        self.assertEqual(result["stops"], 1)
+        # Return: 1 segment (IST->LAX) = 0 stops
+        self.assertEqual(result["return_leg"]["stops"], 0)
+
+    def test_outbound_airline(self):
+        """Outbound primary airline should be first outbound segment's airline."""
+        raw = self._make_raw_multicity(out_airline="United")
+        result = _normalize_serpapi_multicity(raw, "2026-06-29", "2026-07-14")
+        self.assertEqual(result["primary_airline"], "United")
+
+    def test_return_airline(self):
+        """Return leg primary airline should be first return segment's airline."""
+        raw = self._make_raw_multicity(ret_airline="Emirates")
+        result = _normalize_serpapi_multicity(raw, "2026-06-29", "2026-07-14")
+        self.assertEqual(result["return_leg"]["primary_airline"], "Emirates")
+
+    def test_price_is_total(self):
+        """Price should be the total multi-city price."""
+        raw = self._make_raw_multicity(price=1500)
+        result = _normalize_serpapi_multicity(raw, "2026-06-29", "2026-07-14")
+        self.assertEqual(result["price"], 1500)
+
+    def test_search_dates(self):
+        """Outbound search_date should be outbound_date, return should be return_date."""
+        raw = self._make_raw_multicity()
+        result = _normalize_serpapi_multicity(raw, "2026-06-29", "2026-07-14")
+        self.assertEqual(result["search_date"], "2026-06-29")
+        self.assertEqual(result["return_leg"]["search_date"], "2026-07-14")
+
+    def test_nonstop_outbound(self):
+        """Nonstop outbound should have 0 stops on outbound leg."""
+        raw = self._make_raw_multicity(out_stops=0)
+        result = _normalize_serpapi_multicity(raw, "2026-06-29", "2026-07-14")
+        self.assertEqual(result["stops"], 0)
+
+    def test_return_with_stop(self):
+        """Return with 1 stop should have correct stop count and layover info."""
+        raw = self._make_raw_multicity(ret_stops=1)
+        result = _normalize_serpapi_multicity(raw, "2026-06-29", "2026-07-14")
+        self.assertEqual(result["return_leg"]["stops"], 1)
+        self.assertGreater(result["return_leg"]["total_layover_min"], 0)
+
+    def test_flight_to_dict_includes_return_leg(self):
+        """_flight_to_dict should include return_leg for multi-city flights."""
+        raw = self._make_raw_multicity()
+        result = _normalize_serpapi_multicity(raw, "2026-06-29", "2026-07-14")
+        result["score"] = 100
+        result = label_fare_types([result])[0]
+        d = _flight_to_dict(result)
+        self.assertEqual(d["type"], "multi_city")
+        self.assertIn("return_leg", d)
+        self.assertEqual(d["return_leg"]["primary_airline"], "Turkish Airlines")
+        self.assertIn("departure_time", d["return_leg"])
+        self.assertIn("arrival_time", d["return_leg"])
+        self.assertIn("stops", d["return_leg"])
+
+    def test_flight_to_dict_no_return_for_oneway(self):
+        """_flight_to_dict should NOT include return_leg for one-way flights."""
+        f = _make_flight()
+        f = label_fare_types([f])[0]
+        f = score_flights([f])[0]
+        d = _flight_to_dict(f)
+        self.assertNotIn("type", d)
+        self.assertNotIn("return_leg", d)
+
+    def test_scoring_works_on_multicity(self):
+        """Scoring pipeline should work on multi-city flights."""
+        raw = self._make_raw_multicity(price=1200)
+        result = _normalize_serpapi_multicity(raw, "2026-06-29", "2026-07-14")
+        labeled = label_fare_types([result])
+        scored = score_flights(labeled)
+        self.assertEqual(len(scored), 1)
+        self.assertIsNotNone(scored[0]["score"])
+
+    def test_normalize_routes_multicity(self):
+        """normalize() should detect _source=serpapi_multicity and use multicity normalizer."""
+        raw = self._make_raw_multicity()
+        results = normalize([raw])
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["type"], "multi_city")
+
+
+class TestMultiCityFrontend(unittest.TestCase):
+    """Tests for multi-city frontend elements in index.html."""
+
+    @classmethod
+    def setUpClass(cls):
+        import pathlib
+        cls.html = pathlib.Path("public/index.html").read_text()
+
+    def test_multicity_direction_pill(self):
+        """Multi-City direction pill should exist."""
+        self.assertIn('data-dir="multicity"', self.html)
+        self.assertIn('Multi-City', self.html)
+
+    def test_mc_picker_elements(self):
+        """Multi-city date picker function should exist."""
+        self.assertIn('renderMCPicker', self.html)
+        self.assertIn('mc-out-date', self.html)
+        self.assertIn('mc-ret-date', self.html)
+        self.assertIn('mc-search-btn', self.html)
+
+    def test_mc_loading_animation(self):
+        """Loading animation with progress bar and phrases should exist."""
+        self.assertIn('mc-progress-bar', self.html)
+        self.assertIn('mc-progress-fill', self.html)
+        self.assertIn('mc-loading-phrase', self.html)
+        self.assertIn('Searching multi-city fares', self.html)
+
+    def test_mc_card_layout(self):
+        """Multi-city card should show both outbound and return legs."""
+        self.assertIn('mcCardHTML', self.html)
+        self.assertIn('mc-leg-label', self.html)
+        self.assertIn('OUTBOUND', self.html)
+        self.assertIn('RETURN', self.html)
+
+    def test_mc_savings_calculation(self):
+        """Savings calculation function should exist."""
+        self.assertIn('mcSavingsHTML', self.html)
+        self.assertIn('getCheapestOneWay', self.html)
+        self.assertIn('Save $', self.html)
+        self.assertIn('Booking separately may be cheaper', self.html)
+
+    def test_mc_cache(self):
+        """Multi-city results should be cached in memory."""
+        self.assertIn('multiCityCache', self.html)
+
+    def test_mc_api_endpoint(self):
+        """Should call /api/multicity endpoint."""
+        self.assertIn('/api/multicity', self.html)
+
+    def test_mc_book_modal_shows_both_legs(self):
+        """Book modal should show both legs for multi-city flights."""
+        self.assertIn("f.type === 'multi_city'", self.html)
+        self.assertIn('Outbound:', self.html)
+        self.assertIn('round trip', self.html)
+
+    def test_mc_filter_under_2000(self):
+        """Under $1K filter should become Under $2K for multi-city."""
+        self.assertIn("'Under $2,000'", self.html)
+
+    def test_mc_heroes_config(self):
+        """Heroes config should include multicity entry."""
+        self.assertIn("multicity:", self.html)
+        self.assertIn('Round Trip', self.html)
+
+    def test_mc_route_labels(self):
+        """Route labels should include multicity."""
+        self.assertIn('multicity:', self.html)
 
 
 if __name__ == "__main__":

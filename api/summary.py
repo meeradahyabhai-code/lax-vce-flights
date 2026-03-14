@@ -19,6 +19,8 @@ SYSTEM_PROMPT = (
     "available flight today and why, whether nonstop is available, which date is "
     "cheapest, and which flights family members have picked (mention airline and "
     "when they arrive/depart, NOT the price they paid). "
+    "For multi-city results, the price is the total round trip (both legs in a single booking). "
+    "Mention if multi-city saves money vs booking separately. "
     "Use first names from the data. Tone: warm, clear, like a helpful travel agent. "
     "No jargon. No bullet points. No emojis."
 )
@@ -41,7 +43,7 @@ class handler(BaseHTTPRequestHandler):
             # Build a compact data summary
             flight_lines = []
             for f in flights[:15]:
-                flight_lines.append(
+                line = (
                     f"{f.get('primary_airline', '?')} | "
                     f"{f.get('search_date', '?')} | "
                     f"dep {f.get('departure_time', '?')[:16]} | "
@@ -49,6 +51,12 @@ class handler(BaseHTTPRequestHandler):
                     f"${f.get('price', '?')} | "
                     f"score={f.get('score', '?')}"
                 )
+                if f.get('type') == 'multi_city':
+                    ret_airline = f.get('return_airline', '?')
+                    ret_date = f.get('return_date', '?')
+                    ret_stops = f.get('return_stops', '?')
+                    line += f" | MULTI-CITY return: {ret_airline} {ret_date} stops={ret_stops}"
+                flight_lines.append(line)
 
             pick_lines = []
             for p in family_picks[:20]:
@@ -62,10 +70,10 @@ class handler(BaseHTTPRequestHandler):
 
             origin = payload.get("origin", "LAX")
             route_map = {
-                "LAX": {"outbound": "LAX to VCE", "return": "IST to LAX"},
-                "AKL": {"outbound": "AKL to VCE", "return": "IST to AKL"},
-                "ATL": {"outbound": "ATL to VCE", "return": "IST to ATL"},
-                "YVR": {"outbound": "YVR to VCE", "return": "IST to YVR"},
+                "LAX": {"outbound": "LAX to VCE", "return": "IST to LAX", "multicity": "LAX to VCE + IST to LAX"},
+                "AKL": {"outbound": "AKL to VCE", "return": "IST to AKL", "multicity": "AKL to VCE + IST to AKL"},
+                "ATL": {"outbound": "ATL to VCE", "return": "IST to ATL", "multicity": "ATL to VCE + IST to ATL"},
+                "YVR": {"outbound": "YVR to VCE", "return": "IST to YVR", "multicity": "YVR to VCE + IST to YVR"},
             }
             city_names = {"LAX": "Los Angeles", "AKL": "Auckland", "ATL": "Atlanta", "YVR": "Vancouver"}
             route = route_map.get(origin, route_map["LAX"]).get(direction, "LAX to VCE")

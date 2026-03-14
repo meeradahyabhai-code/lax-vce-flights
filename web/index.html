@@ -331,6 +331,91 @@
     text-align: center; font-size: 11px; font-weight: 300; color: #94a3b8;
   }
 
+  /* Multi-city date picker */
+  .mc-picker {
+    display: flex; gap: 12px; align-items: center; justify-content: center;
+    flex-wrap: wrap; margin: 24px 0 16px;
+  }
+  .mc-picker label {
+    font-family: var(--sans); font-size: 13px; font-weight: 400;
+    color: #64748b;
+  }
+  .mc-picker select {
+    font-family: var(--sans); font-size: 14px; font-weight: 400;
+    padding: 8px 12px; border: 1px solid var(--fog); border-radius: 10px;
+    background: #fff; color: var(--ink); cursor: pointer;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+    padding-right: 28px;
+  }
+  .mc-picker select:focus { border-color: var(--azure); outline: none; }
+  .mc-search-btn {
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    padding: 8px 24px; border-radius: 9999px; border: none; cursor: pointer;
+    background: var(--azure); color: #fff; transition: background 0.15s;
+  }
+  .mc-search-btn:hover { background: var(--lagoon); }
+  .mc-search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Multi-city loading animation */
+  .mc-loading { text-align: center; padding: 40px 20px; }
+  .mc-progress-bar {
+    width: 100%; max-width: 400px; height: 8px; border-radius: 4px;
+    background: var(--fog); margin: 0 auto 16px; overflow: hidden;
+  }
+  .mc-progress-fill {
+    height: 100%; border-radius: 4px; width: 0%;
+    background: linear-gradient(90deg, #0a1628, #b8953a, #2a5298);
+    background-size: 200% 100%;
+    animation: mc-gradient 2s ease-in-out infinite, mc-fill 8s ease-out forwards;
+  }
+  @keyframes mc-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes mc-fill {
+    0% { width: 5%; }
+    30% { width: 40%; }
+    60% { width: 65%; }
+    80% { width: 80%; }
+    100% { width: 90%; }
+  }
+  .mc-progress-fill.done { animation: none; width: 100%; transition: width 0.3s; }
+  .mc-loading-phrase {
+    font-family: var(--sans); font-size: 14px; font-weight: 300;
+    color: #64748b; transition: opacity 0.3s;
+  }
+
+  /* Multi-city card */
+  .mc-card .mc-leg {
+    margin-bottom: 12px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--fog);
+  }
+  .mc-card .mc-leg:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .mc-leg-label {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    color: var(--gold); letter-spacing: 0.5px; text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .mc-leg-date {
+    font-family: var(--sans); font-size: 12px; font-weight: 300;
+    color: #94a3b8; margin-left: 8px; text-transform: none; letter-spacing: 0;
+  }
+  .mc-total-price {
+    font-family: var(--serif); font-size: 38px; font-weight: 600;
+    color: #1a3a6b; letter-spacing: -1px; line-height: 1.1;
+  }
+  .mc-total-label {
+    font-size: 12px; font-weight: 300; color: #94a3b8;
+  }
+  .mc-savings {
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    color: #1a7f37; margin-top: 4px;
+  }
+  .mc-savings.no-savings { color: #94a3b8; font-weight: 300; }
+
   /* Loading */
   .status { text-align: center; padding: 60px 20px; color: #94a3b8; font-size: 14px; }
   .loading-spinner {
@@ -487,6 +572,7 @@
   <div class="direction-nav" id="direction-nav">
     <button class="direction-pill active" data-dir="outbound">Outbound</button>
     <button class="direction-pill" data-dir="return">Return</button>
+    <button class="direction-pill" data-dir="multicity">Multi-City</button>
   </div>
   <div class="origin-nav" id="origin-nav">
     <button class="origin-pill" data-origin="LAX">LAX</button>
@@ -571,10 +657,10 @@
   };
 
   const ROUTE_LABELS = {
-    LAX: { outbound: 'LAX \u2192 VCE', return: 'IST \u2192 LAX' },
-    AKL: { outbound: 'AKL \u2192 VCE', return: 'IST \u2192 AKL' },
-    ATL: { outbound: 'ATL \u2192 VCE', return: 'IST \u2192 ATL' },
-    YVR: { outbound: 'YVR \u2192 VCE', return: 'IST \u2192 YVR' },
+    LAX: { outbound: 'LAX \u2192 VCE', return: 'IST \u2192 LAX', multicity: 'LAX \u2194 VCE + IST' },
+    AKL: { outbound: 'AKL \u2192 VCE', return: 'IST \u2192 AKL', multicity: 'AKL \u2194 VCE + IST' },
+    ATL: { outbound: 'ATL \u2192 VCE', return: 'IST \u2192 ATL', multicity: 'ATL \u2194 VCE + IST' },
+    YVR: { outbound: 'YVR \u2192 VCE', return: 'IST \u2192 YVR', multicity: 'YVR \u2194 VCE + IST' },
   };
 
   const HEROES = {
@@ -587,8 +673,16 @@
       image: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=1600&q=80',
       title: 'Homeward Bound',
       subtitle: 'Last stop &mdash; Istanbul, Turkey'
+    },
+    multicity: {
+      image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600',
+      title: 'Round Trip',
+      subtitle: 'Venice &amp; Istanbul &mdash; one booking'
     }
   };
+
+  const MC_OUT_DATES = ['2026-06-28', '2026-06-29', '2026-06-30'];
+  const MC_RET_DATES = ['2026-07-13', '2026-07-14', '2026-07-15'];
 
   const FILTERS = [
     { id: 'morning',   label: 'Morning',        group: 'general' },
@@ -608,6 +702,12 @@
   let pendingBookFlight = null;
   let sheetRows = [];
   var summaryCache = {};  // keyed by "origin|direction"
+
+  // Multi-city state
+  let mcOutDate = '2026-06-29';
+  let mcRetDate = '2026-07-14';
+  var multiCityCache = {};  // keyed by "origin|outDate|retDate"
+  let mcLoading = false;
 
   // ---- Origin persistence ----
   function getStoredOrigin() {
@@ -691,9 +791,10 @@
     return h + ':' + String(m).padStart(2, '0') + ' ' + ampm + (tz ? ' ' + tz : '');
   }
 
-  function getFlightTimezones() {
+  function getFlightTimezones(dir) {
+    var d = dir || activeDirection;
     var OTZ = { LAX: 'PST', AKL: 'NZDT', ATL: 'EST', YVR: 'PST' };
-    if (activeDirection === 'return') {
+    if (d === 'return') {
       return { dep: 'TRT', arr: OTZ[activeOrigin] || 'PST' };
     }
     return { dep: OTZ[activeOrigin] || 'PST', arr: 'CEST' };
@@ -734,6 +835,14 @@
 
   function bookUrl(f) {
     if (f.google_flights_url) return f.google_flights_url;
+    // Multi-city fallback: link to Google Flights multi-city search
+    if (f.type === 'multi_city') {
+      var origin = activeOrigin || 'LAX';
+      var retDate = (f.return_leg && f.return_leg.search_date) || mcRetDate;
+      return 'https://www.google.com/travel/flights?type=3&departure_id=' + origin +
+        '&arrival_id=VCE&outbound_date=' + f.search_date +
+        '&departure_id_2=IST&arrival_id_2=' + origin + '&outbound_date_2=' + retDate;
+    }
     var labels = ROUTE_LABELS[activeOrigin] || ROUTE_LABELS.LAX;
     var route = labels[activeDirection] || '';
     var parts = route.split(' \u2192 ');
@@ -770,6 +879,11 @@
   }
 
   function getActiveFlights() {
+    if (activeDirection === 'multicity') {
+      var key = activeOrigin + '|' + mcOutDate + '|' + mcRetDate;
+      var cached = multiCityCache[key];
+      return cached ? cached.flights || [] : [];
+    }
     var od = getOriginData();
     if (!od) return [];
     var dirData = od[activeDirection];
@@ -799,17 +913,34 @@
 
   function logToSheets(action, flight) {
     var name = getUserName() || 'Anonymous';
+    var fareType = flight.fare_type || 'Economy Main';
+    var airlineLbl = airlineLabel(flight);
+    var flightDate = fmtSheetDate(flight.search_date);
+    var depTime = fmtSheetTime(flight.departure_time);
+    var arrTime = fmtSheetTime(flight.arrival_time);
+    var layover = flight.layover_info || 'Nonstop';
+
+    if (flight.type === 'multi_city' && flight.return_leg) {
+      fareType = 'Multi-City ' + fareType;
+      var ret = flight.return_leg;
+      var retAir = (ret.airlines || []).filter(function(v,i,a){return a.indexOf(v)===i;}).join(' + ') || ret.primary_airline || '';
+      airlineLbl += ' / ' + retAir;
+      flightDate += ' + ' + fmtSheetDate(ret.search_date || mcRetDate);
+      arrTime += ' | ret ' + fmtSheetTime(ret.departure_time || '') + '-' + fmtSheetTime(ret.arrival_time || '');
+      layover += ' | ret ' + (ret.layover_info || 'Nonstop');
+    }
+
     var params = new URLSearchParams({
       name: name,
       origin: activeOrigin,
       action: action,
-      airline: airlineLabel(flight),
-      flight_date: fmtSheetDate(flight.search_date),
-      departure_time: fmtSheetTime(flight.departure_time),
-      arrival_time: fmtSheetTime(flight.arrival_time),
-      layover: flight.layover_info || 'Nonstop',
+      airline: airlineLbl,
+      flight_date: flightDate,
+      departure_time: depTime,
+      arrival_time: arrTime,
+      layover: layover,
       price: String(flight.economy_main_price || flight.price),
-      fare_type: flight.fare_type || 'Economy Main',
+      fare_type: fareType,
       flight_id: activeOrigin + ':' + flightId(flight),
     });
     fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' })
@@ -855,19 +986,23 @@
     return (fid || '').replace(/^[A-Z]{3}:/, '');
   }
 
-  function flightIdPrefix(fid) {
-    // Extract "Airline|date" from "Airline|date|price" — price-agnostic matching
+  function flightMatchKey(fid, depTime) {
+    // Match on airline|date|departure_time (ignoring price which drifts)
     var parts = (fid || '').split('|');
-    return parts.length >= 2 ? parts[0] + '|' + parts[1] : fid;
+    var airline = parts[0] || '';
+    var date = parts[1] || '';
+    var t = depTime ? String(depTime).replace(/.*\s/, '') : ''; // extract HH:MM
+    return airline + '|' + date + '|' + t;
   }
 
-  function getFlightCounts(fid) {
-    var prefix = flightIdPrefix(fid);
+  function getFlightCounts(fid, depTime) {
+    var key = flightMatchKey(fid, depTime);
     var booked = [], interested = [];
     for (var i = 0; i < sheetRows.length; i++) {
       var r = sheetRows[i];
       var sheetFid = stripOriginPrefix(r.flight_id);
-      if (flightIdPrefix(sheetFid) === prefix || flightIdPrefix(r.flight_id) === prefix) {
+      var sheetKey = flightMatchKey(sheetFid, r.departure_time);
+      if (sheetKey === key) {
         if (r.action === 'booked') booked.push(r.name || 'Someone');
         else if (r.action === 'interested') interested.push(r.name || 'Someone');
       }
@@ -878,7 +1013,8 @@
   function updateInterestLinks() {
     document.querySelectorAll('.interest-link[data-fid]').forEach(function (el) {
       var fid = el.getAttribute('data-fid');
-      var counts = getFlightCounts(fid);
+      var dep = el.getAttribute('data-dep') || '';
+      var counts = getFlightCounts(fid, dep);
       var parts = [];
       if (counts.interested.length > 0) parts.push(counts.interested.length + ' interested');
       if (counts.booked.length > 0) parts.push(counts.booked.length + ' booked');
@@ -893,7 +1029,7 @@
   }
 
   function showFamilyModal(fid, flightData) {
-    var counts = getFlightCounts(fid);
+    var counts = getFlightCounts(fid, flightData ? flightData.departure_time : '');
     var body = document.getElementById('fi-modal-body');
     var html = '';
 
@@ -903,12 +1039,31 @@
         niceDate = new Date(flightData.search_date + 'T12:00:00').toLocaleDateString('en-US',
           { month: 'short', day: 'numeric', weekday: 'short' });
       } catch (e) { niceDate = flightData.search_date; }
-      html += '<div class="fi-summary">' +
-        '<div class="fi-airline">' + escHtml(flightData.primary_airline) + '</div>' +
-        '<div class="fi-detail">' + niceDate + ' &middot; ' +
-          fmtTime(flightData.departure_time, getFlightTimezones().dep) + ' &rarr; ' + fmtTime(flightData.arrival_time, getFlightTimezones().arr) + '</div>' +
-        '<div class="fi-price">$' + flightData.price.toLocaleString() + '</div>' +
-      '</div>';
+
+      if (flightData.type === 'multi_city' && flightData.return_leg) {
+        var fiRet = flightData.return_leg;
+        var fiOutTz = getFlightTimezones('outbound');
+        var fiRetTz = getFlightTimezones('return');
+        var fiRetDate = '';
+        try { fiRetDate = new Date((fiRet.search_date || mcRetDate) + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' }); } catch(e) {}
+        var fiRetAirlines = (fiRet.airlines || []).filter(function(v,i,a){return a.indexOf(v)===i;}).join(' + ') || fiRet.primary_airline || '';
+        html += '<div class="fi-summary">' +
+          '<div class="fi-airline">Outbound: ' + escHtml(flightData.primary_airline) + '</div>' +
+          '<div class="fi-detail">' + niceDate + ' &middot; ' +
+            fmtTime(flightData.departure_time, fiOutTz.dep) + ' &rarr; ' + fmtTime(flightData.arrival_time, fiOutTz.arr) + '</div>' +
+          '<div class="fi-airline" style="margin-top:6px;">Return: ' + escHtml(fiRetAirlines) + '</div>' +
+          '<div class="fi-detail">' + fiRetDate + ' &middot; ' +
+            fmtTime(fiRet.departure_time || '', fiRetTz.dep) + ' &rarr; ' + fmtTime(fiRet.arrival_time || '', fiRetTz.arr) + '</div>' +
+          '<div class="fi-price">$' + flightData.price.toLocaleString() + ' round trip</div>' +
+        '</div>';
+      } else {
+        html += '<div class="fi-summary">' +
+          '<div class="fi-airline">' + escHtml(flightData.primary_airline) + '</div>' +
+          '<div class="fi-detail">' + niceDate + ' &middot; ' +
+            fmtTime(flightData.departure_time, getFlightTimezones().dep) + ' &rarr; ' + fmtTime(flightData.arrival_time, getFlightTimezones().arr) + '</div>' +
+          '<div class="fi-price">$' + flightData.price.toLocaleString() + '</div>' +
+        '</div>';
+      }
     }
 
     if (counts.booked.length === 0 && counts.interested.length === 0) {
@@ -948,11 +1103,28 @@
     var summary = document.getElementById('book-modal-summary');
     var niceDate = new Date(f.search_date + 'T12:00:00').toLocaleDateString('en-US',
       { month: 'short', day: 'numeric', weekday: 'short' });
-    summary.innerHTML =
-      '<div class="bm-airline">' + f.primary_airline + '</div>' +
-      '<div class="bm-detail">' + niceDate + ' &middot; ' +
-        fmtTime(f.departure_time, getFlightTimezones().dep) + ' &rarr; ' + fmtTime(f.arrival_time, getFlightTimezones().arr) + '</div>' +
-      '<div class="bm-price">$' + (f.economy_main_price || f.price).toLocaleString() + '</div>';
+
+    if (f.type === 'multi_city' && f.return_leg) {
+      var ret = f.return_leg;
+      var retDate = '';
+      try { retDate = new Date((ret.search_date || mcRetDate) + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' }); } catch(e) {}
+      var outTz = getFlightTimezones('outbound');
+      var retTz = getFlightTimezones('return');
+      summary.innerHTML =
+        '<div class="bm-airline">Outbound: ' + escHtml(f.primary_airline) + '</div>' +
+        '<div class="bm-detail">' + niceDate + ' &middot; ' +
+          fmtTime(f.departure_time, outTz.dep) + ' &rarr; ' + fmtTime(f.arrival_time, outTz.arr) + '</div>' +
+        '<div class="bm-airline" style="margin-top:8px;">Return: ' + escHtml(ret.primary_airline || '') + '</div>' +
+        '<div class="bm-detail">' + retDate + ' &middot; ' +
+          fmtTime(ret.departure_time || '', retTz.dep) + ' &rarr; ' + fmtTime(ret.arrival_time || '', retTz.arr) + '</div>' +
+        '<div class="bm-price">$' + (f.economy_main_price || f.price).toLocaleString() + ' round trip</div>';
+    } else {
+      summary.innerHTML =
+        '<div class="bm-airline">' + f.primary_airline + '</div>' +
+        '<div class="bm-detail">' + niceDate + ' &middot; ' +
+          fmtTime(f.departure_time, getFlightTimezones().dep) + ' &rarr; ' + fmtTime(f.arrival_time, getFlightTimezones().arr) + '</div>' +
+        '<div class="bm-price">$' + (f.economy_main_price || f.price).toLocaleString() + '</div>';
+    }
     document.getElementById('book-modal').classList.add('active');
   }
 
@@ -1021,7 +1193,8 @@
     if (activeFilters.has('1stop') && f.stops !== 1) return false;
     if (activeFilters.has('under1000')) {
       var price = fc ? getFarePrice(f, fc) : (f.economy_main_price || f.basic_economy_price || f.price);
-      if (price == null || price >= 1000) return false;
+      var limit = activeDirection === 'multicity' ? 2000 : 1000;
+      if (price == null || price >= limit) return false;
     }
     return true;
   }
@@ -1029,10 +1202,11 @@
   // ---- Direction nav & hero ----
   function renderDirectionNav() {
     var labels = ROUTE_LABELS[activeOrigin] || ROUTE_LABELS.LAX;
+    var dirLabels = { outbound: 'Outbound', return: 'Return', multicity: 'Multi-City' };
     document.querySelectorAll('.direction-pill').forEach(function (btn) {
       var dir = btn.dataset.dir;
       btn.classList.toggle('active', dir === activeDirection);
-      btn.innerHTML = (dir === 'outbound' ? 'Outbound &nbsp;' : 'Return &nbsp;') + labels[dir];
+      btn.innerHTML = dirLabels[dir] + ' &nbsp;' + (labels[dir] || '');
     });
   }
 
@@ -1057,6 +1231,199 @@
         renderFlights();
       });
     });
+  }
+
+  // ---- Multi-city search ----
+  function mcCacheKey() {
+    return activeOrigin + '|' + mcOutDate + '|' + mcRetDate;
+  }
+
+  function renderMCPicker() {
+    var el = document.getElementById('tabs');
+    function fmtOpt(d) {
+      return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+    }
+    var outOpts = MC_OUT_DATES.map(function (d) {
+      return '<option value="' + d + '"' + (d === mcOutDate ? ' selected' : '') + '>' + fmtOpt(d) + '</option>';
+    }).join('');
+    var retOpts = MC_RET_DATES.map(function (d) {
+      return '<option value="' + d + '"' + (d === mcRetDate ? ' selected' : '') + '>' + fmtOpt(d) + '</option>';
+    }).join('');
+
+    el.innerHTML = '<div class="mc-picker">' +
+      '<label>Depart to Venice</label>' +
+      '<select id="mc-out-date">' + outOpts + '</select>' +
+      '<label>Return from Istanbul</label>' +
+      '<select id="mc-ret-date">' + retOpts + '</select>' +
+      '<button class="mc-search-btn" id="mc-search-btn">Search</button>' +
+    '</div>';
+
+    document.getElementById('mc-out-date').addEventListener('change', function () {
+      mcOutDate = this.value;
+    });
+    document.getElementById('mc-ret-date').addEventListener('change', function () {
+      mcRetDate = this.value;
+    });
+    document.getElementById('mc-search-btn').addEventListener('click', function () {
+      searchMultiCity();
+    });
+  }
+
+  function searchMultiCity() {
+    var key = mcCacheKey();
+    if (multiCityCache[key]) {
+      renderFlights();
+      return;
+    }
+    mcLoading = true;
+    renderMCLoading();
+
+    var url = '/api/multicity?origin=' + activeOrigin +
+              '&out_date=' + mcOutDate + '&ret_date=' + mcRetDate;
+
+    fetch(url)
+      .then(function (r) {
+        if (!r.ok) throw new Error('API ' + r.status);
+        return r.json();
+      })
+      .then(function (result) {
+        multiCityCache[key] = result;
+        mcLoading = false;
+        renderFlights();
+      })
+      .catch(function (err) {
+        mcLoading = false;
+        document.getElementById('flights').innerHTML =
+          '<div class="status">Multi-city search failed: ' + escHtml(err.message) +
+          '<br><span class="loading-sub">Try again in a moment.</span></div>';
+      });
+  }
+
+  var MC_PHRASES = [
+    'Searching multi-city fares\u2026',
+    'Combining outbound + return legs\u2026',
+    'Comparing against separate bookings\u2026',
+    'Finding your best deal\u2026',
+  ];
+
+  function renderMCLoading() {
+    var el = document.getElementById('flights');
+    el.innerHTML = '<div class="mc-loading">' +
+      '<div class="mc-progress-bar"><div class="mc-progress-fill" id="mc-fill"></div></div>' +
+      '<div class="mc-loading-phrase" id="mc-phrase">' + MC_PHRASES[0] + '</div>' +
+    '</div>';
+    var phraseIdx = 0;
+    var phraseEl = document.getElementById('mc-phrase');
+    var interval = setInterval(function () {
+      if (!mcLoading) { clearInterval(interval); return; }
+      phraseIdx = (phraseIdx + 1) % MC_PHRASES.length;
+      phraseEl.style.opacity = '0';
+      setTimeout(function () {
+        if (!phraseEl) return;
+        phraseEl.textContent = MC_PHRASES[phraseIdx];
+        phraseEl.style.opacity = '1';
+      }, 300);
+    }, 2000);
+  }
+
+  function getCheapestOneWay(direction, date) {
+    var od = getOriginData();
+    if (!od || !od[direction]) return null;
+    var flights = od[direction].flights || [];
+    var cheapest = null;
+    for (var i = 0; i < flights.length; i++) {
+      if (flights[i].search_date === date) {
+        var p = flights[i].economy_main_price || flights[i].basic_economy_price || flights[i].price;
+        if (cheapest === null || p < cheapest) cheapest = p;
+      }
+    }
+    return cheapest;
+  }
+
+  function mcSavingsHTML(mcPrice) {
+    var outCheapest = getCheapestOneWay('outbound', mcOutDate);
+    var retCheapest = getCheapestOneWay('return', mcRetDate);
+    if (outCheapest === null || retCheapest === null) return '';
+    var separateTotal = outCheapest + retCheapest;
+    var savings = separateTotal - mcPrice;
+    if (savings > 0) {
+      return '<div class="mc-savings">Save $' + savings.toLocaleString() + ' vs booking separately</div>';
+    }
+    return '<div class="mc-savings no-savings">Booking separately may be cheaper</div>';
+  }
+
+  function mcCardHTML(f, rank, isTopPick) {
+    var topBadge = isTopPick
+      ? '<div><span class="badge badge-top">&#11088; TOP PICK</span></div>' : '';
+
+    var mainPrice = f.economy_main_price || f.price;
+    var ret = f.return_leg || {};
+    var outTz = getFlightTimezones('outbound');
+    var retTz = getFlightTimezones('return');
+
+    var outNiceDate = '';
+    try { outNiceDate = new Date(f.search_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); } catch(e) {}
+    var retNiceDate = '';
+    try { retNiceDate = new Date((ret.search_date || mcRetDate) + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); } catch(e) {}
+
+    var outStopsLabel = f.stops === 0 ? 'Nonstop' : f.stops + ' stop' + (f.stops > 1 ? 's' : '');
+    var retStopsLabel = !ret.stops ? 'Nonstop' : ret.stops + ' stop' + (ret.stops > 1 ? 's' : '');
+
+    var outAirlines = (f.airlines || []).filter(function(v,i,a){return a.indexOf(v)===i;}).join(' + ');
+    var retAirlines = (ret.airlines || []).filter(function(v,i,a){return a.indexOf(v)===i;}).join(' + ');
+
+    var fData = encodeURIComponent(JSON.stringify({
+      primary_airline: f.primary_airline,
+      airlines: f.airlines,
+      search_date: f.search_date,
+      price: f.price,
+      departure_time: f.departure_time,
+      arrival_time: f.arrival_time,
+      stops: f.stops,
+      layover_info: f.layover_info,
+      fare_type: f.fare_type,
+      google_flights_url: f.google_flights_url || '',
+      type: 'multi_city',
+      return_leg: ret,
+    }));
+
+    return '<div class="card mc-card' + (isTopPick ? ' top-pick' : '') + '">' +
+      topBadge +
+      '<div class="card-inner">' +
+        '<div class="card-left">' +
+          // Outbound leg
+          '<div class="mc-leg">' +
+            '<div class="mc-leg-label">OUTBOUND<span class="mc-leg-date">' + outNiceDate + '</span></div>' +
+            '<span class="airline-name">' + escHtml(outAirlines) + '</span> ' +
+            '<span class="badge badge-main">Economy Main</span>' +
+            '<div class="times"><span class="dep-time">' + fmtTime(f.departure_time, outTz.dep) +
+              ' &rarr;</span> <span class="arr-time">' + fmtTime(f.arrival_time, outTz.arr) +
+              dayOffset(f.departure_time, f.arrival_time) + '</span></div>' +
+            '<div class="meta">' + fmtDuration(f.total_duration_min) + ' &middot; ' + outStopsLabel + '</div>' +
+            '<div class="layover">' + (f.layover_info || 'Nonstop') + '</div>' +
+          '</div>' +
+          // Return leg
+          '<div class="mc-leg">' +
+            '<div class="mc-leg-label">RETURN<span class="mc-leg-date">' + retNiceDate + '</span></div>' +
+            '<span class="airline-name">' + escHtml(retAirlines) + '</span>' +
+            '<div class="times"><span class="dep-time">' + fmtTime(ret.departure_time || '', retTz.dep) +
+              ' &rarr;</span> <span class="arr-time">' + fmtTime(ret.arrival_time || '', retTz.arr) +
+              dayOffset(ret.departure_time || '', ret.arrival_time || '') + '</span></div>' +
+            '<div class="meta">' + fmtDuration(ret.total_duration_min || 0) + ' &middot; ' + retStopsLabel + '</div>' +
+            '<div class="layover">' + (ret.layover_info || 'Nonstop') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-right">' +
+          '<div class="mc-total-price">$' + mainPrice.toLocaleString() + '</div>' +
+          '<div class="mc-total-label">round trip</div>' +
+          mcSavingsHTML(mainPrice) +
+          '<button class="book-btn" data-flight="' + fData + '">Select Flight</button>' +
+          '<a class="interest-link" data-fid="' + escHtml(flightId(f)) +
+            '" data-dep="' + escHtml(f.departure_time || '') +
+            '" data-flight="' + fData + '">See family interest</a>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
   }
 
   function setupOriginNav() {
@@ -1135,7 +1502,7 @@
     });
 
     var summaryFlights = flights.slice(0, 15).map(function (f) {
-      return {
+      var sf = {
         primary_airline: f.primary_airline,
         search_date: f.search_date,
         departure_time: f.departure_time,
@@ -1143,6 +1510,13 @@
         price: f.economy_main_price || f.basic_economy_price || f.price,
         score: f.score
       };
+      if (f.type === 'multi_city' && f.return_leg) {
+        sf.type = 'multi_city';
+        sf.return_airline = f.return_leg.primary_airline || '';
+        sf.return_date = f.return_leg.search_date || '';
+        sf.return_stops = f.return_leg.stops;
+      }
+      return sf;
     });
 
     fetch('/api/summary', {
@@ -1178,6 +1552,10 @@
   function renderTabs() {
     var el = document.getElementById('tabs');
     if (!data) return;
+    if (activeDirection === 'multicity') {
+      renderMCPicker();
+      return;
+    }
     var flights = getActiveFlights();
     var dates = [];
     var seen = {};
@@ -1213,7 +1591,9 @@
     var el = document.getElementById('filters');
     el.innerHTML = FILTERS.map(function (f) {
       var cls = activeFilters.has(f.id) ? 'filter-btn active' : 'filter-btn';
-      return '<button class="' + cls + '" data-fid="' + f.id + '" data-group="' + f.group + '">' + f.label + '</button>';
+      var label = f.label;
+      if (f.id === 'under1000' && activeDirection === 'multicity') label = 'Under $2,000';
+      return '<button class="' + cls + '" data-fid="' + f.id + '" data-group="' + f.group + '">' + label + '</button>';
     }).join('');
     el.querySelectorAll('.filter-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -1291,6 +1671,7 @@
           '<button class="book-btn" data-flight="' + fData +
             '">Select Flight</button>' +
           '<a class="interest-link" data-fid="' + escHtml(flightId(f)) +
+            '" data-dep="' + escHtml(f.departure_time || '') +
             '" data-flight="' + fData + '">See family interest</a>' +
         '</div>' +
       '</div>' +
@@ -1322,6 +1703,51 @@
   function renderFlights() {
     var el = document.getElementById('flights');
     if (!data) { el.innerHTML = '<div class="status">Loading flights&hellip;</div>'; return; }
+
+    // Multi-city mode
+    if (activeDirection === 'multicity') {
+      if (mcLoading) return; // loading animation already shown
+      var mcFlights = getActiveFlights().filter(passesFilter);
+      if (mcFlights.length === 0) {
+        var key = mcCacheKey();
+        if (multiCityCache[key]) {
+          el.innerHTML = '<div class="status">No multi-city flights match these filters.</div>';
+        } else {
+          el.innerHTML = '<div class="status" style="color:#64748b;">' +
+            'Select your dates above and click <strong>Search</strong> to find multi-city fares.</div>';
+        }
+        renderFooter(0);
+        return;
+      }
+      var mcExpanded = expandedDates.has('mc');
+      var mcVisible = mcExpanded ? mcFlights : mcFlights.slice(0, 3);
+      var mcRemaining = mcFlights.length - 3;
+      var html = '<div class="date-heading">Multi-City Results' +
+                 '<span class="date-count">' + mcFlights.length +
+                 ' option' + (mcFlights.length !== 1 ? 's' : '') + '</span></div>';
+      mcVisible.forEach(function (f, i) {
+        html += mcCardHTML(f, i + 1, i === 0);
+      });
+      if (mcRemaining > 0 && !mcExpanded) {
+        html += '<button class="show-more-btn" id="show-more">Show ' +
+                mcRemaining + ' more option' + (mcRemaining !== 1 ? 's' : '') + ' &#9660;</button>';
+      } else if (mcExpanded && mcRemaining > 0) {
+        html += '<button class="show-more-btn" id="show-less">Hide extra options &#9650;</button>';
+      }
+      el.innerHTML = html;
+      attachBookHandlers();
+      attachInterestHandlers();
+      var moreBtn = document.getElementById('show-more');
+      if (moreBtn) moreBtn.addEventListener('click', function () {
+        expandedDates.add('mc'); renderFlights();
+      });
+      var lessBtn = document.getElementById('show-less');
+      if (lessBtn) lessBtn.addEventListener('click', function () {
+        expandedDates.delete('mc'); renderFlights();
+      });
+      renderFooter(mcFlights.length);
+      return;
+    }
 
     var allForDate = getActiveFlights()
       .filter(function (f) { return f.search_date === activeDate && passesFilter(f); });
@@ -1447,40 +1873,73 @@
         origin = flightIdForMatch.slice(0, 3);
         flightIdForMatch = flightIdForMatch.slice(4);
       }
-      // If still no origin, try to match flight in data
-      if (!origin && data && flightIdForMatch) {
-        Object.keys(data).forEach(function (o) {
-          ['outbound', 'return'].forEach(function (dir) {
-            if (data[o][dir] && data[o][dir].flights) {
-              var found = data[o][dir].flights.find(function (f) {
-                return (f.primary_airline + '|' + f.search_date + '|' + f.price) === stripOriginPrefix(flightIdForMatch);
-              });
-              if (found) origin = o;
-            }
-          });
+      // Match flight in API data by airline+date (price-agnostic)
+      var matchedFlight = null;
+      var cleanFid = stripOriginPrefix(flightIdForMatch);
+      var fidParts = cleanFid.split('|');
+      var fidAirline = fidParts[0] || '';
+      var fidDate = fidParts[1] || '';
+      if (data && fidAirline && fidDate) {
+        var allFlights = getAllFlightsFlat();
+        // Try exact match first (airline+date+depTime from sheet)
+        var sheetDepTime = r.departure_time ? String(r.departure_time).replace(/.*\s/, '') : '';
+        matchedFlight = allFlights.find(function (f) {
+          return f.primary_airline === fidAirline && f.search_date === fidDate &&
+            f.departure_time && f.departure_time.indexOf(sheetDepTime) !== -1 && sheetDepTime;
         });
+        // Fallback: airline+date only (first match)
+        if (!matchedFlight) {
+          matchedFlight = allFlights.find(function (f) {
+            return f.primary_airline === fidAirline && f.search_date === fidDate;
+          });
+        }
+        // Infer origin from matched flight if still unknown
+        if (!origin && matchedFlight) {
+          Object.keys(data).forEach(function (o) {
+            ['outbound', 'return'].forEach(function (dir) {
+              if (data[o][dir] && data[o][dir].flights &&
+                  data[o][dir].flights.indexOf(matchedFlight) !== -1) {
+                origin = o;
+              }
+            });
+          });
+        }
       }
       origin = origin || 'LAX';
       var info = pickDestInfo(origin, dateLabel);
-      var depStr = fmtPickDateTime(dateLabel, r.departure_time, info.tzDep);
+      // Use API flight data for times when available (sheet times may be wrong)
+      var depTime = matchedFlight ? matchedFlight.departure_time : r.departure_time;
+      var arrTime = matchedFlight ? matchedFlight.arrival_time : r.arrival_time;
+      var depStr = '';
+      if (depTime && depTime.length > 10) {
+        // Full datetime from API: "2026-06-29 18:00"
+        var depDate = depTime.slice(0, 10);
+        var depHHMM = depTime.slice(11, 16);
+        var dd = new Date(depDate + 'T12:00:00');
+        var depDateFmt = (dd.getUTCMonth() + 1) + '-' + dd.getUTCDate() + '-' + String(dd.getUTCFullYear()).slice(2);
+        var dh = parseInt(depHHMM.split(':')[0], 10);
+        var dm = parseInt(depHHMM.split(':')[1], 10);
+        var dAmpm = dh >= 12 ? 'pm' : 'am';
+        var dh12 = dh % 12 || 12;
+        var dmStr = dm > 0 ? ':' + String(dm).padStart(2, '0') : '';
+        depStr = depDateFmt + ' ' + dh12 + dmStr + dAmpm + ' ' + info.tzDep;
+      } else {
+        depStr = fmtPickDateTime(dateLabel, r.departure_time, info.tzDep);
+      }
       var arrStr = '';
-      if (r.arrival_time) {
-        // Arrival may be next day — use flight match if available
-        var arrDate = dateLabel;
-        if (data && r.flight_id) {
-          var allFlights = getAllFlightsFlat();
-          var cleanFid = stripOriginPrefix(r.flight_id || '');
-          var match = allFlights.find(function (f) {
-            return (f.primary_airline + '|' + f.search_date + '|' + f.price) === cleanFid;
-          });
-          if (match && match.arrival_time) {
-            arrDate = match.arrival_time.slice(0, 10);
-            // Format arrDate from YYYY-MM-DD
-            var ad = new Date(arrDate + 'T12:00:00');
-            arrDate = ad.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-          }
-        }
-        arrStr = ' arriving in ' + info.destCity + ' ' + fmtPickDateTime(arrDate, r.arrival_time, info.tzArr);
+      if (arrTime && arrTime.length > 10) {
+        var arrDate = arrTime.slice(0, 10);
+        var arrHHMM = arrTime.slice(11, 16);
+        var ad = new Date(arrDate + 'T12:00:00');
+        var arrDateFmt = (ad.getUTCMonth() + 1) + '-' + ad.getUTCDate() + '-' + String(ad.getUTCFullYear()).slice(2);
+        var ah = parseInt(arrHHMM.split(':')[0], 10);
+        var am = parseInt(arrHHMM.split(':')[1], 10);
+        var aAmpm = ah >= 12 ? 'pm' : 'am';
+        var ah12 = ah % 12 || 12;
+        var amStr = am > 0 ? ':' + String(am).padStart(2, '0') : '';
+        arrStr = ' arriving in ' + info.destCity + ' ' + arrDateFmt + ' ' + ah12 + amStr + aAmpm + ' ' + info.tzArr;
+      } else if (r.arrival_time) {
+        arrStr = ' arriving in ' + info.destCity + ' ' + fmtPickDateTime(dateLabel, r.arrival_time, info.tzArr);
       }
       var ago = r.timestamp ? timeAgo(r.timestamp) : '';
       var originLabel = r.origin ? ' <span style="color:#94a3b8;font-size:11px;">(' + escHtml(origin) + ')</span>' : '';
@@ -1507,6 +1966,11 @@
           all = all.concat(od[dir].flights);
         }
       });
+    });
+    // Include multi-city cached flights
+    Object.keys(multiCityCache).forEach(function (key) {
+      var mc = multiCityCache[key];
+      if (mc && mc.flights) all = all.concat(mc.flights);
     });
     return all;
   }
@@ -1558,8 +2022,8 @@
 
     // Check URL params for direction
     var urlDir = new URLSearchParams(window.location.search).get('dir');
-    if (urlDir === 'return') {
-      activeDirection = 'return';
+    if (urlDir === 'return' || urlDir === 'multicity') {
+      activeDirection = urlDir;
       renderDirectionNav();
       updateHero();
     }

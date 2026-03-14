@@ -121,6 +121,196 @@ def search_serpapi(
     return all_results
 
 
+def search_serpapi_multicity(
+    origin: str = "LAX",
+    dest: str = "VCE",
+    return_from: str = "IST",
+    outbound_date: str = "2026-06-29",
+    return_date: str = "2026-07-14",
+    max_stops: int = 1,
+    min_stops: int = 0,
+) -> list[dict]:
+    """Search Google Flights for multi-city itineraries (origin→dest + return_from→origin).
+
+    Uses SerpAPI type=3 (multi-city) with multi_city_json parameter.
+    Makes one call per stops level (nonstop, 1-stop, optionally 2-stop).
+    """
+    stops_params = [str(i) for i in range(min_stops + 1, max_stops + 2)]
+    all_results: list[dict] = []
+
+    multi_city_json = json.dumps([
+        {"departure_id": origin, "arrival_id": dest, "date": outbound_date},
+        {"departure_id": return_from, "arrival_id": origin, "date": return_date},
+    ])
+
+    for stops_param in stops_params:
+        params = {
+            "engine": "google_flights",
+            "api_key": SERPAPI_KEY,
+            "type": "3",
+            "multi_city_json": multi_city_json,
+            "travel_class": "1",
+            "adults": "1",
+            "stops": stops_param,
+            "currency": "USD",
+        }
+
+        resp = requests.get(
+            "https://serpapi.com/search", params=params, timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        flights = data.get("best_flights", []) + data.get("other_flights", [])
+        _serpapi_call_log.append({
+            "route": f"{origin}↔{dest}+{return_from} (multi)",
+            "date": f"{outbound_date}/{return_date}",
+            "stops": stops_param,
+            "class": "economy",
+            "results": len(flights),
+        })
+        print(f"[SerpAPI #{len(_serpapi_call_log)}] "
+              f"{origin}↔{dest}+{return_from} {outbound_date}/{return_date} "
+              f"stops={stops_param} → {len(flights)} flights")
+        for flight in flights:
+            flight["_source"] = "serpapi_multicity"
+            flight["_search_date"] = outbound_date
+            flight["_outbound_date"] = outbound_date
+            flight["_return_date"] = return_date
+        all_results.extend(flights)
+
+    route = f"{origin}↔{dest}+{return_from}"
+    print(f"[SerpAPI] {route} (multi-city) returned {len(all_results)} results")
+    return all_results
+
+
+def _normalize_serpapi_multicity(flight: dict, outbound_date: str, return_date: str) -> dict:
+    """Flatten a SerpAPI multi-city flight into a common schema with return_leg."""
+    segments = flight.get("flights", [])
+    if not segments:
+        return _normalize_serpapi(flight)
+
+    # Split segments at the leg boundary: find where we arrive at VCE
+    # and the next segment departs from IST (or another city)
+    split_idx = None
+    for i, seg in enumerate(segments):
+        arr_id = seg.get("arrival_airport", {}).get("id", "")
+        if arr_id == "VCE" and i < len(segments) - 1:
+            split_idx = i + 1
+            break
+
+    if split_idx is None:
+        # Fallback: split in half if we can't find VCE boundary
+        if len(segments) >= 2:
+            split_idx = len(segments) // 2
+        else:
+            return _normalize_serpapi(flight)
+
+    out_segments = segments[:split_idx]
+    ret_segments = segments[split_idx:]
+
+    # Build outbound leg
+    out_first = out_segments[0]
+    out_last = out_segments[-1]
+    out_airlines = [seg.get("airline", "") for seg in out_segments]
+    out_layovers = []
+    if len(out_segments) > 1:
+        for i in range(len(out_segments) - 1):
+            arr_info = out_segments[i].get("arrival_airport", {})
+            dep_info = out_segments[i + 1].get("departure_airport", {})
+            arr_time = arr_info.get("time", "")
+            dep_time = dep_info.get("time", "")
+            layover_min = 0
+            try:
+                arr_dt = datetime.fromisoformat(arr_time)
+                dep_dt = datetime.fromisoformat(dep_time)
+                layover_min = int((dep_dt - arr_dt).total_seconds() / 60)
+            except (ValueError, TypeError):
+                pass
+            out_layovers.append({
+                "name": arr_info.get("name", arr_info.get("id", "")),
+                "id": arr_info.get("id", ""),
+                "duration": layover_min,
+            })
+
+    out_total_layover = sum(lo["duration"] for lo in out_layovers)
+    out_dep_time = out_first.get("departure_airport", {}).get("time", "")
+    out_arr_time = out_last.get("arrival_airport", {}).get("time", "")
+    out_duration = sum(seg.get("duration", 0) for seg in out_segments) + out_total_layover
+
+    # Build return leg
+    ret_first = ret_segments[0] if ret_segments else {}
+    ret_last = ret_segments[-1] if ret_segments else {}
+    ret_airlines = [seg.get("airline", "") for seg in ret_segments]
+    ret_layovers = []
+    if len(ret_segments) > 1:
+        for i in range(len(ret_segments) - 1):
+            arr_info = ret_segments[i].get("arrival_airport", {})
+            dep_info = ret_segments[i + 1].get("departure_airport", {})
+            arr_time = arr_info.get("time", "")
+            dep_time = dep_info.get("time", "")
+            layover_min = 0
+            try:
+                arr_dt = datetime.fromisoformat(arr_time)
+                dep_dt = datetime.fromisoformat(dep_time)
+                layover_min = int((dep_dt - arr_dt).total_seconds() / 60)
+            except (ValueError, TypeError):
+                pass
+            ret_layovers.append({
+                "name": arr_info.get("name", arr_info.get("id", "")),
+                "id": arr_info.get("id", ""),
+                "duration": layover_min,
+            })
+
+    ret_total_layover = sum(lo["duration"] for lo in ret_layovers)
+    ret_dep_time = ret_first.get("departure_airport", {}).get("time", "")
+    ret_arr_time = ret_last.get("arrival_airport", {}).get("time", "")
+    ret_duration = sum(seg.get("duration", 0) for seg in ret_segments) + ret_total_layover
+
+    google_flights_url = _build_google_flights_url(flight)
+
+    return {
+        "primary_airline": out_airlines[0] if out_airlines else "",
+        "airlines": out_airlines,
+        "departure_time": out_dep_time,
+        "arrival_time": out_arr_time,
+        "stops": len(out_layovers),
+        "total_layover_min": out_total_layover,
+        "total_duration_min": out_duration,
+        "price": flight.get("price", 0),
+        "source": "serpapi",
+        "search_date": outbound_date,
+        "google_flights_url": google_flights_url,
+        "type": "multi_city",
+        "return_leg": {
+            "primary_airline": ret_airlines[0] if ret_airlines else "",
+            "airlines": ret_airlines,
+            "departure_time": ret_dep_time,
+            "arrival_time": ret_arr_time,
+            "stops": len(ret_layovers),
+            "total_layover_min": ret_total_layover,
+            "total_duration_min": ret_duration,
+            "layover_info": _layover_info_from_layovers(ret_layovers, len(ret_layovers)),
+            "search_date": return_date,
+        },
+        "raw": flight,
+    }
+
+
+def _layover_info_from_layovers(layovers: list[dict], stops: int) -> str:
+    """Build layover info string from a list of layover dicts."""
+    if stops == 0:
+        return "Nonstop"
+    if layovers:
+        parts = []
+        for lo in layovers:
+            name = lo.get("name", lo.get("id", ""))
+            dur = _fmt_duration(lo.get("duration", 0))
+            parts.append(f"{dur} in {name}" if name else dur)
+        return " · ".join(parts)
+    return "Connection"
+
+
 def search_premium_business_prices(
     origin: str,
     destination: str,
@@ -440,6 +630,10 @@ def normalize(raw_results: list[dict]) -> list[dict]:
             n = _normalize_skyscanner(r)
             if n:
                 normalized.append(n)
+        elif r.get("_source") == "serpapi_multicity":
+            normalized.append(_normalize_serpapi_multicity(
+                r, r.get("_outbound_date", ""), r.get("_return_date", ""),
+            ))
         else:
             normalized.append(_normalize_serpapi(r))
     return normalized
@@ -1238,7 +1432,7 @@ def build_email_html(
 
 def _flight_to_dict(f: dict) -> dict:
     """Convert a scored flight to a JSON-serializable dict."""
-    return {
+    d = {
         "primary_airline": f["primary_airline"],
         "airlines": f["airlines"],
         "departure_time": f["departure_time"],
@@ -1257,6 +1451,21 @@ def _flight_to_dict(f: dict) -> dict:
         "google_flights_url": f.get("google_flights_url", ""),
         "layover_info": _layover_info(f),
     }
+    if f.get("type") == "multi_city":
+        d["type"] = "multi_city"
+        ret = f["return_leg"]
+        d["return_leg"] = {
+            "primary_airline": ret["primary_airline"],
+            "airlines": ret["airlines"],
+            "departure_time": ret["departure_time"],
+            "arrival_time": ret["arrival_time"],
+            "stops": ret["stops"],
+            "total_layover_min": ret["total_layover_min"],
+            "total_duration_min": ret["total_duration_min"],
+            "layover_info": ret.get("layover_info", ""),
+            "search_date": ret.get("search_date", ""),
+        }
+    return d
 
 
 def export_flights_json(

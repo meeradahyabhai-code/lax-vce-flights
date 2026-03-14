@@ -7,6 +7,9 @@
     },
     "api/summary.py": {
       "maxDuration": 20
+    },
+    "api/multicity.py": {
+      "maxDuration": 60
     }
   },
   "rewrites": [
