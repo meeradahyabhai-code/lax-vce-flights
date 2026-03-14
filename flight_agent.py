@@ -133,8 +133,10 @@ def search_serpapi_multicity(
     """Search Google Flights for multi-city itineraries (origin→dest + return_from→origin).
 
     Uses SerpAPI type=3 (multi-city) with multi_city_json parameter.
-    SerpAPI does not reliably support the `stops` parameter for type=3,
-    so we make a single call and let the pipeline filter by max_stops.
+    SerpAPI multi-city is a 2-step process:
+      1. First call returns outbound options with total round-trip prices.
+      2. Second call uses departure_token to get return leg options.
+    We fetch returns for the top outbound picks to get full itinerary details.
     """
     all_results: list[dict] = []
 
@@ -143,6 +145,7 @@ def search_serpapi_multicity(
         {"departure_id": return_from, "arrival_id": origin, "date": return_date},
     ])
 
+    # Step 1: Get outbound options
     params = {
         "engine": "google_flights",
         "api_key": SERPAPI_KEY,
@@ -159,145 +162,107 @@ def search_serpapi_multicity(
     resp.raise_for_status()
     data = resp.json()
 
-    flights = data.get("best_flights", []) + data.get("other_flights", [])
+    outbound_flights = data.get("best_flights", []) + data.get("other_flights", [])
     _serpapi_call_log.append({
-        "route": f"{origin}↔{dest}+{return_from} (multi)",
+        "route": f"{origin}→{dest} (multi-city outbound)",
         "date": f"{outbound_date}/{return_date}",
         "stops": "all",
         "class": "economy",
-        "results": len(flights),
+        "results": len(outbound_flights),
     })
     print(f"[SerpAPI #{len(_serpapi_call_log)}] "
-          f"{origin}↔{dest}+{return_from} {outbound_date}/{return_date} "
-          f"→ {len(flights)} flights")
-    for flight in flights:
+          f"{origin}→{dest} (multi-city outbound) {outbound_date} "
+          f"→ {len(outbound_flights)} flights")
+
+    # Step 2: Get return options for top outbound picks (by price).
+    # Use departure_token from best outbound to get return leg details.
+    # We fetch returns for the cheapest outbound; all outbound options
+    # are then paired with the best return for display.
+    best_return_flights: list[dict] = []
+    if outbound_flights:
+        # Pick cheapest outbound to fetch returns for
+        cheapest = min(outbound_flights, key=lambda f: f.get("price", 99999))
+        token = cheapest.get("departure_token", "")
+        if token:
+            params2 = {
+                "engine": "google_flights",
+                "api_key": SERPAPI_KEY,
+                "type": "3",
+                "multi_city_json": multi_city_json,
+                "departure_token": token,
+                "currency": "USD",
+            }
+            try:
+                resp2 = requests.get(
+                    "https://serpapi.com/search", params=params2, timeout=30,
+                )
+                resp2.raise_for_status()
+                data2 = resp2.json()
+                best_return_flights = (
+                    data2.get("best_flights", [])
+                    + data2.get("other_flights", [])
+                )
+                _serpapi_call_log.append({
+                    "route": f"{return_from}→{origin} (multi-city return)",
+                    "date": f"{return_date}",
+                    "stops": "all",
+                    "class": "economy",
+                    "results": len(best_return_flights),
+                })
+                print(f"[SerpAPI #{len(_serpapi_call_log)}] "
+                      f"{return_from}→{origin} (multi-city return) {return_date} "
+                      f"→ {len(best_return_flights)} flights")
+            except Exception as exc:
+                print(f"[SerpAPI] Return leg fetch failed: {exc}")
+
+    # Pick the cheapest return option (best pairing)
+    best_return = None
+    if best_return_flights:
+        best_return = min(best_return_flights, key=lambda f: f.get("price", 99999))
+
+    # Tag all outbound flights with metadata and attach the best return
+    for flight in outbound_flights:
         flight["_source"] = "serpapi_multicity"
         flight["_search_date"] = outbound_date
         flight["_outbound_date"] = outbound_date
         flight["_return_date"] = return_date
         flight["_dest"] = dest
         flight["_return_from"] = return_from
-    all_results.extend(flights)
+        flight["_return_raw"] = best_return  # attach best return leg data
+    all_results.extend(outbound_flights)
 
     route = f"{origin}↔{dest}+{return_from}"
-    print(f"[SerpAPI] {route} (multi-city) returned {len(all_results)} results")
+    print(f"[SerpAPI] {route} (multi-city) returned {len(all_results)} results "
+          f"with {len(best_return_flights)} return options")
     return all_results
 
 
 def _normalize_serpapi_multicity(flight: dict, outbound_date: str, return_date: str) -> dict:
-    """Flatten a SerpAPI multi-city flight into a common schema with return_leg."""
-    segments = flight.get("flights", [])
-    if not segments:
+    """Flatten a SerpAPI multi-city flight into a common schema with return_leg.
+
+    SerpAPI multi-city type=3 returns outbound-only data in the first call.
+    The return leg data comes from a separate call and is attached as _return_raw.
+    We normalize each leg independently (no segment splitting needed).
+    """
+    out_segments = flight.get("flights", [])
+    if not out_segments:
         return _normalize_serpapi(flight)
 
-    dest = flight.get("_dest", "VCE")
-    return_from = flight.get("_return_from", "IST")
-
-    # Strategy 1: Find where a segment arrives at dest (e.g. VCE)
-    split_idx = None
-    for i, seg in enumerate(segments):
-        arr_id = seg.get("arrival_airport", {}).get("id", "")
-        if arr_id == dest and i < len(segments) - 1:
-            split_idx = i + 1
-            break
-
-    # Strategy 2: Find where a segment departs from return_from (e.g. IST)
-    if split_idx is None:
-        for i, seg in enumerate(segments):
-            dep_id = seg.get("departure_airport", {}).get("id", "")
-            if dep_id == return_from and i > 0:
-                split_idx = i
-                break
-
-    # Strategy 3: Use departure dates — the first segment departing on return_date
-    if split_idx is None:
-        for i, seg in enumerate(segments):
-            dep_time = seg.get("departure_airport", {}).get("time", "")
-            if dep_time.startswith(return_date) and i > 0:
-                split_idx = i
-                break
-
-    # Strategy 4: Use SerpAPI layovers array — find the longest gap (between legs)
-    if split_idx is None:
-        raw_layovers = flight.get("layovers", [])
-        if raw_layovers and len(segments) > 1:
-            max_dur = -1
-            max_idx = -1
-            for i, lo in enumerate(raw_layovers):
-                if lo.get("duration", 0) > max_dur:
-                    max_dur = lo["duration"]
-                    max_idx = i
-            if max_idx >= 0 and max_idx + 1 < len(segments):
-                split_idx = max_idx + 1
-
-    if split_idx is None:
-        if len(segments) >= 2:
-            split_idx = len(segments) // 2
-        else:
-            return _normalize_serpapi(flight)
-
-    out_segments = segments[:split_idx]
-    ret_segments = segments[split_idx:]
-
-    # Build outbound leg
+    # --- Outbound leg (all segments belong to outbound) ---
     out_first = out_segments[0]
     out_last = out_segments[-1]
     out_airlines = [seg.get("airline", "") for seg in out_segments]
-    out_layovers = []
-    if len(out_segments) > 1:
-        for i in range(len(out_segments) - 1):
-            arr_info = out_segments[i].get("arrival_airport", {})
-            dep_info = out_segments[i + 1].get("departure_airport", {})
-            arr_time = arr_info.get("time", "")
-            dep_time = dep_info.get("time", "")
-            layover_min = 0
-            try:
-                arr_dt = datetime.fromisoformat(arr_time)
-                dep_dt = datetime.fromisoformat(dep_time)
-                layover_min = int((dep_dt - arr_dt).total_seconds() / 60)
-            except (ValueError, TypeError):
-                pass
-            out_layovers.append({
-                "name": arr_info.get("name", arr_info.get("id", "")),
-                "id": arr_info.get("id", ""),
-                "duration": layover_min,
-            })
-
-    out_total_layover = sum(lo["duration"] for lo in out_layovers)
+    out_layovers = flight.get("layovers", [])
+    out_total_layover = sum(lo.get("duration", 0) for lo in out_layovers)
     out_dep_time = out_first.get("departure_airport", {}).get("time", "")
     out_arr_time = out_last.get("arrival_airport", {}).get("time", "")
-    out_duration = sum(seg.get("duration", 0) for seg in out_segments) + out_total_layover
-
-    # Build return leg
-    ret_first = ret_segments[0] if ret_segments else {}
-    ret_last = ret_segments[-1] if ret_segments else {}
-    ret_airlines = [seg.get("airline", "") for seg in ret_segments]
-    ret_layovers = []
-    if len(ret_segments) > 1:
-        for i in range(len(ret_segments) - 1):
-            arr_info = ret_segments[i].get("arrival_airport", {})
-            dep_info = ret_segments[i + 1].get("departure_airport", {})
-            arr_time = arr_info.get("time", "")
-            dep_time = dep_info.get("time", "")
-            layover_min = 0
-            try:
-                arr_dt = datetime.fromisoformat(arr_time)
-                dep_dt = datetime.fromisoformat(dep_time)
-                layover_min = int((dep_dt - arr_dt).total_seconds() / 60)
-            except (ValueError, TypeError):
-                pass
-            ret_layovers.append({
-                "name": arr_info.get("name", arr_info.get("id", "")),
-                "id": arr_info.get("id", ""),
-                "duration": layover_min,
-            })
-
-    ret_total_layover = sum(lo["duration"] for lo in ret_layovers)
-    ret_dep_time = ret_first.get("departure_airport", {}).get("time", "")
-    ret_arr_time = ret_last.get("arrival_airport", {}).get("time", "")
-    ret_duration = sum(seg.get("duration", 0) for seg in ret_segments) + ret_total_layover
+    out_duration = flight.get("total_duration", 0)
 
     google_flights_url = _build_google_flights_url(flight)
+
+    # --- Return leg (from separate API call, attached as _return_raw) ---
+    ret_raw = flight.get("_return_raw")
+    ret_leg = _build_return_leg(ret_raw, return_date)
 
     return {
         "primary_airline": out_airlines[0] if out_airlines else "",
@@ -312,18 +277,50 @@ def _normalize_serpapi_multicity(flight: dict, outbound_date: str, return_date: 
         "search_date": outbound_date,
         "google_flights_url": google_flights_url,
         "type": "multi_city",
-        "return_leg": {
-            "primary_airline": ret_airlines[0] if ret_airlines else "",
-            "airlines": ret_airlines,
-            "departure_time": ret_dep_time,
-            "arrival_time": ret_arr_time,
-            "stops": len(ret_layovers),
-            "total_layover_min": ret_total_layover,
-            "total_duration_min": ret_duration,
-            "layover_info": _layover_info_from_layovers(ret_layovers, len(ret_layovers)),
-            "search_date": return_date,
-        },
+        "return_leg": ret_leg,
         "raw": flight,
+    }
+
+
+def _build_return_leg(ret_raw: dict | None, return_date: str) -> dict:
+    """Build a return_leg dict from the raw return flight data."""
+    if not ret_raw:
+        return {
+            "primary_airline": "",
+            "airlines": [],
+            "departure_time": "",
+            "arrival_time": "",
+            "stops": 0,
+            "total_layover_min": 0,
+            "total_duration_min": 0,
+            "layover_info": "",
+            "search_date": return_date,
+        }
+
+    ret_segments = ret_raw.get("flights", [])
+    ret_first = ret_segments[0] if ret_segments else {}
+    ret_last = ret_segments[-1] if ret_segments else {}
+    ret_airlines = [seg.get("airline", "") for seg in ret_segments]
+    ret_layovers = ret_raw.get("layovers", [])
+    ret_total_layover = sum(lo.get("duration", 0) for lo in ret_layovers)
+    ret_dep_time = ret_first.get("departure_airport", {}).get("time", "")
+    ret_arr_time = ret_last.get("arrival_airport", {}).get("time", "")
+    ret_duration = ret_raw.get("total_duration", 0)
+
+    return {
+        "primary_airline": ret_airlines[0] if ret_airlines else "",
+        "airlines": ret_airlines,
+        "departure_time": ret_dep_time,
+        "arrival_time": ret_arr_time,
+        "stops": len(ret_layovers),
+        "total_layover_min": ret_total_layover,
+        "total_duration_min": ret_duration,
+        "layover_info": _layover_info_from_layovers(
+            [{"name": lo.get("name", lo.get("id", "")), "id": lo.get("id", ""),
+              "duration": lo.get("duration", 0)} for lo in ret_layovers],
+            len(ret_layovers),
+        ),
+        "search_date": return_date,
     }
 
 

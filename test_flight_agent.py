@@ -1448,30 +1448,52 @@ class TestMultiCityNormalization(unittest.TestCase):
 
     def _make_raw_multicity(self, out_airline="Delta", ret_airline="Turkish Airlines",
                             out_stops=1, ret_stops=0, price=1200):
-        """Build a raw SerpAPI multi-city flight with outbound and return segments."""
-        segments = []
-        # Outbound leg: LAX -> (CDG) -> VCE
-        segments.append({
-            "airline": out_airline,
-            "flight_number": "DL 290",
-            "departure_airport": {"id": "LAX", "time": "2026-06-29 18:00"},
-            "arrival_airport": {"id": "CDG", "time": "2026-06-30 12:00"},
-            "duration": 600,
-        })
+        """Build a raw SerpAPI multi-city flight with outbound segments and _return_raw.
+
+        SerpAPI multi-city type=3 returns outbound-only data in the first call.
+        The return leg comes from a separate call and is attached as _return_raw.
+        """
+        # Outbound segments only (this is what SerpAPI returns in call 1)
+        out_segments = []
+        out_layovers = []
         if out_stops > 0:
-            segments.append({
+            out_segments.append({
+                "airline": out_airline,
+                "flight_number": "DL 290",
+                "departure_airport": {"id": "LAX", "time": "2026-06-29 18:00"},
+                "arrival_airport": {"id": "CDG", "time": "2026-06-30 12:00"},
+                "duration": 600,
+            })
+            out_segments.append({
                 "airline": "Air France",
                 "flight_number": "AF 1526",
                 "departure_airport": {"id": "CDG", "time": "2026-06-30 14:30"},
                 "arrival_airport": {"id": "VCE", "time": "2026-06-30 16:00"},
                 "duration": 90,
             })
+            out_layovers.append({
+                "name": "Paris Charles de Gaulle Airport",
+                "id": "CDG",
+                "duration": 150,
+            })
         else:
-            # Make the first segment go direct to VCE
-            segments[0]["arrival_airport"] = {"id": "VCE", "time": "2026-06-30 12:00"}
-        # Return leg: IST -> origin
+            out_segments.append({
+                "airline": out_airline,
+                "flight_number": "DL 290",
+                "departure_airport": {"id": "LAX", "time": "2026-06-29 18:00"},
+                "arrival_airport": {"id": "VCE", "time": "2026-06-30 12:00"},
+                "duration": 600,
+            })
+
+        out_duration = sum(s["duration"] for s in out_segments) + sum(
+            lo["duration"] for lo in out_layovers
+        )
+
+        # Return leg (from separate API call 2, attached as _return_raw)
+        ret_segments = []
+        ret_layovers = []
         if ret_stops == 0:
-            segments.append({
+            ret_segments.append({
                 "airline": ret_airline,
                 "flight_number": "TK 10",
                 "departure_airport": {"id": "IST", "time": "2026-07-14 10:15"},
@@ -1479,29 +1501,47 @@ class TestMultiCityNormalization(unittest.TestCase):
                 "duration": 780,
             })
         else:
-            segments.append({
+            ret_segments.append({
                 "airline": ret_airline,
                 "flight_number": "TK 1867",
                 "departure_airport": {"id": "IST", "time": "2026-07-14 10:15"},
                 "arrival_airport": {"id": "FRA", "time": "2026-07-14 12:30"},
                 "duration": 195,
             })
-            segments.append({
+            ret_segments.append({
                 "airline": "Lufthansa",
                 "flight_number": "LH 450",
                 "departure_airport": {"id": "FRA", "time": "2026-07-14 14:00"},
                 "arrival_airport": {"id": "LAX", "time": "2026-07-14 17:00"},
                 "duration": 660,
             })
+            ret_layovers.append({
+                "name": "Frankfurt Airport",
+                "id": "FRA",
+                "duration": 90,
+            })
+
+        ret_duration = sum(s["duration"] for s in ret_segments) + sum(
+            lo["duration"] for lo in ret_layovers
+        )
 
         return {
-            "flights": segments,
+            "flights": out_segments,
+            "layovers": out_layovers,
             "price": price,
-            "total_duration": sum(s["duration"] for s in segments),
+            "total_duration": out_duration,
             "_source": "serpapi_multicity",
             "_search_date": "2026-06-29",
             "_outbound_date": "2026-06-29",
             "_return_date": "2026-07-14",
+            "_dest": "VCE",
+            "_return_from": "IST",
+            "_return_raw": {
+                "flights": ret_segments,
+                "layovers": ret_layovers,
+                "price": price,
+                "total_duration": ret_duration,
+            },
         }
 
     def test_splits_legs_at_vce(self):
