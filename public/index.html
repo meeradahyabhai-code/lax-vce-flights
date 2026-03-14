@@ -986,22 +986,22 @@
     return (fid || '').replace(/^[A-Z]{3}:/, '');
   }
 
-  function flightMatchKey(fid, depTime) {
-    // Match on airline|date|departure_time (ignoring price which drifts)
+  function flightMatchKey(fid) {
+    // Match on airline|date only (ignoring price which drifts and departure_time
+    // which Google Sheets mangles into 1899-era date objects)
     var parts = (fid || '').split('|');
     var airline = parts[0] || '';
     var date = parts[1] || '';
-    var t = depTime ? String(depTime).replace(/.*\s/, '') : ''; // extract HH:MM
-    return airline + '|' + date + '|' + t;
+    return airline + '|' + date;
   }
 
-  function getFlightCounts(fid, depTime) {
-    var key = flightMatchKey(fid, depTime);
+  function getFlightCounts(fid) {
+    var key = flightMatchKey(fid);
     var booked = [], interested = [];
     for (var i = 0; i < sheetRows.length; i++) {
       var r = sheetRows[i];
       var sheetFid = stripOriginPrefix(r.flight_id);
-      var sheetKey = flightMatchKey(sheetFid, r.departure_time);
+      var sheetKey = flightMatchKey(sheetFid);
       if (sheetKey === key) {
         if (r.action === 'booked') booked.push(r.name || 'Someone');
         else if (r.action === 'interested') interested.push(r.name || 'Someone');
@@ -1013,8 +1013,7 @@
   function updateInterestLinks() {
     document.querySelectorAll('.interest-link[data-fid]').forEach(function (el) {
       var fid = el.getAttribute('data-fid');
-      var dep = el.getAttribute('data-dep') || '';
-      var counts = getFlightCounts(fid, dep);
+      var counts = getFlightCounts(fid);
       var parts = [];
       if (counts.interested.length > 0) parts.push(counts.interested.length + ' interested');
       if (counts.booked.length > 0) parts.push(counts.booked.length + ' booked');
@@ -1029,7 +1028,7 @@
   }
 
   function showFamilyModal(fid, flightData) {
-    var counts = getFlightCounts(fid, flightData ? flightData.departure_time : '');
+    var counts = getFlightCounts(fid);
     var body = document.getElementById('fi-modal-body');
     var html = '';
 

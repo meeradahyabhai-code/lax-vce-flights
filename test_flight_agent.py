@@ -1395,16 +1395,16 @@ class TestFamilyPickMatching(unittest.TestCase):
             self.html = fh.read()
 
     def test_flight_match_key_function_exists(self):
-        """flightMatchKey function should exist for airline+date+time matching."""
-        self.assertIn("function flightMatchKey(fid, depTime)", self.html)
+        """flightMatchKey function should exist for airline+date matching."""
+        self.assertIn("function flightMatchKey(fid)", self.html)
 
     def test_get_flight_counts_uses_match_key(self):
         """getFlightCounts should use flightMatchKey for matching."""
-        self.assertIn("flightMatchKey(sheetFid, r.departure_time)", self.html)
+        self.assertIn("flightMatchKey(sheetFid)", self.html)
 
-    def test_get_flight_counts_accepts_dep_time(self):
-        """getFlightCounts should accept departure time parameter."""
-        self.assertIn("function getFlightCounts(fid, depTime)", self.html)
+    def test_get_flight_counts_signature(self):
+        """getFlightCounts should accept flight id parameter."""
+        self.assertIn("function getFlightCounts(fid)", self.html)
 
     def test_interest_link_carries_dep_time(self):
         """Interest link should carry data-dep attribute for departure time."""
