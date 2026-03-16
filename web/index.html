@@ -2718,12 +2718,45 @@
     }
   }
 
+  var HOTEL_CACHE_KEY = 'dcf_hotels_cache';
+  var HOTEL_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+  function getHotelLocalCache(key) {
+    try {
+      var raw = localStorage.getItem(HOTEL_CACHE_KEY);
+      if (!raw) return null;
+      var store = JSON.parse(raw);
+      var entry = store[key];
+      if (entry && (Date.now() - entry.ts) < HOTEL_CACHE_TTL) return entry.data;
+    } catch (e) { /* corrupt or unavailable */ }
+    return null;
+  }
+
+  function setHotelLocalCache(key, data) {
+    try {
+      var store = {};
+      try { store = JSON.parse(localStorage.getItem(HOTEL_CACHE_KEY)) || {}; } catch (e) {}
+      store[key] = { ts: Date.now(), data: data };
+      localStorage.setItem(HOTEL_CACHE_KEY, JSON.stringify(store));
+    } catch (e) { /* quota exceeded */ }
+  }
+
   function searchHotels() {
     var key = hotelCacheKey();
     if (hotelCache[key]) {
       renderHotelResults(hotelCache[key]);
       return;
     }
+
+    // Check localStorage cache (survives deploys)
+    var localCached = getHotelLocalCache(key);
+    if (localCached) {
+      hotelCache[key] = localCached;
+      renderHotelResults(localCached);
+      updateHeroForHotels();
+      return;
+    }
+
     hotelLoading = true;
     renderHotelLoading();
 
@@ -2737,6 +2770,7 @@
       })
       .then(function (result) {
         hotelCache[key] = result;
+        setHotelLocalCache(key, result);
         hotelLoading = false;
         renderHotelResults(result);
         updateHeroForHotels();
@@ -3219,27 +3253,52 @@
         '<div class="loading-sub">Checking all routes &times; nonstop + 1-stop</div>' +
       '</div>';
 
-    // Try serverless API first, fall back to static JSON
-    var resp;
+    // Check localStorage cache first (survives deploys, saves SerpAPI calls)
+    var FLIGHT_CACHE_KEY = 'dcf_flights_cache';
+    var FLIGHT_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+    var cached = null;
     try {
-      var controller = new AbortController();
-      var timeout = setTimeout(function () { controller.abort(); }, 60000);
-      resp = await fetch('/api/flights', { signal: controller.signal });
-      clearTimeout(timeout);
-      if (!resp.ok) throw new Error('API ' + resp.status);
-    } catch (e) {
-      try {
-        resp = await fetch('flights.json');
-        if (!resp.ok) throw new Error('JSON ' + resp.status);
-      } catch (e2) {
-        document.getElementById('flights').innerHTML =
-          '<div class="status">Could not load flight data.<br>' +
-          '<span class="loading-sub">Flight search is running. Refresh in a minute.</span></div>';
-        return;
+      var raw = localStorage.getItem(FLIGHT_CACHE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed.ts && (Date.now() - parsed.ts) < FLIGHT_CACHE_TTL) {
+          cached = parsed.data;
+        } else {
+          localStorage.removeItem(FLIGHT_CACHE_KEY);
+        }
       }
-    }
+    } catch (e) { /* localStorage unavailable or corrupt */ }
 
-    data = await resp.json();
+    if (cached) {
+      data = cached;
+    } else {
+      // Try serverless API first, fall back to static JSON
+      var resp;
+      try {
+        var controller = new AbortController();
+        var timeout = setTimeout(function () { controller.abort(); }, 60000);
+        resp = await fetch('/api/flights', { signal: controller.signal });
+        clearTimeout(timeout);
+        if (!resp.ok) throw new Error('API ' + resp.status);
+      } catch (e) {
+        try {
+          resp = await fetch('flights.json');
+          if (!resp.ok) throw new Error('JSON ' + resp.status);
+        } catch (e2) {
+          document.getElementById('flights').innerHTML =
+            '<div class="status">Could not load flight data.<br>' +
+            '<span class="loading-sub">Flight search is running. Refresh in a minute.</span></div>';
+          return;
+        }
+      }
+
+      data = await resp.json();
+
+      // Cache in localStorage for next visit
+      try {
+        localStorage.setItem(FLIGHT_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data }));
+      } catch (e) { /* quota exceeded or unavailable */ }
+    }
 
     // Handle legacy format (flat outbound_flights/return_flights) — wrap into LAX
     if (data.outbound_flights || data.return_flights) {
