@@ -3705,23 +3705,43 @@
   var confirmedOutbound = [];
   var confirmedReturn = [];
 
+  function fetchConfirmedTab(tab, callback) {
+    var url = SHEETS_URL + '?action=get_confirmed_flights&tab=' + tab;
+    console.log('[Confirmed] Fetching:', url);
+    fetch(url, { redirect: 'follow' })
+      .then(function (r) {
+        console.log('[Confirmed] Response status for ' + tab + ':', r.status, r.type);
+        return r.text();
+      })
+      .then(function (text) {
+        console.log('[Confirmed] Raw response for ' + tab + ':', text.slice(0, 300));
+        try {
+          var rows = JSON.parse(text);
+          if (Array.isArray(rows)) { callback(rows); return; }
+        } catch (e) {
+          console.log('[Confirmed] JSON parse failed for ' + tab + ', trying as HTML redirect');
+        }
+        // Apps Script might return HTML redirect — data not available
+        callback([]);
+      })
+      .catch(function (err) {
+        console.error('[Confirmed] Fetch error for ' + tab + ':', err.message);
+        callback([]);
+      });
+  }
+
   function fetchConfirmedFlights() {
-    fetch(SHEETS_URL + '?action=get_confirmed_flights&tab=arriving_venice')
-      .then(function (r) { return r.json(); })
-      .then(function (rows) {
-        if (Array.isArray(rows)) { confirmedOutbound = rows; }
-        else { confirmedOutbound = []; }
-        renderConfirmedTable('outbound');
-      })
-      .catch(function () { confirmedOutbound = []; renderConfirmedTable('outbound'); });
-    fetch(SHEETS_URL + '?action=get_confirmed_flights&tab=departing_istanbul')
-      .then(function (r) { return r.json(); })
-      .then(function (rows) {
-        if (Array.isArray(rows)) { confirmedReturn = rows; }
-        else { confirmedReturn = []; }
-        renderConfirmedTable('return');
-      })
-      .catch(function () { confirmedReturn = []; renderConfirmedTable('return'); });
+    console.log('[Confirmed] Fetching both tabs...');
+    fetchConfirmedTab('arriving_venice', function (rows) {
+      confirmedOutbound = rows;
+      console.log('[Confirmed] Outbound rows:', rows.length > 1 ? rows.length - 1 + ' data rows' : 'empty');
+      renderConfirmedTable('outbound');
+    });
+    fetchConfirmedTab('departing_istanbul', function (rows) {
+      confirmedReturn = rows;
+      console.log('[Confirmed] Return rows:', rows.length > 1 ? rows.length - 1 + ' data rows' : 'empty');
+      renderConfirmedTable('return');
+    });
   }
 
   function generateFlightId(d) {
@@ -3733,6 +3753,7 @@
   function renderConfirmedTable(dir) {
     var elId = dir === 'outbound' ? 'confirmed-outbound' : 'confirmed-return';
     var el = document.getElementById(elId);
+    console.log('[Render Table] Rendering ' + dir + ', element found:', !!el);
     var rows = dir === 'outbound' ? confirmedOutbound : confirmedReturn;
     var title = dir === 'outbound' ? 'Arriving in Venice' : 'Departing Istanbul';
     var subtitle = dir === 'outbound'
@@ -3767,6 +3788,8 @@
         parsed.push(obj);
       }
     }
+    console.log('[Render Table] ' + dir + ': ' + parsed.length + ' valid rows after filtering');
+    if (parsed.length > 0) console.log('[Render Table] Sample row:', JSON.stringify(parsed[0]));
 
     // Sort by time — flexible key matching
     parsed.sort(function (a, b) {
@@ -4160,6 +4183,7 @@
   }
 
   var lastSavedFlightId = null;
+  var lastSavedTab = null;
 
   function saveConfirmedFlight(travelers) {
     var p = afmParsed;
@@ -4189,7 +4213,8 @@
     });
 
     var url = SHEETS_URL + '?' + params.toString();
-    console.log('[Add Flight] Saving to sheet:', { tab: tab, flightId: flightId, travelers: travelers, params: Object.fromEntries(params) });
+    console.log('[Save Flight] Step 1 — URL:', url);
+    console.log('[Save Flight] Step 1 — Params:', JSON.stringify(Object.fromEntries(params), null, 2));
 
     // Show saving state in modal
     var box = document.querySelector('.afm-box');
@@ -4199,36 +4224,38 @@
     }
 
     lastSavedFlightId = flightId;
+    lastSavedTab = tab;
 
-    fetch(url)
-      .then(function (r) {
-        console.log('[Add Flight] Response status:', r.status);
-        return r.text();
-      })
-      .then(function (text) {
-        console.log('[Add Flight] Response body:', text);
-        try {
-          var res = JSON.parse(text);
-          if (res.status === 'error') {
-            alert('Failed to save: ' + (res.message || 'Unknown error'));
-            closeAddFlightModal();
-            return;
-          }
-        } catch (e) {
-          // Apps Script may return non-JSON on success with no-cors — that's OK
-          console.log('[Add Flight] Non-JSON response (likely OK):', text.slice(0, 200));
-        }
+    // Step 2 — Write to sheet (fire-and-forget with no-cors, then read back)
+    // Google Apps Script redirects (302) which causes CORS issues with regular fetch.
+    // So we write with no-cors (blind fire), then read back to verify.
+    console.log('[Save Flight] Step 2 — Sending write request (no-cors)...');
+    fetch(url, { mode: 'no-cors' })
+      .then(function () {
+        console.log('[Save Flight] Step 2 — Write request sent (no-cors, opaque response expected)');
+        // Step 3 — Close modal and refresh after a short delay for sheet to process
         closeAddFlightModal();
-        // Immediately re-fetch and re-render
-        fetchConfirmedFlights();
+        console.log('[Save Flight] Step 3 — Modal closed, waiting 1.5s for sheet to process...');
+        setTimeout(function () {
+          console.log('[Save Flight] Step 4 — Refreshing confirmed flights table for tab:', tab);
+          fetchConfirmedFlights();
+        }, 1500);
       })
       .catch(function (err) {
-        console.error('[Add Flight] Fetch error:', err);
-        // Likely CORS — try fire-and-forget as fallback
-        console.log('[Add Flight] Retrying with no-cors...');
-        fetch(url, { mode: 'no-cors' }).catch(function () {});
-        closeAddFlightModal();
-        setTimeout(fetchConfirmedFlights, 2000);
+        console.error('[Save Flight] Step 2 — Write failed:', err.message);
+        // Show error in modal
+        if (box && document.body.contains(box)) {
+          box.innerHTML = '<button class="afm-close">&times;</button>' +
+            '<div style="text-align:center;padding:30px 20px;">' +
+              '<div style="font-size:14px;color:#ef4444;font-weight:500;margin-bottom:8px;">Failed to save flight</div>' +
+              '<div style="font-size:13px;color:#64748b;">' + escHtml(err.message) + '</div>' +
+              '<button class="afm-btn-secondary" style="margin-top:16px;" onclick="closeAddFlightModal()">Close</button>' +
+            '</div>';
+          box.querySelector('.afm-close').addEventListener('click', closeAddFlightModal);
+        } else {
+          alert('Failed to save flight: ' + err.message);
+          closeAddFlightModal();
+        }
       });
   }
 
