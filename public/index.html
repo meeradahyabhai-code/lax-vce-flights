@@ -852,6 +852,195 @@
 
   /* Hotel loading */
   .hotel-loading { text-align: center; padding: 40px 20px; }
+
+  /* ── Confirmed Flights ── */
+  .cf-section { margin-bottom: 32px; }
+  .cf-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .cf-title {
+    font-family: var(--serif); font-size: 22px; font-weight: 300;
+    font-style: italic; color: var(--azure);
+  }
+  .cf-subtitle {
+    font-family: var(--sans); font-size: 12px; font-weight: 300;
+    color: #94a3b8; margin-bottom: 12px;
+  }
+  .cf-add-btn {
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    padding: 6px 16px; border-radius: 9999px; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #fff; letter-spacing: 0.3px; transition: opacity 0.15s;
+  }
+  .cf-add-btn:hover { opacity: 0.85; }
+  .cf-table {
+    width: 100%; border-collapse: collapse; font-family: var(--sans);
+  }
+  .cf-table th {
+    font-size: 11px; font-weight: 500; color: #94a3b8;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    text-align: left; padding: 8px 10px;
+    border-bottom: 1.5px solid var(--fog);
+  }
+  .cf-table td {
+    padding: 10px 10px; font-size: 13px; font-weight: 400;
+    color: var(--ink); border-bottom: 0.5px solid #eee;
+    vertical-align: top;
+  }
+  .cf-table tr:last-child td { border-bottom: none; }
+  .cf-table tr:hover td { background: #faf8f3; }
+  .cf-day-divider td {
+    font-size: 11px; font-weight: 500; color: #94a3b8;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: var(--fog); padding: 6px 10px;
+    border-top: 0.5px solid #ddd;
+  }
+  .cf-time {
+    font-family: var(--serif); font-size: 17px; font-weight: 400;
+    color: var(--azure);
+  }
+  .cf-code {
+    font-family: var(--sans); font-size: 11px; font-weight: 300;
+    color: #94a3b8;
+  }
+  .cf-airline-name { font-weight: 500; }
+  .cf-flight-num { font-size: 11px; font-weight: 300; color: #94a3b8; }
+  .cf-you-pill {
+    display: inline-block; font-size: 10px; font-weight: 500;
+    padding: 1px 6px; border-radius: 9999px; margin-left: 4px;
+    background: #e6f1fb; color: #0c447c;
+  }
+  .cf-same-flight {
+    font-size: 12px; font-style: italic; color: #94a3b8;
+  }
+  .cf-stopover-pill {
+    display: inline-block; font-size: 11px; font-weight: 400;
+    padding: 2px 8px; border-radius: 9999px;
+    background: var(--fog); color: #64748b;
+  }
+  .cf-join-btn {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    padding: 4px 12px; border-radius: 9999px; cursor: pointer;
+    border: 1px solid var(--azure); background: none; color: var(--azure);
+    transition: all 0.15s;
+  }
+  .cf-join-btn:hover { background: var(--azure); color: #fff; }
+  .cf-action-link {
+    font-size: 11px; color: #94a3b8; cursor: pointer;
+    text-decoration: none; margin-right: 8px;
+  }
+  .cf-action-link:hover { color: var(--azure); text-decoration: underline; }
+  .cf-empty {
+    font-family: var(--sans); font-size: 13px; font-weight: 300;
+    color: #94a3b8; text-align: center; padding: 24px 10px;
+    font-style: italic;
+  }
+  @media (max-width: 600px) {
+    .cf-table .cf-col-route, .cf-table .cf-col-stop { display: none; }
+  }
+
+  /* ── Add Flight Modal ── */
+  .afm-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(10, 10, 15, 0.45);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; animation: popFadeIn 0.15s ease-out;
+  }
+  .afm-box {
+    width: 480px; max-width: 100%; max-height: 90vh; overflow-y: auto;
+    background: #fff; border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    padding: 28px 28px 24px; position: relative;
+  }
+  .afm-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; font-size: 18px; color: #94a3b8;
+    cursor: pointer; line-height: 1;
+  }
+  .afm-close:hover { color: var(--ink); }
+  .afm-title {
+    font-family: var(--serif); font-size: 22px; font-weight: 300;
+    font-style: italic; color: var(--azure); margin-bottom: 4px;
+  }
+  .afm-steps {
+    display: flex; gap: 8px; margin-bottom: 20px;
+    font-family: var(--sans); font-size: 12px; font-weight: 400; color: #94a3b8;
+  }
+  .afm-step {
+    padding: 3px 12px; border-radius: 9999px;
+    border: 1px solid var(--fog); background: #fff;
+  }
+  .afm-step.active {
+    background: var(--azure); color: #fff; border-color: var(--azure);
+  }
+  .afm-step.done { color: var(--gold); border-color: var(--gold); }
+  .afm-upload-area {
+    border: 2px dashed var(--fog); border-radius: 14px;
+    padding: 40px 20px; text-align: center; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .afm-upload-area:hover { border-color: var(--azure); background: #faf8f3; }
+  .afm-upload-area.dragover { border-color: var(--gold); background: #faf8f3; }
+  .afm-upload-label {
+    font-family: var(--sans); font-size: 14px; font-weight: 400;
+    color: #64748b; line-height: 1.6;
+  }
+  .afm-upload-label strong { color: var(--azure); }
+  .afm-field { margin-bottom: 12px; }
+  .afm-field label {
+    display: block; font-family: var(--sans); font-size: 11px;
+    font-weight: 500; color: #94a3b8; letter-spacing: 0.05em;
+    text-transform: uppercase; margin-bottom: 3px;
+  }
+  .afm-field input, .afm-field select {
+    width: 100%; font-family: var(--sans); font-size: 14px;
+    padding: 8px 12px; border: 1px solid var(--fog); border-radius: 8px;
+    background: #fff; color: var(--ink);
+  }
+  .afm-field input:focus, .afm-field select:focus {
+    border-color: var(--azure); outline: none;
+  }
+  .afm-field.parsed input { border-color: #22c55e; }
+  .afm-field.missing input { border-color: #ef4444; }
+  .afm-field .afm-check { color: #22c55e; font-size: 13px; margin-left: 4px; }
+  .afm-field .afm-req { color: #ef4444; font-size: 11px; margin-left: 4px; }
+  .afm-row { display: flex; gap: 12px; }
+  .afm-row .afm-field { flex: 1; }
+  .afm-dir-toggle {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+  .afm-dir-btn {
+    flex: 1; padding: 10px; border-radius: 10px; cursor: pointer;
+    font-family: var(--sans); font-size: 13px; font-weight: 400;
+    border: 1px solid var(--fog); background: #fff; color: var(--ink);
+    text-align: center; transition: all 0.15s;
+  }
+  .afm-dir-btn.active { background: var(--azure); color: #fff; border-color: var(--azure); }
+  .afm-travelers {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px;
+    max-height: 320px; overflow-y: auto; margin-bottom: 16px;
+  }
+  .afm-travelers label {
+    font-family: var(--sans); font-size: 13px; font-weight: 400;
+    color: var(--ink); padding: 5px 0; cursor: pointer;
+  }
+  .afm-travelers label input { margin-right: 8px; }
+  .afm-btn-primary {
+    display: block; width: 100%; padding: 12px; border-radius: 10px;
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    cursor: pointer; border: none;
+    background: var(--azure); color: #fff; transition: background 0.15s;
+  }
+  .afm-btn-primary:hover { background: var(--lagoon); }
+  .afm-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .afm-btn-secondary {
+    display: block; width: 100%; padding: 10px; border-radius: 10px;
+    font-family: var(--sans); font-size: 13px; font-weight: 400;
+    cursor: pointer; margin-top: 8px;
+    border: 1px solid var(--fog); background: #fff; color: var(--ink);
+  }
+  .afm-btn-secondary:hover { border-color: var(--azure); color: var(--azure); }
 </style>
 </head>
 <body>
@@ -913,6 +1102,12 @@
       <div class="ai-briefing-shimmer"></div>
     </div>
   </div>
+</div>
+
+<!-- Confirmed Flights -->
+<div id="confirmed-section" style="max-width:900px;margin:0 auto;padding:0 16px;">
+  <div id="confirmed-outbound"></div>
+  <div id="confirmed-return"></div>
 </div>
 
 <!-- Flights section -->
@@ -3357,6 +3552,467 @@
     startApp();
   }
 
+  // ---- Confirmed Flights ----
+  var TRAVELERS = [
+    "Bhula Joshila P.","Bhula Alayna P.","Bhula Ayush P.","Bhula Piyush H.",
+    "Dinesh Dilani","Dahyabhai Jayshri","Dahyabhai Suresh","Dinesh Sahana",
+    "Dinesh Daviddinesh Raya","Dinesh Vinisha","Patel Ameera K.","Kaur Sukhdeep",
+    "Patel Ronil","Dharna Savannah","Chatha Sandhya","Patel Damyanti",
+    "Aceves Jonathan A.","Dahyabhai Meera C.","Madhav Atul P.","Madhav Malvika",
+    "Dahyabhai Nita","Dahyabhai Naresh","Aceves Ezequiel",
+    "Paredes Aceves Susana D.","Madhav Shakeel A."
+  ];
+  var confirmedOutbound = [];
+  var confirmedReturn = [];
+
+  function fetchConfirmedFlights() {
+    fetch(SHEETS_URL + '?action=get_confirmed_flights&tab=arriving_venice')
+      .then(function (r) { return r.json(); })
+      .then(function (rows) { confirmedOutbound = rows || []; renderConfirmedTable('outbound'); })
+      .catch(function () {});
+    fetch(SHEETS_URL + '?action=get_confirmed_flights&tab=departing_istanbul')
+      .then(function (r) { return r.json(); })
+      .then(function (rows) { confirmedReturn = rows || []; renderConfirmedTable('return'); })
+      .catch(function () {});
+  }
+
+  function generateFlightId(d) {
+    var code = (d.airline || '').replace(/\s+/g, '').slice(0, 2).toUpperCase();
+    var fn = d.flight_number || d.departure_time || '';
+    return code + '-' + (d.departure_date || '') + '-' + fn;
+  }
+
+  function renderConfirmedTable(dir) {
+    var elId = dir === 'outbound' ? 'confirmed-outbound' : 'confirmed-return';
+    var el = document.getElementById(elId);
+    var rows = dir === 'outbound' ? confirmedOutbound : confirmedReturn;
+    var title = dir === 'outbound' ? 'Arriving in Venice' : 'Departing Istanbul';
+    var subtitle = dir === 'outbound'
+      ? 'Sorted by arrival time \u00b7 same flight grouped together'
+      : 'Sorted by departure time \u00b7 same flight grouped together';
+
+    var isArr = Array.isArray(rows) && rows.length > 1;
+    var parsed = [];
+    if (isArr) {
+      var headers = rows[0];
+      for (var i = 1; i < rows.length; i++) {
+        var obj = {};
+        for (var j = 0; j < headers.length; j++) {
+          obj[String(headers[j]).toLowerCase().replace(/[\s()]+/g, '_')] = rows[i][j];
+        }
+        parsed.push(obj);
+      }
+    }
+
+    // Sort by time
+    var sortKey = dir === 'outbound' ? 'arrival_time_vce_' : 'departure_time_ist_';
+    if (dir === 'outbound') sortKey = 'arrival_time';
+    if (dir === 'return') sortKey = 'departure_time';
+    // Flexible key matching
+    parsed.sort(function (a, b) {
+      var at = '', bt = '';
+      Object.keys(a).forEach(function (k) {
+        if (k.indexOf('arrival_time') !== -1 || (dir === 'return' && k.indexOf('departure_time') !== -1)) {
+          if (a[k]) at = String(a[k]);
+        }
+      });
+      Object.keys(b).forEach(function (k) {
+        if (k.indexOf('arrival_time') !== -1 || (dir === 'return' && k.indexOf('departure_time') !== -1)) {
+          if (b[k]) bt = String(b[k]);
+        }
+      });
+      return at.localeCompare(bt);
+    });
+
+    var userName = getUserName() || '';
+
+    var html = '<div class="cf-section">' +
+      '<div class="cf-header">' +
+        '<div class="cf-title">' + escHtml(title) + '</div>' +
+        '<button class="cf-add-btn" data-dir="' + dir + '">+ Add My Flight</button>' +
+      '</div>' +
+      '<div class="cf-subtitle">' + subtitle + '</div>';
+
+    if (parsed.length === 0) {
+      html += '<div class="cf-empty">No confirmed flights yet &mdash; be the first to add yours!</div>';
+    } else {
+      var thRoute = dir === 'outbound' ? 'Route' : 'Route';
+      var thDepart = dir === 'outbound' ? 'Departs' : 'Departs IST';
+      var thArrive = dir === 'outbound' ? 'Arrives VCE' : 'Arrives';
+      html += '<table class="cf-table"><thead><tr>' +
+        '<th>Traveler</th><th>Airline</th><th>' + thDepart + '</th><th>' + thArrive + '</th>' +
+        '<th class="cf-col-route">' + thRoute + '</th><th class="cf-col-stop">Stopover</th><th></th>' +
+        '</tr></thead><tbody>';
+
+      var lastFid = null;
+      var lastDate = null;
+      parsed.forEach(function (r) {
+        var depDate = r.departure_date || '';
+        if (depDate && depDate !== lastDate) {
+          lastDate = depDate;
+          try {
+            var dd = new Date(depDate + 'T12:00:00');
+            var dayLabel = dd.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+            html += '<tr class="cf-day-divider"><td colspan="7">' + escHtml(dayLabel) + '</td></tr>';
+          } catch (e) {}
+        }
+
+        var fid = r.flight_id || '';
+        var isNewGroup = fid !== lastFid;
+        lastFid = fid;
+
+        var traveler = r.traveler || '';
+        var isYou = userName && traveler.toLowerCase().indexOf(userName.toLowerCase()) !== -1;
+        var youPill = isYou ? '<span class="cf-you-pill">you</span>' : '';
+        var addedBy = r.added_by || '';
+
+        if (!isNewGroup) {
+          // Same flight group — just show traveler
+          html += '<tr><td><span style="font-weight:500">' + escHtml(traveler) + '</span>' + youPill +
+            ' <span class="cf-same-flight">same flight</span></td>' +
+            '<td></td><td></td><td></td><td class="cf-col-route"></td><td class="cf-col-stop"></td><td></td></tr>';
+          return;
+        }
+
+        var airline = r.airline || '';
+        var flightNum = r.flight_number || '';
+        var depTime = '';
+        var arrTime = '';
+        var depAirport = '';
+        var arrAirport = '';
+        var stopover = '';
+        // Extract fields flexibly
+        Object.keys(r).forEach(function (k) {
+          if (k.indexOf('departure_time') !== -1 && r[k]) depTime = String(r[k]);
+          if (k.indexOf('arrival_time') !== -1 && r[k]) arrTime = String(r[k]);
+          if (k.indexOf('from_airport') !== -1 || k === 'from_airport_') depAirport = r[k] || '';
+          if (k.indexOf('to_airport') !== -1 || k === 'to_airport_') arrAirport = r[k] || '';
+          if (k.indexOf('stopover_airport') !== -1) stopover = r[k] || '';
+        });
+        if (!depAirport) depAirport = r.departure_airport || '';
+        if (!arrAirport) arrAirport = r.arrival_airport || '';
+
+        var fmtDep = depTime ? depTime.slice(0, 5) : '';
+        var fmtArr = arrTime ? arrTime.slice(0, 5) : '';
+
+        var route = depAirport + (stopover ? ' \u2192 ' + stopover : '') + ' \u2192 ' + arrAirport;
+        var stopHtml = stopover ? '<span class="cf-stopover-pill">' + escHtml(stopover) + '</span>' : '\u2014';
+
+        // Action column
+        var actionHtml = '';
+        if (isYou) {
+          // Already on flight
+        } else {
+          actionHtml = '<button class="cf-join-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">+ Join</button>';
+        }
+        if (userName && addedBy && addedBy.toLowerCase().indexOf(userName.toLowerCase()) !== -1) {
+          actionHtml = '<a class="cf-action-link cf-delete-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">Delete</a>';
+        }
+
+        html += '<tr style="' + (isNewGroup ? 'border-top:1.5px solid #ddd;' : '') + '">' +
+          '<td><span style="font-weight:500">' + escHtml(traveler) + '</span>' + youPill + '</td>' +
+          '<td><span class="cf-airline-name">' + escHtml(airline) + '</span>' +
+            (flightNum ? ' <span class="cf-flight-num">' + escHtml(flightNum) + '</span>' : '') + '</td>' +
+          '<td><div class="cf-time">' + escHtml(fmtDep) + '</div><div class="cf-code">' + escHtml(depAirport) + '</div></td>' +
+          '<td><div class="cf-time">' + escHtml(fmtArr) + '</div><div class="cf-code">' + escHtml(arrAirport) + '</div></td>' +
+          '<td class="cf-col-route" style="font-size:12px;color:#94a3b8;">' + escHtml(route) + '</td>' +
+          '<td class="cf-col-stop">' + stopHtml + '</td>' +
+          '<td>' + actionHtml + '</td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
+
+    // Attach add button handler
+    el.querySelectorAll('.cf-add-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { openAddFlightModal(btn.dataset.dir); });
+    });
+    // Join handlers
+    el.querySelectorAll('.cf-join-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var traveler = prompt('Enter your full name as it appears on your ticket:');
+        if (!traveler) return;
+        var params = new URLSearchParams({
+          action: 'join_flight', flight_id: btn.dataset.fid, traveler: traveler,
+          tab: btn.dataset.dir === 'outbound' ? 'arriving_venice' : 'departing_istanbul'
+        });
+        fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' });
+        setTimeout(fetchConfirmedFlights, 2000);
+      });
+    });
+    // Delete handlers
+    el.querySelectorAll('.cf-delete-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!confirm('Delete this flight?')) return;
+        var params = new URLSearchParams({
+          action: 'delete_confirmed_flight', flight_id: btn.dataset.fid,
+          deleted_by: getUserName() || '',
+          tab: btn.dataset.dir === 'outbound' ? 'arriving_venice' : 'departing_istanbul'
+        });
+        fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' });
+        setTimeout(fetchConfirmedFlights, 2000);
+      });
+    });
+  }
+
+  // ---- Add Flight Modal ----
+  var afmParsed = {};
+  var afmDirection = 'outbound';
+
+  function closeAddFlightModal() {
+    var ov = document.querySelector('.afm-overlay');
+    if (ov) ov.remove();
+  }
+
+  function stepsHTML(active) {
+    var labels = ['1 Upload', '2 Review', '3 Travelers'];
+    return '<div class="afm-steps">' + labels.map(function (l, i) {
+      var cls = 'afm-step';
+      if (i + 1 === active) cls += ' active';
+      else if (i + 1 < active) cls += ' done';
+      return '<span class="' + cls + '">' + l + '</span>';
+    }).join('') + '</div>';
+  }
+
+  function openAddFlightModal(dir) {
+    afmDirection = dir || 'outbound';
+    afmParsed = {};
+    closeAddFlightModal();
+
+    var html = '<div class="afm-overlay">' +
+      '<div class="afm-box">' +
+        '<button class="afm-close">&times;</button>' +
+        '<div class="afm-title">Add My Flight</div>' +
+        stepsHTML(1) +
+        '<div class="afm-upload-area" id="afm-dropzone">' +
+          '<div class="afm-upload-label">' +
+            '<strong>Upload your booking confirmation</strong><br>' +
+            'Drop an image here or click to browse<br>' +
+            '<span style="font-size:12px;color:#94a3b8;">JPG, PNG, or PDF screenshot</span>' +
+          '</div>' +
+          '<input type="file" id="afm-file-input" accept="image/*,.pdf" style="display:none">' +
+        '</div>' +
+      '</div></div>';
+
+    document.body.insertAdjacentHTML('beforeend', html);
+    var overlay = document.querySelector('.afm-overlay');
+    overlay.querySelector('.afm-close').addEventListener('click', closeAddFlightModal);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeAddFlightModal(); });
+
+    var dropzone = document.getElementById('afm-dropzone');
+    var fileInput = document.getElementById('afm-file-input');
+    dropzone.addEventListener('click', function () { fileInput.click(); });
+    dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('dragover'); });
+    dropzone.addEventListener('drop', function (e) {
+      e.preventDefault(); dropzone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) handleScreenshot(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', function () {
+      if (fileInput.files.length) handleScreenshot(fileInput.files[0]);
+    });
+  }
+
+  function handleScreenshot(file) {
+    // Show loading
+    var box = document.querySelector('.afm-box');
+    box.innerHTML = '<button class="afm-close">&times;</button>' +
+      '<div class="afm-title">Add My Flight</div>' +
+      stepsHTML(1) +
+      '<div style="text-align:center;padding:40px 0;">' +
+        '<div class="points-ai-shimmer" style="margin-bottom:12px;"></div>' +
+        '<div style="font-size:13px;color:#64748b;">Parsing your booking confirmation\u2026</div>' +
+      '</div>';
+    box.querySelector('.afm-close').addEventListener('click', closeAddFlightModal);
+
+    // Compress and convert to base64
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var canvas = document.createElement('canvas');
+        var maxW = 1200;
+        var scale = Math.min(1, maxW / img.width);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        sendToParseAPI(dataUrl);
+      };
+      img.onerror = function () {
+        // For PDFs or non-image files, send raw base64
+        sendToParseAPI(reader.result);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function sendToParseAPI(imageDataUrl) {
+    fetch('/api/parse_screenshot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: imageDataUrl }),
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+      if (res.error) {
+        alert(res.error);
+        closeAddFlightModal();
+        return;
+      }
+      afmParsed = res.parsed || {};
+      if (!afmParsed.direction && afmDirection) afmParsed.direction = afmDirection;
+      showReviewStep();
+    })
+    .catch(function (err) {
+      alert('Failed to parse screenshot: ' + err.message);
+      closeAddFlightModal();
+    });
+  }
+
+  function showReviewStep() {
+    var p = afmParsed;
+    var box = document.querySelector('.afm-box');
+    if (!box) return;
+
+    function fieldHTML(label, key, val, required) {
+      var cls = 'afm-field';
+      var indicator = '';
+      if (val) { cls += ' parsed'; indicator = '<span class="afm-check">\u2713</span>'; }
+      else if (required) { cls += ' missing'; indicator = '<span class="afm-req">Required</span>'; }
+      return '<div class="' + cls + '"><label>' + escHtml(label) + indicator + '</label>' +
+        '<input type="text" data-key="' + key + '" value="' + escHtml(val || '') + '"' +
+        (required && !val ? ' placeholder="Required"' : '') + '></div>';
+    }
+
+    var dirToggle = '<div class="afm-dir-toggle">' +
+      '<button class="afm-dir-btn' + (p.direction === 'outbound' ? ' active' : '') + '" data-dir="outbound">Outbound (to Venice)</button>' +
+      '<button class="afm-dir-btn' + (p.direction === 'return' ? ' active' : '') + '" data-dir="return">Return (from Istanbul)</button>' +
+    '</div>';
+
+    box.innerHTML = '<button class="afm-close">&times;</button>' +
+      '<div class="afm-title">Add My Flight</div>' +
+      stepsHTML(2) +
+      dirToggle +
+      '<div class="afm-row">' +
+        fieldHTML('Airline', 'airline', p.airline, true) +
+        fieldHTML('Flight Number', 'flight_number', p.flight_number, false) +
+      '</div>' +
+      '<div class="afm-row">' +
+        fieldHTML('From (Airport)', 'departure_airport', p.departure_airport, true) +
+        fieldHTML('From (City)', 'departure_city', p.departure_city, false) +
+      '</div>' +
+      '<div class="afm-row">' +
+        fieldHTML('Departure Date', 'departure_date', p.departure_date, true) +
+        fieldHTML('Departure Time', 'departure_time', p.departure_time, true) +
+      '</div>' +
+      '<div class="afm-row">' +
+        fieldHTML('To (Airport)', 'arrival_airport', p.arrival_airport, true) +
+        fieldHTML('To (City)', 'arrival_city', p.arrival_city, false) +
+      '</div>' +
+      '<div class="afm-row">' +
+        fieldHTML('Arrival Date', 'arrival_date', p.arrival_date, true) +
+        fieldHTML('Arrival Time', 'arrival_time', p.arrival_time, true) +
+      '</div>' +
+      fieldHTML('Stopover Airport', 'stopover_airport', (p.stopovers && p.stopovers[0] ? p.stopovers[0].airport : ''), false) +
+      '<button class="afm-btn-primary" id="afm-next-travelers">Next: Add Travelers</button>' +
+      '<button class="afm-btn-secondary" id="afm-back-upload">Back</button>';
+
+    box.querySelector('.afm-close').addEventListener('click', closeAddFlightModal);
+    box.querySelectorAll('.afm-dir-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        p.direction = btn.dataset.dir;
+        box.querySelectorAll('.afm-dir-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+    });
+    box.querySelector('#afm-back-upload').addEventListener('click', function () {
+      openAddFlightModal(afmDirection);
+    });
+    box.querySelector('#afm-next-travelers').addEventListener('click', function () {
+      // Gather edited values
+      box.querySelectorAll('[data-key]').forEach(function (inp) {
+        p[inp.dataset.key] = inp.value.trim();
+      });
+      // Validate required
+      var required = ['airline', 'departure_airport', 'departure_date', 'departure_time', 'arrival_airport', 'arrival_date', 'arrival_time'];
+      var missing = required.filter(function (k) { return !p[k]; });
+      if (missing.length > 0) {
+        alert('Please fill in: ' + missing.join(', '));
+        return;
+      }
+      afmParsed = p;
+      showTravelersStep();
+    });
+  }
+
+  function showTravelersStep() {
+    var box = document.querySelector('.afm-box');
+    if (!box) return;
+    var userName = getUserName() || '';
+
+    var checkboxes = TRAVELERS.map(function (name) {
+      var checked = userName && name.toLowerCase().indexOf(userName.toLowerCase()) !== -1 ? ' checked' : '';
+      return '<label><input type="checkbox" value="' + escHtml(name) + '"' + checked + '> ' + escHtml(name) + '</label>';
+    }).join('');
+
+    box.innerHTML = '<button class="afm-close">&times;</button>' +
+      '<div class="afm-title">Add My Flight</div>' +
+      stepsHTML(3) +
+      '<div style="font-family:var(--sans);font-size:14px;font-weight:500;color:var(--azure);margin-bottom:12px;">Who is on this flight?</div>' +
+      '<div class="afm-travelers">' + checkboxes + '</div>' +
+      '<button class="afm-btn-primary" id="afm-save">Save Flight</button>' +
+      '<button class="afm-btn-secondary" id="afm-back-review">Back</button>';
+
+    box.querySelector('.afm-close').addEventListener('click', closeAddFlightModal);
+    box.querySelector('#afm-back-review').addEventListener('click', showReviewStep);
+    box.querySelector('#afm-save').addEventListener('click', function () {
+      var selected = [];
+      box.querySelectorAll('.afm-travelers input:checked').forEach(function (cb) {
+        selected.push(cb.value);
+      });
+      if (selected.length === 0) { alert('Select at least one traveler.'); return; }
+      saveConfirmedFlight(selected);
+    });
+  }
+
+  function saveConfirmedFlight(travelers) {
+    var p = afmParsed;
+    var tab = p.direction === 'return' ? 'departing_istanbul' : 'arriving_venice';
+    var flightId = generateFlightId(p);
+    var stopAirport = p.stopover_airport || '';
+    var stopCity = (p.stopovers && p.stopovers[0] ? p.stopovers[0].city : '') || '';
+
+    var params = new URLSearchParams({
+      action: 'add_confirmed_flight',
+      tab: tab,
+      travelers: travelers.join(','),
+      airline: p.airline || '',
+      flight_number: p.flight_number || '',
+      departure_airport: p.departure_airport || '',
+      departure_city: p.departure_city || '',
+      departure_date: p.departure_date || '',
+      departure_time: p.departure_time || '',
+      arrival_airport: p.arrival_airport || '',
+      arrival_city: p.arrival_city || '',
+      arrival_date: p.arrival_date || '',
+      arrival_time: p.arrival_time || '',
+      stopover_airport: stopAirport,
+      stopover_city: stopCity,
+      flight_id: flightId,
+      added_by: getUserName() || '',
+    });
+
+    fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' })
+      .catch(function () {});
+
+    closeAddFlightModal();
+    setTimeout(fetchConfirmedFlights, 2000);
+  }
+
   async function startApp() {
     promptName();
     renderCountdown();
@@ -3364,8 +4020,10 @@
     renderDirectionNav();
     renderFilters();
     var sheetReady = fetchFamilyPicks();
+    fetchConfirmedFlights();
 
     setInterval(fetchFamilyPicks, 60000);
+    setInterval(fetchConfirmedFlights, 60000);
 
     // Check URL params for direction and section
     var urlSection = new URLSearchParams(window.location.search).get('section');

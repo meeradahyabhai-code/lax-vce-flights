@@ -16,6 +16,9 @@
     },
     "api/points.py": {
       "maxDuration": 20
+    },
+    "api/parse_screenshot.py": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
