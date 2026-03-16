@@ -1785,14 +1785,14 @@ class TestPointsAIFrontend(unittest.TestCase):
         """Programs should persist in localStorage."""
         self.assertIn("dcf_points_programs", self.html)
 
-    def test_popover_frosted_glass(self):
-        """Points AI popover should use frosted glass style."""
-        start = self.html.index(".points-ai-popover {")
+    def test_modal_frosted_glass(self):
+        """Points AI modal should use frosted glass style."""
+        start = self.html.index(".points-modal-box {")
         end = self.html.index("}", start) + 1
         css = self.html[start:end]
         self.assertIn("backdrop-filter", css)
         self.assertIn("blur(20px)", css)
-        self.assertIn("rgba(250, 248, 243, 0.92)", css)
+        self.assertIn("rgba(250, 248, 243, 0.95)", css)
 
     def test_gradient_label(self):
         """Points AI label should use purple-cyan gradient."""
@@ -1803,18 +1803,15 @@ class TestPointsAIFrontend(unittest.TestCase):
         self.assertIn("#b044ff", css)
         self.assertIn("#00c8ff", css)
 
-    def test_mobile_popover_positioning(self):
-        """Popover should use fixed positioning on mobile."""
-        self.assertIn(".points-ai-popover", self.html)
-        # Check the mobile media query positions popovers fixed
+    def test_modal_overlay(self):
+        """Points AI should use a modal overlay."""
+        self.assertIn("points-modal-overlay", self.html)
         self.assertIn("position: fixed", self.html)
 
-    def test_close_on_outside_click(self):
-        """Popover should close on outside click."""
-        start = self.html.index("function fetchPointsStrategy(")
-        end = self.html.index("\n  function ", start + 1)
-        fn_body = self.html[start:end]
-        self.assertIn("removeEventListener", fn_body)
+    def test_close_on_overlay_click(self):
+        """Modal should close on overlay click and X button."""
+        self.assertIn("closePointsModal", self.html)
+        self.assertIn("points-modal-close", self.html)
 
     def test_api_endpoint(self):
         """Should POST to /api/points."""
@@ -1826,6 +1823,10 @@ class TestPointsAIFrontend(unittest.TestCase):
         end = self.html.index("\n  function ", start + 1)
         fn_body = self.html[start:end]
         self.assertIn("days_until_travel", fn_body)
+
+    def test_flight_summary_in_modal(self):
+        """Modal should show flight details."""
+        self.assertIn("flightSummaryLine", self.html)
 
     def test_programs_popover_save_button(self):
         """Programs popover should have a save button."""

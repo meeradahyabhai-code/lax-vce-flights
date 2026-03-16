@@ -286,30 +286,45 @@
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  .points-ai-popover {
-    position: absolute; right: 0; top: 100%; z-index: 100;
-    width: 320px; max-width: calc(100vw - 32px);
-    padding: 16px 18px;
-    background: rgba(250, 248, 243, 0.92);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(26, 58, 107, 0.15);
-    border-radius: 14px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    font-family: var(--sans); font-size: 13px; font-weight: 300;
-    color: #1a3a6b; line-height: 1.7;
+  .points-modal-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(10, 10, 15, 0.4);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
     animation: popFadeIn 0.15s ease-out;
   }
   @keyframes popFadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .points-modal-box {
+    width: 380px; max-width: 100%;
+    padding: 24px 28px;
+    background: rgba(250, 248, 243, 0.95);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(26, 58, 107, 0.15);
+    border-radius: 20px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    font-family: var(--sans); font-size: 13px; font-weight: 300;
+    color: #1a3a6b; line-height: 1.7;
+    animation: popSlideUp 0.2s ease-out;
+  }
+  @keyframes popSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .points-ai-popover-title {
+  .points-modal-title {
     font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
-    text-transform: uppercase; margin-bottom: 8px;
+    text-transform: uppercase; margin-bottom: 12px;
     background: linear-gradient(90deg, #b044ff, #00c8ff);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+  .points-modal-flight {
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    color: #64748b; margin-bottom: 12px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--fog);
   }
   .points-ai-shimmer {
     height: 48px; border-radius: 6px;
@@ -318,40 +333,28 @@
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
   }
-  .points-programs-popover {
-    position: absolute; right: 0; top: 100%; z-index: 100;
-    width: 300px; max-width: calc(100vw - 32px);
-    padding: 16px 18px;
-    background: rgba(250, 248, 243, 0.95);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(26, 58, 107, 0.15);
-    border-radius: 14px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    animation: popFadeIn 0.15s ease-out;
-  }
-  .points-programs-popover label {
-    display: block; font-family: var(--sans); font-size: 13px;
-    font-weight: 400; color: var(--ink); padding: 4px 0; cursor: pointer;
-  }
-  .points-programs-popover label input { margin-right: 8px; }
   .points-programs-title {
     font-family: var(--sans); font-size: 13px; font-weight: 500;
     color: var(--azure); margin-bottom: 10px;
   }
+  .points-modal-box label {
+    display: block; font-family: var(--sans); font-size: 13px;
+    font-weight: 400; color: var(--ink); padding: 4px 0; cursor: pointer;
+  }
+  .points-modal-box label input { margin-right: 8px; }
   .points-save-btn {
-    display: block; width: 100%; margin-top: 12px; padding: 8px 16px;
-    border-radius: 8px; font-family: var(--sans); font-size: 13px;
+    display: block; width: 100%; margin-top: 12px; padding: 10px 16px;
+    border-radius: 10px; font-family: var(--sans); font-size: 14px;
     font-weight: 500; cursor: pointer; border: none;
     background: var(--azure); color: #fff; transition: background 0.15s;
   }
   .points-save-btn:hover { background: var(--lagoon); }
-  @media (max-width: 600px) {
-    .points-ai-popover, .points-programs-popover {
-      position: fixed; left: 16px; right: 16px; top: auto; bottom: 16px;
-      width: auto; max-width: none;
-    }
+  .points-modal-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; font-size: 18px; color: #94a3b8;
+    cursor: pointer; line-height: 1;
   }
+  .points-modal-close:hover { color: var(--ink); }
 
   /* Family interest modal */
   .fi-modal { text-align: left; }
@@ -1998,65 +2001,77 @@
     catch (e) { return null; }
   }
 
-  function closeAllPointsPopovers() {
-    document.querySelectorAll('.points-ai-popover, .points-programs-popover').forEach(function (p) {
-      p.remove();
-    });
+  function closePointsModal() {
+    var overlay = document.querySelector('.points-modal-overlay');
+    if (overlay) overlay.remove();
   }
 
-  function showProgramsPopover(triggerEl, fData) {
-    closeAllPointsPopovers();
-    var wrapper = triggerEl.closest('.card-right') || triggerEl.parentElement;
-    wrapper.style.position = 'relative';
+  function flightSummaryLine(fData) {
+    var stops = fData.stops === 0 ? 'Nonstop' : fData.stops + ' stop' + (fData.stops > 1 ? 's' : '');
+    return escHtml(fData.primary_airline) + ' &middot; $' + (fData.price || '?') +
+      ' &middot; ' + stops + ' &middot; ' + escHtml(fData.search_date || '');
+  }
 
-    var html = '<div class="points-programs-popover">' +
-      '<div class="points-programs-title">Which loyalty programs do you have?</div>';
+  function showProgramsModal(fData) {
+    closePointsModal();
+
+    var html = '<div class="points-modal-overlay">' +
+      '<div class="points-modal-box" style="position:relative;">' +
+        '<button class="points-modal-close">&times;</button>' +
+        '<div class="points-modal-title">Points AI</div>' +
+        '<div class="points-modal-flight">' + flightSummaryLine(fData) + '</div>' +
+        '<div class="points-programs-title">Which loyalty programs do you have?</div>';
     LOYALTY_PROGRAMS.forEach(function (prog) {
       html += '<label><input type="checkbox" value="' + escHtml(prog) + '"> ' + escHtml(prog) + '</label>';
     });
-    html += '<button class="points-save-btn">Save &amp; Get Strategy</button></div>';
+    html += '<button class="points-save-btn">Save &amp; Get Strategy</button>' +
+      '</div></div>';
 
-    wrapper.insertAdjacentHTML('beforeend', html);
-    var popover = wrapper.querySelector('.points-programs-popover');
+    document.body.insertAdjacentHTML('beforeend', html);
+    var overlay = document.querySelector('.points-modal-overlay');
+    var box = overlay.querySelector('.points-modal-box');
 
-    popover.querySelector('.points-save-btn').addEventListener('click', function () {
+    overlay.querySelector('.points-modal-close').addEventListener('click', closePointsModal);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closePointsModal();
+    });
+
+    box.querySelector('.points-save-btn').addEventListener('click', function () {
       var checked = [];
-      popover.querySelectorAll('input[type=checkbox]:checked').forEach(function (cb) {
+      box.querySelectorAll('input[type=checkbox]:checked').forEach(function (cb) {
         checked.push(cb.value);
       });
       if (checked.length === 0) checked = ['None'];
       localStorage.setItem('dcf_points_programs', JSON.stringify(checked));
-      popover.remove();
-      fetchPointsStrategy(triggerEl, fData);
+      closePointsModal();
+      fetchPointsStrategy(fData);
     });
-
-    // Close on outside click (delayed to avoid immediate close)
-    setTimeout(function () {
-      document.addEventListener('click', function handler(e) {
-        if (!popover.contains(e.target) && !triggerEl.contains(e.target)) {
-          popover.remove();
-          document.removeEventListener('click', handler);
-        }
-      });
-    }, 50);
   }
 
-  function fetchPointsStrategy(triggerEl, fData) {
+  function fetchPointsStrategy(fData) {
     var fid = fData.primary_airline + '|' + fData.search_date + '|' + fData.departure_time;
     if (pointsAICache[fid]) {
-      showPointsPopover(triggerEl, pointsAICache[fid]);
+      showPointsResult(fData, pointsAICache[fid]);
       return;
     }
 
-    closeAllPointsPopovers();
-    var wrapper = triggerEl.closest('.card-right') || triggerEl.parentElement;
-    wrapper.style.position = 'relative';
-    wrapper.insertAdjacentHTML('beforeend',
-      '<div class="points-ai-popover">' +
-        '<div class="points-ai-popover-title">Points AI</div>' +
+    closePointsModal();
+
+    // Show loading modal
+    var html = '<div class="points-modal-overlay">' +
+      '<div class="points-modal-box" style="position:relative;">' +
+        '<button class="points-modal-close">&times;</button>' +
+        '<div class="points-modal-title">Points AI</div>' +
+        '<div class="points-modal-flight">' + flightSummaryLine(fData) + '</div>' +
         '<div class="points-ai-shimmer"></div>' +
-      '</div>');
-    var popover = wrapper.querySelector('.points-ai-popover');
+      '</div></div>';
+
+    document.body.insertAdjacentHTML('beforeend', html);
+    var overlay = document.querySelector('.points-modal-overlay');
+    overlay.querySelector('.points-modal-close').addEventListener('click', closePointsModal);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closePointsModal();
+    });
 
     var programs = getSavedPrograms() || [];
     var route = activeOrigin + ' \u2192 VCE';
@@ -2082,47 +2097,29 @@
     .then(function (res) {
       var text = res.strategy || 'Points strategy unavailable right now \u2014 try again later';
       pointsAICache[fid] = text;
-      if (wrapper.contains(popover)) {
-        popover.innerHTML = '<div class="points-ai-popover-title">Points AI</div>' + escHtml(text);
-      }
+      showPointsResult(fData, text);
     })
     .catch(function () {
-      var fallback = 'Points strategy unavailable right now \u2014 try again later';
-      if (wrapper.contains(popover)) {
-        popover.innerHTML = '<div class="points-ai-popover-title">Points AI</div>' + fallback;
-      }
+      showPointsResult(fData, 'Points strategy unavailable right now \u2014 try again later');
     });
-
-    // Close on outside click
-    setTimeout(function () {
-      document.addEventListener('click', function handler(e) {
-        if (!popover.contains(e.target) && !triggerEl.contains(e.target)) {
-          popover.remove();
-          document.removeEventListener('click', handler);
-        }
-      });
-    }, 50);
   }
 
-  function showPointsPopover(triggerEl, text) {
-    closeAllPointsPopovers();
-    var wrapper = triggerEl.closest('.card-right') || triggerEl.parentElement;
-    wrapper.style.position = 'relative';
-    wrapper.insertAdjacentHTML('beforeend',
-      '<div class="points-ai-popover">' +
-        '<div class="points-ai-popover-title">Points AI</div>' +
+  function showPointsResult(fData, text) {
+    closePointsModal();
+    var html = '<div class="points-modal-overlay">' +
+      '<div class="points-modal-box" style="position:relative;">' +
+        '<button class="points-modal-close">&times;</button>' +
+        '<div class="points-modal-title">Points AI</div>' +
+        '<div class="points-modal-flight">' + flightSummaryLine(fData) + '</div>' +
         escHtml(text) +
-      '</div>');
-    var popover = wrapper.querySelector('.points-ai-popover');
+      '</div></div>';
 
-    setTimeout(function () {
-      document.addEventListener('click', function handler(e) {
-        if (!popover.contains(e.target) && !triggerEl.contains(e.target)) {
-          popover.remove();
-          document.removeEventListener('click', handler);
-        }
-      });
-    }, 50);
+    document.body.insertAdjacentHTML('beforeend', html);
+    var overlay = document.querySelector('.points-modal-overlay');
+    overlay.querySelector('.points-modal-close').addEventListener('click', closePointsModal);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closePointsModal();
+    });
   }
 
   function handlePointsAIClick(e) {
@@ -2132,9 +2129,9 @@
     var fData = JSON.parse(decodeURIComponent(btn.getAttribute('data-flight')));
 
     if (!getSavedPrograms()) {
-      showProgramsPopover(btn, fData);
+      showProgramsModal(fData);
     } else {
-      fetchPointsStrategy(btn, fData);
+      fetchPointsStrategy(fData);
     }
   }
 
