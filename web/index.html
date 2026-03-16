@@ -2391,6 +2391,8 @@
     return { tzDep: tzDep, tzArr: tzArr, destCity: destCity };
   }
 
+  var familyInterestedExpanded = false;
+
   function renderFamilyPicks(rows) {
     var el = document.getElementById('family-cards');
     if (!rows || rows.length === 0) {
@@ -2398,7 +2400,41 @@
       return;
     }
     var sorted = rows.slice().reverse();
-    el.innerHTML = sorted.map(function (r) {
+    var booked = sorted.filter(function (r) { return r.action === 'booked'; });
+    var interested = sorted.filter(function (r) { return r.action !== 'booked'; });
+
+    var html = '';
+    if (booked.length > 0) {
+      html += booked.map(function (r) { return familyCardHTML(r); }).join('');
+    } else {
+      html += '<div class="family-empty">No bookings yet.</div>';
+    }
+
+    if (interested.length > 0) {
+      html += '<button class="show-more-btn" id="interested-toggle" style="margin-top:8px;">' +
+        (familyInterestedExpanded
+          ? 'Hide interested (' + interested.length + ') \u25B2'
+          : 'Show interested (' + interested.length + ') \u25BC') +
+        '</button>';
+      if (familyInterestedExpanded) {
+        html += '<div class="family-interested-list">' +
+          interested.map(function (r) { return familyCardHTML(r); }).join('') +
+          '</div>';
+      }
+    }
+
+    el.innerHTML = html;
+
+    var toggle = document.getElementById('interested-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        familyInterestedExpanded = !familyInterestedExpanded;
+        renderFamilyPicks(rows);
+      });
+    }
+  }
+
+  function familyCardHTML(r) {
       if (!r.name && !r.airline) return '';
       var icon = r.action === 'booked' ? '&#9992;&#65039;' : '&#128064;';
       var verb = r.action === 'booked' ? 'booked' : 'is interested in';
@@ -2496,7 +2532,6 @@
           (ago ? '<div class="fc-time">' + ago + '</div>' : '') +
         '</div>' +
       '</div>';
-    }).join('');
   }
 
   function getAllFlightsFlat() {
