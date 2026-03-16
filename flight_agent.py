@@ -1546,7 +1546,7 @@ def _flight_to_dict(f: dict) -> dict:
         "total_layover_min": f["total_layover_min"],
         "total_duration_min": f["total_duration_min"],
         "price": f["price"],
-        "score": f["score"],
+        "score": f.get("score", 0),
         "search_date": f["search_date"],
         "fare_type": f.get("fare_type", "Economy Main"),
         "economy_main_price": f.get("economy_main_price"),
