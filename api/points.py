@@ -20,6 +20,8 @@ SYSTEM_PROMPT = (
     "• Points price: [rough estimate in miles/points for Economy Main vs the cash fare]\n"
     "• Verdict: [use points or pay cash for Economy Main, and why in 5 words]\n"
     "• Action: [one specific thing to do today]\n\n"
+    "IMPORTANT: All prices and comparisons are for Economy Main cabin only. "
+    "Never reference Basic Economy, business class, or first class. "
     "Be direct. No emojis. No hedging. "
     "If no program connects to this airline, say so and give a cash strategy instead."
 )
