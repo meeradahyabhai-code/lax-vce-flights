@@ -3676,13 +3676,31 @@
 
   // ---- Confirmed Flights ----
   var TRAVELERS = [
-    "Bhula Joshila P.","Bhula Alayna P.","Bhula Ayush P.","Bhula Piyush H.",
-    "Dinesh Dilani","Dahyabhai Jayshri","Dahyabhai Suresh","Dinesh Sahana",
-    "Dinesh Daviddinesh Raya","Dinesh Vinisha","Patel Ameera K.","Kaur Sukhdeep",
-    "Patel Ronil","Dharna Savannah","Chatha Sandhya","Patel Damyanti",
-    "Aceves Jonathan A.","Dahyabhai Meera C.","Madhav Atul P.","Madhav Malvika",
-    "Dahyabhai Nita","Dahyabhai Naresh","Aceves Ezequiel",
-    "Paredes Aceves Susana D.","Madhav Shakeel A."
+    "Aceves Ezequiel",
+    "Aceves Jonathan A.",
+    "Bhula Alayna P.",
+    "Bhula Ayush P.",
+    "Bhula Joshila P.",
+    "Bhula Piyush H.",
+    "Chatha Sandhya",
+    "Dahyabhai Jayshri",
+    "Dahyabhai Meera C.",
+    "Dahyabhai Naresh",
+    "Dahyabhai Nita",
+    "Dahyabhai Suresh",
+    "Dharna Savannah",
+    "Dinesh Daviddinesh Raya",
+    "Dinesh Dilani",
+    "Dinesh Sahana",
+    "Dinesh Vinisha",
+    "Kaur Sukhdeep",
+    "Madhav Atul P.",
+    "Madhav Malvika",
+    "Madhav Shakeel A.",
+    "Paredes Aceves Susana D.",
+    "Patel Ameera K.",
+    "Patel Damyanti",
+    "Patel Ronil",
   ];
   var confirmedOutbound = [];
   var confirmedReturn = [];
@@ -3725,14 +3743,27 @@
     var parsed = [];
     if (Array.isArray(rows) && rows.length > 1) {
       var headers = rows[0];
+      var headerKeys = headers.map(function (h) { return String(h).toLowerCase().replace(/[\s()]+/g, '_'); });
+      var hasActionCol = headerKeys.indexOf('action') !== -1;
+
       for (var i = 1; i < rows.length; i++) {
         var obj = {};
-        for (var j = 0; j < headers.length; j++) {
-          obj[String(headers[j]).toLowerCase().replace(/[\s()]+/g, '_')] = rows[i][j];
+        for (var j = 0; j < rows[i].length; j++) {
+          obj[headerKeys[j] || j] = rows[i][j];
         }
-        // Skip rows without a traveler name
-        var travelerVal = obj.traveler || '';
+        // Skip rows without a traveler name (column may be "Traveler" or "Name")
+        var travelerVal = obj.traveler || obj.name || '';
         if (!String(travelerVal).trim()) continue;
+        obj.traveler = String(travelerVal).trim();
+
+        // If data has an Action column (main picks tab fallback), only show "booked"
+        if (hasActionCol && obj.action && obj.action !== 'booked') continue;
+
+        // Normalize field names from main picks tab format
+        if (!obj.airline && obj.airline_) obj.airline = obj.airline_;
+        if (!obj.departure_date && obj.flight_date) obj.departure_date = obj.flight_date;
+        if (!obj.flight_id && obj.flight_id_) obj.flight_id = obj.flight_id_;
+
         parsed.push(obj);
       }
     }
@@ -3805,21 +3836,19 @@
 
         var airline = r.airline || '';
         var flightNum = r.flight_number || '';
-        var depTime = '';
-        var arrTime = '';
-        var depAirport = '';
-        var arrAirport = '';
-        var stopover = '';
-        // Extract fields flexibly
+        var depTime = r.departure_time || '';
+        var arrTime = r.arrival_time || '';
+        var depAirport = r.departure_airport || r.from_airport_ || '';
+        var arrAirport = r.arrival_airport || r.to_airport_ || '';
+        var stopover = r.stopover_airport || '';
+        // Flexible field extraction for varying column names
         Object.keys(r).forEach(function (k) {
-          if (k.indexOf('departure_time') !== -1 && r[k]) depTime = String(r[k]);
-          if (k.indexOf('arrival_time') !== -1 && r[k]) arrTime = String(r[k]);
-          if (k.indexOf('from_airport') !== -1 || k === 'from_airport_') depAirport = r[k] || '';
-          if (k.indexOf('to_airport') !== -1 || k === 'to_airport_') arrAirport = r[k] || '';
-          if (k.indexOf('stopover_airport') !== -1) stopover = r[k] || '';
+          if (!depTime && k.indexOf('departure_time') !== -1 && r[k]) depTime = String(r[k]);
+          if (!arrTime && k.indexOf('arrival_time') !== -1 && r[k]) arrTime = String(r[k]);
+          if (!depAirport && (k.indexOf('from_airport') !== -1 || k.indexOf('departure_airport') !== -1)) depAirport = r[k] || '';
+          if (!arrAirport && (k.indexOf('to_airport') !== -1 || k.indexOf('arrival_airport') !== -1)) arrAirport = r[k] || '';
+          if (!stopover && k.indexOf('stopover') !== -1 && k.indexOf('city') === -1) stopover = r[k] || '';
         });
-        if (!depAirport) depAirport = r.departure_airport || '';
-        if (!arrAirport) arrAirport = r.arrival_airport || '';
 
         var fmtDep = depTime ? depTime.slice(0, 5) : '';
         var fmtArr = arrTime ? arrTime.slice(0, 5) : '';
