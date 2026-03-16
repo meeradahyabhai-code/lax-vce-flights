@@ -1167,6 +1167,88 @@
     return isNaN(d) ? -1 : d.getHours();
   }
 
+  // ---- Client-side flight scoring ----
+  var ROUTE_BONUSES = {
+    LAX: {
+      outbound: {
+        bonuses: {"delta":-280,"air france":-200,"virgin atlantic":-190,"british airways":-180,"united":-170,"turkish airlines":-160,"klm":-150,"swiss":-140,"swiss international":-140,"american":-130,"american airlines":-130,"lufthansa":-80},
+        autoTop: {}
+      },
+      "return": {
+        bonuses: {"turkish airlines":-270,"air france":-190,"virgin atlantic":-180,"klm":-170,"british airways":-160,"united":-150,"swiss":-140,"swiss international":-140,"lufthansa":-70},
+        autoTop: {"turkish airlines":true}
+      }
+    },
+    ATL: {
+      outbound: {
+        bonuses: {"delta":-320,"virgin atlantic":-200,"turkish airlines":-190,"air france":-180,"british airways":-170,"klm":-150,"united":-140,"swiss":-130,"swiss international":-130,"american":-120,"american airlines":-120,"lufthansa":-70},
+        autoTop: {}
+      },
+      "return": {
+        bonuses: {"turkish airlines":-270,"delta":-250,"virgin atlantic":-190,"air france":-180,"klm":-160,"british airways":-160,"lufthansa":-70},
+        autoTop: {"turkish airlines":true}
+      }
+    },
+    AKL: {
+      outbound: {
+        bonuses: {"qatar airways":-320,"singapore airlines":-300,"cathay pacific":-280,"emirates":-270,"etihad":-240,"etihad airways":-240,"air new zealand":-180,"qantas":-160,"ana":-150,"all nippon airways":-150},
+        autoTop: {}
+      },
+      "return": {
+        bonuses: {"emirates":-300,"qatar airways":-290,"singapore airlines":-270,"etihad":-250,"etihad airways":-250,"cathay pacific":-220,"turkish airlines":-160,"air new zealand":-150},
+        autoTop: {}
+      }
+    },
+    YVR: {
+      outbound: {
+        bonuses: {"air canada":-300,"british airways":-180,"klm":-180,"air france":-180,"swiss":-160,"swiss international":-160,"turkish airlines":-160,"lufthansa":-80},
+        autoTop: {}
+      },
+      "return": {
+        bonuses: {"turkish airlines":-280,"air canada":-260,"british airways":-180,"lufthansa":-80},
+        autoTop: {"turkish airlines":true}
+      }
+    }
+  };
+
+  function scoreFlight(f, origin, direction) {
+    var cfg = (ROUTE_BONUSES[origin] || ROUTE_BONUSES.LAX)[direction] || ROUTE_BONUSES.LAX.outbound;
+    var primary = (f.primary_airline || '').toLowerCase().trim();
+
+    // Auto TOP PICK: nonstop by these airlines → score 0
+    if (cfg.autoTop[primary] && f.stops === 0) {
+      f.score = 0;
+      return;
+    }
+
+    var score = f.economy_main_price || f.price || 0;
+    score += cfg.bonuses[primary] || 0;
+
+    // Time-of-day bonus
+    var hour = depHour(f);
+    if (hour >= 0 && (hour >= 6 && hour <= 10 || hour >= 17 && hour <= 21)) score -= 80;
+
+    // Layover penalty
+    score += (f.total_layover_min || 0) * 0.5;
+
+    // Speed bonus
+    var dur = f.total_duration_min || 0;
+    if (dur < 960) score -= 60;
+    else if (dur <= 1080) score -= 30;
+    else if (dur > 1200) score += 50;
+
+    // Nonstop bonus
+    if (f.stops === 0) score -= 100;
+
+    f.score = Math.round(score * 100) / 100;
+  }
+
+  function scoreAndSortFlights(flights, origin, direction) {
+    flights.forEach(function (f) { scoreFlight(f, origin, direction); });
+    flights.sort(function (a, b) { return a.score - b.score; });
+    return flights;
+  }
+
   function scoreLabel(s) {
     if (s < 200) return '\u2726 Excellent Choice';
     if (s <= 400) return 'Solid Pick';
@@ -3305,10 +3387,10 @@
       '</div>';
 
     // Check localStorage cache first (survives deploys, saves SerpAPI calls)
-    var FLIGHT_CACHE_KEY = 'dcf_flights_cache_v2';
+    var FLIGHT_CACHE_KEY = 'dcf_flights_cache_v3';
     var FLIGHT_CACHE_TTL = 48 * 60 * 60 * 1000; // 48 hours (matches CDN s-maxage)
-    // Clear old cache key
-    try { localStorage.removeItem('dcf_flights_cache'); } catch (e) {}
+    // Clear old cache keys
+    try { localStorage.removeItem('dcf_flights_cache'); localStorage.removeItem('dcf_flights_cache_v2'); } catch (e) {}
     var cached = null;
     try {
       var raw = localStorage.getItem(FLIGHT_CACHE_KEY);
@@ -3373,6 +3455,18 @@
         }
       };
     }
+
+    // Score flights client-side (scoring logic lives in JS, not cached API)
+    Object.keys(data).forEach(function (origin) {
+      if (origin.startsWith('_')) return; // skip _serpapi_usage etc.
+      var od = data[origin];
+      if (od && od.outbound && od.outbound.flights) {
+        scoreAndSortFlights(od.outbound.flights, origin, 'outbound');
+      }
+      if (od && od['return'] && od['return'].flights) {
+        scoreAndSortFlights(od['return'].flights, origin, 'return');
+      }
+    });
 
     if (data.error) {
       document.getElementById('flights').innerHTML =

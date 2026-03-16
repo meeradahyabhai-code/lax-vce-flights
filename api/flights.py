@@ -25,7 +25,6 @@ from flight_agent import (
     label_fare_types,
     normalize,
     reset_serpapi_call_log,
-    score_flights,
     search_serpapi,
     search_skyscanner,
 )
@@ -44,11 +43,8 @@ def _run_direction(origin: str, direction: str, cfg: dict, today) -> tuple[str, 
     flights = dedup_flights(flights)
     flights = label_fare_types(flights)
 
-    flights = score_flights(
-        flights,
-        airline_bonuses=cfg["bonuses"],
-        auto_top_picks=cfg["auto_top"],
-    )
+    # Scoring is done client-side so we can update ranking logic
+    # without invalidating the CDN cache or burning SerpAPI calls
     return direction, {
         "generated": today.isoformat(),
         "days_to_go": (TRIP_DATE - today).days,
