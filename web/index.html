@@ -2140,7 +2140,9 @@
 
   function fetchPointsStrategy(fData) {
     var fns = (fData.flight_numbers || []).join(',');
-    var fid = fData.primary_airline + '|' + fns + '|' + fData.search_date + '|' + fData.departure_time;
+    var als = (fData.airlines || []).join('+');
+    var fid = fData.primary_airline + '|' + als + '|' + fns + '|' + fData.search_date + '|' + fData.departure_time;
+    console.log('[Points AI] Request for:', fData.primary_airline, '| airlines:', fData.airlines, '| fid:', fid);
     if (pointsAICache[fid]) {
       showPointsResult(fData, pointsAICache[fid]);
       return;
