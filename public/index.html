@@ -872,6 +872,7 @@
     padding: 6px 16px; border-radius: 9999px; border: none; cursor: pointer;
     background: linear-gradient(135deg, var(--gold), var(--gold-light));
     color: #fff; letter-spacing: 0.3px; transition: opacity 0.15s;
+    margin-top: 16px;
   }
   .cf-add-btn:hover { opacity: 0.85; }
   .cf-table {
@@ -1041,6 +1042,58 @@
     border: 1px solid var(--fog); background: #fff; color: var(--ink);
   }
   .afm-btn-secondary:hover { border-color: var(--azure); color: var(--azure); }
+
+  /* ── Itinerary Tab ── */
+  .itin-section { margin-bottom: 40px; }
+  .itin-heading {
+    font-family: var(--serif); font-size: 28px; font-weight: 300;
+    font-style: italic; color: var(--azure);
+  }
+  .itin-rule {
+    width: 60px; height: 1.5px; background: var(--gold); margin: 8px 0 6px;
+  }
+  .itin-sub {
+    font-family: var(--sans); font-size: 12px; font-weight: 300;
+    color: #94a3b8; margin-bottom: 20px;
+  }
+  .itin-placeholder {
+    border: 2px dashed var(--fog); border-radius: 14px;
+    padding: 32px 20px; text-align: center;
+    font-family: var(--sans); font-size: 12px; font-weight: 300;
+    font-style: italic; color: #94a3b8;
+  }
+
+  /* Timeline */
+  .itin-timeline {
+    position: relative; padding-left: 28px; margin-top: 8px;
+  }
+  .itin-timeline::before {
+    content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px;
+    width: 2px; background: var(--gold);
+  }
+  .itin-stop {
+    display: flex; align-items: flex-start; gap: 16px;
+    position: relative; padding: 10px 0;
+  }
+  .itin-dot {
+    position: absolute; left: -24px; top: 14px;
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid var(--gold); background: #fff;
+    flex-shrink: 0;
+  }
+  .itin-confirmed .itin-dot { background: var(--gold); }
+  .itin-confirmed .itin-label {
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    color: var(--azure);
+  }
+  .itin-tbd .itin-label {
+    font-family: var(--sans); font-size: 14px; font-weight: 400;
+    color: #94a3b8;
+  }
+  .itin-date {
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    color: #94a3b8; min-width: 60px;
+  }
 </style>
 </head>
 <body>
@@ -1074,8 +1127,9 @@
 
 <!-- Section nav: Flights / Hotels -->
 <div class="section-nav" id="section-nav">
-  <button class="section-tab active" data-section="flights">Flights</button>
-  <button class="section-tab" data-section="hotels">Hotels</button>
+  <button class="section-tab active" data-section="flights">Shop Flights</button>
+  <button class="section-tab" data-section="hotels">Shop Hotels</button>
+  <button class="section-tab" data-section="itinerary">Itinerary</button>
 </div>
 
 <!-- Hero -->
@@ -1102,12 +1156,6 @@
       <div class="ai-briefing-shimmer"></div>
     </div>
   </div>
-</div>
-
-<!-- Confirmed Flights -->
-<div id="confirmed-section" style="max-width:900px;margin:0 auto;padding:0 16px;">
-  <div id="confirmed-outbound"></div>
-  <div id="confirmed-return"></div>
 </div>
 
 <!-- Flights section -->
@@ -1146,6 +1194,55 @@
   </div>
 
   <div class="footer" id="hotel-footer"></div>
+</div>
+</div>
+
+<!-- Itinerary section (hidden by default) -->
+<div id="itinerary-section" style="display:none;">
+<div style="max-width:900px; margin:0 auto; padding:0 16px 48px;">
+
+  <!-- Section 1: Confirmed Flights -->
+  <div id="confirmed-outbound"></div>
+  <div id="confirmed-return"></div>
+
+  <!-- Section 2: Cruise Timeline -->
+  <div class="itin-section">
+    <div class="itin-heading">The Cruise</div>
+    <div class="itin-rule"></div>
+    <div class="itin-sub">Full itinerary with ports coming soon</div>
+    <div class="itin-timeline">
+      <div class="itin-stop itin-confirmed">
+        <div class="itin-date">Jul 3</div>
+        <div class="itin-dot"></div>
+        <div class="itin-label">Depart Venice &mdash; cruise begins</div>
+      </div>
+      <div class="itin-stop itin-tbd">
+        <div class="itin-date">Jul 4&ndash;12</div>
+        <div class="itin-dot"></div>
+        <div class="itin-label">Ports of call &mdash; to be updated</div>
+      </div>
+      <div class="itin-stop itin-confirmed">
+        <div class="itin-date">Jul 13</div>
+        <div class="itin-dot"></div>
+        <div class="itin-label">Arrive Istanbul &mdash; cruise ends</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Hotels -->
+  <div class="itin-section">
+    <div class="itin-heading">Hotels</div>
+    <div class="itin-rule"></div>
+    <div class="itin-placeholder">Hotel details coming soon &mdash; check back after bookings are confirmed</div>
+  </div>
+
+  <!-- Section 4: Excursions -->
+  <div class="itin-section">
+    <div class="itin-heading">Excursions</div>
+    <div class="itin-rule"></div>
+    <div class="itin-placeholder">Shore excursions and activities will be added here once the cruise itinerary is confirmed</div>
+  </div>
+
 </div>
 </div>
 
@@ -2089,6 +2186,7 @@
     hero.style.backgroundRepeat = 'no-repeat';
     document.querySelector('.hero-title').innerHTML = cfg.title;
     document.querySelector('.hero-subtitle').innerHTML = cfg.subtitle;
+    document.getElementById('ai-briefing').style.display = '';
     renderAIBriefing();
   }
 
@@ -2880,27 +2978,38 @@
   function renderSectionContent() {
     var flightsSection = document.getElementById('flights-section');
     var hotelsSection = document.getElementById('hotels-section');
+    var itinerarySection = document.getElementById('itinerary-section');
     var dirNav = document.getElementById('direction-nav');
     var filtersEl = document.getElementById('filters');
     var tabsEl = document.getElementById('tabs');
-
     var originNav = document.getElementById('origin-nav');
+    var confirmedSection = document.getElementById('confirmed-section');
+
+    // Hide all sections
+    flightsSection.style.display = 'none';
+    hotelsSection.style.display = 'none';
+    itinerarySection.style.display = 'none';
+    dirNav.style.display = 'none';
+    originNav.style.display = 'none';
+    if (tabsEl) tabsEl.style.display = 'none';
+    if (filtersEl) filtersEl.style.display = 'none';
 
     if (activeSection === 'hotels') {
-      flightsSection.style.display = 'none';
       hotelsSection.style.display = '';
-      dirNav.style.display = 'none';
-      originNav.style.display = 'none';
-      if (tabsEl) tabsEl.style.display = 'none';
-      if (filtersEl) filtersEl.style.display = 'none';
       updateHeroForHotels();
       renderHotelCityNav();
       renderSmartCheckin();
       renderHotelPicker();
       renderHotelFamilyPicks();
+    } else if (activeSection === 'itinerary') {
+      itinerarySection.style.display = '';
+      dirNav.style.display = 'none';
+      updateHeroForItinerary();
+      renderConfirmedTable('outbound');
+      renderConfirmedTable('return');
     } else {
+      // Shop Flights
       flightsSection.style.display = '';
-      hotelsSection.style.display = 'none';
       dirNav.style.display = '';
       originNav.style.display = '';
       if (tabsEl) tabsEl.style.display = '';
@@ -2911,6 +3020,19 @@
       renderFilters();
       renderFlights();
     }
+  }
+
+  function updateHeroForItinerary() {
+    var hero = document.querySelector('.hero');
+    hero.style.backgroundImage =
+      'linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)), ' +
+      "url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600')";
+    hero.style.backgroundPosition = 'center';
+    hero.style.backgroundSize = 'cover';
+    hero.style.backgroundRepeat = 'no-repeat';
+    document.querySelector('.hero-title').innerHTML = 'Trip Itinerary';
+    document.querySelector('.hero-subtitle').innerHTML = 'Venice &middot; Mediterranean Cruise &middot; Istanbul';
+    document.getElementById('ai-briefing').style.display = 'none';
   }
 
   function updateHeroForHotels() {
@@ -3568,12 +3690,20 @@
   function fetchConfirmedFlights() {
     fetch(SHEETS_URL + '?action=get_confirmed_flights&tab=arriving_venice')
       .then(function (r) { return r.json(); })
-      .then(function (rows) { confirmedOutbound = rows || []; renderConfirmedTable('outbound'); })
-      .catch(function () {});
+      .then(function (rows) {
+        if (Array.isArray(rows)) { confirmedOutbound = rows; }
+        else { confirmedOutbound = []; }
+        renderConfirmedTable('outbound');
+      })
+      .catch(function () { confirmedOutbound = []; renderConfirmedTable('outbound'); });
     fetch(SHEETS_URL + '?action=get_confirmed_flights&tab=departing_istanbul')
       .then(function (r) { return r.json(); })
-      .then(function (rows) { confirmedReturn = rows || []; renderConfirmedTable('return'); })
-      .catch(function () {});
+      .then(function (rows) {
+        if (Array.isArray(rows)) { confirmedReturn = rows; }
+        else { confirmedReturn = []; }
+        renderConfirmedTable('return');
+      })
+      .catch(function () { confirmedReturn = []; renderConfirmedTable('return'); });
   }
 
   function generateFlightId(d) {
@@ -3591,24 +3721,23 @@
       ? 'Sorted by arrival time \u00b7 same flight grouped together'
       : 'Sorted by departure time \u00b7 same flight grouped together';
 
-    var isArr = Array.isArray(rows) && rows.length > 1;
+    // Only use Google Sheet data — never marketplace/flights.json
     var parsed = [];
-    if (isArr) {
+    if (Array.isArray(rows) && rows.length > 1) {
       var headers = rows[0];
       for (var i = 1; i < rows.length; i++) {
         var obj = {};
         for (var j = 0; j < headers.length; j++) {
           obj[String(headers[j]).toLowerCase().replace(/[\s()]+/g, '_')] = rows[i][j];
         }
+        // Skip rows without a traveler name
+        var travelerVal = obj.traveler || '';
+        if (!String(travelerVal).trim()) continue;
         parsed.push(obj);
       }
     }
 
-    // Sort by time
-    var sortKey = dir === 'outbound' ? 'arrival_time_vce_' : 'departure_time_ist_';
-    if (dir === 'outbound') sortKey = 'arrival_time';
-    if (dir === 'return') sortKey = 'departure_time';
-    // Flexible key matching
+    // Sort by time — flexible key matching
     parsed.sort(function (a, b) {
       var at = '', bt = '';
       Object.keys(a).forEach(function (k) {
@@ -4027,8 +4156,8 @@
 
     // Check URL params for direction and section
     var urlSection = new URLSearchParams(window.location.search).get('section');
-    if (urlSection === 'hotels') {
-      activeSection = 'hotels';
+    if (urlSection === 'hotels' || urlSection === 'itinerary') {
+      activeSection = urlSection;
       renderSectionNav();
       renderSectionContent();
     }
