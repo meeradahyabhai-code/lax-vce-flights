@@ -461,7 +461,8 @@ class TestFlightToDict(unittest.TestCase):
         f = score_flights([f])[0]
         d = _flight_to_dict(f)
         required = {
-            "primary_airline", "airlines", "departure_time", "arrival_time",
+            "primary_airline", "airlines", "flight_numbers",
+            "departure_time", "arrival_time",
             "stops", "total_layover_min", "total_duration_min", "price",
             "score", "search_date", "fare_type", "economy_main_price",
             "basic_economy_price", "premium_economy_price", "business_price",
@@ -1835,6 +1836,87 @@ class TestPointsAIFrontend(unittest.TestCase):
     def test_error_fallback_message(self):
         """Should show user-friendly error on API failure."""
         self.assertIn("Points strategy unavailable right now", self.html)
+
+
+class TestPointsConsistency(unittest.TestCase):
+    """Tests for Points AI consistency and correctness."""
+
+    def test_temperature_zero(self):
+        """Points API should use temperature=0 for consistent results."""
+        import inspect
+        from api.points import handler
+        source = inspect.getsource(handler)
+        self.assertIn('"temperature": 0', source)
+
+    def test_flight_numbers_in_api(self):
+        """Points API should include flight numbers in the prompt."""
+        import inspect
+        from api.points import handler
+        source = inspect.getsource(handler)
+        self.assertIn("flight_numbers", source)
+
+    def test_flight_numbers_in_frontend_data(self):
+        """Flight card data should include flight_numbers."""
+        with open("public/index.html", "r") as fh:
+            html = fh.read()
+        # cardHTML should pass flight_numbers in fData
+        start = html.index("function cardHTML(")
+        end = html.index("\n  function ", start + 1)
+        fn_body = html[start:end]
+        self.assertIn("flight_numbers", fn_body)
+
+    def test_flight_numbers_in_dict(self):
+        """_flight_to_dict should include flight_numbers."""
+        from flight_agent import _flight_to_dict
+        import inspect
+        source = inspect.getsource(_flight_to_dict)
+        self.assertIn("flight_numbers", source)
+
+    def test_cache_key_includes_flight_numbers(self):
+        """Points AI cache key should include flight numbers."""
+        with open("public/index.html", "r") as fh:
+            html = fh.read()
+        start = html.index("function fetchPointsStrategy(")
+        end = html.index("\n  function ", start + 1)
+        fn_body = html[start:end]
+        self.assertIn("flight_numbers", fn_body)
+
+    def test_economy_main_in_api_message(self):
+        """Points API user message should say Economy Main."""
+        import inspect
+        from api.points import handler
+        source = inspect.getsource(handler)
+        self.assertIn("Economy Main", source)
+
+
+class TestBookUrlFallback(unittest.TestCase):
+    """Tests for the Select Flight booking URL."""
+
+    def setUp(self):
+        with open("public/index.html", "r") as fh:
+            self.html = fh.read()
+
+    def test_fallback_uses_modern_google_flights(self):
+        """Fallback URL should use google.com/travel/flights format."""
+        start = self.html.index("function bookUrl(")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("google.com/travel/flights", fn_body)
+        self.assertNotIn("#search;f=", fn_body)
+
+    def test_deep_link_preferred(self):
+        """bookUrl should prefer google_flights_url when available."""
+        start = self.html.index("function bookUrl(")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("google_flights_url", fn_body)
+
+    def test_flight_summary_shows_flight_numbers(self):
+        """Points AI modal should display flight numbers."""
+        start = self.html.index("function flightSummaryLine(")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("flight_numbers", fn_body)
 
 
 class TestSummaryPromptUpdate(unittest.TestCase):

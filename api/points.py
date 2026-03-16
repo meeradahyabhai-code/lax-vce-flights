@@ -40,13 +40,15 @@ class handler(BaseHTTPRequestHandler):
             flight = payload.get("flight", {})
             programs = payload.get("programs", [])
             days_until = payload.get("days_until_travel", "unknown")
+            flight_nums = flight.get("flight_numbers", [])
+            fn_str = ", ".join(flight_nums) if flight_nums else "unknown"
 
             user_msg = (
-                f"Flight: {flight.get('primary_airline', '?')} | "
+                f"Flight: {flight.get('primary_airline', '?')} {fn_str} | "
                 f"{flight.get('search_date', '?')} | "
                 f"dep {flight.get('departure_time', '?')[:16]} | "
                 f"stops={flight.get('stops', '?')} | "
-                f"${flight.get('price', '?')}\n"
+                f"${flight.get('price', '?')} Economy Main\n"
                 f"Route: {flight.get('route', 'unknown')}\n"
                 f"Days until travel: {days_until}\n"
                 f"User's loyalty programs: {', '.join(programs) if programs else 'None'}"
@@ -61,6 +63,7 @@ class handler(BaseHTTPRequestHandler):
                 json={
                     "model": "gpt-4o-mini",
                     "max_tokens": 200,
+                    "temperature": 0,
                     "messages": [
                         {"role": "system", "content": SYSTEM_PROMPT},
                         {"role": "user", "content": user_msg},

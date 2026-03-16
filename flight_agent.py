@@ -117,7 +117,7 @@ def search_serpapi(
     route = f"{origin}→{destination}"
     cls_label = class_labels.get(travel_class, travel_class)
     print(f"[SerpAPI] {route} ({cls_label}) returned {len(all_results)} results "
-          f"({len(dates)} dates × 2 queries)")
+          f"({len(dates)} dates × {len(stops_params)} queries)")
     return all_results
 
 
@@ -1459,9 +1459,18 @@ def build_email_html(
 
 def _flight_to_dict(f: dict) -> dict:
     """Convert a scored flight to a JSON-serializable dict."""
+    # Extract flight numbers from raw segments
+    flight_numbers = []
+    raw = f.get("raw", {})
+    for seg in raw.get("flights", []):
+        fn = seg.get("flight_number", "")
+        if fn:
+            flight_numbers.append(fn)
+
     d = {
         "primary_airline": f["primary_airline"],
         "airlines": f["airlines"],
+        "flight_numbers": flight_numbers,
         "departure_time": f["departure_time"],
         "arrival_time": f["arrival_time"],
         "stops": f["stops"],

@@ -1193,7 +1193,7 @@
     var route = labels[activeDirection] || '';
     var parts = route.split(' \u2192 ');
     var from = parts[0] || 'LAX', to = parts[1] || 'VCE';
-    return 'https://www.google.com/flights#search;f=' + from + ';t=' + to + ';d=' + f.search_date + ';tt=o;c=e;s=1';
+    return 'https://www.google.com/travel/flights?q=flights+from+' + from + '+to+' + to + '+on+' + f.search_date + '&curr=USD';
   }
 
   function flightId(f) {
@@ -2010,7 +2010,10 @@
 
   function flightSummaryLine(fData) {
     var stops = fData.stops === 0 ? 'Nonstop' : fData.stops + ' stop' + (fData.stops > 1 ? 's' : '');
-    return escHtml(fData.primary_airline) + ' &middot; $' + (fData.price || '?') +
+    var fns = (fData.flight_numbers || []).join(', ');
+    return escHtml(fData.primary_airline) +
+      (fns ? ' <span style="color:#94a3b8;">(' + escHtml(fns) + ')</span>' : '') +
+      ' &middot; $' + (fData.price || '?') +
       ' &middot; ' + stops + ' &middot; ' + escHtml(fData.search_date || '');
   }
 
@@ -2051,7 +2054,8 @@
   }
 
   function fetchPointsStrategy(fData) {
-    var fid = fData.primary_airline + '|' + fData.search_date + '|' + fData.departure_time;
+    var fns = (fData.flight_numbers || []).join(',');
+    var fid = fData.primary_airline + '|' + fns + '|' + fData.search_date + '|' + fData.departure_time;
     if (pointsAICache[fid]) {
       showPointsResult(fData, pointsAICache[fid]);
       return;
@@ -2085,6 +2089,7 @@
       body: JSON.stringify({
         flight: {
           primary_airline: fData.primary_airline,
+          flight_numbers: fData.flight_numbers || [],
           search_date: fData.search_date,
           departure_time: fData.departure_time,
           stops: fData.stops,
@@ -2164,6 +2169,7 @@
     var fData = encodeURIComponent(JSON.stringify({
       primary_airline: f.primary_airline,
       airlines: f.airlines,
+      flight_numbers: f.flight_numbers || [],
       search_date: f.search_date,
       price: mainPrice,
       departure_time: f.departure_time,
@@ -3254,8 +3260,10 @@
       '</div>';
 
     // Check localStorage cache first (survives deploys, saves SerpAPI calls)
-    var FLIGHT_CACHE_KEY = 'dcf_flights_cache';
+    var FLIGHT_CACHE_KEY = 'dcf_flights_cache_v2';
     var FLIGHT_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+    // Clear old cache key
+    try { localStorage.removeItem('dcf_flights_cache'); } catch (e) {}
     var cached = null;
     try {
       var raw = localStorage.getItem(FLIGHT_CACHE_KEY);
