@@ -10,6 +10,12 @@
     },
     "api/multicity.py": {
       "maxDuration": 60
+    },
+    "api/hotels.py": {
+      "maxDuration": 30
+    },
+    "api/points.py": {
+      "maxDuration": 20
     }
   },
   "rewrites": [
