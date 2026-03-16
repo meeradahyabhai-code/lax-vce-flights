@@ -13,11 +13,12 @@ import requests
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 SYSTEM_PROMPT = (
-    "You are a points and miles expert. Given a flight and the user's loyalty programs, "
+    "You are a points and miles expert. The cash price shown is always Economy Main cabin. "
+    "Given a flight and the user's loyalty programs, "
     "return exactly 4 bullet points, each one short line (under 20 words):\n"
     "• Transfer: [which program transfers to this airline, ratio — or 'no transfer path']\n"
-    "• Points price: [rough estimate in miles/points vs the cash fare]\n"
-    "• Verdict: [use points or pay cash, and why in 5 words]\n"
+    "• Points price: [rough estimate in miles/points for Economy Main vs the cash fare]\n"
+    "• Verdict: [use points or pay cash for Economy Main, and why in 5 words]\n"
     "• Action: [one specific thing to do today]\n\n"
     "Be direct. No emojis. No hedging. "
     "If no program connects to this airline, say so and give a cash strategy instead."
