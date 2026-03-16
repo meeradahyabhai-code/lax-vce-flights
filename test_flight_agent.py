@@ -1855,6 +1855,35 @@ class TestPointsConsistency(unittest.TestCase):
         source = inspect.getsource(handler)
         self.assertIn("flight_numbers", source)
 
+    def test_alliance_data_in_prompt(self):
+        """Points API should include airline alliance reference data."""
+        from api.points import SYSTEM_PROMPT
+        self.assertIn("SkyTeam", SYSTEM_PROMPT)
+        self.assertIn("Star Alliance", SYSTEM_PROMPT)
+        self.assertIn("oneworld", SYSTEM_PROMPT)
+
+    def test_transfer_partners_in_prompt(self):
+        """Points API should include credit card transfer partner data."""
+        from api.points import SYSTEM_PROMPT
+        self.assertIn("Amex Membership Rewards", SYSTEM_PROMPT)
+        self.assertIn("Chase Ultimate Rewards", SYSTEM_PROMPT)
+        self.assertIn("Citi ThankYou", SYSTEM_PROMPT)
+        self.assertIn("Capital One Miles", SYSTEM_PROMPT)
+
+    def test_alliance_matching_rule(self):
+        """Prompt should instruct to match airline to correct alliance."""
+        from api.points import SYSTEM_PROMPT
+        self.assertIn("CRITICAL", SYSTEM_PROMPT)
+        self.assertIn("Do NOT mix alliances", SYSTEM_PROMPT)
+
+    def test_airlines_array_sent(self):
+        """Points API should receive airlines array, not just primary."""
+        import inspect
+        from api.points import handler
+        source = inspect.getsource(handler)
+        self.assertIn("airlines", source)
+        self.assertIn("Operating airline", source)
+
     def test_flight_numbers_in_frontend_data(self):
         """Flight card data should include flight_numbers."""
         with open("public/index.html", "r") as fh:
@@ -1887,6 +1916,35 @@ class TestPointsConsistency(unittest.TestCase):
         from api.points import handler
         source = inspect.getsource(handler)
         self.assertIn("Economy Main", source)
+
+
+class TestTimeAgo(unittest.TestCase):
+    """Tests for the timeAgo function in family picks."""
+
+    def setUp(self):
+        with open("public/index.html", "r") as fh:
+            self.html = fh.read()
+
+    def test_timeago_handles_invalid(self):
+        """timeAgo should return empty string for invalid timestamps."""
+        start = self.html.index("function timeAgo(")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("isNaN", fn_body)
+
+    def test_timeago_shows_date_for_old(self):
+        """timeAgo should show actual date for picks older than 24h."""
+        start = self.html.index("function timeAgo(")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("toLocaleDateString", fn_body)
+
+    def test_timeago_negative_diff(self):
+        """timeAgo should handle future timestamps gracefully."""
+        start = self.html.index("function timeAgo(")
+        end = self.html.index("\n  function ", start + 1)
+        fn_body = self.html[start:end]
+        self.assertIn("diff < 0", fn_body)
 
 
 class TestBookUrlFallback(unittest.TestCase):

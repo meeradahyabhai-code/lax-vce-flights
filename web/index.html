@@ -1201,15 +1201,18 @@
   }
 
   function timeAgo(ts) {
+    var d = new Date(ts);
+    if (isNaN(d.getTime())) return '';
     var now = Date.now();
-    var diff = now - new Date(ts).getTime();
+    var diff = now - d.getTime();
+    if (diff < 0) return '';
     var mins = Math.floor(diff / 60000);
     if (mins < 1) return 'just now';
     if (mins < 60) return mins + 'm ago';
     var hrs = Math.floor(mins / 60);
     if (hrs < 24) return hrs + 'h ago';
-    var days = Math.floor(hrs / 24);
-    return days + 'd ago';
+    // For older picks, show the actual date
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   }
 
   function daysToGo() {
@@ -2089,6 +2092,7 @@
       body: JSON.stringify({
         flight: {
           primary_airline: fData.primary_airline,
+          airlines: fData.airlines || [],
           flight_numbers: fData.flight_numbers || [],
           search_date: fData.search_date,
           departure_time: fData.departure_time,
@@ -2440,9 +2444,9 @@
       }
       origin = origin || 'LAX';
       var info = pickDestInfo(origin, dateLabel);
-      // Use API flight data for times when available (sheet times may be wrong)
-      var depTime = matchedFlight ? matchedFlight.departure_time : r.departure_time;
-      var arrTime = matchedFlight ? matchedFlight.arrival_time : r.arrival_time;
+      // Only use API flight data for times — sheet times are mangled by Google Sheets
+      var depTime = matchedFlight ? matchedFlight.departure_time : null;
+      var arrTime = matchedFlight ? matchedFlight.arrival_time : null;
       var depStr = '';
       if (depTime && depTime.length > 10) {
         // Full datetime from API: "2026-06-29 18:00"
@@ -2456,8 +2460,16 @@
         var dh12 = dh % 12 || 12;
         var dmStr = dm > 0 ? ':' + String(dm).padStart(2, '0') : '';
         depStr = depDateFmt + ' ' + dh12 + dmStr + dAmpm + ' ' + info.tzDep;
-      } else {
-        depStr = fmtPickDateTime(dateLabel, r.departure_time, info.tzDep);
+      } else if (dateLabel) {
+        // No matched flight — show date only, no time (sheet times are unreliable)
+        try {
+          var dd2 = new Date(dateLabel);
+          if (!isNaN(dd2)) {
+            depStr = dd2.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          } else {
+            depStr = dateLabel;
+          }
+        } catch (e) { depStr = dateLabel; }
       }
       var arrStr = '';
       if (arrTime && arrTime.length > 10) {
@@ -2471,8 +2483,6 @@
         var ah12 = ah % 12 || 12;
         var amStr = am > 0 ? ':' + String(am).padStart(2, '0') : '';
         arrStr = ' arriving in ' + info.destCity + ' ' + arrDateFmt + ' ' + ah12 + amStr + aAmpm + ' ' + info.tzArr;
-      } else if (r.arrival_time) {
-        arrStr = ' arriving in ' + info.destCity + ' ' + fmtPickDateTime(dateLabel, r.arrival_time, info.tzArr);
       }
       var ago = r.timestamp ? timeAgo(r.timestamp) : '';
       var originLabel = r.origin ? ' <span style="color:#94a3b8;font-size:11px;">(' + escHtml(origin) + ')</span>' : '';
