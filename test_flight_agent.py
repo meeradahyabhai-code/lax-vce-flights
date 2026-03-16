@@ -7,15 +7,15 @@ import unittest
 
 from flight_agent import (
     AIRLINE_BONUSES,
-    AKL_OUTBOUND_BONUSES,
-    AKL_RETURN_AUTO_TOP_PICK,
-    AKL_RETURN_BONUSES,
-    ATL_OUTBOUND_BONUSES,
-    ATL_RETURN_AUTO_TOP_PICK,
-    ATL_RETURN_BONUSES,
-    YVR_OUTBOUND_BONUSES,
-    YVR_RETURN_AUTO_TOP_PICK,
-    YVR_RETURN_BONUSES,
+    AKL_VCE_BONUSES as AKL_OUTBOUND_BONUSES,
+    IST_AKL_AUTO_TOP_PICK as AKL_RETURN_AUTO_TOP_PICK,
+    IST_AKL_BONUSES as AKL_RETURN_BONUSES,
+    ATL_VCE_BONUSES as ATL_OUTBOUND_BONUSES,
+    IST_ATL_AUTO_TOP_PICK as ATL_RETURN_AUTO_TOP_PICK,
+    IST_ATL_BONUSES as ATL_RETURN_BONUSES,
+    YVR_VCE_BONUSES as YVR_OUTBOUND_BONUSES,
+    IST_YVR_AUTO_TOP_PICK as YVR_RETURN_AUTO_TOP_PICK,
+    IST_YVR_BONUSES as YVR_RETURN_BONUSES,
     AUTO_TOP_PICK_NONSTOP,
     BASIC_ECONOMY_CARRIERS,
     DEPARTURE_DATES,
@@ -25,6 +25,7 @@ from flight_agent import (
     RETURN_AUTO_TOP_PICK_NONSTOP,
     RETURN_DATES,
     ROUTES,
+    SCORING_RATIONALE,
     _build_date_sections,
     _flight_to_dict,
     _layover_info,
@@ -341,20 +342,20 @@ class TestReturnScoring(unittest.TestCase):
         self.assertEqual(RETURN_DATES, ["2026-07-13", "2026-07-14", "2026-07-15"])
 
     def test_return_scoring_uses_custom_bonuses(self):
-        """Lufthansa should get -200 bonus in return scoring (not -160 outbound)."""
-        lh = _make_flight(airline="Lufthansa", price=600, stops=1,
+        """Air France should get different bonuses for return vs outbound routes."""
+        af = _make_flight(airline="Air France", price=600, stops=1,
                           layover=60, search_date="2026-07-13")
         scored_return = score_flights(
-            [lh],
+            [af],
             airline_bonuses=RETURN_AIRLINE_BONUSES,
             auto_top_picks=RETURN_AUTO_TOP_PICK_NONSTOP,
         )
         scored_outbound = score_flights(
-            [_make_flight(airline="Lufthansa", price=600, stops=1,
+            [_make_flight(airline="Air France", price=600, stops=1,
                           layover=60, search_date="2026-06-29")],
         )
-        # Return bonus (-200) is bigger than outbound (-160), so return score is lower
-        self.assertLess(scored_return[0]["score"], scored_outbound[0]["score"])
+        # Return bonus (-190) vs outbound bonus (-200) — different per route
+        self.assertNotEqual(scored_return[0]["score"], scored_outbound[0]["score"])
 
 
 class TestSkyscannerNormalize(unittest.TestCase):
@@ -765,6 +766,39 @@ class TestFrontendSummaryIntegration(unittest.TestCase):
         self.assertIn("backdrop-filter", css)
         self.assertIn("blur(20px)", css)
         self.assertNotIn("linear-gradient", css)
+
+
+class TestScoringRationale(unittest.TestCase):
+    """Tests for the scoring rationale metadata."""
+
+    def test_rationale_has_sources(self):
+        """Scoring rationale should list verification sources."""
+        self.assertIn("sources", SCORING_RATIONALE)
+        self.assertGreater(len(SCORING_RATIONALE["sources"]), 0)
+
+    def test_rationale_has_last_updated(self):
+        """Scoring rationale should have a last_updated date."""
+        self.assertIn("last_updated", SCORING_RATIONALE)
+        self.assertIn("2026", SCORING_RATIONALE["last_updated"])
+
+    def test_lufthansa_note(self):
+        """Rationale should explain Lufthansa's low bonus."""
+        self.assertIn("lufthansa_note", SCORING_RATIONALE)
+        self.assertIn("strike", SCORING_RATIONALE["lufthansa_note"].lower())
+
+    def test_lufthansa_bonus_low_across_all_routes(self):
+        """Lufthansa should have the lowest bonus on every route it appears."""
+        from flight_agent import (LAX_VCE_BONUSES, IST_LAX_BONUSES,
+                                  ATL_VCE_BONUSES, IST_ATL_BONUSES)
+        for route_name, bonuses in [("LAX_VCE", LAX_VCE_BONUSES),
+                                     ("IST_LAX", IST_LAX_BONUSES),
+                                     ("ATL_VCE", ATL_VCE_BONUSES),
+                                     ("IST_ATL", IST_ATL_BONUSES)]:
+            if "lufthansa" in bonuses:
+                lh = bonuses["lufthansa"]
+                others = [v for k, v in bonuses.items() if k != "lufthansa"]
+                self.assertEqual(lh, max(bonuses.values()),
+                    f"Lufthansa should have worst (highest) bonus in {route_name}")
 
 
 class TestAucklandRouteScoring(unittest.TestCase):

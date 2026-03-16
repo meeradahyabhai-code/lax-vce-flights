@@ -843,91 +843,160 @@ def dedup_flights(flights: list[dict]) -> list[dict]:
 # 3. Scoring
 # ---------------------------------------------------------------------------
 
-AIRLINE_BONUSES: dict[str, int] = {
-    "delta": -300,
-    "united": -220,
-    "british airways": -180,
-    "american": -180,
-    "air france": -160,
-    "lufthansa": -160,
-    "klm": -160,
-    "ita airways": -120,
-    "alaska": -120,
+# Scoring rationale — sources for all bonus values
+SCORING_RATIONALE = {
+    "sources": [
+        "Skytrax World Airline Awards 2025",
+        "Cirium On-Time Performance Review 2025",
+        "AirHelp Score 2025",
+        "AirlineRatings Safest Airlines 2026",
+    ],
+    "last_updated": "March 2026",
+    "lufthansa_note": (
+        "Bonus reduced due to active pilot strikes and labor disputes "
+        "through end of 2026"
+    ),
+    "emirates_etihad_note": (
+        "Independent airlines — not in Star Alliance, Oneworld or SkyTeam. "
+        "Points do not transfer from Amex/Chase/United to these airlines."
+    ),
+    "turkish_note": (
+        "Istanbul Airport ranked #1 globally for punctuality by Cirium 2025. "
+        "Turkish nonstop IST-LAX and IST-ATL are auto TOP PICK."
+    ),
 }
 
-RETURN_AIRLINE_BONUSES: dict[str, int] = {
-    "turkish airlines": -250,
-    "lufthansa": -200,
+# ---------------------------------------------------------------------------
+# LAX → VCE (outbound)
+# ---------------------------------------------------------------------------
+LAX_VCE_BONUSES: dict[str, int] = {
+    "delta": -280,
     "air france": -200,
-    "klm": -200,
-    "delta": -160,
-    "united": -160,
+    "virgin atlantic": -190,
     "british airways": -180,
-    "american": -180,
-    "ita airways": -120,
-    "alaska": -120,
+    "united": -170,
+    "turkish airlines": -160,
+    "klm": -150,
+    "swiss": -140,
+    "swiss international": -140,
+    "american": -130,
+    "american airlines": -130,
+    "lufthansa": -80,
 }
-
-# Airlines whose nonstop flights get forced score=0 (automatic TOP PICK)
-AUTO_TOP_PICK_NONSTOP: set[str] = set()
-RETURN_AUTO_TOP_PICK_NONSTOP: set[str] = {"turkish airlines"}
+LAX_VCE_AUTO_TOP_PICK: set[str] = set()
 
 # ---------------------------------------------------------------------------
-# Per-origin airline bonuses (AKL, ATL)
+# IST → LAX (return)
 # ---------------------------------------------------------------------------
-
-AKL_OUTBOUND_BONUSES: dict[str, int] = {
-    "singapore airlines": -280,
-    "emirates": -260,
-    "qatar airways": -260,
-    "etihad": -240,
-    "lufthansa": -160,
-    "air france": -160,
-    "klm": -160,
-}
-
-AKL_RETURN_BONUSES: dict[str, int] = {
-    "emirates": -280,
-    "qatar airways": -280,
-    "singapore airlines": -260,
-    "etihad": -240,
-}
-AKL_RETURN_AUTO_TOP_PICK: set[str] = set()
-
-ATL_OUTBOUND_BONUSES: dict[str, int] = {
-    "delta": -300,
-    "united": -220,
-    "american": -180,
+IST_LAX_BONUSES: dict[str, int] = {
+    "turkish airlines": -270,
+    "air france": -190,
+    "virgin atlantic": -180,
+    "klm": -170,
     "british airways": -160,
-    "lufthansa": -160,
-    "air france": -160,
+    "united": -150,
+    "swiss": -140,
+    "swiss international": -140,
+    "lufthansa": -70,
 }
+IST_LAX_AUTO_TOP_PICK: set[str] = {"turkish airlines"}
 
-ATL_RETURN_BONUSES: dict[str, int] = {
-    "turkish airlines": -250,
-    "delta": -220,
-    "united": -180,
+# ---------------------------------------------------------------------------
+# ATL → VCE (outbound)
+# ---------------------------------------------------------------------------
+ATL_VCE_BONUSES: dict[str, int] = {
+    "delta": -320,
+    "virgin atlantic": -200,
+    "turkish airlines": -190,
+    "air france": -180,
+    "british airways": -170,
+    "klm": -150,
+    "united": -140,
+    "swiss": -130,
+    "swiss international": -130,
+    "american": -120,
+    "american airlines": -120,
+    "lufthansa": -70,
 }
-ATL_RETURN_AUTO_TOP_PICK: set[str] = {"turkish airlines"}
+ATL_VCE_AUTO_TOP_PICK: set[str] = set()
 
-# ---- Vancouver (YVR) ----
-YVR_OUTBOUND_BONUSES: dict[str, int] = {
+# ---------------------------------------------------------------------------
+# IST → ATL (return)
+# ---------------------------------------------------------------------------
+IST_ATL_BONUSES: dict[str, int] = {
+    "turkish airlines": -270,
+    "delta": -250,
+    "virgin atlantic": -190,
+    "air france": -180,
+    "klm": -160,
+    "british airways": -160,
+    "lufthansa": -70,
+}
+IST_ATL_AUTO_TOP_PICK: set[str] = {"turkish airlines"}
+
+# ---------------------------------------------------------------------------
+# AKL → VCE (outbound)
+# ---------------------------------------------------------------------------
+AKL_VCE_BONUSES: dict[str, int] = {
+    "qatar airways": -320,
+    "singapore airlines": -300,
+    "cathay pacific": -280,
+    "emirates": -270,
+    "etihad": -240,
+    "etihad airways": -240,
+    "air new zealand": -180,
+    "qantas": -160,
+    "ana": -150,
+    "all nippon airways": -150,
+}
+AKL_VCE_AUTO_TOP_PICK: set[str] = set()
+
+# ---------------------------------------------------------------------------
+# IST → AKL (return)
+# ---------------------------------------------------------------------------
+IST_AKL_BONUSES: dict[str, int] = {
+    "emirates": -300,
+    "qatar airways": -290,
+    "singapore airlines": -270,
+    "etihad": -250,
+    "etihad airways": -250,
+    "cathay pacific": -220,
+    "turkish airlines": -160,
+    "air new zealand": -150,
+}
+IST_AKL_AUTO_TOP_PICK: set[str] = set()
+
+# ---------------------------------------------------------------------------
+# YVR → VCE (outbound)
+# ---------------------------------------------------------------------------
+YVR_VCE_BONUSES: dict[str, int] = {
     "air canada": -300,
-    "lufthansa": -200,
     "british airways": -180,
     "klm": -180,
     "air france": -180,
     "swiss": -160,
+    "swiss international": -160,
     "turkish airlines": -160,
+    "lufthansa": -80,
 }
+YVR_VCE_AUTO_TOP_PICK: set[str] = set()
 
-YVR_RETURN_BONUSES: dict[str, int] = {
+# ---------------------------------------------------------------------------
+# IST → YVR (return)
+# ---------------------------------------------------------------------------
+IST_YVR_BONUSES: dict[str, int] = {
     "turkish airlines": -280,
     "air canada": -260,
-    "lufthansa": -200,
     "british airways": -180,
+    "lufthansa": -80,
 }
-YVR_RETURN_AUTO_TOP_PICK: set[str] = {"turkish airlines"}
+IST_YVR_AUTO_TOP_PICK: set[str] = {"turkish airlines"}
+
+# Backward-compatible aliases used by tests and score_flights()
+AIRLINE_BONUSES = LAX_VCE_BONUSES
+RETURN_AIRLINE_BONUSES = IST_LAX_BONUSES
+AUTO_TOP_PICK_NONSTOP = LAX_VCE_AUTO_TOP_PICK
+RETURN_AUTO_TOP_PICK_NONSTOP = IST_LAX_AUTO_TOP_PICK
 
 # ---------------------------------------------------------------------------
 # Route definitions
@@ -937,33 +1006,33 @@ ROUTES = [
     {
         "origin": "LAX",
         "outbound": {"from": "LAX", "to": "VCE", "dates": DEPARTURE_DATES,
-                      "bonuses": AIRLINE_BONUSES, "auto_top": AUTO_TOP_PICK_NONSTOP},
+                      "bonuses": LAX_VCE_BONUSES, "auto_top": LAX_VCE_AUTO_TOP_PICK},
         "return": {"from": "IST", "to": "LAX", "dates": RETURN_DATES,
-                   "bonuses": RETURN_AIRLINE_BONUSES, "auto_top": RETURN_AUTO_TOP_PICK_NONSTOP},
+                   "bonuses": IST_LAX_BONUSES, "auto_top": IST_LAX_AUTO_TOP_PICK},
     },
     {
         "origin": "AKL",
         "outbound": {"from": "AKL", "to": "VCE", "dates": DEPARTURE_DATES,
-                      "bonuses": AKL_OUTBOUND_BONUSES, "auto_top": set(),
+                      "bonuses": AKL_VCE_BONUSES, "auto_top": AKL_VCE_AUTO_TOP_PICK,
                       "max_stops": 2, "min_stops": 1},
         "return": {"from": "IST", "to": "AKL", "dates": RETURN_DATES,
-                   "bonuses": AKL_RETURN_BONUSES, "auto_top": AKL_RETURN_AUTO_TOP_PICK,
+                   "bonuses": IST_AKL_BONUSES, "auto_top": IST_AKL_AUTO_TOP_PICK,
                    "max_stops": 2, "min_stops": 1},
     },
     {
         "origin": "ATL",
         "outbound": {"from": "ATL", "to": "VCE", "dates": DEPARTURE_DATES,
-                      "bonuses": ATL_OUTBOUND_BONUSES, "auto_top": set()},
+                      "bonuses": ATL_VCE_BONUSES, "auto_top": ATL_VCE_AUTO_TOP_PICK},
         "return": {"from": "IST", "to": "ATL", "dates": RETURN_DATES,
-                   "bonuses": ATL_RETURN_BONUSES, "auto_top": ATL_RETURN_AUTO_TOP_PICK},
+                   "bonuses": IST_ATL_BONUSES, "auto_top": IST_ATL_AUTO_TOP_PICK},
     },
     {
         "origin": "YVR",
         "outbound": {"from": "YVR", "to": "VCE", "dates": DEPARTURE_DATES,
-                      "bonuses": YVR_OUTBOUND_BONUSES, "auto_top": set(),
+                      "bonuses": YVR_VCE_BONUSES, "auto_top": YVR_VCE_AUTO_TOP_PICK,
                       "min_stops": 1},
         "return": {"from": "IST", "to": "YVR", "dates": RETURN_DATES,
-                   "bonuses": YVR_RETURN_BONUSES, "auto_top": YVR_RETURN_AUTO_TOP_PICK,
+                   "bonuses": IST_YVR_BONUSES, "auto_top": IST_YVR_AUTO_TOP_PICK,
                    "min_stops": 1},
     },
 ]
