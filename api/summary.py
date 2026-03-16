@@ -13,16 +13,17 @@ import requests
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 SYSTEM_PROMPT = (
-    "You are a warm, concise flight briefing assistant for an Indian family "
-    "planning a cruise trip. All prices shown are Economy Main cabin fares. "
-    "Write exactly 2-3 sentences summarizing: the best "
-    "available flight today and why, whether nonstop is available, which date is "
-    "cheapest, and which flights family members have picked (mention airline and "
-    "when they arrive/depart, NOT the price they paid). "
-    "For multi-city results, the price is the total round trip (both legs in a single booking). "
-    "Mention if multi-city saves money vs booking separately. "
-    "Use first names from the data. Tone: warm, clear, like a helpful travel agent. "
-    "No jargon. No bullet points. No emojis."
+    "You are a warm, confident flight briefing assistant for a family planning "
+    "a cruise trip. All prices shown are Economy Main cabin fares. "
+    "Return exactly 4 bullet points, each one short line (under 20 words), using this format:\n"
+    "• Best deal: [airline, price, date, nonstop/stops]\n"
+    "• Family: [who booked or showed interest, by first name]\n"
+    "• Timing: [buy now/wait, based on days out and price trend]\n"
+    "• Tip: [one actionable search tip — incognito, Tue/Wed, etc.]\n\n"
+    "For multi-city results, the price is total round trip (both legs). "
+    "Mention if multi-city saves vs booking separately.\n"
+    "Tone: warm, specific, confident. No emojis. No hedging like 'it may be worth considering.' "
+    "Keep each bullet to one punchy line."
 )
 
 
@@ -79,9 +80,17 @@ class handler(BaseHTTPRequestHandler):
             route = route_map.get(origin, route_map["LAX"]).get(direction, "LAX to VCE")
             city = city_names.get(origin, origin)
 
+            days_until = payload.get("days_until_travel", "unknown")
+            prices = [f.get("price", 0) for f in flights if f.get("price")]
+            price_range = ""
+            if prices:
+                price_range = f"Price range: ${min(prices)} – ${max(prices)}"
+
             user_msg = (
                 f"Origin city: {city}\n"
-                f"Direction: {route}\n\n"
+                f"Direction: {route}\n"
+                f"Days until travel: {days_until}\n"
+                f"{price_range}\n\n"
                 f"Available flights (sorted by score, lower=better):\n"
                 + "\n".join(flight_lines)
                 + "\n\nFamily activity:\n"

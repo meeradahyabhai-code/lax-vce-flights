@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dahyabhai Cruise Flights</title>
+<title>Dahyabhai Cruise Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -273,6 +273,86 @@
     font-weight: 600; font-size: 13px; color: #1a7f37;
   }
 
+  /* Points AI */
+  .points-ai-trigger {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: none; border: none; cursor: pointer; padding: 2px 0;
+    margin-bottom: 4px; transition: filter 0.2s;
+  }
+  .points-ai-trigger:hover { filter: brightness(1.2) drop-shadow(0 0 4px rgba(176,68,255,0.3)); }
+  .points-ai-label {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    background: linear-gradient(90deg, #b044ff, #00c8ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .points-ai-popover {
+    position: absolute; right: 0; top: 100%; z-index: 100;
+    width: 320px; max-width: calc(100vw - 32px);
+    padding: 16px 18px;
+    background: rgba(250, 248, 243, 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(26, 58, 107, 0.15);
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    font-family: var(--sans); font-size: 13px; font-weight: 300;
+    color: #1a3a6b; line-height: 1.7;
+    animation: popFadeIn 0.15s ease-out;
+  }
+  @keyframes popFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .points-ai-popover-title {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 8px;
+    background: linear-gradient(90deg, #b044ff, #00c8ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .points-ai-shimmer {
+    height: 48px; border-radius: 6px;
+    background: linear-gradient(90deg,
+      rgba(176,68,255,0.06) 25%, rgba(0,200,255,0.12) 50%, rgba(176,68,255,0.06) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+  .points-programs-popover {
+    position: absolute; right: 0; top: 100%; z-index: 100;
+    width: 300px; max-width: calc(100vw - 32px);
+    padding: 16px 18px;
+    background: rgba(250, 248, 243, 0.95);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(26, 58, 107, 0.15);
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    animation: popFadeIn 0.15s ease-out;
+  }
+  .points-programs-popover label {
+    display: block; font-family: var(--sans); font-size: 13px;
+    font-weight: 400; color: var(--ink); padding: 4px 0; cursor: pointer;
+  }
+  .points-programs-popover label input { margin-right: 8px; }
+  .points-programs-title {
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    color: var(--azure); margin-bottom: 10px;
+  }
+  .points-save-btn {
+    display: block; width: 100%; margin-top: 12px; padding: 8px 16px;
+    border-radius: 8px; font-family: var(--sans); font-size: 13px;
+    font-weight: 500; cursor: pointer; border: none;
+    background: var(--azure); color: #fff; transition: background 0.15s;
+  }
+  .points-save-btn:hover { background: var(--lagoon); }
+  @media (max-width: 600px) {
+    .points-ai-popover, .points-programs-popover {
+      position: fixed; left: 16px; right: 16px; top: auto; bottom: 16px;
+      width: auto; max-width: none;
+    }
+  }
+
   /* Family interest modal */
   .fi-modal { text-align: left; }
   .fi-modal .modal-title { text-align: center; margin-bottom: 16px; }
@@ -535,6 +615,240 @@
     .price { font-size: 38px; }
     .book-btn { display: block; width: 100%; text-align: center; margin-top: 8px; }
   }
+
+  /* ── Section nav (Flights / Hotels) ── */
+  .section-nav {
+    display: flex; gap: 0; justify-content: center;
+    background: #faf8f3; padding: 12px 0 0; position: relative; z-index: 10;
+  }
+  .section-tab {
+    font-family: var(--sans); font-size: 15px; font-weight: 500;
+    padding: 12px 32px; cursor: pointer; border: none; background: transparent;
+    color: #94a3b8; letter-spacing: 0.5px; text-transform: uppercase;
+    border-bottom: 3px solid transparent; transition: all 0.15s;
+  }
+  .section-tab:hover { color: var(--azure); }
+  .section-tab.active {
+    color: var(--azure); border-bottom-color: var(--gold);
+  }
+
+  /* Hotel sub-nav (Venice / Istanbul) */
+  .hotel-city-nav {
+    display: flex; gap: 8px; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .hotel-city-pill {
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    padding: 8px 20px; border-radius: 9999px; cursor: pointer;
+    border: 1.5px solid var(--azure); transition: all 0.15s;
+    background: transparent; color: var(--azure);
+  }
+  .hotel-city-pill:hover { background: rgba(26,58,107,0.06); }
+  .hotel-city-pill.active { background: var(--azure); color: #fff; }
+  .hotel-city-pill:disabled {
+    opacity: 0.4; cursor: not-allowed;
+    border-color: #94a3b8; color: #94a3b8;
+  }
+  .hotel-city-pill:disabled:hover { background: transparent; }
+
+  /* Smart check-in prompt */
+  .smart-checkin {
+    max-width: 640px; margin: 16px auto 0; padding: 16px 20px;
+    background: rgba(184,149,58,0.06); border: 1px solid rgba(184,149,58,0.25);
+    border-radius: 14px; text-align: center;
+  }
+  .smart-checkin-text {
+    font-family: var(--sans); font-size: 14px; font-weight: 400;
+    color: var(--azure); line-height: 1.6;
+  }
+  .smart-checkin-actions { margin-top: 10px; display: flex; gap: 8px; justify-content: center; }
+  .smart-checkin-btn {
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    padding: 6px 18px; border-radius: 9999px; border: none; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .smart-checkin-yes { background: var(--azure); color: #fff; }
+  .smart-checkin-yes:hover { background: var(--lagoon); }
+  .smart-checkin-other { background: var(--fog); color: var(--ink); }
+  .smart-checkin-other:hover { background: #e0e0ec; }
+
+  /* Hotel date picker */
+  .hotel-picker {
+    display: flex; gap: 12px; align-items: center; justify-content: center;
+    flex-wrap: wrap; margin: 24px 0 16px;
+  }
+  .hotel-picker label {
+    font-family: var(--sans); font-size: 13px; font-weight: 400; color: #64748b;
+  }
+  .hotel-picker select {
+    font-family: var(--sans); font-size: 14px; font-weight: 400;
+    padding: 8px 12px; border: 1px solid var(--fog); border-radius: 10px;
+    background: #fff; color: var(--ink); cursor: pointer;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+    padding-right: 28px;
+  }
+  .hotel-picker select:focus { border-color: var(--azure); outline: none; }
+  .hotel-search-btn {
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    padding: 8px 24px; border-radius: 9999px; border: none; cursor: pointer;
+    background: var(--azure); color: #fff; transition: background 0.15s;
+  }
+  .hotel-search-btn:hover { background: var(--lagoon); }
+  .hotel-search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* 3-column hotel grid */
+  .hotel-columns {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;
+    max-width: 1100px; margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .hotel-columns { grid-template-columns: 1fr; max-width: 500px; }
+  }
+  .hotel-column-title {
+    font-family: var(--serif); font-size: 20px; font-weight: 400;
+    color: var(--ink); letter-spacing: -0.3px; margin-bottom: 14px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--gold);
+  }
+  .hotel-column-empty {
+    font-family: var(--sans); font-size: 13px; font-weight: 300;
+    color: #94a3b8; text-align: center; padding: 30px 10px;
+    background: #fff; border: 1px solid var(--fog); border-radius: 16px;
+  }
+
+  /* Hotel card */
+  .hotel-card {
+    background: #fff; border: 1px solid var(--fog); border-radius: 16px;
+    overflow: hidden; margin-bottom: 14px;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .hotel-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.09); transform: translateY(-3px); }
+  .hotel-card-img {
+    width: 100%; height: 160px; object-fit: cover; display: block;
+    background: var(--fog);
+  }
+  .hotel-card-body { padding: 16px; }
+  .hotel-card-name {
+    font-family: var(--serif); font-size: 18px; font-weight: 400;
+    color: var(--ink); line-height: 1.3; margin-bottom: 4px;
+  }
+  .hotel-stars {
+    color: var(--gold); font-size: 14px; letter-spacing: 1px;
+  }
+  .hotel-loyalty-badge {
+    display: inline-block; font-family: var(--sans); font-size: 10px;
+    font-weight: 600; padding: 3px 10px; border-radius: 9999px;
+    letter-spacing: 0.3px; margin: 6px 0 4px;
+  }
+  .badge-marriott { background: #7b2d26; color: #fff; }
+  .badge-hilton { background: #003b5c; color: #fff; }
+  .hotel-rating {
+    font-family: var(--sans); font-size: 14px; font-weight: 400;
+    color: var(--azure); margin: 4px 0;
+  }
+  .hotel-rating-num {
+    font-weight: 600; font-size: 16px;
+  }
+  .hotel-price {
+    font-family: var(--serif); font-size: 28px; font-weight: 600;
+    color: #1a3a6b; letter-spacing: -0.5px; margin-top: 6px;
+  }
+  .hotel-price-sub {
+    font-family: var(--sans); font-size: 12px; font-weight: 300;
+    color: #94a3b8;
+  }
+  .hotel-address {
+    font-family: var(--sans); font-size: 12px; font-weight: 300;
+    color: #94a3b8; margin-top: 4px;
+  }
+  .hotel-view-btn {
+    display: inline-block; margin-top: 10px;
+    background: var(--ink); color: var(--paper);
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    text-decoration: none; padding: 8px 18px; border-radius: 8px;
+    letter-spacing: 0.3px; transition: background 0.15s; cursor: pointer;
+    border: none;
+  }
+  .hotel-view-btn:hover { background: var(--azure); }
+  .hotel-points-link {
+    display: block; margin-top: 6px;
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    color: #2a5298; cursor: pointer; text-decoration: none;
+  }
+  .hotel-points-link:hover { text-decoration: underline; }
+  .hotel-distance {
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    color: #64748b; margin-top: 4px;
+  }
+  .hotel-distance svg { vertical-align: -2px; margin-right: 3px; }
+  .hotel-cc-badge {
+    display: inline-block; font-family: var(--sans); font-size: 10px;
+    font-weight: 600; padding: 3px 10px; border-radius: 9999px;
+    letter-spacing: 0.3px; margin: 4px 4px 0 0;
+  }
+  .badge-fhr { background: #1a6b3a; color: #fff; }
+  .badge-thc { background: #4a6b8a; color: #fff; }
+
+  /* Hotel filters */
+  .hotel-filters {
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+    margin: 12px 0 20px; padding: 14px 18px;
+    background: #fff; border: 1px solid var(--fog); border-radius: 14px;
+  }
+  .hotel-filter-group {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .hotel-filter-label {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    color: #94a3b8; letter-spacing: 0.3px; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .hotel-filter-btn {
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    padding: 5px 12px; border-radius: 9999px; border: 1px solid var(--fog);
+    background: #fff; color: var(--ink); cursor: pointer; transition: all 0.15s;
+  }
+  .hotel-filter-btn:hover { border-color: var(--lagoon); color: var(--lagoon); }
+  .hotel-filter-btn.active {
+    background: var(--lagoon); color: #fff; border-color: var(--lagoon);
+  }
+  .hotel-filter-sep {
+    width: 1px; height: 24px; background: var(--fog); flex-shrink: 0;
+  }
+  .hotel-range-group {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .hotel-range-slider {
+    -webkit-appearance: none; appearance: none; width: 100px; height: 4px;
+    border-radius: 2px; background: var(--fog); outline: none;
+    cursor: pointer;
+  }
+  .hotel-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--lagoon); cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .hotel-range-slider::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--lagoon); cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .hotel-range-value {
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    color: var(--ink); min-width: 48px;
+  }
+  .hotel-filter-count {
+    font-family: var(--sans); font-size: 11px; font-weight: 300;
+    color: #94a3b8; margin-left: auto;
+  }
+  @media (max-width: 900px) {
+    .hotel-filters { gap: 10px; }
+    .hotel-range-slider { width: 80px; }
+  }
+
+  /* Hotel loading */
+  .hotel-loading { text-align: center; padding: 40px 20px; }
 </style>
 </head>
 <body>
@@ -566,6 +880,12 @@
 <!-- Page content (hidden until origin selected) -->
 <div id="page-content" style="display:none;">
 
+<!-- Section nav: Flights / Hotels -->
+<div class="section-nav" id="section-nav">
+  <button class="section-tab active" data-section="flights">Flights</button>
+  <button class="section-tab" data-section="hotels">Hotels</button>
+</div>
+
 <!-- Hero -->
 <div class="hero">
   <a class="change-city" id="change-city">Change city</a>
@@ -592,6 +912,8 @@
   </div>
 </div>
 
+<!-- Flights section -->
+<div id="flights-section">
 <div class="container">
   <div class="tabs" id="tabs"></div>
   <div class="filters" id="filters"></div>
@@ -606,6 +928,27 @@
   </div>
 
   <div class="footer" id="footer"></div>
+</div>
+</div>
+
+<!-- Hotels section (hidden by default) -->
+<div id="hotels-section" style="display:none;">
+<div style="max-width:1100px; margin:0 auto; padding:0 16px 48px;">
+  <div id="hotel-smart-checkin"></div>
+  <div id="hotel-picker-area"></div>
+  <div id="hotel-filters-area"></div>
+  <div id="hotel-results"></div>
+
+  <!-- Family Picks (hotel) -->
+  <div class="family-section" id="hotel-family-section">
+    <div class="family-title">&#128104;&#8205;&#128105;&#8205;&#128103; Family Picks</div>
+    <div class="family-cards" id="hotel-family-cards">
+      <div class="family-empty">Loading family picks&hellip;</div>
+    </div>
+  </div>
+
+  <div class="footer" id="hotel-footer"></div>
+</div>
 </div>
 
 </div><!-- /page-content -->
@@ -1535,6 +1878,7 @@
         origin: origin,
         flights: summaryFlights,
         family_picks: picks.slice(0, 20),
+        days_until_travel: daysToGo(),
       }),
     })
     .then(function (r) { return r.json(); })
@@ -1629,6 +1973,177 @@
     });
   }
 
+  // ---- Points AI ----
+  var pointsAICache = {};  // keyed by flightId
+
+  var LOYALTY_PROGRAMS = [
+    'Amex Membership Rewards', 'Chase Ultimate Rewards', 'Citi ThankYou',
+    'Capital One Miles', 'Delta SkyMiles', 'United MileagePlus',
+    'British Airways Avios', 'Emirates Skywards', 'Singapore KrisFlyer',
+    'Qatar Privilege Club', 'Other'
+  ];
+
+  function sparkleSVG() {
+    return '<svg width="20" height="20" viewBox="0 0 20 20" fill="none">' +
+      '<defs><linearGradient id="paiGrad" x1="0" y1="0" x2="1" y2="0">' +
+        '<stop offset="0%" stop-color="#b044ff"/>' +
+        '<stop offset="100%" stop-color="#00c8ff"/>' +
+      '</linearGradient></defs>' +
+      '<path d="M10 1l2.2 5.8L18 10l-5.8 2.2L10 19l-2.2-5.8L2 10l5.8-2.2z" fill="url(#paiGrad)"/>' +
+    '</svg>';
+  }
+
+  function getSavedPrograms() {
+    try { return JSON.parse(localStorage.getItem('dcf_points_programs')); }
+    catch (e) { return null; }
+  }
+
+  function closeAllPointsPopovers() {
+    document.querySelectorAll('.points-ai-popover, .points-programs-popover').forEach(function (p) {
+      p.remove();
+    });
+  }
+
+  function showProgramsPopover(triggerEl, fData) {
+    closeAllPointsPopovers();
+    var wrapper = triggerEl.closest('.card-right') || triggerEl.parentElement;
+    wrapper.style.position = 'relative';
+
+    var html = '<div class="points-programs-popover">' +
+      '<div class="points-programs-title">Which loyalty programs do you have?</div>';
+    LOYALTY_PROGRAMS.forEach(function (prog) {
+      html += '<label><input type="checkbox" value="' + escHtml(prog) + '"> ' + escHtml(prog) + '</label>';
+    });
+    html += '<button class="points-save-btn">Save &amp; Get Strategy</button></div>';
+
+    wrapper.insertAdjacentHTML('beforeend', html);
+    var popover = wrapper.querySelector('.points-programs-popover');
+
+    popover.querySelector('.points-save-btn').addEventListener('click', function () {
+      var checked = [];
+      popover.querySelectorAll('input[type=checkbox]:checked').forEach(function (cb) {
+        checked.push(cb.value);
+      });
+      if (checked.length === 0) checked = ['None'];
+      localStorage.setItem('dcf_points_programs', JSON.stringify(checked));
+      popover.remove();
+      fetchPointsStrategy(triggerEl, fData);
+    });
+
+    // Close on outside click (delayed to avoid immediate close)
+    setTimeout(function () {
+      document.addEventListener('click', function handler(e) {
+        if (!popover.contains(e.target) && !triggerEl.contains(e.target)) {
+          popover.remove();
+          document.removeEventListener('click', handler);
+        }
+      });
+    }, 50);
+  }
+
+  function fetchPointsStrategy(triggerEl, fData) {
+    var fid = fData.primary_airline + '|' + fData.search_date + '|' + fData.departure_time;
+    if (pointsAICache[fid]) {
+      showPointsPopover(triggerEl, pointsAICache[fid]);
+      return;
+    }
+
+    closeAllPointsPopovers();
+    var wrapper = triggerEl.closest('.card-right') || triggerEl.parentElement;
+    wrapper.style.position = 'relative';
+    wrapper.insertAdjacentHTML('beforeend',
+      '<div class="points-ai-popover">' +
+        '<div class="points-ai-popover-title">Points AI</div>' +
+        '<div class="points-ai-shimmer"></div>' +
+      '</div>');
+    var popover = wrapper.querySelector('.points-ai-popover');
+
+    var programs = getSavedPrograms() || [];
+    var route = activeOrigin + ' \u2192 VCE';
+    if (activeDirection === 'return') route = 'IST \u2192 ' + activeOrigin;
+
+    fetch('/api/points', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        flight: {
+          primary_airline: fData.primary_airline,
+          search_date: fData.search_date,
+          departure_time: fData.departure_time,
+          stops: fData.stops,
+          price: fData.price,
+          route: route,
+        },
+        programs: programs,
+        days_until_travel: daysToGo(),
+      }),
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+      var text = res.strategy || 'Points strategy unavailable right now \u2014 try again later';
+      pointsAICache[fid] = text;
+      if (wrapper.contains(popover)) {
+        popover.innerHTML = '<div class="points-ai-popover-title">Points AI</div>' + escHtml(text);
+      }
+    })
+    .catch(function () {
+      var fallback = 'Points strategy unavailable right now \u2014 try again later';
+      if (wrapper.contains(popover)) {
+        popover.innerHTML = '<div class="points-ai-popover-title">Points AI</div>' + fallback;
+      }
+    });
+
+    // Close on outside click
+    setTimeout(function () {
+      document.addEventListener('click', function handler(e) {
+        if (!popover.contains(e.target) && !triggerEl.contains(e.target)) {
+          popover.remove();
+          document.removeEventListener('click', handler);
+        }
+      });
+    }, 50);
+  }
+
+  function showPointsPopover(triggerEl, text) {
+    closeAllPointsPopovers();
+    var wrapper = triggerEl.closest('.card-right') || triggerEl.parentElement;
+    wrapper.style.position = 'relative';
+    wrapper.insertAdjacentHTML('beforeend',
+      '<div class="points-ai-popover">' +
+        '<div class="points-ai-popover-title">Points AI</div>' +
+        escHtml(text) +
+      '</div>');
+    var popover = wrapper.querySelector('.points-ai-popover');
+
+    setTimeout(function () {
+      document.addEventListener('click', function handler(e) {
+        if (!popover.contains(e.target) && !triggerEl.contains(e.target)) {
+          popover.remove();
+          document.removeEventListener('click', handler);
+        }
+      });
+    }, 50);
+  }
+
+  function handlePointsAIClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var btn = e.currentTarget;
+    var fData = JSON.parse(decodeURIComponent(btn.getAttribute('data-flight')));
+
+    if (!getSavedPrograms()) {
+      showProgramsPopover(btn, fData);
+    } else {
+      fetchPointsStrategy(btn, fData);
+    }
+  }
+
+  function attachPointsAIHandlers() {
+    document.querySelectorAll('.points-ai-trigger[data-flight]').forEach(function (btn) {
+      btn.addEventListener('click', handlePointsAIClick);
+    });
+  }
+
   function cardHTML(f, rank, isTopPick) {
     var topBadge = isTopPick
       ? '<div><span class="badge badge-top">&#11088; TOP PICK</span></div>' : '';
@@ -1675,6 +2190,9 @@
           '<div class="layover">' + f.layover_info + '</div>' +
         '</div>' +
         '<div class="card-right">' +
+          '<button class="points-ai-trigger" data-flight="' + fData + '">' +
+            sparkleSVG() + '<span class="points-ai-label">Points AI</span>' +
+          '</button>' +
           priceBlock +
           '<button class="book-btn" data-flight="' + fData +
             '">Select Flight</button>' +
@@ -1745,6 +2263,7 @@
       el.innerHTML = html;
       attachBookHandlers();
       attachInterestHandlers();
+      attachPointsAIHandlers();
       var moreBtn = document.getElementById('show-more');
       if (moreBtn) moreBtn.addEventListener('click', function () {
         expandedDates.add('mc'); renderFlights();
@@ -1996,6 +2515,656 @@
       'Generated ' + gen + ' \u00b7 ' + count + ' flights shown \u00b7 Prices in USD';
   }
 
+  // ---- Section nav (Flights / Hotels) ----
+  let activeSection = 'flights';  // 'flights' | 'hotels'
+  let activeHotelCity = 'venice';
+  let hotelCheckIn = '2026-06-30';
+  let hotelCheckOut = '2026-07-03';
+  var hotelCache = {};  // keyed by "city|checkIn|checkOut"
+  let hotelLoading = false;
+  let hotelExpandedColumns = new Set();
+  let smartCheckinDismissed = false;
+  var hotelFilters = { stars: new Set(), maxPrice: Infinity, maxDistance: Infinity };
+  var lastHotelResult = null;
+
+  const HOTEL_CHECK_IN_DATES = ['2026-06-28', '2026-06-29', '2026-06-30'];
+  const HOTEL_CHECK_OUT_DATES = ['2026-07-01', '2026-07-02', '2026-07-03'];
+
+  function setupSectionNav() {
+    document.querySelectorAll('.section-tab').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (activeSection === btn.dataset.section) return;
+        activeSection = btn.dataset.section;
+        renderSectionNav();
+        renderSectionContent();
+      });
+    });
+  }
+
+  function renderSectionNav() {
+    document.querySelectorAll('.section-tab').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.section === activeSection);
+    });
+  }
+
+  function renderSectionContent() {
+    var flightsSection = document.getElementById('flights-section');
+    var hotelsSection = document.getElementById('hotels-section');
+    var dirNav = document.getElementById('direction-nav');
+    var filtersEl = document.getElementById('filters');
+    var tabsEl = document.getElementById('tabs');
+
+    var originNav = document.getElementById('origin-nav');
+
+    if (activeSection === 'hotels') {
+      flightsSection.style.display = 'none';
+      hotelsSection.style.display = '';
+      dirNav.style.display = 'none';
+      originNav.style.display = 'none';
+      if (tabsEl) tabsEl.style.display = 'none';
+      if (filtersEl) filtersEl.style.display = 'none';
+      updateHeroForHotels();
+      renderHotelCityNav();
+      renderSmartCheckin();
+      renderHotelPicker();
+      renderHotelFamilyPicks();
+    } else {
+      flightsSection.style.display = '';
+      hotelsSection.style.display = 'none';
+      dirNav.style.display = '';
+      originNav.style.display = '';
+      if (tabsEl) tabsEl.style.display = '';
+      if (filtersEl) filtersEl.style.display = '';
+      updateHero();
+      renderDirectionNav();
+      renderTabs();
+      renderFilters();
+      renderFlights();
+    }
+  }
+
+  function updateHeroForHotels() {
+    var hero = document.querySelector('.hero');
+    hero.style.backgroundImage =
+      'linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)), ' +
+      "url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600')";
+    hero.style.backgroundPosition = 'center';
+    hero.style.backgroundSize = 'cover';
+    hero.style.backgroundRepeat = 'no-repeat';
+    document.querySelector('.hero-title').innerHTML = 'Venice Hotels';
+    document.querySelector('.hero-subtitle').innerHTML = 'Before the cruise &mdash; July 3, 2026';
+    // Show hotel-specific AI briefing
+    var el = document.getElementById('ai-briefing-text');
+    var hotelKey = hotelCacheKey();
+    if (hotelCache[hotelKey]) {
+      var hData = hotelCache[hotelKey];
+      var count = (hData.best_overall || []).length;
+      el.innerHTML = count + ' hotels found for Venice. Compare the best overall, Marriott Bonvoy, and Hilton Honors options below.';
+    } else {
+      el.innerHTML = 'Search for Venice hotels to find the best options for your pre-cruise stay.';
+    }
+  }
+
+  function renderHotelCityNav() {
+    var dirNav = document.getElementById('direction-nav');
+    dirNav.style.display = '';
+    dirNav.innerHTML =
+      '<div class="hotel-city-nav">' +
+        '<button class="hotel-city-pill active" data-city="venice">Venice</button>' +
+        '<button class="hotel-city-pill" data-city="istanbul" disabled title="Coming soon">Istanbul</button>' +
+      '</div>';
+  }
+
+  function hotelCacheKey() {
+    return activeHotelCity + '|' + hotelCheckIn + '|' + hotelCheckOut;
+  }
+
+  // ---- Smart check-in ----
+  function detectBookedFlight() {
+    if (!sheetRows || sheetRows.length === 0) return null;
+    var userName = getUserName();
+    if (!userName) return null;
+    for (var i = sheetRows.length - 1; i >= 0; i--) {
+      var r = sheetRows[i];
+      if (r.action === 'booked' && r.name === userName) {
+        return r;
+      }
+    }
+    return null;
+  }
+
+  function renderSmartCheckin() {
+    var el = document.getElementById('hotel-smart-checkin');
+    if (smartCheckinDismissed) { el.innerHTML = ''; return; }
+
+    var booked = detectBookedFlight();
+    if (!booked) { el.innerHTML = ''; return; }
+
+    var airline = booked.airline || 'your flight';
+    var dateStr = booked.flight_date || '';
+    // Try to extract a date for check-in suggestion
+    var suggestedDate = '2026-06-30';
+    // Look through outbound dates
+    var OUTBOUND_DATE_MAP = {
+      'June 28, 2026': '2026-06-28', 'June 29, 2026': '2026-06-29', 'June 30, 2026': '2026-06-30',
+      '2026-06-28': '2026-06-28', '2026-06-29': '2026-06-29', '2026-06-30': '2026-06-30',
+    };
+    if (OUTBOUND_DATE_MAP[dateStr]) {
+      suggestedDate = OUTBOUND_DATE_MAP[dateStr];
+    }
+
+    el.innerHTML =
+      '<div class="smart-checkin">' +
+        '<div class="smart-checkin-text">' +
+          'I see you booked <strong>' + escHtml(airline) + '</strong> arriving ' +
+          new Date(suggestedDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) +
+          '. Is that your check-in date?' +
+        '</div>' +
+        '<div class="smart-checkin-actions">' +
+          '<button class="smart-checkin-btn smart-checkin-yes" id="checkin-yes">Yes, use ' +
+            new Date(suggestedDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
+          '</button>' +
+          '<button class="smart-checkin-btn smart-checkin-other" id="checkin-other">Choose different date</button>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById('checkin-yes').addEventListener('click', function () {
+      hotelCheckIn = suggestedDate;
+      smartCheckinDismissed = true;
+      renderSmartCheckin();
+      renderHotelPicker();
+    });
+    document.getElementById('checkin-other').addEventListener('click', function () {
+      smartCheckinDismissed = true;
+      renderSmartCheckin();
+    });
+  }
+
+  // ---- Hotel date picker ----
+  function renderHotelPicker() {
+    var el = document.getElementById('hotel-picker-area');
+    function fmtOpt(d) {
+      return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+    }
+    var ciOpts = HOTEL_CHECK_IN_DATES.map(function (d) {
+      return '<option value="' + d + '"' + (d === hotelCheckIn ? ' selected' : '') + '>' + fmtOpt(d) + '</option>';
+    }).join('');
+    var coOpts = HOTEL_CHECK_OUT_DATES.map(function (d) {
+      return '<option value="' + d + '"' + (d === hotelCheckOut ? ' selected' : '') + '>' + fmtOpt(d) + '</option>';
+    }).join('');
+
+    el.innerHTML = '<div class="hotel-picker">' +
+      '<label>Check-in</label>' +
+      '<select id="hotel-ci">' + ciOpts + '</select>' +
+      '<label>Check-out</label>' +
+      '<select id="hotel-co">' + coOpts + '</select>' +
+      '<button class="hotel-search-btn" id="hotel-search-btn">Search Hotels</button>' +
+    '</div>';
+
+    document.getElementById('hotel-ci').addEventListener('change', function () {
+      hotelCheckIn = this.value;
+    });
+    document.getElementById('hotel-co').addEventListener('change', function () {
+      hotelCheckOut = this.value;
+    });
+    document.getElementById('hotel-search-btn').addEventListener('click', function () {
+      searchHotels();
+    });
+
+    // If we already have cached results, show them
+    var key = hotelCacheKey();
+    if (hotelCache[key]) {
+      renderHotelResults(hotelCache[key]);
+    }
+  }
+
+  function searchHotels() {
+    var key = hotelCacheKey();
+    if (hotelCache[key]) {
+      renderHotelResults(hotelCache[key]);
+      return;
+    }
+    hotelLoading = true;
+    renderHotelLoading();
+
+    var url = '/api/hotels?city=' + activeHotelCity +
+              '&check_in=' + hotelCheckIn + '&check_out=' + hotelCheckOut;
+
+    fetch(url)
+      .then(function (r) {
+        if (!r.ok) throw new Error('API ' + r.status);
+        return r.json();
+      })
+      .then(function (result) {
+        hotelCache[key] = result;
+        hotelLoading = false;
+        renderHotelResults(result);
+        updateHeroForHotels();
+      })
+      .catch(function (err) {
+        hotelLoading = false;
+        document.getElementById('hotel-results').innerHTML =
+          '<div class="status">Hotel search failed: ' + escHtml(err.message) +
+          '<br><span class="loading-sub">Try again in a moment.</span></div>';
+      });
+  }
+
+  var HOTEL_PHRASES = [
+    'Searching Venice hotels\u2026',
+    'Comparing rates and ratings\u2026',
+    'Finding Marriott & Hilton options\u2026',
+    'Scoring by value, location & quality\u2026',
+  ];
+
+  function renderHotelLoading() {
+    var el = document.getElementById('hotel-results');
+    el.innerHTML = '<div class="hotel-loading">' +
+      '<div class="mc-progress-bar"><div class="mc-progress-fill" id="hotel-fill"></div></div>' +
+      '<div class="mc-loading-phrase" id="hotel-phrase">' + HOTEL_PHRASES[0] + '</div>' +
+    '</div>';
+    var phraseIdx = 0;
+    var phraseEl = document.getElementById('hotel-phrase');
+    var interval = setInterval(function () {
+      if (!hotelLoading) { clearInterval(interval); return; }
+      phraseIdx = (phraseIdx + 1) % HOTEL_PHRASES.length;
+      phraseEl.style.opacity = '0';
+      setTimeout(function () {
+        if (!phraseEl) return;
+        phraseEl.textContent = HOTEL_PHRASES[phraseIdx];
+        phraseEl.style.opacity = '1';
+      }, 300);
+    }, 2000);
+  }
+
+  // ---- Hotel card rendering ----
+  function hotelStars(n) {
+    var s = '';
+    for (var i = 0; i < Math.min(n, 5); i++) s += '\u2605';
+    return s;
+  }
+
+  function hotelScoreLabel(s) {
+    if (s < -50) return '\u2726 Excellent Value';
+    if (s <= 50) return 'Great Pick';
+    if (s <= 150) return 'Solid Option';
+    return 'Fair';
+  }
+
+  function hotelScoreColor(s) {
+    if (s < -50) return '#b8953a';
+    if (s <= 50) return '#2a5298';
+    return '#8b8ba0';
+  }
+
+  function hotelCardHTML(h, rank) {
+    var imgHtml = h.image_url
+      ? '<img class="hotel-card-img" src="' + escHtml(h.image_url) + '" alt="' + escHtml(h.name) + '" loading="lazy">'
+      : '<div class="hotel-card-img" style="background:var(--fog);display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px;">No image</div>';
+
+    var loyaltyBadge = '';
+    if (h.brand === 'marriott') {
+      loyaltyBadge = '<span class="hotel-loyalty-badge badge-marriott">Marriott Bonvoy</span>';
+    } else if (h.brand === 'hilton') {
+      loyaltyBadge = '<span class="hotel-loyalty-badge badge-hilton">Hilton Honors</span>';
+    }
+
+    var ccBadges = '';
+    if (h.cc_programs && h.cc_programs.length > 0) {
+      h.cc_programs.forEach(function (p) {
+        if (p === 'fhr') ccBadges += '<span class="hotel-cc-badge badge-fhr">Amex FHR</span>';
+        if (p === 'thc') ccBadges += '<span class="hotel-cc-badge badge-thc">Amex THC</span>';
+      });
+    }
+
+    var distanceHtml = '';
+    if (h.distance_mi != null && h.landmark_name) {
+      distanceHtml = '<div class="hotel-distance">' +
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
+        h.distance_mi + ' mi from ' + escHtml(h.landmark_name) +
+        ' <span style="color:#b0b0c0;">(' + h.distance_km + ' km)</span>' +
+      '</div>';
+    }
+
+    // Google Places user rating (1-5 scale)
+    var ratingHtml = '';
+    if (h.overall_rating) {
+      ratingHtml = '<div class="hotel-rating">' +
+        '<span class="hotel-rating-num">' + h.overall_rating + '</span>/5' +
+        (h.reviews ? ' <span style="color:#94a3b8;font-size:12px;">(' + h.reviews.toLocaleString() + ' reviews)</span>' : '') +
+      '</div>';
+    }
+
+    // SerpAPI pricing (or "Check price" for Places-only hotels)
+    var nights = h.nights || 1;
+    var priceHtml;
+    if (h.places_only || !h.rate_per_night) {
+      var checkUrl = h.loyalty_url || h.google_maps_url || h.website || '';
+      var brandLabel = h.brand === 'marriott' ? 'Marriott.com' : h.brand === 'hilton' ? 'Hilton.com' : 'hotel site';
+      priceHtml = '<div class="hotel-price" style="font-size:16px;color:#6366f1;">' +
+        (checkUrl ? '<a href="' + escHtml(checkUrl) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Check price on ' + brandLabel + '</a>' : 'Price not available') +
+        '</div>';
+    } else {
+      priceHtml = '<div class="hotel-price">$' + h.rate_per_night.toLocaleString() +
+        '<span style="font-size:14px;font-weight:300;color:#94a3b8">/night</span></div>' +
+        '<div class="hotel-price-sub">$' + h.total_rate.toLocaleString() + ' total (' +
+        nights + ' night' + (nights !== 1 ? 's' : '') + ')</div>';
+    }
+
+    var scoreBadge = '<span class="badge" style="background:' + hotelScoreColor(h.score) + ';color:#fff;font-size:10px;">' + hotelScoreLabel(h.score) + '</span>';
+
+    // Google Places review snippet
+    var snippetHtml = '';
+    if (h.review_snippets && h.review_snippets.length > 0) {
+      var snip = h.review_snippets[0];
+      snippetHtml = '<div style="margin-top:8px;padding:8px 10px;background:var(--fog);border-radius:8px;font-size:12px;color:#64748b;line-height:1.5;">' +
+        '\u201c' + escHtml(snip.text.slice(0, 120)) + (snip.text.length > 120 ? '...' : '') + '\u201d' +
+        '<div style="font-size:11px;color:#94a3b8;margin-top:2px;">&mdash; ' + escHtml(snip.author) +
+        (snip.time ? ', ' + escHtml(snip.time) : '') + '</div>' +
+      '</div>';
+    } else if (h.editorial_summary) {
+      snippetHtml = '<div style="margin-top:8px;padding:8px 10px;background:var(--fog);border-radius:8px;font-size:12px;color:#64748b;line-height:1.5;">' +
+        escHtml(h.editorial_summary.slice(0, 150)) + '</div>';
+    }
+
+    // SerpAPI Google Hotels booking link (or Google Maps for Places-only)
+    var viewUrl = h.google_hotels_url || h.google_maps_url || h.website || '';
+    var viewLabel = h.google_hotels_url ? 'View Hotel' : (h.google_maps_url ? 'View on Maps' : 'Visit Website');
+    var viewBtn = viewUrl
+      ? '<a class="hotel-view-btn" href="' + escHtml(viewUrl) + '" target="_blank" rel="noopener">' + viewLabel + '</a>'
+      : '';
+
+    // Google Places loyalty link
+    var pointsLink = '';
+    if (h.loyalty_url) {
+      pointsLink = '<a class="hotel-points-link" href="' + escHtml(h.loyalty_url) + '" target="_blank" rel="noopener">Check points price \u2197</a>';
+    }
+
+    var interestData = encodeURIComponent(JSON.stringify({
+      primary_airline: h.name,
+      airlines: [],
+      search_date: h.check_in,
+      price: h.rate_per_night,
+      departure_time: '',
+      arrival_time: '',
+      stops: 0,
+      layover_info: '',
+      fare_type: 'Hotel',
+      google_flights_url: h.google_hotels_url || '',
+      type: 'hotel',
+    }));
+    var hotelFid = 'HOTEL:' + h.name + '|' + h.check_in;
+
+    return '<div class="hotel-card">' +
+      imgHtml +
+      '<div class="hotel-card-body">' +
+        '<div class="hotel-card-name">' + escHtml(h.name) + '</div>' +
+        '<div class="hotel-stars">' + hotelStars(h.star_class || 0) + '</div> ' + scoreBadge +
+        '<div>' + loyaltyBadge + ccBadges + '</div>' +
+        distanceHtml +
+        ratingHtml +
+        priceHtml +
+        (h.address ? '<div class="hotel-address">' + escHtml(h.address) + '</div>' : '') +
+        snippetHtml +
+        viewBtn +
+        pointsLink +
+        '<a class="interest-link" data-fid="' + escHtml(hotelFid) +
+          '" data-flight="' + interestData + '">See family interest</a>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function passesHotelFilter(h) {
+    if (hotelFilters.stars.size > 0 && !hotelFilters.stars.has(h.star_class || 0)) return false;
+    if (h.rate_per_night && h.rate_per_night > hotelFilters.maxPrice) return false;
+    if (h.distance_mi != null && h.distance_mi > hotelFilters.maxDistance) return false;
+    return true;
+  }
+
+  function renderHotelFilters(result) {
+    var el = document.getElementById('hotel-filters-area');
+    if (!result) { el.innerHTML = ''; return; }
+
+    var allHotels = (result.best_overall || []);
+    if (allHotels.length === 0) { el.innerHTML = ''; return; }
+
+    // Compute ranges from data
+    var prices = allHotels.filter(function (h) { return h.rate_per_night > 0; })
+      .map(function (h) { return h.rate_per_night; });
+    var distances = allHotels.filter(function (h) { return h.distance_mi != null; })
+      .map(function (h) { return h.distance_mi; });
+
+    var maxPriceData = prices.length > 0 ? Math.max.apply(null, prices) : 1000;
+    var maxDistData = distances.length > 0 ? Math.ceil(Math.max.apply(null, distances)) : 5;
+
+    // Initialize sliders to max if still at Infinity
+    var priceVal = hotelFilters.maxPrice === Infinity ? maxPriceData : Math.min(hotelFilters.maxPrice, maxPriceData);
+    var distVal = hotelFilters.maxDistance === Infinity ? maxDistData : Math.min(hotelFilters.maxDistance, maxDistData);
+
+    var filteredCount = allHotels.filter(passesHotelFilter).length;
+
+    var html = '<div class="hotel-filters">' +
+      '<div class="hotel-filter-group">' +
+        '<span class="hotel-filter-label">Stars</span>' +
+        '<button class="hotel-filter-btn' + (hotelFilters.stars.has(4) ? ' active' : '') + '" data-star="4">\u2605\u2605\u2605\u2605</button>' +
+        '<button class="hotel-filter-btn' + (hotelFilters.stars.has(5) ? ' active' : '') + '" data-star="5">\u2605\u2605\u2605\u2605\u2605</button>' +
+      '</div>' +
+      '<div class="hotel-filter-sep"></div>' +
+      '<div class="hotel-range-group">' +
+        '<span class="hotel-filter-label">Max price</span>' +
+        '<input type="range" class="hotel-range-slider" id="hotel-price-slider"' +
+          ' min="0" max="' + maxPriceData + '" value="' + priceVal + '" step="25">' +
+        '<span class="hotel-range-value" id="hotel-price-val">$' + priceVal + '</span>' +
+      '</div>' +
+      '<div class="hotel-filter-sep"></div>' +
+      '<div class="hotel-range-group">' +
+        '<span class="hotel-filter-label">Max distance</span>' +
+        '<input type="range" class="hotel-range-slider" id="hotel-dist-slider"' +
+          ' min="0" max="' + maxDistData + '" value="' + distVal + '" step="0.1">' +
+        '<span class="hotel-range-value" id="hotel-dist-val">' + distVal + ' mi</span>' +
+      '</div>' +
+      '<span class="hotel-filter-count">' + filteredCount + ' of ' + allHotels.length + ' hotels</span>' +
+    '</div>';
+
+    el.innerHTML = html;
+
+    // Star toggle handlers
+    el.querySelectorAll('[data-star]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var s = parseInt(btn.dataset.star);
+        if (hotelFilters.stars.has(s)) hotelFilters.stars.delete(s);
+        else hotelFilters.stars.add(s);
+        renderHotelFilters(result);
+        renderHotelResults(result);
+      });
+    });
+
+    // Price slider
+    var ps = document.getElementById('hotel-price-slider');
+    var pv = document.getElementById('hotel-price-val');
+    ps.addEventListener('input', function () {
+      var v = parseInt(ps.value);
+      pv.textContent = '$' + v;
+      hotelFilters.maxPrice = v >= maxPriceData ? Infinity : v;
+      renderFilterCount(result);
+      renderHotelResults(result);
+    });
+
+    // Distance slider
+    var ds = document.getElementById('hotel-dist-slider');
+    var dv = document.getElementById('hotel-dist-val');
+    ds.addEventListener('input', function () {
+      var v = parseFloat(ds.value);
+      dv.textContent = v + ' mi';
+      hotelFilters.maxDistance = v >= maxDistData ? Infinity : v;
+      renderFilterCount(result);
+      renderHotelResults(result);
+    });
+  }
+
+  function renderFilterCount(result) {
+    var allHotels = (result.best_overall || []);
+    var count = allHotels.filter(passesHotelFilter).length;
+    var countEl = document.querySelector('.hotel-filter-count');
+    if (countEl) countEl.textContent = count + ' of ' + allHotels.length + ' hotels';
+  }
+
+  function renderHotelResults(result) {
+    var el = document.getElementById('hotel-results');
+    if (!result) {
+      el.innerHTML = '<div class="status" style="color:#64748b;">Select your dates and click <strong>Search Hotels</strong> to find Venice hotels.</div>';
+      document.getElementById('hotel-filters-area').innerHTML = '';
+      return;
+    }
+
+    lastHotelResult = result;
+    renderHotelFilters(result);
+
+    var overall = (result.best_overall || []).filter(passesHotelFilter);
+    var marriott = (result.best_marriott || []).filter(passesHotelFilter);
+    var hilton = (result.best_hilton || []).filter(passesHotelFilter);
+
+    if (overall.length === 0) {
+      el.innerHTML = '<div class="status">No hotels match your filters.</div>';
+      renderHotelFooter(0);
+      return;
+    }
+
+    var overallExpanded = hotelExpandedColumns.has('overall');
+    var marriottExpanded = hotelExpandedColumns.has('marriott');
+    var hiltonExpanded = hotelExpandedColumns.has('hilton');
+
+    var overallVisible = overallExpanded ? overall : overall.slice(0, 3);
+    var marriottVisible = marriottExpanded ? marriott : marriott.slice(0, 3);
+    var hiltonVisible = hiltonExpanded ? hilton : hilton.slice(0, 3);
+
+    function columnHTML(title, hotels, visibleHotels, colKey, emptyMsg) {
+      var html = '<div>' +
+        '<div class="hotel-column-title">' + title + '</div>';
+      if (hotels.length === 0) {
+        html += '<div class="hotel-column-empty">' + emptyMsg + '</div>';
+      } else {
+        visibleHotels.forEach(function (h, i) {
+          html += hotelCardHTML(h, i + 1);
+        });
+        var remaining = hotels.length - 3;
+        if (remaining > 0) {
+          var isExpanded = hotelExpandedColumns.has(colKey);
+          if (!isExpanded) {
+            html += '<button class="show-more-btn hotel-show-more" data-col="' + colKey + '">Show ' +
+              remaining + ' more \u25BC</button>';
+          } else {
+            html += '<button class="show-more-btn hotel-show-less" data-col="' + colKey + '">Show less \u25B2</button>';
+          }
+        }
+      }
+      html += '</div>';
+      return html;
+    }
+
+    var html = '<div class="hotel-columns">' +
+      columnHTML('Best Overall', overall, overallVisible, 'overall', 'No hotels found.') +
+      columnHTML('Best Marriott', marriott, marriottVisible, 'marriott', 'No Marriott properties available in Venice.') +
+      columnHTML('Best Hilton', hilton, hiltonVisible, 'hilton', 'No Hilton properties available in Venice.') +
+    '</div>';
+
+    el.innerHTML = html;
+
+    // Attach expand/collapse handlers
+    el.querySelectorAll('.hotel-show-more').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        hotelExpandedColumns.add(btn.dataset.col);
+        renderHotelResults(result);
+      });
+    });
+    el.querySelectorAll('.hotel-show-less').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        hotelExpandedColumns.delete(btn.dataset.col);
+        renderHotelResults(result);
+      });
+    });
+
+    // Attach hotel interest handlers
+    attachHotelInterestHandlers();
+    renderHotelFooter(overall.length);
+  }
+
+  function attachHotelInterestHandlers() {
+    document.querySelectorAll('#hotel-results .interest-link[data-fid]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.preventDefault();
+        var fid = el.getAttribute('data-fid');
+        var fd = JSON.parse(decodeURIComponent(el.getAttribute('data-flight')));
+        showFamilyModal(fid, fd);
+      });
+    });
+    // Update interest counts
+    document.querySelectorAll('#hotel-results .interest-link[data-fid]').forEach(function (el) {
+      var fid = el.getAttribute('data-fid');
+      var counts = getFlightCounts(fid);
+      var parts = [];
+      if (counts.interested.length > 0) parts.push(counts.interested.length + ' interested');
+      if (counts.booked.length > 0) parts.push(counts.booked.length + ' booked');
+      if (parts.length > 0) {
+        el.textContent = parts.join(' \u00b7 ');
+        el.classList.add('has-picks');
+      }
+    });
+  }
+
+  function logHotelToSheets(action, hotel) {
+    var name = getUserName() || 'Anonymous';
+    var params = new URLSearchParams({
+      name: name,
+      origin: activeOrigin,
+      action: action,
+      airline: hotel.name || '',
+      flight_date: hotel.check_in || '',
+      departure_time: '',
+      arrival_time: '',
+      layover: '',
+      price: String(hotel.rate_per_night || 0),
+      fare_type: 'Hotel',
+      flight_id: 'HOTEL:' + (hotel.name || '') + '|' + (hotel.check_in || ''),
+    });
+    fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' })
+      .catch(function () { /* silent */ });
+  }
+
+  function renderHotelFamilyPicks() {
+    var el = document.getElementById('hotel-family-cards');
+    if (!sheetRows || sheetRows.length === 0) {
+      el.innerHTML = '<div class="family-empty">No picks yet.</div>';
+      return;
+    }
+    // Filter for hotel picks
+    var hotelRows = sheetRows.filter(function (r) {
+      return r.flight_id && String(r.flight_id).indexOf('HOTEL:') === 0;
+    });
+    if (hotelRows.length === 0) {
+      el.innerHTML = '<div class="family-empty">No hotel picks yet. Be the first!</div>';
+      return;
+    }
+    var sorted = hotelRows.slice().reverse();
+    el.innerHTML = sorted.map(function (r) {
+      var icon = r.action === 'booked' ? '&#127976;' : '&#128064;';
+      var verb = r.action === 'booked' ? 'booked' : 'is interested in';
+      var ago = r.timestamp ? timeAgo(r.timestamp) : '';
+      return '<div class="family-card">' +
+        '<div class="fc-icon">' + icon + '</div>' +
+        '<div class="fc-body">' +
+          '<div class="fc-text"><strong>' + escHtml(r.name || 'Someone') + '</strong> ' +
+            verb + ' <strong>' + escHtml(r.airline || 'a hotel') + '</strong></div>' +
+          (ago ? '<div class="fc-time">' + ago + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderHotelFooter(count) {
+    document.getElementById('hotel-footer').textContent =
+      count + ' hotels shown \u00b7 Prices in USD per night';
+  }
+
   // ---- Init ----
   async function init() {
     setupOriginModal();
@@ -2004,6 +3173,7 @@
     setupFamilyModal();
     setupDirectionNav();
     setupOriginNav();
+    setupSectionNav();
 
     // Check stored origin
     var stored = getStoredOrigin();
@@ -2028,7 +3198,13 @@
 
     setInterval(fetchFamilyPicks, 60000);
 
-    // Check URL params for direction
+    // Check URL params for direction and section
+    var urlSection = new URLSearchParams(window.location.search).get('section');
+    if (urlSection === 'hotels') {
+      activeSection = 'hotels';
+      renderSectionNav();
+      renderSectionContent();
+    }
     var urlDir = new URLSearchParams(window.location.search).get('dir');
     if (urlDir === 'return' || urlDir === 'multicity') {
       activeDirection = urlDir;
