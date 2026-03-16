@@ -860,7 +860,7 @@
     margin-bottom: 4px;
   }
   .cf-title {
-    font-family: var(--serif); font-size: 22px; font-weight: 300;
+    font-family: var(--serif); font-size: 28px; font-weight: 300;
     font-style: italic; color: var(--azure);
   }
   .cf-subtitle {
@@ -3838,7 +3838,7 @@
           actionHtml = '<a class="cf-action-link cf-delete-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">Delete</a>';
         }
 
-        html += '<tr style="' + (isNewGroup ? 'border-top:1.5px solid #ddd;' : '') + '">' +
+        html += '<tr data-fid="' + escHtml(fid) + '" style="' + (isNewGroup ? 'border-top:1.5px solid #ddd;' : '') + '">' +
           '<td><span style="font-weight:500">' + escHtml(traveler) + '</span>' + youPill + '</td>' +
           '<td><span class="cf-airline-name">' + escHtml(airline) + '</span>' +
             (flightNum ? ' <span class="cf-flight-num">' + escHtml(flightNum) + '</span>' : '') + '</td>' +
@@ -3853,6 +3853,20 @@
     }
     html += '</div>';
     el.innerHTML = html;
+
+    // Highlight newly saved flight
+    if (lastSavedFlightId) {
+      el.querySelectorAll('tr[data-fid="' + lastSavedFlightId + '"]').forEach(function (row) {
+        row.style.transition = 'box-shadow 0.3s, outline 0.3s';
+        row.style.outline = '2px solid #b8953a';
+        row.style.outlineOffset = '-1px';
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(function () {
+          row.style.outline = 'none';
+          lastSavedFlightId = null;
+        }, 2500);
+      });
+    }
 
     // Attach add button handler
     el.querySelectorAll('.cf-add-btn').forEach(function (btn) {
@@ -3945,14 +3959,22 @@
   }
 
   function handleScreenshot(file) {
-    // Show loading
+    // Show loading with shimmer visible on white background
     var box = document.querySelector('.afm-box');
     box.innerHTML = '<button class="afm-close">&times;</button>' +
       '<div class="afm-title">Add My Flight</div>' +
       stepsHTML(1) +
       '<div style="text-align:center;padding:40px 0;">' +
-        '<div class="points-ai-shimmer" style="margin-bottom:12px;"></div>' +
-        '<div style="font-size:13px;color:#64748b;">Parsing your booking confirmation\u2026</div>' +
+        '<div style="height:12px;border-radius:6px;margin-bottom:10px;' +
+          'background:linear-gradient(90deg,rgba(0,0,0,0.04) 25%,rgba(0,0,0,0.08) 50%,rgba(0,0,0,0.04) 75%);' +
+          'background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;"></div>' +
+        '<div style="height:12px;border-radius:6px;width:70%;margin:0 auto 10px;' +
+          'background:linear-gradient(90deg,rgba(0,0,0,0.04) 25%,rgba(0,0,0,0.08) 50%,rgba(0,0,0,0.04) 75%);' +
+          'background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;"></div>' +
+        '<div style="height:12px;border-radius:6px;width:50%;margin:0 auto 16px;' +
+          'background:linear-gradient(90deg,rgba(0,0,0,0.04) 25%,rgba(0,0,0,0.08) 50%,rgba(0,0,0,0.04) 75%);' +
+          'background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;"></div>' +
+        '<div style="font-size:13px;color:#64748b;">Reading your booking confirmation\u2026</div>' +
       '</div>';
     box.querySelector('.afm-close').addEventListener('click', closeAddFlightModal);
 
@@ -4108,6 +4130,8 @@
     });
   }
 
+  var lastSavedFlightId = null;
+
   function saveConfirmedFlight(travelers) {
     var p = afmParsed;
     var tab = p.direction === 'return' ? 'departing_istanbul' : 'arriving_venice';
@@ -4135,11 +4159,48 @@
       added_by: getUserName() || '',
     });
 
-    fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' })
-      .catch(function () {});
+    var url = SHEETS_URL + '?' + params.toString();
+    console.log('[Add Flight] Saving to sheet:', { tab: tab, flightId: flightId, travelers: travelers, params: Object.fromEntries(params) });
 
-    closeAddFlightModal();
-    setTimeout(fetchConfirmedFlights, 2000);
+    // Show saving state in modal
+    var box = document.querySelector('.afm-box');
+    if (box) {
+      box.innerHTML = '<div style="text-align:center;padding:40px 0;">' +
+        '<div style="font-size:14px;color:var(--azure);font-weight:500;">Saving flight\u2026</div></div>';
+    }
+
+    lastSavedFlightId = flightId;
+
+    fetch(url)
+      .then(function (r) {
+        console.log('[Add Flight] Response status:', r.status);
+        return r.text();
+      })
+      .then(function (text) {
+        console.log('[Add Flight] Response body:', text);
+        try {
+          var res = JSON.parse(text);
+          if (res.status === 'error') {
+            alert('Failed to save: ' + (res.message || 'Unknown error'));
+            closeAddFlightModal();
+            return;
+          }
+        } catch (e) {
+          // Apps Script may return non-JSON on success with no-cors — that's OK
+          console.log('[Add Flight] Non-JSON response (likely OK):', text.slice(0, 200));
+        }
+        closeAddFlightModal();
+        // Immediately re-fetch and re-render
+        fetchConfirmedFlights();
+      })
+      .catch(function (err) {
+        console.error('[Add Flight] Fetch error:', err);
+        // Likely CORS — try fire-and-forget as fallback
+        console.log('[Add Flight] Retrying with no-cors...');
+        fetch(url, { mode: 'no-cors' }).catch(function () {});
+        closeAddFlightModal();
+        setTimeout(fetchConfirmedFlights, 2000);
+      });
   }
 
   async function startApp() {
