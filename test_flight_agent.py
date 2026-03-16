@@ -501,6 +501,130 @@ class TestFlightToDict(unittest.TestCase):
         self.assertIn("2h 30m", info)
 
 
+class TestClientSideScoringCompat(unittest.TestCase):
+    """Tests that the API pipeline works WITHOUT server-side scoring.
+
+    These prevent regressions like the _flight_to_dict crash when
+    score_flights() is not called server-side (scoring moved to client JS).
+    """
+
+    def test_flight_to_dict_without_score(self):
+        """_flight_to_dict must not crash when flight has no 'score' key."""
+        f = _make_flight(airline="Delta", price=500)
+        f = label_fare_types([f])[0]
+        # Do NOT call score_flights — simulates the API pipeline
+        d = _flight_to_dict(f)
+        self.assertIn("score", d)
+        self.assertEqual(d["score"], 0)  # default when not scored
+
+    def test_flight_to_dict_all_keys_without_scoring(self):
+        """All required keys must be present even without server scoring."""
+        f = _make_flight(airline="Air France", price=600, stops=1, layover=90)
+        f = label_fare_types([f])[0]
+        d = _flight_to_dict(f)
+        required = {
+            "primary_airline", "airlines", "flight_numbers",
+            "departure_time", "arrival_time",
+            "stops", "total_layover_min", "total_duration_min", "price",
+            "score", "search_date", "fare_type", "economy_main_price",
+            "basic_economy_price", "premium_economy_price", "business_price",
+            "google_flights_url", "layover_info",
+        }
+        self.assertEqual(set(d.keys()), required)
+
+    def test_flight_to_dict_price_survives(self):
+        """Price must pass through to dict without scoring."""
+        f = _make_flight(price=427)
+        f = label_fare_types([f])[0]
+        d = _flight_to_dict(f)
+        self.assertEqual(d["price"], 427)
+
+    def test_flight_to_dict_serializable_without_score(self):
+        """Dict must be JSON-serializable without server scoring."""
+        import json
+        f = _make_flight(airline="Turkish Airlines", price=580, stops=1, layover=120)
+        f = label_fare_types([f])[0]
+        d = _flight_to_dict(f)
+        # Should not raise
+        serialized = json.dumps(d)
+        self.assertIn("Turkish Airlines", serialized)
+
+    def test_multiple_flights_to_dict_without_scoring(self):
+        """Batch of flights should all serialize without scoring."""
+        flights = [
+            _make_flight(airline="Delta", price=450),
+            _make_flight(airline="United", price=520, stops=1, layover=60),
+            _make_flight(airline="British Airways", price=600, stops=1, layover=90),
+        ]
+        flights = label_fare_types(flights)
+        for f in flights:
+            d = _flight_to_dict(f)
+            self.assertIn("primary_airline", d)
+            self.assertIn("price", d)
+            self.assertEqual(d["score"], 0)
+
+    def test_multicity_flight_to_dict_without_scoring(self):
+        """Multi-city flights should serialize without scoring."""
+        f = _make_flight(airline="Delta", price=1200)
+        f["type"] = "multi_city"
+        f["return_leg"] = {
+            "primary_airline": "Air France",
+            "airlines": ["Air France"],
+            "departure_time": "2026-07-14 10:00",
+            "arrival_time": "2026-07-15 06:00",
+            "stops": 1,
+            "total_layover_min": 120,
+            "total_duration_min": 840,
+            "layover_info": "2h in CDG",
+            "search_date": "2026-07-14",
+        }
+        f = label_fare_types([f])[0]
+        d = _flight_to_dict(f)
+        self.assertEqual(d["score"], 0)
+        self.assertIn("return_leg", d)
+
+    def test_api_does_not_import_score_flights(self):
+        """api/flights.py should NOT import score_flights."""
+        with open("api/flights.py", "r") as fh:
+            source = fh.read()
+        # score_flights should not be in the imports
+        self.assertNotIn("score_flights", source)
+
+    def test_client_scoring_in_frontend(self):
+        """Frontend JS must contain client-side scoring logic."""
+        with open("public/index.html", "r") as fh:
+            html = fh.read()
+        self.assertIn("function scoreFlight(", html)
+        self.assertIn("function scoreAndSortFlights(", html)
+        self.assertIn("ROUTE_BONUSES", html)
+
+    def test_client_scoring_applied_after_data_load(self):
+        """Frontend must call scoreAndSortFlights after loading data."""
+        with open("public/index.html", "r") as fh:
+            html = fh.read()
+        self.assertIn("scoreAndSortFlights(", html)
+        # Should be called in the data loading section
+        start = html.index("async function startApp()")
+        end = html.index("renderCountdown();", start + 100)
+        load_section = html[start:end + 500]
+        self.assertIn("scoreAndSortFlights", load_section)
+
+    def test_all_origins_have_client_bonuses(self):
+        """Frontend ROUTE_BONUSES must cover all 4 origins."""
+        with open("public/index.html", "r") as fh:
+            html = fh.read()
+        for origin in ["LAX", "ATL", "AKL", "YVR"]:
+            self.assertIn(origin + ':', html)
+
+    def test_no_cache_version_regression(self):
+        """Cache key must be v3+ to avoid serving stale scored data."""
+        with open("public/index.html", "r") as fh:
+            html = fh.read()
+        self.assertIn("dcf_flights_cache_v3", html)
+        # v2 should only appear in cleanup code, not as the active key
+        self.assertNotIn("FLIGHT_CACHE_KEY = 'dcf_flights_cache_v2'", html)
+
+
 class TestEmailHTML(unittest.TestCase):
     """Tests for build_email_html output."""
 
