@@ -3750,6 +3750,61 @@
     return code + '-' + (d.departure_date || '') + '-' + fn;
   }
 
+  // Format helpers for confirmed flights table
+  function cfFmtTime(raw) {
+    // Handles: "15:50", "1899-12-31T01:55:00.000Z", "2026-06-29T15:50:00", null
+    if (!raw) return '';
+    var s = String(raw);
+    var h, m;
+    if (s.indexOf('1899') !== -1) {
+      // Google Sheets mangled time — extract UTC hours/minutes
+      var d = new Date(s);
+      if (isNaN(d)) return '';
+      h = d.getUTCHours(); m = d.getUTCMinutes();
+    } else if (s.indexOf('T') !== -1 && s.length > 10) {
+      // ISO datetime — extract time portion
+      var tp = s.slice(11, 16).split(':');
+      h = parseInt(tp[0], 10); m = parseInt(tp[1] || '0', 10);
+    } else if (s.indexOf(':') !== -1) {
+      // Plain "HH:MM"
+      var parts = s.split(':');
+      h = parseInt(parts[0], 10); m = parseInt(parts[1] || '0', 10);
+    } else {
+      return s; // Can't parse, return as-is
+    }
+    if (isNaN(h)) return '';
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    var h12 = h % 12 || 12;
+    var mStr = String(m).padStart(2, '0');
+    return h12 + ':' + mStr + ampm;
+  }
+
+  function cfNormDate(raw) {
+    // Normalize date to YYYY-MM-DD from various formats
+    if (!raw) return '';
+    var s = String(raw);
+    if (s.length >= 10 && s[4] === '-') return s.slice(0, 10);
+    return s;
+  }
+
+  function cfFmtDate(ymd) {
+    // Format "2026-06-29" as "Monday · June 29"
+    if (!ymd || ymd.length < 10) return ymd;
+    try {
+      var d = new Date(ymd + 'T12:00:00');
+      if (isNaN(d)) return ymd;
+      return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    } catch (e) { return ymd; }
+  }
+
+  function cfFmtDateShort(raw) {
+    // Format as MM/DD/YY
+    var ymd = cfNormDate(raw);
+    if (!ymd || ymd.length < 10) return ymd || '';
+    var parts = ymd.split('-');
+    return parts[1] + '/' + parts[2] + '/' + parts[0].slice(2);
+  }
+
   function renderConfirmedTable(dir) {
     var elId = dir === 'outbound' ? 'confirmed-outbound' : 'confirmed-return';
     var el = document.getElementById(elId);
@@ -3777,36 +3832,29 @@
         if (!String(travelerVal).trim()) continue;
         obj.traveler = String(travelerVal).trim();
 
-        // If data has an Action column (main picks tab fallback), only show "booked"
-        if (hasActionCol && obj.action && obj.action !== 'booked') continue;
+        // If data has an Action column (main picks tab), only show "booked" or "Confirmed" fare_type
+        if (hasActionCol) {
+          var isBooked = obj.action === 'booked';
+          var isConfirmed = obj.fare_type === 'Confirmed';
+          if (!isBooked && !isConfirmed) continue;
+        }
 
         // Normalize field names from main picks tab format
         if (!obj.airline && obj.airline_) obj.airline = obj.airline_;
         if (!obj.departure_date && obj.flight_date) obj.departure_date = obj.flight_date;
         if (!obj.flight_id && obj.flight_id_) obj.flight_id = obj.flight_id_;
 
-        // Direction filtering: check arrival/departure airports and flight_id
-        var arrAirport = (obj.arrival_airport || '').toUpperCase();
-        var depAirport = (obj.departure_airport || '').toUpperCase();
-        var fid = obj.flight_id || '';
-        // Detect direction from flight_id prefix or airport codes
-        // Outbound (arriving Venice): arrival = VCE, or no IST departure
-        // Return (departing Istanbul): departure = IST, or flight_id contains return dates
-        var OUTBOUND_DATES = {'2026-06-28':1,'2026-06-29':1,'2026-06-30':1};
+        // Direction filtering: check airports, dates, and tab source
+        var rowArr = (obj.arrival_airport || '').toUpperCase();
+        var rowDep = (obj.departure_airport || '').toUpperCase();
+        var flightDate = cfNormDate(obj.departure_date || obj.flight_date || '');
         var RETURN_DATES = {'2026-07-13':1,'2026-07-14':1,'2026-07-15':1};
-        var flightDate = obj.departure_date || obj.flight_date || '';
-        // Normalize date from "2026-06-29T07:00:00.000Z" to "2026-06-29"
-        if (flightDate.length > 10) flightDate = flightDate.slice(0, 10);
 
-        var isOutbound = false;
-        var isReturn = false;
-        if (arrAirport === 'VCE') isOutbound = true;
-        else if (depAirport === 'IST') isReturn = true;
-        else if (RETURN_DATES[flightDate]) isReturn = true;
-        else if (OUTBOUND_DATES[flightDate]) isOutbound = true;
-        else isOutbound = true; // default to outbound
+        // Determine if this row is return direction
+        var isReturn = (rowDep === 'IST') || (rowArr !== '' && rowArr !== 'VCE' && rowDep === 'IST') || RETURN_DATES[flightDate];
 
-        if (dir === 'outbound' && !isOutbound) continue;
+        // Filter: outbound table skips return flights, return table skips outbound
+        if (dir === 'outbound' && isReturn) continue;
         if (dir === 'return' && !isReturn) continue;
 
         parsed.push(obj);
@@ -3854,14 +3902,11 @@
       var lastFid = null;
       var lastDate = null;
       parsed.forEach(function (r) {
-        var depDate = r.departure_date || '';
+        var depDate = cfNormDate(r.departure_date || '');
         if (depDate && depDate !== lastDate) {
           lastDate = depDate;
-          try {
-            var dd = new Date(depDate + 'T12:00:00');
-            var dayLabel = dd.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-            html += '<tr class="cf-day-divider"><td colspan="7">' + escHtml(dayLabel) + '</td></tr>';
-          } catch (e) {}
+          var dayLabel = cfFmtDate(depDate);
+          if (dayLabel) html += '<tr class="cf-day-divider"><td colspan="7">' + escHtml(dayLabel) + '</td></tr>';
         }
 
         var fid = r.flight_id || '';
@@ -3897,8 +3942,8 @@
           if (!stopover && k.indexOf('stopover') !== -1 && k.indexOf('city') === -1) stopover = r[k] || '';
         });
 
-        var fmtDep = depTime ? depTime.slice(0, 5) : '';
-        var fmtArr = arrTime ? arrTime.slice(0, 5) : '';
+        var fmtDep = cfFmtTime(depTime);
+        var fmtArr = cfFmtTime(arrTime);
 
         var route = depAirport + (stopover ? ' \u2192 ' + stopover : '') + ' \u2192 ' + arrAirport;
         var stopHtml = stopover ? '<span class="cf-stopover-pill">' + escHtml(stopover) + '</span>' : '\u2014';
@@ -3914,12 +3959,15 @@
           actionHtml = '<a class="cf-action-link cf-delete-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">Delete</a>';
         }
 
+        var depDateShort = cfFmtDateShort(r.departure_date);
+        var arrDateShort = cfFmtDateShort(r.arrival_date || r.departure_date);
+
         html += '<tr data-fid="' + escHtml(fid) + '" style="' + (isNewGroup ? 'border-top:1.5px solid #ddd;' : '') + '">' +
           '<td><span style="font-weight:500">' + escHtml(traveler) + '</span>' + youPill + '</td>' +
           '<td><span class="cf-airline-name">' + escHtml(airline) + '</span>' +
             (flightNum ? ' <span class="cf-flight-num">' + escHtml(flightNum) + '</span>' : '') + '</td>' +
-          '<td><div class="cf-time">' + escHtml(fmtDep) + '</div><div class="cf-code">' + escHtml(depAirport) + '</div></td>' +
-          '<td><div class="cf-time">' + escHtml(fmtArr) + '</div><div class="cf-code">' + escHtml(arrAirport) + '</div></td>' +
+          '<td><div class="cf-time">' + fmtDep + '</div><div class="cf-code">' + escHtml(depDateShort) + ' ' + escHtml(depAirport) + '</div></td>' +
+          '<td><div class="cf-time">' + fmtArr + '</div><div class="cf-code">' + escHtml(arrDateShort) + ' ' + escHtml(arrAirport) + '</div></td>' +
           '<td class="cf-col-route" style="font-size:12px;color:#94a3b8;">' + escHtml(route) + '</td>' +
           '<td class="cf-col-stop">' + stopHtml + '</td>' +
           '<td>' + actionHtml + '</td>' +
@@ -4250,9 +4298,27 @@
     lastSavedFlightId = flightId;
     lastSavedTab = tab;
 
-    // Step 2 — Write to sheet (fire-and-forget with no-cors, then read back)
-    // Google Apps Script redirects (302) which causes CORS issues with regular fetch.
-    // So we write with no-cors (blind fire), then read back to verify.
+    // Also write as a "booked" entry to the main picks format as fallback
+    // This ensures the flight shows up even if the Apps Script confirmed handler isn't deployed
+    travelers.forEach(function (name) {
+      var fallbackParams = new URLSearchParams({
+        name: name,
+        origin: p.departure_airport || '',
+        action: 'booked',
+        airline: p.airline || '',
+        flight_date: p.departure_date || '',
+        departure_time: p.departure_time || '',
+        arrival_time: p.arrival_time || '',
+        layover: stopAirport ? 'via ' + stopAirport : 'Nonstop',
+        price: '0',
+        fare_type: 'Confirmed',
+        flight_id: flightId,
+      });
+      console.log('[Save Flight] Fallback write for:', name);
+      fetch(SHEETS_URL + '?' + fallbackParams.toString(), { mode: 'no-cors' }).catch(function () {});
+    });
+
+    // Primary write to confirmed flights tab
     console.log('[Save Flight] Step 2 — Sending write request (no-cors)...');
     fetch(url, { mode: 'no-cors' })
       .then(function () {
