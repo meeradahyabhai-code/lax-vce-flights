@@ -854,7 +854,7 @@
   .hotel-loading { text-align: center; padding: 40px 20px; }
 
   /* ── Confirmed Flights ── */
-  .cf-section { margin-bottom: 32px; }
+  .cf-section { margin-bottom: 48px; }
   .cf-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 4px;
@@ -879,10 +879,10 @@
     width: 100%; border-collapse: collapse; font-family: var(--sans);
   }
   .cf-table th {
-    font-size: 11px; font-weight: 500; color: #94a3b8;
+    font-size: 11px; font-weight: 500; color: #1a3a6b;
     letter-spacing: 0.08em; text-transform: uppercase;
     text-align: left; padding: 8px 10px;
-    border-bottom: 1.5px solid var(--fog);
+    border-bottom: 1.5px solid #1a3a6b;
   }
   .cf-table td {
     padding: 10px 10px; font-size: 15px; font-weight: 400;
@@ -892,33 +892,33 @@
   .cf-table tr:last-child td { border-bottom: none; }
   .cf-table tr:hover td { background: #faf8f3; }
   .cf-day-divider td {
-    font-size: 11px; font-weight: 500; color: #94a3b8;
+    font-size: 15px; font-weight: 600; color: #ffffff;
     letter-spacing: 0.08em; text-transform: uppercase;
-    background: var(--fog); padding: 6px 10px;
-    border-top: 0.5px solid #ddd;
+    background: #1a3a6b; padding: 8px 10px;
+    border-top: none;
   }
   .cf-time {
-    font-family: var(--serif); font-size: 17px; font-weight: 400;
-    color: var(--azure);
+    font-family: var(--sans); font-size: 15px; font-weight: 500;
+    color: var(--ink);
   }
   .cf-code {
-    font-family: var(--sans); font-size: 11px; font-weight: 300;
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
     color: #94a3b8;
   }
   .cf-airline-name { font-weight: 500; }
-  .cf-flight-num { font-size: 11px; font-weight: 300; color: #94a3b8; }
+  .cf-flight-num { font-size: 13px; font-weight: 400; color: #94a3b8; }
   .cf-you-pill {
     display: inline-block; font-size: 10px; font-weight: 500;
     padding: 1px 6px; border-radius: 9999px; margin-left: 4px;
     background: #e6f1fb; color: #0c447c;
   }
   .cf-same-flight {
-    font-size: 12px; font-style: italic; color: #94a3b8;
+    font-size: 13px; font-style: italic; color: #94a3b8;
   }
   .cf-stopover-pill {
-    display: inline-block; font-size: 11px; font-weight: 400;
+    display: inline-block; font-size: 13px; font-weight: 400;
     padding: 2px 8px; border-radius: 9999px;
-    background: var(--fog); color: #64748b;
+    background: rgba(26, 58, 107, 0.1); color: #1a3a6b;
   }
   .cf-join-btn {
     font-family: var(--sans); font-size: 11px; font-weight: 500;
@@ -930,8 +930,12 @@
   .cf-action-link {
     font-size: 11px; color: #94a3b8; cursor: pointer;
     text-decoration: none; margin-right: 8px;
+    display: inline-flex; align-items: center; gap: 3px;
+    min-height: 28px; min-width: 28px; justify-content: center;
   }
   .cf-action-link:hover { color: var(--azure); text-decoration: underline; }
+  .cf-action-link .cf-icon { display: none; }
+  .cf-action-link .cf-label { display: inline; }
   .cf-empty {
     font-family: var(--sans); font-size: 13px; font-weight: 300;
     color: #94a3b8; text-align: center; padding: 24px 10px;
@@ -939,6 +943,22 @@
   }
   @media (max-width: 600px) {
     .cf-table .cf-col-route, .cf-table .cf-col-stop { display: none; }
+    .cf-header { flex-direction: column; align-items: flex-start; }
+    .cf-title { font-size: 24px; }
+    .cf-add-btn { margin-top: 8px; }
+    .cf-table td { padding: 8px 6px; font-size: 13px; }
+    .cf-table th { padding: 6px 6px; font-size: 10px; }
+    .cf-time { font-size: 13px; }
+    .cf-code { font-size: 11px; }
+    .cf-flight-num { font-size: 11px; }
+    .cf-same-flight { font-size: 11px; }
+    .cf-day-divider td { font-size: 13px; padding: 6px 6px; }
+    .cf-you-pill { font-size: 12px; padding: 2px 7px; }
+    .cf-action-link .cf-icon { display: inline; }
+    .cf-action-link .cf-label { display: none; }
+    .cf-action-link { min-height: 44px; min-width: 16px; margin-right: 0; gap: 0; }
+    .cf-action-link:hover { text-decoration: none; }
+    .cf-join-btn { font-size: 10px; padding: 6px 10px; min-height: 44px; }
   }
 
   /* ── Add Flight Modal ── */
@@ -3923,6 +3943,8 @@
           if (!norm.departure_airport) norm.departure_airport = norm.from_airport_ || '';
           if (!norm.arrival_airport) norm.arrival_airport = norm.to_airport_ || '';
           if (!norm.arrival_time) norm.arrival_time = norm.arrival_time_vce_ || '';
+          if (!norm.departure_date) norm.departure_date = norm.departure_date_ist_ || '';
+          if (!norm.departure_time) norm.departure_time = norm.departure_time_ist_ || '';
           if (!norm.departure_time_raw) norm.departure_time_raw = norm.departure_time_ist_ || '';
           parsed.push(norm);
         });
@@ -4065,8 +4087,12 @@
         var isAdder = userName && addedBy && addedBy.toLowerCase().indexOf(userName.toLowerCase()) !== -1;
 
         if (isMyFlight || isAdder) {
-          actionHtml = '<a class="cf-action-link cf-edit-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">Edit</a>' +
-            '<a class="cf-action-link cf-delete-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">Delete</a>';
+          actionHtml = '<a class="cf-action-link cf-edit-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">' +
+            '<svg class="cf-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>' +
+            '<span class="cf-label">Edit</span></a>' +
+            '<a class="cf-action-link cf-delete-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">' +
+            '<svg class="cf-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>' +
+            '<span class="cf-label">Delete</span></a>';
         } else if (!isYou) {
           actionHtml = '<button class="cf-join-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">+ Join</button>';
         }
@@ -4080,7 +4106,7 @@
             (flightNum ? ' <span class="cf-flight-num">' + escHtml(flightNum) + '</span>' : '') + '</td>' +
           '<td><div class="cf-time">' + fmtDep + '</div><div class="cf-code">' + escHtml(depDateShort + ' ' + depAirport) + '</div></td>' +
           '<td><div class="cf-time">' + fmtArr + '</div><div class="cf-code">' + escHtml(arrDateShort + ' ' + arrAirport) + '</div></td>' +
-          '<td class="cf-col-route" style="font-size:12px;color:#94a3b8;">' + escHtml(route) + '</td>' +
+          '<td class="cf-col-route" style="font-size:13px;color:#94a3b8;">' + escHtml(route) + '</td>' +
           '<td class="cf-col-stop">' + stopHtml + '</td>' +
           '<td>' + actionHtml + '</td>' +
         '</tr>';
