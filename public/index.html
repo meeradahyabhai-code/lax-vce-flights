@@ -3706,29 +3706,58 @@
   var confirmedReturn = [];
 
   function fetchConfirmedFlights() {
-    console.log('[Confirmed] Fetching main sheet...');
+    console.log('[Confirmed] Fetching confirmed tabs + main sheet...');
+    var mainData = null;
+    var outData = null;
+    var retData = null;
+    var done = 0;
+
+    function tryRender() {
+      done++;
+      if (done < 3) return;
+      // Use confirmed tabs if they have data, otherwise fallback to main sheet
+      confirmedOutbound = (outData && outData.length > 0) ? outData : mainData || [];
+      confirmedReturn = (retData && retData.length > 0) ? retData : mainData || [];
+      console.log('[Confirmed] Outbound source:', (outData && outData.length > 0) ? 'Arriving Venice tab' : 'main sheet');
+      console.log('[Confirmed] Return source:', (retData && retData.length > 0) ? 'Departing Istanbul tab' : 'main sheet');
+      renderConfirmedTable('outbound');
+      renderConfirmedTable('return');
+    }
+
+    // Fetch main sheet (fallback)
     fetch(SHEETS_URL + '?action=read')
       .then(function (r) { return r.json(); })
       .then(function (rows) {
-        if (!Array.isArray(rows)) { rows = []; }
-        console.log('[Confirmed] Got ' + (rows.length > 1 ? rows.length - 1 : 0) + ' rows from sheet');
-        if (rows.length > 1) {
-          console.log('[Confirmed] Headers:', rows[0]);
-          console.log('[Confirmed] Sample row:', rows[1].slice(0, 8));
-        }
-        // Both tables use the same data — direction filtering happens in renderConfirmedTable
-        confirmedOutbound = rows;
-        confirmedReturn = rows;
-        renderConfirmedTable('outbound');
-        renderConfirmedTable('return');
+        if (Array.isArray(rows)) mainData = rows;
+        console.log('[Confirmed] Main sheet:', (mainData || []).length, 'rows');
+        tryRender();
       })
-      .catch(function (err) {
-        console.error('[Confirmed] Fetch error:', err.message);
-        confirmedOutbound = [];
-        confirmedReturn = [];
-        renderConfirmedTable('outbound');
-        renderConfirmedTable('return');
-      });
+      .catch(function () { tryRender(); });
+
+    // Fetch Arriving Venice tab
+    fetch(SHEETS_URL + '?action=get_confirmed_flights&tab=arriving_venice')
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        // Handle {flights: [...objects...]} format
+        if (res && Array.isArray(res.flights) && res.flights.length > 0) {
+          outData = res.flights;
+          console.log('[Confirmed] Arriving Venice tab:', outData.length, 'flights');
+        }
+        tryRender();
+      })
+      .catch(function () { tryRender(); });
+
+    // Fetch Departing Istanbul tab
+    fetch(SHEETS_URL + '?action=get_confirmed_flights&tab=departing_istanbul')
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res && Array.isArray(res.flights) && res.flights.length > 0) {
+          retData = res.flights;
+          console.log('[Confirmed] Departing Istanbul tab:', retData.length, 'flights');
+        }
+        tryRender();
+      })
+      .catch(function () { tryRender(); });
   }
 
   function generateFlightId(d) {
@@ -3875,51 +3904,66 @@
       ? 'Sorted by arrival time \u00b7 same flight grouped together'
       : 'Sorted by departure time \u00b7 same flight grouped together';
 
-    // Only use Google Sheet data — never marketplace/flights.json
+    // Parse data — handles both 2D array (main sheet) and array of objects (confirmed tabs)
     var parsed = [];
-    if (Array.isArray(rows) && rows.length > 1) {
-      var headers = rows[0];
-      var headerKeys = headers.map(function (h) { return String(h).toLowerCase().replace(/[\s()]+/g, '_'); });
-      var hasActionCol = headerKeys.indexOf('action') !== -1;
+    if (Array.isArray(rows) && rows.length > 0) {
+      var isObjectArray = rows[0] && typeof rows[0] === 'object' && !Array.isArray(rows[0]);
 
-      for (var i = 1; i < rows.length; i++) {
-        var obj = {};
-        for (var j = 0; j < rows[i].length; j++) {
-          obj[headerKeys[j] || j] = rows[i][j];
+      if (isObjectArray) {
+        // Array of objects from get_confirmed_flights {flights: [...]}
+        rows.forEach(function (obj) {
+          // Normalize keys to lowercase with underscores
+          var norm = {};
+          Object.keys(obj).forEach(function (k) {
+            norm[k.toLowerCase().replace(/[\s()]+/g, '_')] = obj[k];
+          });
+          norm.traveler = norm.traveler || norm.name || '';
+          if (!String(norm.traveler).trim()) return;
+          norm.traveler = String(norm.traveler).trim();
+          // Map confirmed tab column names
+          if (!norm.departure_airport) norm.departure_airport = norm.from_airport_ || '';
+          if (!norm.arrival_airport) norm.arrival_airport = norm.to_airport_ || '';
+          if (!norm.arrival_time) norm.arrival_time = norm.arrival_time_vce_ || '';
+          if (!norm.departure_time_raw) norm.departure_time_raw = norm.departure_time_ist_ || '';
+          parsed.push(norm);
+        });
+      } else if (rows.length > 1) {
+        // 2D array from main sheet action=read
+        var headers = rows[0];
+        var headerKeys = headers.map(function (h) { return String(h).toLowerCase().replace(/[\s()]+/g, '_'); });
+        var hasActionCol = headerKeys.indexOf('action') !== -1;
+
+        for (var i = 1; i < rows.length; i++) {
+          var obj = {};
+          for (var j = 0; j < rows[i].length; j++) {
+            obj[headerKeys[j] || j] = rows[i][j];
+          }
+          obj.traveler = obj.traveler || obj.name || '';
+          if (!String(obj.traveler).trim()) continue;
+          obj.traveler = String(obj.traveler).trim();
+
+          if (hasActionCol) {
+            var isBooked = obj.action === 'booked';
+            var isConfirmed = obj.fare_type === 'Confirmed';
+            if (!isBooked && !isConfirmed) continue;
+          }
+
+          if (!obj.departure_date && obj.flight_date) obj.departure_date = obj.flight_date;
+          parsed.push(obj);
         }
-        // Skip rows without a traveler name (column may be "Traveler" or "Name")
-        var travelerVal = obj.traveler || obj.name || '';
-        if (!String(travelerVal).trim()) continue;
-        obj.traveler = String(travelerVal).trim();
-
-        // If data has an Action column (main picks tab), only show "booked" or "Confirmed" fare_type
-        if (hasActionCol) {
-          var isBooked = obj.action === 'booked';
-          var isConfirmed = obj.fare_type === 'Confirmed';
-          if (!isBooked && !isConfirmed) continue;
-        }
-
-        // Normalize field names from main picks tab format
-        if (!obj.airline && obj.airline_) obj.airline = obj.airline_;
-        if (!obj.departure_date && obj.flight_date) obj.departure_date = obj.flight_date;
-        if (!obj.flight_id && obj.flight_id_) obj.flight_id = obj.flight_id_;
-
-        // Direction filtering: check airports, dates, and tab source
-        var rowArr = (obj.arrival_airport || '').toUpperCase();
-        var rowDep = (obj.departure_airport || '').toUpperCase();
-        var flightDate = cfNormDate(obj.departure_date || obj.flight_date || '');
-        var RETURN_DATES = {'2026-07-13':1,'2026-07-14':1,'2026-07-15':1};
-
-        // Determine if this row is return direction
-        var isReturn = (rowDep === 'IST') || (rowArr !== '' && rowArr !== 'VCE' && rowDep === 'IST') || RETURN_DATES[flightDate];
-
-        // Filter: outbound table skips return flights, return table skips outbound
-        if (dir === 'outbound' && isReturn) continue;
-        if (dir === 'return' && !isReturn) continue;
-
-        parsed.push(obj);
       }
     }
+
+    // Direction filtering
+    var RETURN_DATES = {'2026-07-13':1,'2026-07-14':1,'2026-07-15':1};
+    parsed = parsed.filter(function (obj) {
+      var rowDep = (obj.departure_airport || '').toUpperCase();
+      var flightDate = cfNormDate(obj.departure_date || obj.flight_date || '');
+      var isReturn = (rowDep === 'IST') || RETURN_DATES[flightDate];
+      if (dir === 'outbound' && isReturn) return false;
+      if (dir === 'return' && !isReturn) return false;
+      return true;
+    });
     console.log('[Render Table] ' + dir + ': ' + parsed.length + ' valid rows after filtering');
     if (parsed.length > 0) console.log('[Render Table] Sample row:', JSON.stringify(parsed[0]));
 
@@ -3947,12 +3991,11 @@
     if (parsed.length === 0) {
       html += '<div class="cf-empty">No confirmed flights yet &mdash; be the first to add yours!</div>';
     } else {
-      var thRoute = dir === 'outbound' ? 'Route' : 'Route';
       var thDepart = dir === 'outbound' ? 'Departs' : 'Departs IST';
       var thArrive = dir === 'outbound' ? 'Arrives VCE' : 'Arrives';
       html += '<table class="cf-table"><thead><tr>' +
-        '<th>Traveler</th><th>Airline</th><th>' + thDepart + '</th><th>' + thArrive + '</th>' +
-        '<th class="cf-col-route">' + thRoute + '</th><th class="cf-col-stop">Stopover</th><th></th>' +
+        '<th>Traveler</th><th>Airline / Flight</th><th>' + thDepart + '</th><th>' + thArrive + '</th>' +
+        '<th class="cf-col-route">Route</th><th class="cf-col-stop">Stopover</th><th></th>' +
         '</tr></thead><tbody>';
 
       var lastFid = null;
@@ -3986,18 +4029,18 @@
 
         var airline = r.airline || '';
         var flightNum = r.flight_number || '';
-        var depTime = r.departure_time || '';
-        var arrTime = r.arrival_time || '';
-        var depAirport = r.departure_airport || r.from_airport_ || '';
-        var arrAirport = r.arrival_airport || r.to_airport_ || '';
-        var stopover = r.stopover_airport || '';
-        // Flexible field extraction for varying column names
+        var depTime = '', arrTime = '', depAirport = '', arrAirport = '', stopover = '';
+        // Extract from all possible column name variations
         Object.keys(r).forEach(function (k) {
-          if (!depTime && k.indexOf('departure_time') !== -1 && r[k]) depTime = String(r[k]);
-          if (!arrTime && k.indexOf('arrival_time') !== -1 && r[k]) arrTime = String(r[k]);
-          if (!depAirport && (k.indexOf('from_airport') !== -1 || k.indexOf('departure_airport') !== -1)) depAirport = r[k] || '';
-          if (!arrAirport && (k.indexOf('to_airport') !== -1 || k.indexOf('arrival_airport') !== -1)) arrAirport = r[k] || '';
-          if (!stopover && k.indexOf('stopover') !== -1 && k.indexOf('city') === -1) stopover = r[k] || '';
+          var v = r[k] ? String(r[k]).trim() : '';
+          if (!v) return;
+          var kl = k.toLowerCase();
+          if (!depTime && kl.indexOf('departure_time') !== -1) depTime = v;
+          if (!arrTime && kl.indexOf('arrival_time') !== -1) arrTime = v;
+          if (!depAirport && (kl.indexOf('from_airport') !== -1 || kl === 'departure_airport')) depAirport = v;
+          if (!arrAirport && (kl.indexOf('to_airport') !== -1 || kl === 'arrival_airport')) arrAirport = v;
+          if (!stopover && kl.indexOf('stopover') !== -1 && kl.indexOf('city') === -1) stopover = v;
+          if (!flightNum && kl === 'flight_number') flightNum = v;
         });
 
         var fmtDep = cfFmtTime(depTime);
