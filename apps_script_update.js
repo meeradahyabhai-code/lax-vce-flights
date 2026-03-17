@@ -56,7 +56,7 @@ function handleConfirmedFlights(e) {
     var sheet = ss.getSheetByName(tabName);
     if (!sheet) return ContentService.createTextOutput('[]').setMimeType(ContentService.MimeType.JSON);
 
-    var data = sheet.getDataRange().getValues();
+    var data = sheet.getDataRange().getDisplayValues();
     return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
   }
 
@@ -67,7 +67,7 @@ function handleConfirmedFlights(e) {
 
     var flightId = e.parameter.flight_id || '';
     var deletedBy = (e.parameter.deleted_by || '').toLowerCase();
-    var data = sheet.getDataRange().getValues();
+    var data = sheet.getDataRange().getDisplayValues();
     var headers = data[0];
     var fidCol = headers.indexOf('Flight ID');
     var addedByCol = headers.indexOf('Added By');
@@ -106,7 +106,7 @@ function handleConfirmedFlights(e) {
 
     var flightId = e.parameter.flight_id || '';
     var traveler = e.parameter.traveler || '';
-    var data = sheet.getDataRange().getValues();
+    var data = sheet.getDataRange().getDisplayValues();
     var headers = data[0];
     var fidCol = headers.indexOf('Flight ID');
 
