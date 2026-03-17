@@ -13,8 +13,9 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 PARSE_PROMPT = (
     "Extract flight details from this booking confirmation. "
-    "This is for a family trip: outbound flights end at Venice (VCE), "
-    "return flights depart from Istanbul (IST).\n\n"
+    "This is for a family trip in JUNE/JULY 2026: outbound flights end at Venice (VCE), "
+    "return flights depart from Istanbul (IST). "
+    "The year is 2026 — if the image shows only month/day (e.g. '28 JUN'), use 2026 as the year.\n\n"
     "CRITICAL RULES:\n"
     "- If the image shows multiple legs (e.g., 'Flight 1 of 2' and 'Flight 2 of 2'), "
     "this is ONE connecting itinerary, not separate trips.\n"

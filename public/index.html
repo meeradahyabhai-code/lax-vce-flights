@@ -3785,6 +3785,30 @@
         if (!obj.departure_date && obj.flight_date) obj.departure_date = obj.flight_date;
         if (!obj.flight_id && obj.flight_id_) obj.flight_id = obj.flight_id_;
 
+        // Direction filtering: check arrival/departure airports and flight_id
+        var arrAirport = (obj.arrival_airport || '').toUpperCase();
+        var depAirport = (obj.departure_airport || '').toUpperCase();
+        var fid = obj.flight_id || '';
+        // Detect direction from flight_id prefix or airport codes
+        // Outbound (arriving Venice): arrival = VCE, or no IST departure
+        // Return (departing Istanbul): departure = IST, or flight_id contains return dates
+        var OUTBOUND_DATES = {'2026-06-28':1,'2026-06-29':1,'2026-06-30':1};
+        var RETURN_DATES = {'2026-07-13':1,'2026-07-14':1,'2026-07-15':1};
+        var flightDate = obj.departure_date || obj.flight_date || '';
+        // Normalize date from "2026-06-29T07:00:00.000Z" to "2026-06-29"
+        if (flightDate.length > 10) flightDate = flightDate.slice(0, 10);
+
+        var isOutbound = false;
+        var isReturn = false;
+        if (arrAirport === 'VCE') isOutbound = true;
+        else if (depAirport === 'IST') isReturn = true;
+        else if (RETURN_DATES[flightDate]) isReturn = true;
+        else if (OUTBOUND_DATES[flightDate]) isOutbound = true;
+        else isOutbound = true; // default to outbound
+
+        if (dir === 'outbound' && !isOutbound) continue;
+        if (dir === 'return' && !isReturn) continue;
+
         parsed.push(obj);
       }
     }
