@@ -146,7 +146,7 @@ class TestConfirmedFlightsFrontend(unittest.TestCase):
     def test_fetch_confirmed_flights(self):
         """Should fetch confirmed flights on page load."""
         self.assertIn("fetchConfirmedFlights()", self.html)
-        self.assertIn("get_confirmed_flights", self.html)
+        self.assertIn("action=read", self.html)
 
     def test_refresh_interval(self):
         """Should refresh confirmed flights every 60 seconds."""

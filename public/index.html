@@ -3705,43 +3705,30 @@
   var confirmedOutbound = [];
   var confirmedReturn = [];
 
-  function fetchConfirmedTab(tab, callback) {
-    var url = SHEETS_URL + '?action=get_confirmed_flights&tab=' + tab;
-    console.log('[Confirmed] Fetching:', url);
-    fetch(url, { redirect: 'follow' })
-      .then(function (r) {
-        console.log('[Confirmed] Response status for ' + tab + ':', r.status, r.type);
-        return r.text();
-      })
-      .then(function (text) {
-        console.log('[Confirmed] Raw response for ' + tab + ':', text.slice(0, 300));
-        try {
-          var rows = JSON.parse(text);
-          if (Array.isArray(rows)) { callback(rows); return; }
-        } catch (e) {
-          console.log('[Confirmed] JSON parse failed for ' + tab + ', trying as HTML redirect');
+  function fetchConfirmedFlights() {
+    console.log('[Confirmed] Fetching main sheet...');
+    fetch(SHEETS_URL + '?action=read')
+      .then(function (r) { return r.json(); })
+      .then(function (rows) {
+        if (!Array.isArray(rows)) { rows = []; }
+        console.log('[Confirmed] Got ' + (rows.length > 1 ? rows.length - 1 : 0) + ' rows from sheet');
+        if (rows.length > 1) {
+          console.log('[Confirmed] Headers:', rows[0]);
+          console.log('[Confirmed] Sample row:', rows[1].slice(0, 8));
         }
-        // Apps Script might return HTML redirect — data not available
-        callback([]);
+        // Both tables use the same data — direction filtering happens in renderConfirmedTable
+        confirmedOutbound = rows;
+        confirmedReturn = rows;
+        renderConfirmedTable('outbound');
+        renderConfirmedTable('return');
       })
       .catch(function (err) {
-        console.error('[Confirmed] Fetch error for ' + tab + ':', err.message);
-        callback([]);
+        console.error('[Confirmed] Fetch error:', err.message);
+        confirmedOutbound = [];
+        confirmedReturn = [];
+        renderConfirmedTable('outbound');
+        renderConfirmedTable('return');
       });
-  }
-
-  function fetchConfirmedFlights() {
-    console.log('[Confirmed] Fetching both tabs...');
-    fetchConfirmedTab('arriving_venice', function (rows) {
-      confirmedOutbound = rows;
-      console.log('[Confirmed] Outbound rows:', rows.length > 1 ? rows.length - 1 + ' data rows' : 'empty');
-      renderConfirmedTable('outbound');
-    });
-    fetchConfirmedTab('departing_istanbul', function (rows) {
-      confirmedReturn = rows;
-      console.log('[Confirmed] Return rows:', rows.length > 1 ? rows.length - 1 + ' data rows' : 'empty');
-      renderConfirmedTable('return');
-    });
   }
 
   function generateFlightId(d) {
