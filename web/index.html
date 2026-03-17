@@ -3767,16 +3767,29 @@
   }
 
   function cfNormDate(raw) {
-    // Normalize date to YYYY-MM-DD from various formats
+    // Normalize various date formats to YYYY-MM-DD
     if (!raw) return '';
-    var s = String(raw);
+    var s = String(raw).trim();
+    // Handle "June 29, 2026 + July 15, 2026" — take first date only
+    if (s.indexOf('+') !== -1) s = s.split('+')[0].trim();
+    // Already ISO: "2026-06-29" or "2026-06-29T07:00:00.000Z"
     if (s.length >= 10 && s[4] === '-') return s.slice(0, 10);
-    return s;
+    // Try parsing "June 29, 2026" or "Jun 29, 2026"
+    try {
+      var d = new Date(s);
+      if (!isNaN(d)) {
+        var y = d.getFullYear();
+        var m = String(d.getMonth() + 1).padStart(2, '0');
+        var day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+      }
+    } catch (e) {}
+    return '';
   }
 
   function cfFmtDate(ymd) {
-    // Format "2026-06-29" as "Monday · June 29"
-    if (!ymd || ymd.length < 10) return ymd;
+    // Format "2026-06-29" as "Sunday, June 29"
+    if (!ymd || ymd.length < 10) return ymd || '';
     try {
       var d = new Date(ymd + 'T12:00:00');
       if (isNaN(d)) return ymd;
@@ -3787,7 +3800,7 @@
   function cfFmtDateShort(raw) {
     // Format as MM/DD/YY
     var ymd = cfNormDate(raw);
-    if (!ymd || ymd.length < 10) return ymd || '';
+    if (!ymd || ymd.length < 10) return '';
     var parts = ymd.split('-');
     return parts[1] + '/' + parts[2] + '/' + parts[0].slice(2);
   }
@@ -3906,10 +3919,12 @@
         var addedBy = r.added_by || '';
 
         if (!isNewGroup) {
-          // Same flight group — just show traveler
-          html += '<tr><td><span style="font-weight:500">' + escHtml(traveler) + '</span>' + youPill +
-            ' <span class="cf-same-flight">same flight</span></td>' +
-            '<td></td><td></td><td></td><td class="cf-col-route"></td><td class="cf-col-stop"></td><td></td></tr>';
+          // Same flight group — traveler name, "same flight" under airline, arrows in time cols
+          html += '<tr><td><span style="font-weight:500">' + escHtml(traveler) + '</span>' + youPill + '</td>' +
+            '<td><span class="cf-same-flight">same flight</span></td>' +
+            '<td style="text-align:center;color:#94a3b8;font-size:16px;">\u2191</td>' +
+            '<td style="text-align:center;color:#94a3b8;font-size:16px;">\u2191</td>' +
+            '<td class="cf-col-route"></td><td class="cf-col-stop"></td><td></td></tr>';
           return;
         }
 
@@ -3946,8 +3961,8 @@
           actionHtml = '<a class="cf-action-link cf-delete-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">Delete</a>';
         }
 
-        var depDateShort = cfFmtDateShort(r.departure_date);
-        var arrDateShort = cfFmtDateShort(r.arrival_date || r.departure_date);
+        var depDateShort = cfFmtDateShort(r.departure_date || r.flight_date);
+        var arrDateShort = cfFmtDateShort(r.arrival_date);
 
         html += '<tr data-fid="' + escHtml(fid) + '" style="' + (isNewGroup ? 'border-top:1.5px solid #ddd;' : '') + '">' +
           '<td><span style="font-weight:500">' + escHtml(traveler) + '</span>' + youPill + '</td>' +
