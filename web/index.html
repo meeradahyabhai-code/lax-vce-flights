@@ -3689,7 +3689,8 @@
     "Dahyabhai Nita",
     "Dahyabhai Suresh",
     "Dharna Savannah",
-    "Dinesh Daviddinesh Raya",
+    "Dinesh David",
+    "Dinesh Raya",
     "Dinesh Dilani",
     "Dinesh Sahana",
     "Dinesh Vinisha",
@@ -3952,6 +3953,12 @@
       }
     }
 
+    // Default terminal airports: outbound always arrives VCE, return always departs IST
+    parsed.forEach(function (obj) {
+      if (dir === 'outbound' && !obj.arrival_airport) obj.arrival_airport = 'VCE';
+      if (dir === 'return' && !obj.departure_airport) obj.departure_airport = 'IST';
+    });
+
     // Direction filtering
     var RETURN_DATES = {'2026-07-13':1,'2026-07-14':1,'2026-07-15':1};
     parsed = parsed.filter(function (obj) {
@@ -4043,6 +4050,10 @@
 
         var fmtDep = cfFmtTime(depTime);
         var fmtArr = cfFmtTime(arrTime);
+
+        // Enforce correct terminal airports: outbound always arrives VCE, return always departs IST
+        if (dir === 'outbound' && arrAirport !== 'VCE') arrAirport = 'VCE';
+        if (dir === 'return' && depAirport !== 'IST') depAirport = 'IST';
 
         var route = depAirport + (stopover ? ' \u2192 ' + stopover : '') + ' \u2192 ' + arrAirport;
         var stopHtml = stopover ? '<span class="cf-stopover-pill">' + escHtml(stopover) + '</span>' : '\u2014';

@@ -185,6 +185,14 @@ class TestConfirmedFlightsFrontend(unittest.TestCase):
         """generateFlightId should create a consistent ID."""
         self.assertIn("function generateFlightId(", self.html)
 
+    def test_outbound_enforces_vce_arrival(self):
+        """Outbound table should force arrival airport to VCE."""
+        self.assertIn("if (dir === 'outbound' && arrAirport !== 'VCE') arrAirport = 'VCE'", self.html)
+
+    def test_return_enforces_ist_departure(self):
+        """Return table should force departure airport to IST."""
+        self.assertIn("if (dir === 'return' && depAirport !== 'IST') depAirport = 'IST'", self.html)
+
 
 class TestAppsScriptUpdate(unittest.TestCase):
     """Tests for the Google Apps Script update file."""
