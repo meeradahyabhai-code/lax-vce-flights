@@ -3900,9 +3900,7 @@
     console.log('[Render Table] Rendering ' + dir + ', element found:', !!el);
     var rows = dir === 'outbound' ? confirmedOutbound : confirmedReturn;
     var title = dir === 'outbound' ? 'Arriving in Venice' : 'Departing Istanbul';
-    var subtitle = dir === 'outbound'
-      ? 'Sorted by arrival time \u00b7 same flight grouped together'
-      : 'Sorted by departure time \u00b7 same flight grouped together';
+    var subtitle = 'Sorted by departure time \u00b7 same flight grouped together';
 
     // Parse data — handles both 2D array (main sheet) and array of objects (confirmed tabs)
     var parsed = [];
@@ -4051,13 +4049,15 @@
 
         // Action column
         var actionHtml = '';
-        if (isYou) {
-          // Already on flight
-        } else {
+        var myFlights = getMyFlights();
+        var isMyFlight = myFlights.indexOf(fid) !== -1;
+        var isAdder = userName && addedBy && addedBy.toLowerCase().indexOf(userName.toLowerCase()) !== -1;
+
+        if (isMyFlight || isAdder) {
+          actionHtml = '<a class="cf-action-link cf-edit-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">Edit</a>' +
+            '<a class="cf-action-link cf-delete-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">Delete</a>';
+        } else if (!isYou) {
           actionHtml = '<button class="cf-join-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">+ Join</button>';
-        }
-        if (userName && addedBy && addedBy.toLowerCase().indexOf(userName.toLowerCase()) !== -1) {
-          actionHtml = '<a class="cf-action-link cf-delete-btn" data-fid="' + escHtml(fid) + '" data-dir="' + dir + '">Delete</a>';
         }
 
         var depDateShort = cfFmtDateShort(r.departure_date || r.flight_date);
@@ -4116,11 +4116,38 @@
         setTimeout(fetchConfirmedFlights, 2000);
       });
     });
+    // Edit handlers
+    el.querySelectorAll('.cf-edit-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var fid = btn.dataset.fid;
+        var editDir = btn.dataset.dir;
+        // Find the row data from parsed results
+        var rowData = parsed.find(function (r) { return (r.flight_id || r._sortFid) === fid; });
+        if (rowData) {
+          rowData._direction = editDir;
+          openEditFlightModal(rowData);
+        }
+      });
+    });
   }
 
   // ---- Add Flight Modal ----
   var afmParsed = {};
   var afmDirection = 'outbound';
+  var afmScreenshotDataUrl = null;
+  var afmEditMode = false;
+  var afmEditFlightId = null;
+
+  function getMyFlights() {
+    try { return JSON.parse(sessionStorage.getItem('dcf_my_flights')) || []; }
+    catch (e) { return []; }
+  }
+  function addMyFlight(fid) {
+    var list = getMyFlights();
+    if (list.indexOf(fid) === -1) list.push(fid);
+    sessionStorage.setItem('dcf_my_flights', JSON.stringify(list));
+  }
 
   function closeAddFlightModal() {
     var ov = document.querySelector('.afm-overlay');
@@ -4220,6 +4247,7 @@
   }
 
   function sendToParseAPI(imageDataUrl) {
+    afmScreenshotDataUrl = imageDataUrl;
     fetch('/api/parse_screenshot', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -4262,9 +4290,12 @@
       '<button class="afm-dir-btn' + (p.direction === 'return' ? ' active' : '') + '" data-dir="return">Return (from Istanbul)</button>' +
     '</div>';
 
+    var modalTitle = afmEditMode ? 'Edit Flight' : 'Add My Flight';
+    var stopAirportVal = p.stopover_airport || (p.stopovers && p.stopovers[0] ? p.stopovers[0].airport : '') || '';
+
     box.innerHTML = '<button class="afm-close">&times;</button>' +
-      '<div class="afm-title">Add My Flight</div>' +
-      stepsHTML(2) +
+      '<div class="afm-title">' + modalTitle + '</div>' +
+      (afmEditMode ? '' : stepsHTML(2)) +
       dirToggle +
       '<div class="afm-row">' +
         fieldHTML('Airline', 'airline', p.airline, true) +
@@ -4286,9 +4317,11 @@
         fieldHTML('Arrival Date', 'arrival_date', p.arrival_date, true) +
         fieldHTML('Arrival Time', 'arrival_time', p.arrival_time, true) +
       '</div>' +
-      fieldHTML('Stopover Airport', 'stopover_airport', (p.stopovers && p.stopovers[0] ? p.stopovers[0].airport : ''), false) +
-      '<button class="afm-btn-primary" id="afm-next-travelers">Next: Add Travelers</button>' +
-      '<button class="afm-btn-secondary" id="afm-back-upload">Back</button>';
+      fieldHTML('Stopover Airport', 'stopover_airport', stopAirportVal, false) +
+      (afmEditMode
+        ? '<button class="afm-btn-primary" id="afm-update-flight">Update Flight</button>'
+        : '<button class="afm-btn-primary" id="afm-next-travelers">Next: Add Travelers</button>') +
+      '<button class="afm-btn-secondary" id="afm-back-upload">' + (afmEditMode ? 'Cancel' : 'Back') + '</button>';
 
     box.querySelector('.afm-close').addEventListener('click', closeAddFlightModal);
     box.querySelectorAll('.afm-dir-btn').forEach(function (btn) {
@@ -4299,9 +4332,26 @@
       });
     });
     box.querySelector('#afm-back-upload').addEventListener('click', function () {
-      openAddFlightModal(afmDirection);
+      if (afmEditMode) { closeAddFlightModal(); } else { openAddFlightModal(afmDirection); }
     });
-    box.querySelector('#afm-next-travelers').addEventListener('click', function () {
+
+    // Edit mode: update flight
+    var updateBtn = box.querySelector('#afm-update-flight');
+    if (updateBtn) {
+      updateBtn.addEventListener('click', function () {
+        box.querySelectorAll('[data-key]').forEach(function (inp) {
+          p[inp.dataset.key] = inp.value.trim();
+        });
+        var required = ['airline', 'departure_airport', 'departure_date', 'departure_time', 'arrival_airport', 'arrival_date', 'arrival_time'];
+        var missing = required.filter(function (k) { return !p[k]; });
+        if (missing.length > 0) { alert('Please fill in: ' + missing.join(', ')); return; }
+        afmParsed = p;
+        updateConfirmedFlight();
+      });
+    }
+
+    var nextBtn = box.querySelector('#afm-next-travelers');
+    if (nextBtn) nextBtn.addEventListener('click', function () {
       // Gather edited values
       box.querySelectorAll('[data-key]').forEach(function (inp) {
         p[inp.dataset.key] = inp.value.trim();
@@ -4417,11 +4467,28 @@
     fetch(url, { mode: 'no-cors' })
       .then(function () {
         console.log('[Save Flight] Step 2 — Write request sent (no-cors, opaque response expected)');
-        // Step 3 — Close modal and refresh after a short delay for sheet to process
+        // Store in session for edit capability
+        addMyFlight(flightId);
+
+        // Email screenshot (fire and forget)
+        if (afmScreenshotDataUrl) {
+          var emailParams = new URLSearchParams({
+            action: 'email_screenshot',
+            travelers: travelers.join(','),
+            airline: p.airline || '',
+            route: (p.departure_airport || '') + ' \u2192 ' + (p.arrival_airport || ''),
+            dates: (p.departure_date || '') + ' to ' + (p.arrival_date || ''),
+            image: afmScreenshotDataUrl,
+          });
+          console.log('[Save Flight] Sending screenshot email...');
+          fetch(SHEETS_URL + '?' + emailParams.toString(), { mode: 'no-cors' }).catch(function () {});
+        }
+
+        // Close modal and refresh
         closeAddFlightModal();
         console.log('[Save Flight] Step 3 — Modal closed, waiting 1.5s for sheet to process...');
         setTimeout(function () {
-          console.log('[Save Flight] Step 4 — Refreshing confirmed flights table for tab:', tab);
+          console.log('[Save Flight] Step 4 — Refreshing confirmed flights table');
           fetchConfirmedFlights();
         }, 1500);
       })
@@ -4440,6 +4507,74 @@
           alert('Failed to save flight: ' + err.message);
           closeAddFlightModal();
         }
+      });
+  }
+
+  function openEditFlightModal(flightData) {
+    afmEditMode = true;
+    afmEditFlightId = flightData.flight_id || '';
+    afmParsed = {
+      airline: flightData.airline || '',
+      flight_number: flightData.flight_number || '',
+      departure_airport: flightData.departure_airport || '',
+      departure_city: flightData.departure_city || '',
+      departure_date: flightData.departure_date || '',
+      departure_time: flightData.departure_time || '',
+      arrival_airport: flightData.arrival_airport || '',
+      arrival_city: flightData.arrival_city || '',
+      arrival_date: flightData.arrival_date || '',
+      arrival_time: flightData.arrival_time || '',
+      stopover_airport: flightData.stopover_airport || '',
+      direction: flightData._direction || 'outbound',
+    };
+    afmDirection = afmParsed.direction;
+    closeAddFlightModal();
+
+    var html = '<div class="afm-overlay"><div class="afm-box"></div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+    var overlay = document.querySelector('.afm-overlay');
+    overlay.querySelector('.afm-box');
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeAddFlightModal(); });
+    showReviewStep();
+  }
+
+  function updateConfirmedFlight() {
+    var p = afmParsed;
+    var tab = p.direction === 'return' ? 'departing_istanbul' : 'arriving_venice';
+    var flightId = afmEditFlightId || generateFlightId(p);
+
+    var params = new URLSearchParams({
+      action: 'update_confirmed_flight',
+      tab: tab,
+      flight_id: flightId,
+      airline: p.airline || '',
+      flight_number: p.flight_number || '',
+      departure_airport: p.departure_airport || '',
+      departure_city: p.departure_city || '',
+      departure_date: p.departure_date || '',
+      departure_time: p.departure_time || '',
+      arrival_airport: p.arrival_airport || '',
+      arrival_city: p.arrival_city || '',
+      arrival_date: p.arrival_date || '',
+      arrival_time: p.arrival_time || '',
+      stopover_airport: p.stopover_airport || '',
+      updated_by: getUserName() || '',
+    });
+
+    var url = SHEETS_URL + '?' + params.toString();
+    console.log('[Update Flight] URL:', url);
+
+    lastSavedFlightId = flightId;
+    closeAddFlightModal();
+    afmEditMode = false;
+    afmEditFlightId = null;
+
+    fetch(url, { mode: 'no-cors' })
+      .then(function () {
+        setTimeout(fetchConfirmedFlights, 1500);
+      })
+      .catch(function () {
+        setTimeout(fetchConfirmedFlights, 2000);
       });
   }
 
