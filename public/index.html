@@ -3863,20 +3863,16 @@
     console.log('[Render Table] ' + dir + ': ' + parsed.length + ' valid rows after filtering');
     if (parsed.length > 0) console.log('[Render Table] Sample row:', JSON.stringify(parsed[0]));
 
-    // Sort by time — flexible key matching
+    // Sort: by departure date, then flight_id (groups same flights), then time
+    parsed.forEach(function (r) {
+      r._sortDate = cfNormDate(r.departure_date || r.flight_date || '');
+      r._sortTime = r.departure_time || r.arrival_time || '';
+      r._sortFid = r.flight_id || '';
+    });
     parsed.sort(function (a, b) {
-      var at = '', bt = '';
-      Object.keys(a).forEach(function (k) {
-        if (k.indexOf('arrival_time') !== -1 || (dir === 'return' && k.indexOf('departure_time') !== -1)) {
-          if (a[k]) at = String(a[k]);
-        }
-      });
-      Object.keys(b).forEach(function (k) {
-        if (k.indexOf('arrival_time') !== -1 || (dir === 'return' && k.indexOf('departure_time') !== -1)) {
-          if (b[k]) bt = String(b[k]);
-        }
-      });
-      return at.localeCompare(bt);
+      if (a._sortDate !== b._sortDate) return a._sortDate.localeCompare(b._sortDate);
+      if (a._sortFid !== b._sortFid) return a._sortFid.localeCompare(b._sortFid);
+      return a._sortTime.localeCompare(b._sortTime);
     });
 
     var userName = getUserName() || '';
@@ -3902,7 +3898,7 @@
       var lastFid = null;
       var lastDate = null;
       parsed.forEach(function (r) {
-        var depDate = cfNormDate(r.departure_date || '');
+        var depDate = r._sortDate || '';
         if (depDate && depDate !== lastDate) {
           lastDate = depDate;
           var dayLabel = cfFmtDate(depDate);
@@ -3962,14 +3958,14 @@
         }
 
         var depDateShort = cfFmtDateShort(r.departure_date || r.flight_date);
-        var arrDateShort = cfFmtDateShort(r.arrival_date);
+        var arrDateShort = cfFmtDateShort(r.arrival_date) || depDateShort;
 
         html += '<tr data-fid="' + escHtml(fid) + '" style="' + (isNewGroup ? 'border-top:1.5px solid #ddd;' : '') + '">' +
           '<td><span style="font-weight:500">' + escHtml(traveler) + '</span>' + youPill + '</td>' +
           '<td><span class="cf-airline-name">' + escHtml(airline) + '</span>' +
             (flightNum ? ' <span class="cf-flight-num">' + escHtml(flightNum) + '</span>' : '') + '</td>' +
-          '<td><div class="cf-time">' + fmtDep + '</div><div class="cf-code">' + escHtml(depDateShort) + ' ' + escHtml(depAirport) + '</div></td>' +
-          '<td><div class="cf-time">' + fmtArr + '</div><div class="cf-code">' + escHtml(arrDateShort) + ' ' + escHtml(arrAirport) + '</div></td>' +
+          '<td><div class="cf-time">' + fmtDep + '</div><div class="cf-code">' + escHtml(depDateShort + ' ' + depAirport) + '</div></td>' +
+          '<td><div class="cf-time">' + fmtArr + '</div><div class="cf-code">' + escHtml(arrDateShort + ' ' + arrAirport) + '</div></td>' +
           '<td class="cf-col-route" style="font-size:12px;color:#94a3b8;">' + escHtml(route) + '</td>' +
           '<td class="cf-col-stop">' + stopHtml + '</td>' +
           '<td>' + actionHtml + '</td>' +
