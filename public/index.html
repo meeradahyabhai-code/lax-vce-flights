@@ -3737,6 +3737,66 @@
     return code + '-' + (d.departure_date || '') + '-' + fn;
   }
 
+  function showJoinFlightPopover(btn) {
+    // Remove any existing join popover
+    var old = document.querySelector('.cf-join-popover');
+    if (old) old.remove();
+
+    var fid = btn.dataset.fid;
+    var dir = btn.dataset.dir;
+    var userName = getUserName() || '';
+
+    var checkboxes = TRAVELERS.map(function (name) {
+      var checked = userName && name.toLowerCase().indexOf(userName.toLowerCase()) !== -1 ? ' checked' : '';
+      return '<label style="display:block;padding:3px 0;font-size:13px;cursor:pointer;">' +
+        '<input type="checkbox" value="' + escHtml(name) + '"' + checked + ' style="margin-right:6px;"> ' +
+        escHtml(name) + '</label>';
+    }).join('');
+
+    var popover = document.createElement('div');
+    popover.className = 'cf-join-popover';
+    popover.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2001;' +
+      'background:#fff;border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,0.18);padding:20px 24px;' +
+      'width:340px;max-width:90vw;max-height:80vh;overflow-y:auto;';
+    popover.innerHTML =
+      '<div style="font-family:var(--sans);font-size:14px;font-weight:500;color:var(--azure);margin-bottom:12px;">Who is joining this flight?</div>' +
+      '<div style="max-height:300px;overflow-y:auto;margin-bottom:12px;">' + checkboxes + '</div>' +
+      '<button class="afm-btn-primary" id="cf-join-save">Join Flight</button>' +
+      '<button class="afm-btn-secondary" id="cf-join-cancel">Cancel</button>';
+
+    // Backdrop
+    var backdrop = document.createElement('div');
+    backdrop.style.cssText = 'position:fixed;inset:0;z-index:2000;background:rgba(10,10,15,0.4);';
+    backdrop.addEventListener('click', function () { backdrop.remove(); popover.remove(); });
+
+    document.body.appendChild(backdrop);
+    document.body.appendChild(popover);
+
+    popover.querySelector('#cf-join-cancel').addEventListener('click', function () {
+      backdrop.remove(); popover.remove();
+    });
+
+    popover.querySelector('#cf-join-save').addEventListener('click', function () {
+      var selected = [];
+      popover.querySelectorAll('input[type=checkbox]:checked').forEach(function (cb) {
+        selected.push(cb.value);
+      });
+      if (selected.length === 0) { alert('Select at least one traveler.'); return; }
+
+      selected.forEach(function (name) {
+        var params = new URLSearchParams({
+          action: 'join_flight', flight_id: fid, traveler: name,
+          tab: dir === 'outbound' ? 'arriving_venice' : 'departing_istanbul'
+        });
+        fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' }).catch(function () {});
+      });
+
+      backdrop.remove();
+      popover.remove();
+      setTimeout(fetchConfirmedFlights, 2000);
+    });
+  }
+
   // Format helpers for confirmed flights table
   function cfFmtTime(raw) {
     // Handles: "15:50", "1899-12-31T01:55:00.000Z", "2026-06-29T15:50:00", null
@@ -3997,14 +4057,7 @@
     // Join handlers
     el.querySelectorAll('.cf-join-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        var traveler = prompt('Enter your full name as it appears on your ticket:');
-        if (!traveler) return;
-        var params = new URLSearchParams({
-          action: 'join_flight', flight_id: btn.dataset.fid, traveler: traveler,
-          tab: btn.dataset.dir === 'outbound' ? 'arriving_venice' : 'departing_istanbul'
-        });
-        fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' });
-        setTimeout(fetchConfirmedFlights, 2000);
+        showJoinFlightPopover(btn);
       });
     });
     // Delete handlers
