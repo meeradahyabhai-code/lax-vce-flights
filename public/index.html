@@ -4479,26 +4479,6 @@
     lastSavedFlightId = flightId;
     lastSavedTab = tab;
 
-    // Also write as a "booked" entry to the main picks format as fallback
-    // This ensures the flight shows up even if the Apps Script confirmed handler isn't deployed
-    travelers.forEach(function (name) {
-      var fallbackParams = new URLSearchParams({
-        name: name,
-        origin: p.departure_airport || '',
-        action: 'booked',
-        airline: p.airline || '',
-        flight_date: p.departure_date || '',
-        departure_time: p.departure_time || '',
-        arrival_time: p.arrival_time || '',
-        layover: stopAirport ? 'via ' + stopAirport : 'Nonstop',
-        price: '0',
-        fare_type: 'Confirmed',
-        flight_id: flightId,
-      });
-      console.log('[Save Flight] Fallback write for:', name);
-      fetch(SHEETS_URL + '?' + fallbackParams.toString(), { mode: 'no-cors' }).catch(function () {});
-    });
-
     // Primary write to confirmed flights tab
     console.log('[Save Flight] Step 2 — Sending write request (no-cors)...');
     fetch(url, { mode: 'no-cors' })
