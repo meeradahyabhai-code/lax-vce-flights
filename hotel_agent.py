@@ -5,8 +5,10 @@ SerpAPI Google Hotels → pricing ($/night, total), star class, photos, booking 
 Google Places API     → user ratings (1-5), review text, editorial summary, loyalty links
 """
 
+import json
 import math
 import os
+import re
 import sys
 
 from dotenv import load_dotenv
@@ -123,6 +125,137 @@ def detect_brand(hotel_name: str) -> str:
         if brand in name_lower:
             return "hilton"
     return "independent"
+
+
+# ---------------------------------------------------------------------------
+# Official star ratings from Regione del Veneto open data
+# ---------------------------------------------------------------------------
+
+_star_lookup: dict | None = None
+
+
+def _normalize_star_name(name: str) -> str:
+    """Normalize hotel name for star lookup matching."""
+    n = (name or "").lower().strip()
+    n = re.sub(r"[^\w\s]", " ", n)  # strip punctuation
+    n = re.sub(r"\s+", " ", n).strip()
+    return n
+
+
+def load_star_lookup() -> dict[str, int]:
+    """Load official Venice hotel star ratings from JSON.
+
+    Returns a dict mapping normalized hotel name -> star count (int).
+    Cached after first load.
+    """
+    global _star_lookup
+    if _star_lookup is not None:
+        return _star_lookup
+
+    data_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "data", "hotel_stars_venice.json"
+    )
+    _star_lookup = {}
+    try:
+        with open(data_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        for h in data.get("hotels", []):
+            norm = _normalize_star_name(h.get("name", ""))
+            if norm and h.get("stars"):
+                _star_lookup[norm] = h["stars"]
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+    return _star_lookup
+
+
+def apply_official_stars(hotels: list[dict]) -> list[dict]:
+    """Fill in star_class from official Veneto open data for hotels with star_class == 0."""
+    lookup = load_star_lookup()
+    if not lookup:
+        return hotels
+
+    # Sort longest first so "jw marriott" is tried before "marriott"
+    brand_prefixes = sorted(MARRIOTT_BRANDS + HILTON_BRANDS, key=len, reverse=True)
+
+    for h in hotels:
+        if h.get("star_class", 0) != 0:
+            continue
+
+        name = h.get("name", "")
+        norm = _normalize_star_name(name)
+
+        # 1. Exact normalized match
+        if norm in lookup:
+            h["star_class"] = lookup[norm]
+            continue
+
+        # 2. Substring match (either direction) — prefer longest match
+        #    Require the shorter string to be at least 50% of the longer
+        #    to avoid false positives like "venice resort" matching everything.
+        best_match_name = ""
+        best_match_stars = 0
+        for lookup_name, stars in lookup.items():
+            if len(norm) >= 6 and len(lookup_name) >= 6:
+                if norm in lookup_name or lookup_name in norm:
+                    shorter = min(len(norm), len(lookup_name))
+                    longer = max(len(norm), len(lookup_name))
+                    if shorter / longer >= 0.5 and len(lookup_name) > len(best_match_name):
+                        best_match_name = lookup_name
+                        best_match_stars = stars
+        if best_match_stars:
+            h["star_class"] = best_match_stars
+            continue
+
+        # 3. For branded hotels, try without the brand prefix
+        matched = False
+        for prefix in brand_prefixes:
+            if prefix in norm:
+                stripped = norm.replace(prefix, "").strip()
+                stripped = re.sub(r"\s+", " ", stripped).strip()
+                if not stripped:
+                    continue
+                if stripped in lookup:
+                    h["star_class"] = lookup[stripped]
+                    matched = True
+                    break
+                # Substring match on stripped name — prefer longest match
+                best_name = ""
+                best_stars = 0
+                for lookup_name, stars in lookup.items():
+                    if len(stripped) >= 6 and len(lookup_name) >= 6:
+                        if stripped in lookup_name or lookup_name in stripped:
+                            shorter = min(len(stripped), len(lookup_name))
+                            longer = max(len(stripped), len(lookup_name))
+                            if shorter / longer >= 0.5 and len(lookup_name) > len(best_name):
+                                best_name = lookup_name
+                                best_stars = stars
+                if best_stars:
+                    h["star_class"] = best_stars
+                    matched = True
+                    break
+        if matched:
+            continue
+
+        # 4. Word-set match for reordered names (e.g. "Hilton Molino Stucky"
+        #    vs "Molino Stucky Hilton"). Require high overlap.
+        STOP = {"hotel", "the", "a", "di", "e", "venice", "venezia", "italy"}
+        norm_words = set(norm.split()) - STOP
+        if len(norm_words) >= 2:
+            best_overlap = 0
+            best_stars_ws = 0
+            for lookup_name, stars in lookup.items():
+                lk_words = set(lookup_name.split()) - STOP
+                if not lk_words:
+                    continue
+                overlap = len(norm_words & lk_words)
+                min_w = min(len(norm_words), len(lk_words))
+                if overlap >= 2 and overlap / min_w >= 0.6 and overlap > best_overlap:
+                    best_overlap = overlap
+                    best_stars_ws = stars
+            if best_stars_ws:
+                h["star_class"] = best_stars_ws
+
+    return hotels
 
 
 # ---------------------------------------------------------------------------

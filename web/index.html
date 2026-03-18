@@ -2381,7 +2381,9 @@
     'Amex Membership Rewards', 'Chase Ultimate Rewards', 'Citi ThankYou',
     'Capital One Miles', 'Delta SkyMiles', 'United MileagePlus',
     'British Airways Avios', 'Emirates Skywards', 'Singapore KrisFlyer',
-    'Qatar Privilege Club', 'Other'
+    'Qatar Privilege Club',
+    'Marriott Bonvoy', 'Hilton Honors', 'World of Hyatt', 'IHG One Rewards',
+    'Other'
   ];
 
   var _sparkleId = 0;
@@ -2415,14 +2417,14 @@
       ' &middot; ' + stops + ' &middot; ' + escHtml(fData.search_date || '');
   }
 
-  function showProgramsModal(fData) {
+  function showProgramsModal(summaryHtml, callback) {
     closePointsModal();
 
     var html = '<div class="points-modal-overlay">' +
       '<div class="points-modal-box" style="position:relative;">' +
         '<button class="points-modal-close">&times;</button>' +
         '<div class="points-modal-title">Points AI</div>' +
-        '<div class="points-modal-flight">' + flightSummaryLine(fData) + '</div>' +
+        '<div class="points-modal-flight">' + summaryHtml + '</div>' +
         '<div class="points-programs-title">Which loyalty programs do you have?</div>';
     LOYALTY_PROGRAMS.forEach(function (prog) {
       html += '<label><input type="checkbox" value="' + escHtml(prog) + '"> ' + escHtml(prog) + '</label>';
@@ -2447,7 +2449,7 @@
       if (checked.length === 0) checked = ['None'];
       localStorage.setItem('dcf_points_programs', JSON.stringify(checked));
       closePointsModal();
-      fetchPointsStrategy(fData);
+      callback();
     });
   }
 
@@ -2457,7 +2459,7 @@
     var fid = fData.primary_airline + '|' + als + '|' + fns + '|' + fData.search_date + '|' + fData.departure_time;
     console.log('[Points AI] Request for:', fData.primary_airline, '| airlines:', fData.airlines, '| fid:', fid);
     if (pointsAICache[fid]) {
-      showPointsResult(fData, pointsAICache[fid]);
+      showPointsResult(flightSummaryLine(fData), pointsAICache[fid]);
       return;
     }
 
@@ -2505,20 +2507,20 @@
     .then(function (res) {
       var text = res.strategy || 'Points strategy unavailable right now \u2014 try again later';
       pointsAICache[fid] = text;
-      showPointsResult(fData, text);
+      showPointsResult(flightSummaryLine(fData), text);
     })
     .catch(function () {
-      showPointsResult(fData, 'Points strategy unavailable right now \u2014 try again later');
+      showPointsResult(flightSummaryLine(fData), 'Points strategy unavailable right now \u2014 try again later');
     });
   }
 
-  function showPointsResult(fData, text) {
+  function showPointsResult(summaryHtml, text) {
     closePointsModal();
     var html = '<div class="points-modal-overlay">' +
       '<div class="points-modal-box" style="position:relative;">' +
         '<button class="points-modal-close">&times;</button>' +
         '<div class="points-modal-title">Points AI</div>' +
-        '<div class="points-modal-flight">' + flightSummaryLine(fData) + '</div>' +
+        '<div class="points-modal-flight">' + summaryHtml + '</div>' +
         escHtml(text) +
       '</div></div>';
 
@@ -2537,7 +2539,7 @@
     var fData = JSON.parse(decodeURIComponent(btn.getAttribute('data-flight')));
 
     if (!getSavedPrograms()) {
-      showProgramsModal(fData);
+      showProgramsModal(flightSummaryLine(fData), function() { fetchPointsStrategy(fData); });
     } else {
       fetchPointsStrategy(fData);
     }
@@ -2546,6 +2548,95 @@
   function attachPointsAIHandlers() {
     document.querySelectorAll('.points-ai-trigger[data-flight]').forEach(function (btn) {
       btn.addEventListener('click', handlePointsAIClick);
+    });
+  }
+
+  // ---- Hotel Points AI ----
+  var hotelPointsAICache = {};
+
+  function hotelSummaryLine(hData) {
+    var stars = hData.star_class ? hData.star_class + '\u2605' : '';
+    var rate = hData.rate_per_night ? '$' + hData.rate_per_night + '/night' : 'Price N/A';
+    var nights = hData.nights ? hData.nights + ' night' + (hData.nights !== 1 ? 's' : '') : '';
+    return escHtml(hData.name) +
+      (stars ? ' &middot; ' + stars : '') +
+      ' &middot; ' + rate +
+      (nights ? ' &middot; ' + nights : '');
+  }
+
+  function fetchHotelPointsStrategy(hData) {
+    var hid = 'HOTEL:' + hData.name + '|' + hData.check_in;
+    if (hotelPointsAICache[hid]) {
+      showPointsResult(hotelSummaryLine(hData), hotelPointsAICache[hid]);
+      return;
+    }
+
+    closePointsModal();
+
+    var html = '<div class="points-modal-overlay">' +
+      '<div class="points-modal-box" style="position:relative;">' +
+        '<button class="points-modal-close">&times;</button>' +
+        '<div class="points-modal-title">Points AI</div>' +
+        '<div class="points-modal-flight">' + hotelSummaryLine(hData) + '</div>' +
+        '<div class="points-ai-shimmer"></div>' +
+      '</div></div>';
+
+    document.body.insertAdjacentHTML('beforeend', html);
+    var overlay = document.querySelector('.points-modal-overlay');
+    overlay.querySelector('.points-modal-close').addEventListener('click', closePointsModal);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closePointsModal();
+    });
+
+    var programs = getSavedPrograms() || [];
+
+    fetch('/api/hotel-points', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        hotel: {
+          name: hData.name,
+          brand: hData.brand || 'independent',
+          star_class: hData.star_class,
+          rate_per_night: hData.rate_per_night,
+          total_rate: hData.total_rate,
+          nights: hData.nights,
+          city: hData.city || 'venice',
+          cc_programs: hData.cc_programs || [],
+          check_in: hData.check_in,
+          overall_rating: hData.overall_rating,
+        },
+        programs: programs,
+        days_until_travel: daysToGo(),
+      }),
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+      var text = res.strategy || 'Points strategy unavailable right now \u2014 try again later';
+      hotelPointsAICache[hid] = text;
+      showPointsResult(hotelSummaryLine(hData), text);
+    })
+    .catch(function () {
+      showPointsResult(hotelSummaryLine(hData), 'Points strategy unavailable right now \u2014 try again later');
+    });
+  }
+
+  function handleHotelPointsAIClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var btn = e.currentTarget;
+    var hData = JSON.parse(decodeURIComponent(btn.getAttribute('data-hotel')));
+
+    if (!getSavedPrograms()) {
+      showProgramsModal(hotelSummaryLine(hData), function() { fetchHotelPointsStrategy(hData); });
+    } else {
+      fetchHotelPointsStrategy(hData);
+    }
+  }
+
+  function attachHotelPointsAIHandlers() {
+    document.querySelectorAll('.hotel-points-ai-trigger[data-hotel]').forEach(function (btn) {
+      btn.addEventListener('click', handleHotelPointsAIClick);
     });
   }
 
@@ -3247,11 +3338,23 @@
         renderHotelResults(result);
         updateHeroForHotels();
       })
-      .catch(function (err) {
-        hotelLoading = false;
-        document.getElementById('hotel-results').innerHTML =
-          '<div class="status">Hotel search failed: ' + escHtml(err.message) +
-          '<br><span class="loading-sub">Try again in a moment.</span></div>';
+      .catch(function () {
+        // Fallback to static JSON (for local dev and when API is down)
+        fetch('hotels_venice.json')
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+          .then(function (result) {
+            hotelCache[key] = result;
+            setHotelLocalCache(key, result);
+            hotelLoading = false;
+            renderHotelResults(result);
+            updateHeroForHotels();
+          })
+          .catch(function (err2) {
+            hotelLoading = false;
+            document.getElementById('hotel-results').innerHTML =
+              '<div class="status">Hotel search failed.' +
+              '<br><span class="loading-sub">Try again in a moment.</span></div>';
+          });
       });
   }
 
@@ -3379,6 +3482,17 @@
       ? '<a class="hotel-view-btn" href="' + escHtml(viewUrl) + '" target="_blank" rel="noopener">' + viewLabel + '</a>'
       : '';
 
+    // Hotel Points AI button
+    var hotelData = encodeURIComponent(JSON.stringify({
+      name: h.name, brand: h.brand || 'independent',
+      star_class: h.star_class, rate_per_night: h.rate_per_night,
+      total_rate: h.total_rate, nights: nights,
+      city: activeHotelCity || 'venice', cc_programs: h.cc_programs || [],
+      check_in: h.check_in, overall_rating: h.overall_rating
+    }));
+    var hotelPointsAIBtn = '<button class="points-ai-trigger hotel-points-ai-trigger" data-hotel="' + hotelData + '">' +
+      sparkleSVG() + '<span class="points-ai-label">Points AI</span></button>';
+
     // Google Places loyalty link
     var pointsLink = '';
     if (h.loyalty_url) {
@@ -3412,6 +3526,7 @@
         (h.address ? '<div class="hotel-address">' + escHtml(h.address) + '</div>' : '') +
         snippetHtml +
         viewBtn +
+        hotelPointsAIBtn +
         pointsLink +
         '<a class="interest-link" data-fid="' + escHtml(hotelFid) +
           '" data-flight="' + interestData + '">See family interest</a>' +
@@ -3591,6 +3706,7 @@
 
     // Attach hotel interest handlers
     attachHotelInterestHandlers();
+    attachHotelPointsAIHandlers();
     renderHotelFooter(overall.length);
   }
 

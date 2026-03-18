@@ -1,0 +1,3302 @@
+{
+  "source": "Regione del Veneto - Direzione Turismo",
+  "license": "CC BY 4.0",
+  "url": "https://dati.veneto.it/content/elenco_delle_strutture_ricettive_turistiche_della_regione_veneto_aggiornamento_quotidiano",
+  "fetched": "2026-03-17",
+  "hotels": [
+    {
+      "name": "A LA COMMEDIA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "SAN MARCO - CORTE DEL TEATRO GOLDONI, 4596/A",
+      "cap": "30124"
+    },
+    {
+      "name": "A LA LOCANDA DI ORSARIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 103",
+      "cap": "30121"
+    },
+    {
+      "name": "ABBAZIA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Cannaregio, 68",
+      "cap": "30121",
+      "superior": true
+    },
+    {
+      "name": "AC HOTEL VENEZIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "RIO TERA' SANT'ANDREA, 466",
+      "cap": "30100"
+    },
+    {
+      "name": "ACCA HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SAN POLO, 2160",
+      "cap": "30100"
+    },
+    {
+      "name": "AD PLACE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "SAN MARCO, 2557/A",
+      "cap": "30100"
+    },
+    {
+      "name": "ADRIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Cappuccina, 34",
+      "cap": "30172"
+    },
+    {
+      "name": "ADRIATICO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Lista di Spagna, 224",
+      "cap": "30121"
+    },
+    {
+      "name": "ADUA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio - Lista di Spagna, 233/A",
+      "cap": "30121"
+    },
+    {
+      "name": "AGLI ALBORETTI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Dorsoduro, 882/884",
+      "cap": "30123"
+    },
+    {
+      "name": "AI DO MORI",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Calle Larga S. Marco, 658",
+      "cap": "30124"
+    },
+    {
+      "name": "AI DUE PRINCIPI",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CASTELLO, 4971-2",
+      "cap": "30100"
+    },
+    {
+      "name": "AI MORI D'ORIENTE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Cannaregio-Fondamenta della Sensa, 3319",
+      "cap": "30121"
+    },
+    {
+      "name": "AI MORI D'ORIENTE DEP.3",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CANNAREGIO 3316/B",
+      "cap": "30100"
+    },
+    {
+      "name": "AI PINI (DIPENDENZA)",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Via Miranese, 176",
+      "cap": "30174",
+      "superior": true
+    },
+    {
+      "name": "AIRELLES VENEZIA PALLADIO",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "GIUDECCA, 33",
+      "cap": "30100"
+    },
+    {
+      "name": "AIRMOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Ceccherini, 13",
+      "cap": "30174"
+    },
+    {
+      "name": "AIRONE",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "S. Croce, 557",
+      "cap": "30135"
+    },
+    {
+      "name": "AL  PIAVE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Ruga Giuffa, 4838/4840",
+      "cap": "30122"
+    },
+    {
+      "name": "AL GAMBERO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Calle dei Fabbri, 4687",
+      "cap": "30124"
+    },
+    {
+      "name": "AL GAZZETTINO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "San Marco, 4971",
+      "cap": "30124"
+    },
+    {
+      "name": "AL GOBBO",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Cannaregio, 312",
+      "cap": "30121"
+    },
+    {
+      "name": "AL MASCARON RIDENTE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CANNAREGIO, 2606",
+      "cap": "30100"
+    },
+    {
+      "name": "AL NUOVO TESON",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 3980",
+      "cap": "30122"
+    },
+    {
+      "name": "AL PONTE ANTICO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Cannaregio, 5768",
+      "cap": "30100"
+    },
+    {
+      "name": "AL PONTE DEI SOSPIRI",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "San Marco, 381",
+      "cap": "30124"
+    },
+    {
+      "name": "AL PONTE MOCENIGO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Santa Croce, 2063-1985-1984/B",
+      "cap": "30100"
+    },
+    {
+      "name": "AL SOFFIADOR",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "viale bressagio Murano, 11",
+      "cap": "30141"
+    },
+    {
+      "name": "AL SOLE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Croce, 134 - 136 - Tolentini",
+      "cap": "30124"
+    },
+    {
+      "name": "AL THEATRO PALACE HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "s. marco, 1925/a",
+      "cap": "30100"
+    },
+    {
+      "name": "AL VAGON",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Cannaregio, 5619",
+      "cap": "30131"
+    },
+    {
+      "name": "ALA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "S. Marco, 2494",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "ALBATROS",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "V.le Don Luigi Sturzo, 32 - Carpenedo",
+      "cap": "30174"
+    },
+    {
+      "name": "ALBERGO AGLI ARTISTI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CANNAREGIO, 99/C",
+      "cap": "30100"
+    },
+    {
+      "name": "ALBERGO AI TOLENTINI",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Calle Amai - Santa Croce, 197/G",
+      "cap": "30135"
+    },
+    {
+      "name": "ALBERGO ANTICO CAPON",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Dorsoduro, 3004/B",
+      "cap": "30124"
+    },
+    {
+      "name": "ALBERGO LA MERIDIANA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Via Lepanto, 45",
+      "cap": "30126",
+      "superior": true
+    },
+    {
+      "name": "ALBERGO NOEMI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "San Marco - Calle dei Fabbri, 909",
+      "cap": "30124"
+    },
+    {
+      "name": "ALCYONE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco - Calle dei Fabbri, 4712",
+      "cap": "30124"
+    },
+    {
+      "name": "ALEXANDER",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Forte Marghera, 193/C",
+      "cap": "30170"
+    },
+    {
+      "name": "ALL'ANGELO ART HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "S. Marco, 403/410",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "ALLA BIANCA HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via G. Cantore, 23",
+      "cap": "30175"
+    },
+    {
+      "name": "ALLA FAVA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Castello, 5525",
+      "cap": "30122"
+    },
+    {
+      "name": "ALLA GIUSTIZIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Miranese, 111",
+      "cap": "30170"
+    },
+    {
+      "name": "ALLA SALUTE DA CICI",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Dorsoduro - F.ta Cà Balà, 222",
+      "cap": "30123",
+      "superior": true
+    },
+    {
+      "name": "ALLE GUGLIE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CANNAREGIO- Rio Terà San Leonardo, 1523",
+      "cap": "30121"
+    },
+    {
+      "name": "ALTIERI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Altinia - Favaro V.to, 51",
+      "cap": "30030"
+    },
+    {
+      "name": "ALVERI' HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "V. PAGANELLO, 18",
+      "cap": "30100"
+    },
+    {
+      "name": "AMADEUS",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Cannaregio, 227",
+      "cap": "30121"
+    },
+    {
+      "name": "AMAN VENICE",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "S. POLO, 1364-1365",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "AMBA ALAGI",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Via Mutilati del Lavoro, 38",
+      "cap": "30175"
+    },
+    {
+      "name": "AMBASCIATA VENICE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "VIA FAGARE', 19",
+      "cap": "30171"
+    },
+    {
+      "name": "AMBASSADOR TRE ROSE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 905",
+      "cap": "30124"
+    },
+    {
+      "name": "AMERICAN DINESEN",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "DORSODURO- S. Vio, 628",
+      "cap": "30123"
+    },
+    {
+      "name": "ANNIA PARK HOTEL (DIPENDENZA)",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "VIA TRIESTINA, 161",
+      "cap": "30100"
+    },
+    {
+      "name": "ANTICA  FENICE HOTEL RISTORANTE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Orlanda, 10/B - Campalto",
+      "cap": "30030"
+    },
+    {
+      "name": "ANTICA CASA CARETTONI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 130",
+      "cap": "30121"
+    },
+    {
+      "name": "ANTICA LOCANDA MONTIN",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Dorsoduro, 1147 - F.ta di Borgo",
+      "cap": "30123"
+    },
+    {
+      "name": "ANTICA LOCANDA STURION",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Polo, 679 - Calle Sturion",
+      "cap": "30125"
+    },
+    {
+      "name": "ANTICA VILLA GRAZIELLA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "VIA LUIGI COLETTI, 6",
+      "cap": "30175"
+    },
+    {
+      "name": "ANTICHE FIGURE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Santa Croce, 686/A-687",
+      "cap": "30100"
+    },
+    {
+      "name": "ANTICO DOGE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 5643",
+      "cap": "30121"
+    },
+    {
+      "name": "ANTICO MORO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Castellana - Zelarino, 149",
+      "cap": "30174"
+    },
+    {
+      "name": "ANTICO PANADA HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SAN MARCO, 646",
+      "cap": "30124"
+    },
+    {
+      "name": "ANTIGO TROVATORE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Calle delle Rasse-Castello, 4534",
+      "cap": "30122"
+    },
+    {
+      "name": "ANTONY",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Via Orlanda, 182/B - Campalto",
+      "cap": "30173",
+      "superior": true
+    },
+    {
+      "name": "AQUA PALACE HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CASTELLO, CALLE DELLA MALVASIA, 5492/A",
+      "cap": "30100"
+    },
+    {
+      "name": "ARCADIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 1333",
+      "cap": "30121"
+    },
+    {
+      "name": "ARIEL SILVA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio, 1391/a",
+      "cap": "30121"
+    },
+    {
+      "name": "ARISTON",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via G. Bergamo, 12",
+      "cap": "30174"
+    },
+    {
+      "name": "ARLECCHINO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Croce, 390",
+      "cap": "30135"
+    },
+    {
+      "name": "AT LEONARD'S",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "CANNAREGIO, 4606-4606/A",
+      "cap": "30100"
+    },
+    {
+      "name": "ATENEO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 1876",
+      "cap": "30124"
+    },
+    {
+      "name": "ATLANTA AUGUSTUS",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Via Lepanto, 15",
+      "cap": "30126",
+      "superior": true
+    },
+    {
+      "name": "ATLANTIDE",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio, 375/A",
+      "cap": "30121"
+    },
+    {
+      "name": "AURORA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "P.tta Giordano Bruno, 15",
+      "cap": "30174"
+    },
+    {
+      "name": "AURORA (DIPENDENZA)",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "PIAZZETTA GIORDANO BRUNO, 6",
+      "cap": "30100"
+    },
+    {
+      "name": "AUTOSTRADA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "VIA TRIESTE, 1",
+      "cap": "30175"
+    },
+    {
+      "name": "BARTOLOMEO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "S. Marco, 5494",
+      "cap": "30124"
+    },
+    {
+      "name": "BASILEA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Croce, 817 - Rio Marin",
+      "cap": "30135"
+    },
+    {
+      "name": "BEL SITO & BERLINO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 2517",
+      "cap": "30124"
+    },
+    {
+      "name": "BELLA VENEZIA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CALLE DEI FABBRI - S. MARCO, 4702",
+      "cap": "30124"
+    },
+    {
+      "name": "BELLE ARTI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Dorsoduro, 912/A",
+      "cap": "30123"
+    },
+    {
+      "name": "BELMOND HOTEL CIPRIANI",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "Giudecca, 10",
+      "cap": "30133",
+      "lusso": true
+    },
+    {
+      "name": "BELSTAY VENEZIA MESTRE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Rotonda Romea, 1/2",
+      "cap": "30175"
+    },
+    {
+      "name": "BELVEDERE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "P.le S. Maria Elisabetta, 4",
+      "cap": "30126"
+    },
+    {
+      "name": "BERNARDI SEMENZATO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio, 4363/4366",
+      "cap": "30121"
+    },
+    {
+      "name": "BIASUTTI (ADRIA URANIA-VILLA NORA)",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via E. Dandolo, 27-29",
+      "cap": "30126"
+    },
+    {
+      "name": "BISANZIO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Castello, 3651",
+      "cap": "30122"
+    },
+    {
+      "name": "BLUECOLORS HOTEL",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "VIA  CIMITERO, 14/A - CAMPALTO.",
+      "cap": "30030"
+    },
+    {
+      "name": "BOLOGNA & STAZIONE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Piave, 214",
+      "cap": "30171"
+    },
+    {
+      "name": "BOUTIQUE HOTEL RIVA DEL VIN VENEZIA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "S. POLO, Calle del Sturion, 677/A-678",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "BRIDGE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 4498",
+      "cap": "30122"
+    },
+    {
+      "name": "BUCINTORO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Riva S. Biagio, 2135",
+      "cap": "30122"
+    },
+    {
+      "name": "BYRON HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via M. Bragadin, 30",
+      "cap": "30124"
+    },
+    {
+      "name": "CA' BONFADINI",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "CANNAREGIO, 461-462",
+      "cap": "30100"
+    },
+    {
+      "name": "CA' BONFADINI DIPENDENZA",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "Cannaregio, 459-460",
+      "cap": "30121"
+    },
+    {
+      "name": "CA' D'ORO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 4604",
+      "cap": "30131"
+    },
+    {
+      "name": "CA' DEI BARCAROLI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "VIA FORTE MARGHERA, 63/65",
+      "cap": "30100"
+    },
+    {
+      "name": "CA' DEI CONTI",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Castello, 4429",
+      "cap": "30100"
+    },
+    {
+      "name": "CA' FAVRETTO SAN CASSIANO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "S. Croce, 2232",
+      "cap": "30135"
+    },
+    {
+      "name": "CA' MARINELLA (DIP. SANTA MARINA)",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 6105",
+      "cap": "30100"
+    },
+    {
+      "name": "CA' NIGRA LAGOON RESORT",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Santa Croce, 927",
+      "cap": "30125",
+      "superior": true
+    },
+    {
+      "name": "CA' NOBILE CORNER",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SESTIERE DI DORSODURO - CAMPO SANTA MARGHERITA, 2931",
+      "cap": "30123"
+    },
+    {
+      "name": "CA' NOVA HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Minotto, 2",
+      "cap": "30175"
+    },
+    {
+      "name": "CA' PISANI",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Dorsoduro, 979/A",
+      "cap": "30123",
+      "superior": true
+    },
+    {
+      "name": "CA' SAGREDO HOTEL",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "CANNAREGIO - CAMPO SANTA SOFIA, 4198-4199",
+      "cap": "30121",
+      "lusso": true
+    },
+    {
+      "name": "CA'FORMENTA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 1650",
+      "cap": "30122"
+    },
+    {
+      "name": "CAMPANILE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "VIA CA' MARCELLO, 8/G",
+      "cap": "30100"
+    },
+    {
+      "name": "CAMPIELLO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Zaccaria, 4647",
+      "cap": "30122"
+    },
+    {
+      "name": "CANADA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "CASTELLO - Campo S. Lio, 5659",
+      "cap": "30122"
+    },
+    {
+      "name": "CANAL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Croce, 553",
+      "cap": "30135"
+    },
+    {
+      "name": "CANALETTO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 5487",
+      "cap": "30122"
+    },
+    {
+      "name": "CAPRERA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio, 219",
+      "cap": "30121"
+    },
+    {
+      "name": "CARLTON CAPRI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Croce, 595/A",
+      "cap": "30135"
+    },
+    {
+      "name": "CARNIVAL PALACE HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "CANNAREGIO 929/930",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "CASA FONTANA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Campo S. Provolo Castello, 4701",
+      "cap": "30122"
+    },
+    {
+      "name": "CASA LINGER",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "S. Antonin-Castello, 3541",
+      "cap": "30122"
+    },
+    {
+      "name": "CASA PERON",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Salizzada S. Pantalon, 84-85",
+      "cap": "30135"
+    },
+    {
+      "name": "CASA PETRARCA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "S. Marco, 4386 - 4394",
+      "cap": "30124"
+    },
+    {
+      "name": "CASA PRADEL (DIPENDENZA VILLA MABAPA)",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "RIVIERA SAN NICOLO', 15/a",
+      "cap": "30126"
+    },
+    {
+      "name": "CASA VERARDO",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Castello, 4765",
+      "cap": "30122",
+      "superior": true
+    },
+    {
+      "name": "CASANOVA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "S. Marco, 1284",
+      "cap": "30124"
+    },
+    {
+      "name": "CASTELLO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 4365",
+      "cap": "30122"
+    },
+    {
+      "name": "CAVALLETTO & DOGE ORSEOLO  DIPENDENZA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "San Marco, 897/a",
+      "cap": "30124"
+    },
+    {
+      "name": "CAVALLETTO & DOGE ORSEOLO (CASA PRINCIPALE)",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "S. Marco, 1107",
+      "cap": "30124"
+    },
+    {
+      "name": "CENTAURO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Calle della Vida, 4297/A",
+      "cap": "30124"
+    },
+    {
+      "name": "CENTRALE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "P.le Donatori di Sangue, 14",
+      "cap": "30171"
+    },
+    {
+      "name": "CENTURION PALACE",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "DORSODURO, 173",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "CITTA' DI MILANO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "San Marco - Campiello S. Zulian, 590",
+      "cap": "30124"
+    },
+    {
+      "name": "CLUB HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Villafranca, 1",
+      "cap": "30174"
+    },
+    {
+      "name": "COLOMBINA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Castello, Calle del Remedio, 4416",
+      "cap": "30122"
+    },
+    {
+      "name": "COLOMBO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Paolucci, 5",
+      "cap": "30175"
+    },
+    {
+      "name": "COLOMBO (DIPENDENZA ALBERGO COLOMBO)",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Grondoni, 1",
+      "cap": "30175"
+    },
+    {
+      "name": "COMMERCIO E PELLEGRINO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 4551/A - Calle delle Rasse",
+      "cap": "30122"
+    },
+    {
+      "name": "CONCORDIA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Calle Larga S. Marco, 367",
+      "cap": "30124"
+    },
+    {
+      "name": "CONTINENTAL",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CANNAREGIO Lista di Spagna, 166",
+      "cap": "30121"
+    },
+    {
+      "name": "CORTE CONTARINA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 1931",
+      "cap": "30122"
+    },
+    {
+      "name": "CORTE DI GABRIELA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Calle Avvocati - San Marco, 3836-3837",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "COURTYARD BY MARRIOTT VENICE AIRPORT",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "VIA TRIESTINA, 170 - TESSERA",
+      "cap": "30173"
+    },
+    {
+      "name": "CRIS",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Monte Nero, 3",
+      "cap": "30171"
+    },
+    {
+      "name": "CRISTALLO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Gran Viale S.M. Elisabetta, 51",
+      "cap": "30126"
+    },
+    {
+      "name": "DA BRUNO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello - Salizzada S. Lio, 5726/A",
+      "cap": "30122"
+    },
+    {
+      "name": "DA TITO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Cappuccina, 67",
+      "cap": "30172"
+    },
+    {
+      "name": "DALLA MORA (CASA PRINCIPALE)",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "S. Croce, 42",
+      "cap": "30123"
+    },
+    {
+      "name": "DALLA MORA (DIPENDENZA)",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "S. Croce, 44",
+      "cap": "30123"
+    },
+    {
+      "name": "DANIELI",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "Castello, 4196",
+      "cap": "30122",
+      "lusso": true
+    },
+    {
+      "name": "DE L'ALBORO",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "S. Marco, 3894 e 3894/A",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "DELLE ROSE",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Millosevich, 46",
+      "cap": "30173"
+    },
+    {
+      "name": "DEPANDANCE BELLE ARTI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "DORSODURO, 895+896",
+      "cap": "30100"
+    },
+    {
+      "name": "DEPENDANCE HOTEL AARON FELISATI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "via Felisati, 108",
+      "cap": "30100"
+    },
+    {
+      "name": "DEPENDANCE HOTEL AARON SALETTUOL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "via Salettuol, 1",
+      "cap": "30100"
+    },
+    {
+      "name": "DEPENDANCE HOTEL DUODO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "S. MARCO 1902",
+      "cap": "30100"
+    },
+    {
+      "name": "DIANA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Calle Specchieri, 449",
+      "cap": "30124"
+    },
+    {
+      "name": "DIPENDENZA 1 AMERICAN DINESEN",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "DORSODURO 623",
+      "cap": "30100"
+    },
+    {
+      "name": "DO POZZI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "San Marco, 2373",
+      "cap": "30124"
+    },
+    {
+      "name": "DOGE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Croce, 1222",
+      "cap": "30135"
+    },
+    {
+      "name": "DONA' PALACE",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "San Marco, 391",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "DUCALE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Triestina, 5 - Favaro Veneto",
+      "cap": "30030"
+    },
+    {
+      "name": "DUODO PALACE HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "San Marco, 1887-1888",
+      "cap": "30124"
+    },
+    {
+      "name": "EGO' HOTEL THE SILK ROAD",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "san marco, 4794",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "ELITE HOTEL RESIDENCE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Forte Marghera, 119",
+      "cap": "30173"
+    },
+    {
+      "name": "EXCESS VENICE-BOUTIQUE HOTEL & PRIVATE SPA",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "SAN SEBASTIANO - DORSODURO, 2541-2542-2543",
+      "cap": "30100"
+    },
+    {
+      "name": "FALIER",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Salizzada S. Pantalon, 130",
+      "cap": "30135"
+    },
+    {
+      "name": "FIRENZE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SAN  MARCO, 1490",
+      "cap": "30124"
+    },
+    {
+      "name": "FLORA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 2283/A",
+      "cap": "30124"
+    },
+    {
+      "name": "FLORIDA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "CANNAREGIO -Calle Priuli, 106",
+      "cap": "30121"
+    },
+    {
+      "name": "FOSCARI PALACE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Cannaregio, 4200",
+      "cap": "30100"
+    },
+    {
+      "name": "FOUR POINTS BY SHERATON VENICE MESTRE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "v DON PERON, 4",
+      "cap": "30100"
+    },
+    {
+      "name": "GALLERIA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Accademia - DORSODURO, 878/A",
+      "cap": "30123"
+    },
+    {
+      "name": "GARDENA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Croce, 239",
+      "cap": "30135"
+    },
+    {
+      "name": "GARIBALDI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "V.le Garibaldi, 24",
+      "cap": "30174"
+    },
+    {
+      "name": "GIARDINETTO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "P.le S. Maria Elisabetta, 3",
+      "cap": "30126"
+    },
+    {
+      "name": "GIORGIONE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Calle Larga dei Proverbi, 4587",
+      "cap": "30121"
+    },
+    {
+      "name": "GORIZIA A LA VALIGIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "San Marco - Calle Fabbri, 4696/A - 4697/A",
+      "cap": "30124"
+    },
+    {
+      "name": "GRAND HOTEL DEI DOGI",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "Cannaregio - Fondamenta Madonna dell'Orto, 3499/3500",
+      "cap": "30121"
+    },
+    {
+      "name": "GRANDE ALBERGO AUSONIA E HUNGARIA",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "Gran Viale Santa Maria Elisabetta, 28",
+      "cap": "30126",
+      "lusso": true
+    },
+    {
+      "name": "GRASPO DE UA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 5094",
+      "cap": "30124"
+    },
+    {
+      "name": "GREENCOLORS DEPENDANCE",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "via Bagaron, 4",
+      "cap": "30173"
+    },
+    {
+      "name": "GREENCOLORS HOTEL",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Via Orlanda, 66",
+      "cap": "30173"
+    },
+    {
+      "name": "GUERRINI",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio, 265",
+      "cap": "30121"
+    },
+    {
+      "name": "GUERRINI (DIPENDENZA)",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio, 261",
+      "cap": "30121"
+    },
+    {
+      "name": "GUIDI",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Forte Marghera, 197",
+      "cap": "30173"
+    },
+    {
+      "name": "H 10 PALAZZO CANOVA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "SAN POLO- RIVA DEL VIN, 744",
+      "cap": "30125",
+      "superior": true
+    },
+    {
+      "name": "HAMPTON BY HILTON VENICE ISOLA NUOVA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "VIA ISOLA NUOVA DEL TRONCHETTO, 17",
+      "cap": "30135"
+    },
+    {
+      "name": "HILTON GARDEN INN VENICE MESTRE SAN GIULIANO",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "VIA ORLANDA, 1",
+      "cap": "30173",
+      "superior": true
+    },
+    {
+      "name": "HOTEL  BECHER",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SAN MARCO, 1857",
+      "cap": "30124"
+    },
+    {
+      "name": "HOTEL AARON",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "V. FELISATI, 187",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL AI CAVALIERI DI VENEZIA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Castello, 6108",
+      "cap": "30122"
+    },
+    {
+      "name": "HOTEL AI MORI D'ORIENTE DEP.4",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CANNAREGIO 3319",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL AI REALI",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "CASTELLO 5527",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "HOTEL AL CODEGA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "C.LLO DEL FORNO VECCHIO - S. MARCO, 4481",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL AL DUCA DI VENEZIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SANTA CROCE, 1739-1755",
+      "cap": "30135"
+    },
+    {
+      "name": "HOTEL AL MALCANTON",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "DORSODURO, 3587",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL AL SOTOPORTEGO",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "CANNAREGIO, 5595/A",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL ALLE TORRI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "VIA COLOMBARA, 6",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL AMBASCIATORI THAPESTRY COLLECTION BY HILTON",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Corso del Popolo, 221",
+      "cap": "30172"
+    },
+    {
+      "name": "HOTEL ANNIA (DIP. PARK HOTEL ANNIA)",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "VIA TRIESTINA, 161",
+      "cap": "30173"
+    },
+    {
+      "name": "HOTEL AQUARIUS",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "SANTA CROCE, 1621-1622-1623-1624",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL AUTOESPRESSO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "VIA FRATELLI BANDIERA, N. 34-36",
+      "cap": "30171"
+    },
+    {
+      "name": "HOTEL CA' ALVISE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "SAN MARCO -  CALLE DELLA VERONA, 3673",
+      "cap": "30124"
+    },
+    {
+      "name": "HOTEL CA' DI DIO",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "Castello, n. 2182",
+      "cap": "30122",
+      "lusso": true
+    },
+    {
+      "name": "HOTEL CA' VENDRAMIN ZAGO SANTA FOSCA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "cannaregio, 2400",
+      "cap": "30121"
+    },
+    {
+      "name": "HOTEL CA' ZUSTO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "SANTA CROCE, 1358",
+      "cap": "30135"
+    },
+    {
+      "name": "HOTEL CANAL GRANDE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "SANTA CROCE, 932",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL CANEVA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "CASTELLO, 5515/18",
+      "cap": "30122"
+    },
+    {
+      "name": "HOTEL CANEVA 1  DIPENDENZA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "castello, 5511",
+      "cap": "30122"
+    },
+    {
+      "name": "HOTEL CANNAREGIO 2357",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 2357",
+      "cap": "30121"
+    },
+    {
+      "name": "HOTEL CARLTON ON THE GRAND CANAL",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "S. Croce, 578",
+      "cap": "30135"
+    },
+    {
+      "name": "HOTEL CASAW",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "SAN POLO, 2910/A",
+      "cap": "30125",
+      "superior": true
+    },
+    {
+      "name": "HOTEL CITY OF ART - VENICE - LLOYD",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Rizzardi, 32",
+      "cap": "30175"
+    },
+    {
+      "name": "HOTEL CONTERIE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "RAMO DE LE CONTERIE, 8 - MURANO",
+      "cap": "30141"
+    },
+    {
+      "name": "HOTEL CORTE CONTARINA DEPENDANCE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CASTELLO 1956/7",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL CORTE DEI GRECI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CASTELLO 4973",
+      "cap": "30122"
+    },
+    {
+      "name": "HOTEL DEI DRAGOMANNI",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "SAN MARCO, 2710-2711-2712",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL DELFINO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "C.so del Popolo, 211",
+      "cap": "30172"
+    },
+    {
+      "name": "HOTEL DELL'OPERA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SAN MARCO, 2009",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL EXCELSIOR",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "Lungomare Marconi, 41",
+      "cap": "30126",
+      "lusso": true
+    },
+    {
+      "name": "HOTEL GABRIELLI",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "CASTELLO, RIVA DEGLI SCHIAVONI, 4109",
+      "cap": "30122"
+    },
+    {
+      "name": "HOTEL GIOVANNINA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Via Dante, 113",
+      "cap": "30171"
+    },
+    {
+      "name": "HOTEL GIUDECCA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CORTE FERRANDO, 409/C Giudecca",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL GRIFONI",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "SAN POLO, 2603/A-2606-2607",
+      "cap": "30125"
+    },
+    {
+      "name": "HOTEL GRONDA LAGUNARE",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "V. ORLANDA 256/A",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL HAVE VENICE",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Piazzale Bainsizza, 19",
+      "cap": "30171"
+    },
+    {
+      "name": "HOTEL HENRY",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "CANNAREGIO, 1506/C-D-E",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL HEUREKA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "cannaregio, 3534",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL INDIGO VENICE - SANT'ELENA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Calle Buccari, 10",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL L'OROLOGIO",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "SAN POLO, 1777",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "HOTEL LE DUNE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "VIA DEI VILLINI, 4",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL LEONE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "F.ta Cannareggio, 1250-1251-1252-1253-1254",
+      "cap": "30121"
+    },
+    {
+      "name": "HOTEL MESSNER PALACE",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Dorsoduro, 216",
+      "cap": "30123",
+      "superior": true
+    },
+    {
+      "name": "HOTEL MEZZO POZZO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "cannaregio, 4529",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL MICHELANGELO VENEZIA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Forte Marghera, 69",
+      "cap": "30173"
+    },
+    {
+      "name": "HOTEL MORESCO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "DORSODURO, 3499-3561/B",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL NEW REITER",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "GRAN VIALE S. M. ELISABETTA, 57/58",
+      "cap": "30126"
+    },
+    {
+      "name": "HOTEL PAGANELLI",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Castello - Riva degli Schiavoni, 4181-4182-4691",
+      "cap": "30122",
+      "superior": true
+    },
+    {
+      "name": "HOTEL PAGANELLI DIPENDENZA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Castello, 4687-4687/a-4644/a",
+      "cap": "30122",
+      "superior": true
+    },
+    {
+      "name": "HOTEL PALAZZINA SARDI",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CASTELLO, 4656-4654",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL PALAZZO NANI",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "CANNAREGIO, 1105",
+      "cap": "30121"
+    },
+    {
+      "name": "HOTEL PALAZZO PARUTA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "SAN MARCO, 3824",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL PALAZZO SANT'ANTONIN",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CASTELLO 3299",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL PALAZZO STERN",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "DORSODURO, 2792-2792/A2792/B",
+      "cap": "30123",
+      "superior": true
+    },
+    {
+      "name": "HOTEL PAPADOPOLI",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "S. Croce, 245",
+      "cap": "30135",
+      "superior": true
+    },
+    {
+      "name": "HOTEL RB",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "VIA TRIESTE, 2/H",
+      "cap": "30175"
+    },
+    {
+      "name": "HOTEL SAN LUCA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SAN MARCO, 4671",
+      "cap": "30100"
+    },
+    {
+      "name": "HOTEL VENEZIA LAGUNA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "via Isola Nova del Tronchetto, 16T",
+      "cap": "30135"
+    },
+    {
+      "name": "HOTEL VILLA BARBARICH",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "VIA MOLINO RONCHIN 1",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "HOTEL VILLA COSTANZA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "VIA MONTE NERO, 25",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "HOTEL VILLA ORIO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Ca' Rossa, 10 - Località Alberoni",
+      "cap": "30126"
+    },
+    {
+      "name": "HYATT CENTRIC MURANO VENEZIA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "RIVA LONGA, 27",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "IL CASOLARE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "via Litomarino, n.74",
+      "cap": "30100"
+    },
+    {
+      "name": "IL LATO AZZURRO",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "v.FORTI, 13",
+      "cap": "30100"
+    },
+    {
+      "name": "IL MERCANTE DI VENEZIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 379",
+      "cap": "30121"
+    },
+    {
+      "name": "IL MORO DI VENEZIA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio - Lista di Spagna, 152",
+      "cap": "30121"
+    },
+    {
+      "name": "IL PALAZZO EXPERIMENTAL",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "DORSODURO-FONDAMENTA ZATTERE, 1410-1411-1412",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "J. W. MARRIOTT VENICE RESORT & SPA",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "ISOLA SACCA SESSOLA, N.1",
+      "cap": "30133",
+      "lusso": true
+    },
+    {
+      "name": "KAPPA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Trezzo, 8 - Carpenedo",
+      "cap": "30174"
+    },
+    {
+      "name": "KETTE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "S. Marco, 2053",
+      "cap": "30124"
+    },
+    {
+      "name": "LA CALCINA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Dorsoduro, 780 - Zattere",
+      "cap": "30123"
+    },
+    {
+      "name": "LA DEPENDANCE",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "isola di sacca sessola, 1",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "LA FENICE ET DES ARTISTES",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "S. Marco, 1936",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "LA MAISONETTE (DIPENDENZA)",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "isola di sacca sessola, 1",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "LA PERGOLA DI VENEZIA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Cipro, 15",
+      "cap": "30126"
+    },
+    {
+      "name": "LA RESIDENZA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Campo Bandiera e Moro, 3608",
+      "cap": "30122"
+    },
+    {
+      "name": "LA VILLA  (DIPENDENZA)",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "isola di saccab sessola, 1",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "LAGUNA PALACE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Torino, 105/F",
+      "cap": "30172"
+    },
+    {
+      "name": "LE BOULEVARD",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Gran Viale S. M. Elisabetta, 41",
+      "cap": "30126"
+    },
+    {
+      "name": "LE ISOLE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CASTELLO, 4661-4665",
+      "cap": "30100"
+    },
+    {
+      "name": "LEONARDO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio - Calle de la Masena, 1385",
+      "cap": "30121"
+    },
+    {
+      "name": "LEONARDO ROYAL HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "VIA CA' MARCELLO, 6L",
+      "cap": "30170",
+      "superior": true
+    },
+    {
+      "name": "LIASSIDI PALACE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Castello, 3405",
+      "cap": "30122"
+    },
+    {
+      "name": "LIASSIDI WELLNESS SUITES (DIP. ALB. LIASSIDI PALACE)",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CASTELLO, CALLE DEL MAGAZEN, 3335",
+      "cap": "30122"
+    },
+    {
+      "name": "LOCANDA AI SANTI APOSTOLI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 4391/A - Campo Santi Apostoli",
+      "cap": "30121"
+    },
+    {
+      "name": "LOCANDA CA' FOSCARI",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Dorsoduro - CALLE DELLA FRESCADA, 3887/B",
+      "cap": "30123"
+    },
+    {
+      "name": "LOCANDA CANAL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "F.ta del Remedio Castello, 4422/C",
+      "cap": "30122"
+    },
+    {
+      "name": "LOCANDA FIORITA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "S. Marco, 3457/A",
+      "cap": "30124"
+    },
+    {
+      "name": "LOCANDA REMEDIO  (DEPENDANCE COLOMBINA)",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 4412",
+      "cap": "30122"
+    },
+    {
+      "name": "LOCANDA SALIERI",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "F.ta Minotto Santa Croce, 160",
+      "cap": "30135"
+    },
+    {
+      "name": "LOCANDA SANT'ANNA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Castello Corte Bianco, 269",
+      "cap": "30122"
+    },
+    {
+      "name": "LOCANDA SILVA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "F.ta del Remedio Castello, 4423",
+      "cap": "30122"
+    },
+    {
+      "name": "LOCANDA VIVALDI",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Castello, 4150/4152",
+      "cap": "30122",
+      "superior": true
+    },
+    {
+      "name": "LONDRA PALACE",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "Riva degli Schiavoni, 4171",
+      "cap": "30122"
+    },
+    {
+      "name": "LUGANO TORRETTA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Rizzardi, 11",
+      "cap": "30175"
+    },
+    {
+      "name": "LUNA HOTEL BAGLIONI",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "SAN  MARCO, 1243",
+      "cap": "30124",
+      "lusso": true
+    },
+    {
+      "name": "LUX",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 4541/4542",
+      "cap": "30122"
+    },
+    {
+      "name": "MAISON DUCAL VENEZIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "castello, 4588,4590/a",
+      "cap": "30122"
+    },
+    {
+      "name": "MAISON SPADA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "SAN MARCO, 2488/A",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "MAISON VENEZIA | UNA ESPERIENZE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CANNAREGIO 4167/8  4171/2/3/6, 4167/8 4171/2/3/6",
+      "cap": "30121"
+    },
+    {
+      "name": "MALIBRAN",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 5864",
+      "cap": "30131"
+    },
+    {
+      "name": "MARCO POLO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Orlanda - Loc. Campalto, 115",
+      "cap": "30030"
+    },
+    {
+      "name": "MARCONI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Polo, 729",
+      "cap": "30125"
+    },
+    {
+      "name": "MARIN",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Santa Croce - Ramo delle Chioverete, 670/b",
+      "cap": "30135"
+    },
+    {
+      "name": "MARTE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 338",
+      "cap": "30121"
+    },
+    {
+      "name": "MARY",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Orlanda, 152 - Campalto",
+      "cap": "30173"
+    },
+    {
+      "name": "MELIA' VENEZIA LIDO",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "VIALE SANTA MARIA ELISABETTA, 4",
+      "cap": "30126",
+      "superior": true
+    },
+    {
+      "name": "MERCURE VENEZIA MARGHERA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Malamocco, 14",
+      "cap": "30175"
+    },
+    {
+      "name": "MERCURIO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SAN MARCO - Calle del Fruttariol, 1848",
+      "cap": "30124"
+    },
+    {
+      "name": "MESSNER  DIPENDENZA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Dorsoduro, 237",
+      "cap": "30123",
+      "superior": true
+    },
+    {
+      "name": "METROPOLE",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "Castello - Riva degli Schiavoni, 4149",
+      "cap": "30122"
+    },
+    {
+      "name": "MIGNON",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SS. Apostoli, 4535",
+      "cap": "30131"
+    },
+    {
+      "name": "MINERVA E NETTUNO",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Cannaregio, 230",
+      "cap": "30121"
+    },
+    {
+      "name": "MINERVA E NETTUNO (DIPENDENZA)",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Cannaregio, 242/a",
+      "cap": "30121"
+    },
+    {
+      "name": "MOLINO STUCKY HILTON VENICE",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "GIUDECCA, 810",
+      "cap": "30100"
+    },
+    {
+      "name": "MONACO & GRAND CANAL",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "SAN MARCO, 1332",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "MONDIAL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via G. Rizzardi, 21 - Marghera",
+      "cap": "30175"
+    },
+    {
+      "name": "MONTECARLO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 463",
+      "cap": "30124"
+    },
+    {
+      "name": "MONTEPIANA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Monte San Michele, 17",
+      "cap": "30175"
+    },
+    {
+      "name": "NANI MOCENIGO PALACE",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "dorsoduro 960-962",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "NAZIONALE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Lista di Spagna, 158",
+      "cap": "30121"
+    },
+    {
+      "name": "NAZIONALE DIPENDENZA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 184 - L. di Spagna",
+      "cap": "30121"
+    },
+    {
+      "name": "NH COLLECTION MURANO VILLA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "FONDAMENTA ANDREA NAVAGERO, N. 29",
+      "cap": "30141",
+      "superior": true
+    },
+    {
+      "name": "NH LAGUNA PALACE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Viale Ancona, 2",
+      "cap": "30172"
+    },
+    {
+      "name": "NH RIO NOVO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "DORSODURO, 3489/C-E",
+      "cap": "30100"
+    },
+    {
+      "name": "NH VENEZIA SANTA LUCIA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Cannaregio, 116/119",
+      "cap": "30121"
+    },
+    {
+      "name": "NICE HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Avesani, 6",
+      "cap": "30175"
+    },
+    {
+      "name": "NOLINSKI VENEZIA",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "SAN MARCO XXII MARZO, 2032",
+      "cap": "30124",
+      "lusso": true
+    },
+    {
+      "name": "NOVOTEL VENEZIA MESTRE CASTELLANA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Ceccherini, 21",
+      "cap": "30174"
+    },
+    {
+      "name": "NUMA VENICE FORCOLA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 2353-2355-2356",
+      "cap": "30121"
+    },
+    {
+      "name": "NUOVA AURORA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Fratelli Bandiera, 194",
+      "cap": "30175"
+    },
+    {
+      "name": "NUOVA LOCANDA BELVEDERE",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "P.zzale Mezzacapo, 1",
+      "cap": "30175"
+    },
+    {
+      "name": "NUOVA MESTRE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Miranese ang. via Liguria 4, 169",
+      "cap": "30124"
+    },
+    {
+      "name": "OLIMPIA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Santa Croce F.ta delle Burchielle, 395",
+      "cap": "30135",
+      "superior": true
+    },
+    {
+      "name": "ORION",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "San Marco - Spadaria, 700/A",
+      "cap": "30124"
+    },
+    {
+      "name": "PALAZZETTO MADONNA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "S. POLO 2902, 2902",
+      "cap": "30100"
+    },
+    {
+      "name": "PALAZZETTO MY VENICE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "DORSODURO - Calle del Traghetto, 2785/86",
+      "cap": "30123"
+    },
+    {
+      "name": "PALAZZINA G",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "SAN MARCO, 3246",
+      "cap": "30124"
+    },
+    {
+      "name": "PALAZZO ABADESSA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "CANNAREGIO, 4011/4013",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "PALAZZO BARBARIGO SUL CANAL GRANDE",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "SAN POLO, 2765-2765/C",
+      "cap": "30125",
+      "superior": true
+    },
+    {
+      "name": "PALAZZO BAROCCI",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "San Marco, 3878/a",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "PALAZZO CONTI QUERINI",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CASTELLO, 5257",
+      "cap": "30100"
+    },
+    {
+      "name": "PALAZZO DE POLO",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "CANNAREGIO, 5536-5537",
+      "cap": "30121",
+      "superior": true
+    },
+    {
+      "name": "PALAZZO GIOVANELLI & GRAN CANAL",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "SANTA CROCE, 2070 A/B/C/D",
+      "cap": "30135",
+      "superior": true
+    },
+    {
+      "name": "PALAZZO KELLER",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "SAN MARCO (CALLE DEL PESTRIN), 3522",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "PALAZZO MARTINELLI DOLFIN",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "santa croce, 420/A - 420/C",
+      "cap": "30100"
+    },
+    {
+      "name": "PALAZZO PRIULI",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Fondamenta de l'osmarin Castello, 4979/B",
+      "cap": "30122"
+    },
+    {
+      "name": "PALAZZO S. ANGELO SUL CANAL GRANDE",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "San Marco, 3489",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "PALAZZO SAN LORENZO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CASTELLO, 4981/B-4981/A-4998",
+      "cap": "30100"
+    },
+    {
+      "name": "PALAZZO VENART LUXURY HOTEL",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "SAN STAE - SANTA CROCE, 1961",
+      "cap": "30100"
+    },
+    {
+      "name": "PALAZZO VENDRAMIN (DIPENDENZA)",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "Giudecca, 10",
+      "cap": "30133",
+      "lusso": true
+    },
+    {
+      "name": "PALAZZO VENEZIANO",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "DORSODURO, 1413",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "PALAZZO VITTURI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 5246",
+      "cap": "30122"
+    },
+    {
+      "name": "PALLADIO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "VIA MALCONTENTA  -, 40",
+      "cap": "30175"
+    },
+    {
+      "name": "PANORAMA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Piazzale S.M.Elisabetta, 1/b",
+      "cap": "30126"
+    },
+    {
+      "name": "PANTALON",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Dorsoduro, 3942",
+      "cap": "30123"
+    },
+    {
+      "name": "PARIS",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "V.le Venezia, 11",
+      "cap": "30171"
+    },
+    {
+      "name": "PARK HOTEL AI PINI",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Via Miranese, 176",
+      "cap": "30174",
+      "superior": true
+    },
+    {
+      "name": "PARK HOTEL ANNIA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Triestina Tessera, 161",
+      "cap": "30170"
+    },
+    {
+      "name": "PAUSANIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Dorsoduro, 2824",
+      "cap": "30123"
+    },
+    {
+      "name": "PENSIONE ACCADEMIA VILLA MARAVEGE",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Dorsoduro, 1058 - Fond. Bollani",
+      "cap": "30123",
+      "superior": true
+    },
+    {
+      "name": "PENSIONE GUERRATO",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "S. Polo, 240/A",
+      "cap": "30125"
+    },
+    {
+      "name": "PENSIONE SEGUSO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Dorsoduro - Zattere, 779",
+      "cap": "30123"
+    },
+    {
+      "name": "PESARO PALACE HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CANNAREGIO, 3935-3936-3937",
+      "cap": "30100"
+    },
+    {
+      "name": "PETIT PALAIS",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Lungomare G. Marconi, 54",
+      "cap": "30126"
+    },
+    {
+      "name": "PICCOLA FENICE (DIP. LA FENICE ET DES ARTISTES)",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 3614",
+      "cap": "30124"
+    },
+    {
+      "name": "PLAZA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "V.le Stazione, 36",
+      "cap": "30171"
+    },
+    {
+      "name": "PRESIDENT",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Forte Marghera, 99/A",
+      "cap": "30173"
+    },
+    {
+      "name": "PRIMAVERA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Orlanda, 5",
+      "cap": "30173"
+    },
+    {
+      "name": "PRINCIPE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Lista di Spagna, 146/147",
+      "cap": "30121"
+    },
+    {
+      "name": "QUATTRO FONTANE",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Via Quattro Fontane, 16",
+      "cap": "30126",
+      "superior": true
+    },
+    {
+      "name": "QUIDHOTEL",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "V. TERRAGLIO, 15",
+      "cap": "30100"
+    },
+    {
+      "name": "RASPO DE UA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "P.zza Galuppi, 560 - Burano",
+      "cap": "30012"
+    },
+    {
+      "name": "REGIT",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "via Cappuccina, 96",
+      "cap": "30172"
+    },
+    {
+      "name": "RESIDENCE HOTEL LAGUNA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via della Rinascita, 75",
+      "cap": "30175"
+    },
+    {
+      "name": "RESIDENZA CANNAREGIO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CANNAREGIO, 3210/A-3217",
+      "cap": "30100"
+    },
+    {
+      "name": "RESIDENZA FAVARO",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "San Marco, 2259",
+      "cap": "30124"
+    },
+    {
+      "name": "RESIDENZA GRUNWALD",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "San Marco, 1391",
+      "cap": "30100"
+    },
+    {
+      "name": "RIALTO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "SAN  MARCO, 5149",
+      "cap": "30124"
+    },
+    {
+      "name": "RIGEL",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Via E. Dandolo, 13",
+      "cap": "30126",
+      "superior": true
+    },
+    {
+      "name": "RIO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Castello, 4358 e 4358/a",
+      "cap": "30122"
+    },
+    {
+      "name": "RIVAMARE",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Lungomare Marconi, 44",
+      "cap": "30126",
+      "superior": true
+    },
+    {
+      "name": "ROBERTA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Sernaglia, 21",
+      "cap": "30174"
+    },
+    {
+      "name": "ROMA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via C. Beccaria, 11",
+      "cap": "30175"
+    },
+    {
+      "name": "ROSA SALVA HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "San Marco - Calle Fiubera, 951 /C",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "ROSSI",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Cannaregio, 262",
+      "cap": "30121"
+    },
+    {
+      "name": "ROYAL SAN MARCO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "S. Marco, 848",
+      "cap": "30124"
+    },
+    {
+      "name": "RUSSO PALACE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "RIVIERA SAN NICOLO', 11/A",
+      "cap": "30126"
+    },
+    {
+      "name": "RUSSOTT HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Orlanda, 4",
+      "cap": "30173"
+    },
+    {
+      "name": "RUZZINI PALACE HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "CAMPO SANTA MARIA FORMOSA - CASTELLO, 5866",
+      "cap": "30100"
+    },
+    {
+      "name": "SAN CARLO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Forte Marghera, 131",
+      "cap": "30124"
+    },
+    {
+      "name": "SAN CLEMENTE PALACE KEMPINSKI",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "Isola di San Clemente San Marco, 1",
+      "cap": "30124",
+      "lusso": true
+    },
+    {
+      "name": "SAN CLEMENTE PALACE KEMPINSKI - DIPENDENZA 1",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "ISOLA SAN CLEMENTE, 1",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "SAN CLEMENTE PALACE KEMPINSKI - DIPENDENZA 2",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "ISOLA DI SAN CLEMENTE, 1",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "SAN CLEMENTE PALACE KEMPINSKI - DIPENDENZA 3",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "ISOLA DI SAN CLEMENTE, 1",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "SAN FANTIN",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "S. Marco, 1930/A",
+      "cap": "30124"
+    },
+    {
+      "name": "SAN GALLO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 1093/A",
+      "cap": "30124"
+    },
+    {
+      "name": "SAN GEREMIA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "CANNAREGIO, 290/A",
+      "cap": "30121"
+    },
+    {
+      "name": "SAN GIORGIO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "San Marco - Rio Terà della Mandola, 3781",
+      "cap": "30124"
+    },
+    {
+      "name": "SAN GIULIANO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Forte Marghera, 193/A",
+      "cap": "30173"
+    },
+    {
+      "name": "SAN MARCO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "San Marco, 877",
+      "cap": "30124"
+    },
+    {
+      "name": "SAN MAURIZIO",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "S. Marco, 2625",
+      "cap": "30124"
+    },
+    {
+      "name": "SAN MOISE'",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 2058",
+      "cap": "30124"
+    },
+    {
+      "name": "SAN SALVADOR",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "SAN MARCO - Calle del Galliazzo, 5264",
+      "cap": "30124"
+    },
+    {
+      "name": "SAN SAMUELE",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "S. Marco, 3358",
+      "cap": "30124"
+    },
+    {
+      "name": "SAN SIMON AI DUE FANALI - DIPENDENZA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Croce, 946",
+      "cap": "30135"
+    },
+    {
+      "name": "SAN ZULIAN",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 535",
+      "cap": "30124"
+    },
+    {
+      "name": "SANTA CHIARA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "S. Croce, 548",
+      "cap": "30135",
+      "superior": true
+    },
+    {
+      "name": "SANTA CROCE BOUTIQUE HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "santa croce, 978/981",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "SANTA LUCIA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Cannaregio, 358",
+      "cap": "30121"
+    },
+    {
+      "name": "SANTA MARINA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Castello, 6068",
+      "cap": "30122"
+    },
+    {
+      "name": "SANTO STEFANO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "SAN MARCO - Campo Santo Stefano, 2957",
+      "cap": "30124"
+    },
+    {
+      "name": "SATURNIA & INTERNATIONAL",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Via XXII Marzo, 2398",
+      "cap": "30124",
+      "superior": true
+    },
+    {
+      "name": "SAVOIA & JOLANDA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Castello, 4187 - Riv Schiavoni",
+      "cap": "30122",
+      "superior": true
+    },
+    {
+      "name": "SCANDINAVIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 5240",
+      "cap": "30122"
+    },
+    {
+      "name": "SERENISSIMA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "SAN MARCO- Calle Goldoni, 4486",
+      "cap": "30123"
+    },
+    {
+      "name": "SIRIO",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Circonvallazione, 109",
+      "cap": "30174"
+    },
+    {
+      "name": "SMART HOTEL HOLIDAY",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Essicatoio, 38 - Favaro Veneto",
+      "cap": "30030"
+    },
+    {
+      "name": "SMART HOTEL HOLIDAY - DIPENDENZA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Vicolo Staulanza, 2 - Favaro Veneto",
+      "cap": "30030"
+    },
+    {
+      "name": "SOGNO DI GIULIETTA E ROMEO",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "S POLO, 1858",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "SORRISO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Colombo, 22",
+      "cap": "30126"
+    },
+    {
+      "name": "STARHOTELS  SPLENDID VENICE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "SAN MARCO -Mercerie, 760",
+      "cap": "30124"
+    },
+    {
+      "name": "SUITES  DIPENDENZA",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "isola di sacca sessola, 1",
+      "cap": "30100",
+      "lusso": true
+    },
+    {
+      "name": "SUNSHINE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Piave, 153",
+      "cap": "30171"
+    },
+    {
+      "name": "THE GRITTI PALACE",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "C.po S. Maria del Giglio, 2467",
+      "cap": "30124",
+      "lusso": true
+    },
+    {
+      "name": "THE ST. REGIS VENICE",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "S. Marco, 2159",
+      "cap": "30124",
+      "lusso": true
+    },
+    {
+      "name": "THE VENICE TIMES",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Calle Priuli dei Cavalletti, 99/D",
+      "cap": "30121",
+      "superior": true
+    },
+    {
+      "name": "THE VENICE VENICE HOTEL",
+      "stars": 5,
+      "classification": "5 Stelle Lusso",
+      "address": "Cannaregio, 5631",
+      "cap": "30121",
+      "lusso": true
+    },
+    {
+      "name": "TIEPOLO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Castello, 4510",
+      "cap": "30122"
+    },
+    {
+      "name": "TINTORETTO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CANNAREGIO, 2316 - S. FOSCA",
+      "cap": "30121"
+    },
+    {
+      "name": "TITIAN INN",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Via Orlanda, 244",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "TIVOLI",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Dorsoduro, 3838",
+      "cap": "30123"
+    },
+    {
+      "name": "TIZIANO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Dorsoduro Fondamenta Rielo, 1873",
+      "cap": "30100"
+    },
+    {
+      "name": "TORINO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "S. Marco, 2356",
+      "cap": "30124"
+    },
+    {
+      "name": "TRE ARCHI",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Cannaregio, 923",
+      "cap": "30100"
+    },
+    {
+      "name": "TRIESTE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Trento, 2",
+      "cap": "30171"
+    },
+    {
+      "name": "TRITONE",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "V.le Stazione, 16",
+      "cap": "30171"
+    },
+    {
+      "name": "U VISIONARY VENEZIA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Cannaregio, 121 - L. di Spagna",
+      "cap": "30121",
+      "superior": true
+    },
+    {
+      "name": "VECELLIO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "CANNAREGIO, 5039/b",
+      "cap": "30131"
+    },
+    {
+      "name": "VENEZIA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Teatro Vecchio,, 5",
+      "cap": "30171"
+    },
+    {
+      "name": "VENEZIA 2000",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "l.mare d'annunzio, 2",
+      "cap": "30100",
+      "superior": true
+    },
+    {
+      "name": "VENEZIA DIPENDENZA JOLLY",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Teatro Vecchio, 5/A",
+      "cap": "30171"
+    },
+    {
+      "name": "VENICE CERTOSA HOTEL",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "ISOLA DELLA CERTOSA",
+      "cap": "30100"
+    },
+    {
+      "name": "VENICE MAGGIOR CONSIGLIO",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Calle Priuli ai Cavalletti Cannaregio, 73/74",
+      "cap": "30121"
+    },
+    {
+      "name": "VENICE RESORT",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "VIA TRIESTINA - TESSERA, 153",
+      "cap": "30030",
+      "superior": true
+    },
+    {
+      "name": "VENICE RESORT ( DIPENDENZA )",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "VIA TRIESTINA - TESSERA, 153",
+      "cap": "30030",
+      "superior": true
+    },
+    {
+      "name": "VENICE RESORT (DIPENDENZA 2)",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "VIA TRIESTINA, 151",
+      "cap": "30173",
+      "superior": true
+    },
+    {
+      "name": "VIDALE",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "Via G. Parini, 2",
+      "cap": "30172"
+    },
+    {
+      "name": "VIENNA",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "Via Rizzardi, 54",
+      "cap": "30175",
+      "superior": true
+    },
+    {
+      "name": "VIKTORIA PALACE HOTEL",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Riviera S. Nicolò, 50",
+      "cap": "30126",
+      "superior": true
+    },
+    {
+      "name": "VILLA ADELE",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Padre Egidio Gelain, 10",
+      "cap": "30175"
+    },
+    {
+      "name": "VILLA ALBERTINA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Vallaresso, 1/a",
+      "cap": "30126"
+    },
+    {
+      "name": "VILLA CASANOVA",
+      "stars": 1,
+      "classification": "1 Stella",
+      "address": "VIA ORSO PARTECIPAZIO, N. 9",
+      "cap": "30126"
+    },
+    {
+      "name": "VILLA CIPRO",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Zara, 2",
+      "cap": "30126"
+    },
+    {
+      "name": "VILLA DELLE PALME",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via E. Dandolo, 12/A",
+      "cap": "30126"
+    },
+    {
+      "name": "VILLA EDERA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Negroponte, 13",
+      "cap": "30126"
+    },
+    {
+      "name": "VILLA LAGUNA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "Via Sandro  Gallo, 6",
+      "cap": "30126",
+      "superior": true
+    },
+    {
+      "name": "VILLA MABAPA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Riviera S. Nicolò, 16",
+      "cap": "30126"
+    },
+    {
+      "name": "VILLA PANNONIA",
+      "stars": 4,
+      "classification": "4 Stelle",
+      "address": "Via Doge D. Michiel, 48",
+      "cap": "30126"
+    },
+    {
+      "name": "VILLA ROSA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Cannaregio - Calle Misericordia, 389",
+      "cap": "30121"
+    },
+    {
+      "name": "VILLA SARA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Vallenari, 80",
+      "cap": "30170"
+    },
+    {
+      "name": "VILLA SERENA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via Mezzacapo, 2/B",
+      "cap": "30175"
+    },
+    {
+      "name": "VILLA STELLA",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "Via Sandro Gallo, 111",
+      "cap": "30126"
+    },
+    {
+      "name": "VILLA TIZIANA",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Via A. Gritti, 3",
+      "cap": "30126"
+    },
+    {
+      "name": "VILLA VIRIDIA",
+      "stars": 4,
+      "classification": "4 Stelle Superior",
+      "address": "CANNAREGIO, 1486",
+      "cap": "30121",
+      "superior": true
+    },
+    {
+      "name": "VIOLINO D'ORO",
+      "stars": 5,
+      "classification": "5 Stelle",
+      "address": "San Marco, 2091",
+      "cap": "30124"
+    },
+    {
+      "name": "VIVIT",
+      "stars": 3,
+      "classification": "3 Stelle Superior",
+      "address": "P.zza Ferretto, 73",
+      "cap": "30170",
+      "superior": true
+    },
+    {
+      "name": "WALTER",
+      "stars": 2,
+      "classification": "2 Stelle",
+      "address": "S. Croce, 240",
+      "cap": "30135"
+    },
+    {
+      "name": "WILDNER",
+      "stars": 3,
+      "classification": "3 Stelle",
+      "address": "Riva degli Schiavoni, 4161",
+      "cap": "30122"
+    }
+  ]
+}
