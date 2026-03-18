@@ -194,6 +194,59 @@ class TestConfirmedFlightsFrontend(unittest.TestCase):
         self.assertIn("if (dir === 'return' && depAirport !== 'IST') depAirport = 'IST'", self.html)
 
 
+class TestItinerarySortOrder(unittest.TestCase):
+    """Tests for itinerary table sort order — arrival time for Venice, departure time for Istanbul."""
+
+    def setUp(self):
+        with open("public/index.html", "r") as fh:
+            self.html = fh.read()
+
+    def test_outbound_sorts_by_arrival_date(self):
+        """Outbound (Arriving Venice) should use arrival_date for grouping."""
+        self.assertIn("r._sortDate = cfNormDate(r.arrival_date", self.html)
+
+    def test_outbound_sorts_by_arrival_time(self):
+        """Outbound should use arrival_time for sorting within a date group."""
+        self.assertIn("r._sortTime = r.arrival_time", self.html)
+
+    def test_return_sorts_by_departure_date(self):
+        """Return (Departing Istanbul) should use departure_date for grouping."""
+        self.assertIn("r._sortDate = cfNormDate(r.departure_date", self.html)
+
+    def test_return_sorts_by_departure_time(self):
+        """Return should use departure_time for sorting within a date group."""
+        self.assertIn("r._sortTime = r.departure_time", self.html)
+
+    def test_time_sorted_before_flight_id(self):
+        """Sort order must be: date → time → flight_id (NOT date → flight_id → time)."""
+        # Find the sort comparator
+        sort_start = self.html.index("parsed.sort(function (a, b)")
+        sort_block = self.html[sort_start:sort_start + 300]
+        # _sortTime comparison must come before _sortFid comparison
+        time_pos = sort_block.index("_sortTime")
+        fid_pos = sort_block.index("_sortFid")
+        self.assertLess(time_pos, fid_pos,
+                        "Arrival/departure time must be compared before flight_id in sort")
+
+    def test_outbound_subtitle_says_arrival(self):
+        """Outbound subtitle should say 'arrival in Venice'."""
+        self.assertIn("Sorted by arrival in Venice", self.html)
+
+    def test_return_subtitle_says_departure(self):
+        """Return subtitle should say 'departure from Istanbul'."""
+        self.assertIn("Sorted by departure from Istanbul", self.html)
+
+    def test_loading_phrases_exist(self):
+        """Itinerary loading should have rotating phrases."""
+        self.assertIn("ITINERARY_PHRASES", self.html)
+        self.assertIn("renderItineraryLoading", self.html)
+
+    def test_flight_loading_phrases_exist(self):
+        """Flight loading should have rotating phrases."""
+        self.assertIn("FLIGHT_PHRASES", self.html)
+        self.assertIn("renderFlightLoading", self.html)
+
+
 class TestAppsScriptUpdate(unittest.TestCase):
     """Tests for the Google Apps Script update file."""
 

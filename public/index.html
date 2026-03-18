@@ -3848,17 +3848,24 @@
     var outData = null;
     var retData = null;
     var done = 0;
+    var fetchStart = Date.now();
 
     function tryRender() {
       done++;
       if (done < 3) return;
-      // Use confirmed tabs if they have data, otherwise fallback to main sheet
-      confirmedOutbound = (outData && outData.length > 0) ? outData : mainData || [];
-      confirmedReturn = (retData && retData.length > 0) ? retData : mainData || [];
-      console.log('[Confirmed] Outbound source:', (outData && outData.length > 0) ? 'Arriving Venice tab' : 'main sheet');
-      console.log('[Confirmed] Return source:', (retData && retData.length > 0) ? 'Departing Istanbul tab' : 'main sheet');
-      renderConfirmedTable('outbound');
-      renderConfirmedTable('return');
+      // Show loading bar for at least 800ms so users see feedback
+      var elapsed = Date.now() - fetchStart;
+      var minDelay = Math.max(0, 800 - elapsed);
+      setTimeout(function () {
+        itineraryLoading = false;
+        // Use confirmed tabs if they have data, otherwise fallback to main sheet
+        confirmedOutbound = (outData && outData.length > 0) ? outData : mainData || [];
+        confirmedReturn = (retData && retData.length > 0) ? retData : mainData || [];
+        console.log('[Confirmed] Outbound source:', (outData && outData.length > 0) ? 'Arriving Venice tab' : 'main sheet');
+        console.log('[Confirmed] Return source:', (retData && retData.length > 0) ? 'Departing Istanbul tab' : 'main sheet');
+        renderConfirmedTable('outbound');
+        renderConfirmedTable('return');
+      }, minDelay);
     }
 
     // Fetch main sheet (fallback)
@@ -4037,7 +4044,9 @@
     console.log('[Render Table] Rendering ' + dir + ', element found:', !!el);
     var rows = dir === 'outbound' ? confirmedOutbound : confirmedReturn;
     var title = dir === 'outbound' ? 'Arriving in Venice' : 'Departing Istanbul';
-    var subtitle = 'Sorted by departure time \u00b7 same flight grouped together';
+    var subtitle = dir === 'outbound'
+      ? 'Sorted by arrival in Venice \u00b7 same flight grouped together'
+      : 'Sorted by departure from Istanbul \u00b7 same flight grouped together';
 
     // Parse data — handles both 2D array (main sheet) and array of objects (confirmed tabs)
     var parsed = [];
@@ -4110,16 +4119,21 @@
     console.log('[Render Table] ' + dir + ': ' + parsed.length + ' valid rows after filtering');
     if (parsed.length > 0) console.log('[Render Table] Sample row:', JSON.stringify(parsed[0]));
 
-    // Sort: by departure date, then flight_id (groups same flights), then time
+    // Sort: outbound by arrival date/time in Venice, return by departure date/time from Istanbul
     parsed.forEach(function (r) {
-      r._sortDate = cfNormDate(r.departure_date || r.flight_date || '');
-      r._sortTime = r.departure_time || r.arrival_time || '';
+      if (dir === 'outbound') {
+        r._sortDate = cfNormDate(r.arrival_date || r.departure_date || r.flight_date || '');
+        r._sortTime = r.arrival_time || r.departure_time || '';
+      } else {
+        r._sortDate = cfNormDate(r.departure_date || r.flight_date || '');
+        r._sortTime = r.departure_time || r.arrival_time || '';
+      }
       r._sortFid = r.flight_id || '';
     });
     parsed.sort(function (a, b) {
       if (a._sortDate !== b._sortDate) return a._sortDate.localeCompare(b._sortDate);
-      if (a._sortFid !== b._sortFid) return a._sortFid.localeCompare(b._sortFid);
-      return a._sortTime.localeCompare(b._sortTime);
+      if (a._sortTime !== b._sortTime) return a._sortTime.localeCompare(b._sortTime);
+      return a._sortFid.localeCompare(b._sortFid);
     });
 
     var userName = getUserName() || '';
@@ -4131,7 +4145,12 @@
       '</div>' +
       '<div class="cf-subtitle">' + subtitle + '</div>';
 
-    if (parsed.length === 0) {
+    if (itineraryLoading) {
+      html += '<div class="hotel-loading">' +
+        '<div class="mc-progress-bar"><div class="mc-progress-fill"></div></div>' +
+        '<div class="mc-loading-phrase" id="itinerary-phrase-' + dir + '">' + ITINERARY_PHRASES[0] + '</div>' +
+      '</div>';
+    } else if (parsed.length === 0) {
       html += '<div class="cf-empty">No confirmed flights yet &mdash; be the first to add yours!</div>';
     } else {
       var thDepart = dir === 'outbound' ? 'Departs' : 'Departs IST';
@@ -4144,10 +4163,10 @@
       var lastFid = null;
       var lastDate = null;
       parsed.forEach(function (r) {
-        var depDate = r._sortDate || '';
-        if (depDate && depDate !== lastDate) {
-          lastDate = depDate;
-          var dayLabel = cfFmtDate(depDate);
+        var groupDate = r._sortDate || '';
+        if (groupDate && groupDate !== lastDate) {
+          lastDate = groupDate;
+          var dayLabel = cfFmtDate(groupDate);
           if (dayLabel) html += '<tr class="cf-day-divider"><td colspan="7">' + escHtml(dayLabel) + '</td></tr>';
         }
 
@@ -4711,6 +4730,69 @@
       });
   }
 
+  var FLIGHT_PHRASES = [
+    'Loading most recent flights\u2026',
+    'Finding best recommendations\u2026',
+    'Ranking the airlines\u2026',
+    'Comparing prices across dates\u2026',
+    'Checking nonstop and 1-stop options\u2026'
+  ];
+  var flightLoading = false;
+
+  function renderFlightLoading() {
+    var el = document.getElementById('flights');
+    el.innerHTML = '<div class="hotel-loading">' +
+      '<div class="mc-progress-bar"><div class="mc-progress-fill" id="flight-fill"></div></div>' +
+      '<div class="mc-loading-phrase" id="flight-phrase">' + FLIGHT_PHRASES[0] + '</div>' +
+    '</div>';
+    var phraseIdx = 0;
+    var phraseEl = document.getElementById('flight-phrase');
+    var interval = setInterval(function () {
+      if (!flightLoading) { clearInterval(interval); return; }
+      phraseIdx = (phraseIdx + 1) % FLIGHT_PHRASES.length;
+      phraseEl.style.opacity = '0';
+      setTimeout(function () {
+        if (!phraseEl) return;
+        phraseEl.textContent = FLIGHT_PHRASES[phraseIdx];
+        phraseEl.style.opacity = '1';
+      }, 300);
+    }, 3000);
+  }
+
+  var ITINERARY_PHRASES = [
+    'Loading itinerary\u2026',
+    'Fetching confirmed flights\u2026',
+    'Organizing by travel dates\u2026',
+    'Grouping fellow travelers\u2026'
+  ];
+  var itineraryLoading = false;
+  var itineraryLoadingInterval = null;
+
+  function renderItineraryLoading() {
+    itineraryLoading = true;
+    confirmedOutbound = [];
+    confirmedReturn = [];
+    renderConfirmedTable('outbound');
+    renderConfirmedTable('return');
+    var phraseIdx = 0;
+    if (itineraryLoadingInterval) clearInterval(itineraryLoadingInterval);
+    itineraryLoadingInterval = setInterval(function () {
+      if (!itineraryLoading) { clearInterval(itineraryLoadingInterval); itineraryLoadingInterval = null; return; }
+      phraseIdx = (phraseIdx + 1) % ITINERARY_PHRASES.length;
+      ['outbound', 'return'].forEach(function (d) {
+        var phraseEl = document.getElementById('itinerary-phrase-' + d);
+        if (phraseEl) {
+          phraseEl.style.opacity = '0';
+          setTimeout(function () {
+            if (!phraseEl) return;
+            phraseEl.textContent = ITINERARY_PHRASES[phraseIdx];
+            phraseEl.style.opacity = '1';
+          }, 300);
+        }
+      });
+    }, 3000);
+  }
+
   async function startApp() {
     promptName();
     renderCountdown();
@@ -4718,6 +4800,7 @@
     renderDirectionNav();
     renderFilters();
     var sheetReady = fetchFamilyPicks();
+    renderItineraryLoading();
     fetchConfirmedFlights();
 
     setInterval(fetchFamilyPicks, 60000);
@@ -4737,12 +4820,9 @@
       updateHero();
     }
 
-    document.getElementById('flights').innerHTML =
-      '<div class="status">' +
-        '<div class="loading-spinner"></div>' +
-        '<div>Searching flights&hellip;</div>' +
-        '<div class="loading-sub">Checking all routes &times; nonstop + 1-stop</div>' +
-      '</div>';
+    flightLoading = true;
+    renderFlightLoading();
+    var loadStart = Date.now();
 
     // Check localStorage cache first (survives deploys, saves SerpAPI calls)
     var FLIGHT_CACHE_KEY = 'dcf_flights_cache_v3';
@@ -4778,6 +4858,7 @@
           resp = await fetch('flights.json');
           if (!resp.ok) throw new Error('JSON ' + resp.status);
         } catch (e2) {
+          flightLoading = false;
           document.getElementById('flights').innerHTML =
             '<div class="status">Could not load flight data.<br>' +
             '<span class="loading-sub">Flight search is running. Refresh in a minute.</span></div>';
@@ -4825,6 +4906,13 @@
         scoreAndSortFlights(od['return'].flights, origin, 'return');
       }
     });
+
+    // Show loading bar for at least 800ms so users see feedback
+    var elapsed = Date.now() - loadStart;
+    var minDelay = Math.max(0, 800 - elapsed);
+    await new Promise(function (r) { setTimeout(r, minDelay); });
+
+    flightLoading = false;
 
     if (data.error) {
       document.getElementById('flights').innerHTML =
