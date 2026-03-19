@@ -1435,9 +1435,11 @@ class TestCacheConfig(unittest.TestCase):
         """stale-while-revalidate should be 172800 (48 hours)."""
         self.assertIn("stale-while-revalidate=172800", self.source)
 
-    def test_serpapi_usage_in_response(self):
-        """API response should include _serpapi_usage."""
-        self.assertIn("_serpapi_usage", self.source)
+    def test_serpapi_usage_in_cache(self):
+        """Cached flight data should include _serpapi_usage."""
+        with open("data/flights_cache.json", "r") as fh:
+            data = json.load(fh)
+        self.assertIn("_serpapi_usage", data)
 
 
 class TestAISummaryPrompt(unittest.TestCase):
@@ -1540,10 +1542,10 @@ class TestFrontendFilters(unittest.TestCase):
         count = self.html.count('class="origin-pill"')
         self.assertEqual(count, 4)
 
-    def test_change_city_link(self):
-        """Change city link should be present."""
-        self.assertIn('id="change-city"', self.html)
-        self.assertIn("clearStoredOrigin", self.html)
+    def test_home_nav_tab(self):
+        """Home tab should be present in section nav."""
+        self.assertIn('data-section="home"', self.html)
+        self.assertIn("showLanding", self.html)
 
 
 class TestFamilyPickMatching(unittest.TestCase):

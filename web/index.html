@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dahyabhai Cruise Dashboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dahyabhai Vacation Planner</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -19,6 +19,59 @@
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-weight: 400; }
+
+  /* ── Landing screen ── */
+  .landing-screen {
+    position: fixed; inset: 0; z-index: 2500;
+    background: #faf8f3;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; padding: 24px;
+  }
+  .landing-screen.hidden { display: none; }
+  .landing-title {
+    font-family: var(--serif); font-size: clamp(36px, 8vw, 56px);
+    font-weight: 300; font-style: italic; color: var(--azure);
+    letter-spacing: -0.02em; margin-bottom: 4px; text-align: center;
+    line-height: 1.15;
+  }
+  .landing-sub {
+    font-family: var(--sans); font-size: 15px; font-weight: 300;
+    color: #94a3b8; margin-bottom: 40px; text-align: center;
+  }
+  .landing-cards {
+    display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    max-width: 800px; width: 100%;
+  }
+  .landing-card {
+    background: #fff; border: 1px solid var(--fog); border-radius: 16px;
+    padding: 36px 28px 32px; cursor: pointer; text-align: center;
+    flex: 1; min-width: 200px; max-width: 240px;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .landing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.10);
+    border-color: var(--azure);
+  }
+  .landing-card-icon {
+    font-size: 36px; margin-bottom: 14px;
+  }
+  .landing-card-label {
+    font-family: var(--serif); font-size: 24px; font-weight: 400;
+    color: var(--azure); margin-bottom: 6px;
+  }
+  .landing-card-desc {
+    font-family: var(--sans); font-size: 13px; font-weight: 300;
+    color: #94a3b8; line-height: 1.4;
+  }
+  .landing-welcome {
+    font-family: var(--sans); font-size: 14px; font-weight: 400;
+    color: var(--gold); margin-bottom: 16px; text-align: center;
+  }
+  @media (max-width: 600px) {
+    .landing-cards { flex-direction: column; align-items: center; }
+    .landing-card { max-width: 100%; width: 100%; }
+  }
 
   /* ── Origin selection modal ── */
   .origin-modal {
@@ -127,13 +180,6 @@
   }
 
   /* Change city link */
-  .change-city {
-    font-family: var(--sans); font-size: 11px; font-weight: 400;
-    color: #94a3b8; cursor: pointer; text-decoration: none;
-    position: absolute; top: 16px; right: 20px;
-    transition: color 0.15s;
-  }
-  .change-city:hover { color: var(--azure); text-decoration: underline; }
 
   /* AI Briefing */
   .ai-briefing {
@@ -619,20 +665,47 @@
     .book-btn { display: block; width: 100%; text-align: center; margin-top: 8px; }
   }
 
-  /* ── Section nav (Flights / Hotels) ── */
+  /* ── Section nav (top bar desktop, bottom bar mobile) ── */
   .section-nav {
     display: flex; gap: 0; justify-content: center;
     background: #faf8f3; padding: 12px 0 0; position: relative; z-index: 10;
   }
   .section-tab {
-    font-family: var(--sans); font-size: 15px; font-weight: 500;
-    padding: 12px 32px; cursor: pointer; border: none; background: transparent;
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    padding: 10px 24px 12px; cursor: pointer; border: none; background: transparent;
     color: #94a3b8; letter-spacing: 0.5px; text-transform: uppercase;
     border-bottom: 3px solid transparent; transition: all 0.15s;
+    display: flex; align-items: center; gap: 6px;
   }
   .section-tab:hover { color: var(--azure); }
   .section-tab.active {
     color: var(--azure); border-bottom-color: var(--gold);
+  }
+  .section-tab svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .section-tab .tab-label { white-space: nowrap; }
+
+  @media (max-width: 600px) {
+    .section-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #fff; padding: 0;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      border-top: 1px solid var(--fog);
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+      z-index: 2000;
+      justify-content: stretch;
+    }
+    .section-tab {
+      flex: 1; flex-direction: column; gap: 3px;
+      padding: 10px 4px 8px; font-size: 10px; letter-spacing: 0.3px;
+      min-height: 56px;
+      border-bottom: none; border-top: 3px solid transparent;
+      justify-content: center; text-align: center;
+    }
+    .section-tab.active {
+      border-bottom: none; border-top-color: var(--gold);
+    }
+    .section-tab svg { width: 22px; height: 22px; }
+    body { padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
   }
 
   /* Hotel sub-nav (Venice / Istanbul) */
@@ -1118,8 +1191,34 @@
 </head>
 <body>
 
+<!-- Landing screen -->
+<div class="landing-screen" id="landing-screen">
+  <div class="landing-title">Dahyabhai Vacation</div>
+  <div class="landing-sub">Venice &middot; Mediterranean Cruise &middot; Istanbul</div>
+  <div class="hero-pill" id="landing-countdown" style="margin-bottom:24px;">&#128336; <span id="landing-countdown-days"></span> DAYS UNTIL JULY 3, 2026</div>
+  <div class="landing-welcome hidden" id="landing-welcome"></div>
+  <div class="landing-cards">
+    <div class="landing-card" data-dest="flights">
+      <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+      <div class="landing-card-label">Shop Flights</div>
+      <div class="landing-card-desc">Outbound to Venice, return from Istanbul</div>
+    </div>
+    <div class="landing-card" data-dest="hotels">
+      <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 7v14M21 7v14M6 11h4v4H6zM14 11h4v4h-4zM9 3h6l3 4H6l3-4z"/></svg></div>
+      <div class="landing-card-label">Shop Hotels</div>
+      <div class="landing-card-desc">Venice &amp; Istanbul stays before and after the cruise</div>
+    </div>
+    <div class="landing-card" data-dest="itinerary">
+      <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></div>
+      <div class="landing-card-label">Itinerary</div>
+      <div class="landing-card-desc">Confirmed bookings &amp; trip timeline</div>
+    </div>
+  </div>
+</div>
+
 <!-- Origin selection modal -->
-<div class="origin-modal" id="origin-modal">
+<div class="origin-modal hidden" id="origin-modal">
+  <a id="origin-back" style="position:absolute;top:16px;left:20px;font-family:var(--sans);font-size:13px;font-weight:400;color:#94a3b8;cursor:pointer;text-decoration:none;">&#8592; Back</a>
   <div class="origin-modal-title">Where are you flying from?</div>
   <div class="origin-modal-sub">We'll show you the best flights for your journey</div>
   <div class="origin-cards">
@@ -1147,14 +1246,14 @@
 
 <!-- Section nav: Flights / Hotels -->
 <div class="section-nav" id="section-nav">
-  <button class="section-tab active" data-section="flights">Shop Flights</button>
-  <button class="section-tab" data-section="hotels">Shop Hotels</button>
-  <button class="section-tab" data-section="itinerary">Itinerary</button>
+  <button class="section-tab" data-section="home"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 14 15 14 15 21"/></svg><span class="tab-label">Home</span></button>
+  <button class="section-tab active" data-section="flights"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg><span class="tab-label">Flights</span></button>
+  <button class="section-tab" data-section="hotels"><svg viewBox="0 0 24 24"><path d="M3 21h18M3 7v14M21 7v14M6 11h4v4H6zM14 11h4v4h-4zM9 3h6l3 4H6l3-4z"/></svg><span class="tab-label">Hotels</span></button>
+  <button class="section-tab" data-section="itinerary"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg><span class="tab-label">Itinerary</span></button>
 </div>
 
 <!-- Hero -->
 <div class="hero">
-  <a class="change-city" id="change-city">Change city</a>
   <div class="direction-nav" id="direction-nav">
     <button class="direction-pill active" data-dir="outbound">Outbound</button>
     <button class="direction-pill" data-dir="return">Return</button>
@@ -1394,24 +1493,24 @@
         var origin = card.dataset.origin;
         setStoredOrigin(origin);
         activeOrigin = origin;
+        activeSection = 'flights';
         hideOriginModal();
         if (!data) {
           startApp();
         } else {
           promptName();
+          renderSectionNav();
           onOriginChanged();
         }
       });
     });
-  }
-
-  function setupChangeCity() {
-    document.getElementById('change-city').addEventListener('click', function (e) {
+    // Back to landing from origin modal
+    document.getElementById('origin-back').addEventListener('click', function (e) {
       e.preventDefault();
-      clearStoredOrigin();
-      showOriginModal();
+      showLanding();
     });
   }
+
 
   // ---- User name ----
   function getUserName() {
@@ -3072,8 +3171,13 @@
   function setupSectionNav() {
     document.querySelectorAll('.section-tab').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        if (activeSection === btn.dataset.section) return;
-        activeSection = btn.dataset.section;
+        var section = btn.dataset.section;
+        if (section === 'home') {
+          showLanding();
+          return;
+        }
+        if (activeSection === section) return;
+        activeSection = section;
         renderSectionNav();
         renderSectionContent();
       });
@@ -3788,26 +3892,102 @@
   }
 
   // ---- Init ----
+  // ---- Landing screen ----
+  function showLanding() {
+    document.getElementById('landing-screen').classList.remove('hidden');
+    document.getElementById('page-content').style.display = 'none';
+    document.getElementById('origin-modal').classList.add('hidden');
+    // Show personalized welcome if we know the user
+    var name = getUserName();
+    var welcomeEl = document.getElementById('landing-welcome');
+    if (name) {
+      welcomeEl.textContent = 'Welcome back, ' + name;
+      welcomeEl.classList.remove('hidden');
+    } else {
+      welcomeEl.classList.add('hidden');
+    }
+    // Countdown on landing
+    var days = Math.ceil((TRIP - new Date()) / 86400000);
+    var cEl = document.getElementById('landing-countdown-days');
+    if (cEl) cEl.textContent = days > 0 ? days : 0;
+  }
+
+  function hideLanding() {
+    document.getElementById('landing-screen').classList.add('hidden');
+  }
+
+  function setupLanding() {
+    document.querySelectorAll('.landing-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var dest = card.dataset.dest;
+        hideLanding();
+
+        if (dest === 'flights') {
+          // For flights, need origin selection first (if not stored)
+          var stored = getStoredOrigin();
+          if (stored && ORIGINS[stored]) {
+            activeOrigin = stored;
+            activeSection = 'flights';
+            hideOriginModal();
+            if (!data) {
+              startApp();
+            } else {
+              renderSectionNav();
+              renderSectionContent();
+            }
+          } else {
+            showOriginModal();
+            // Origin modal click will call startApp()
+          }
+        } else {
+          // Hotels or Itinerary — need data loaded but skip origin if we have one
+          activeSection = dest;
+          var stored = getStoredOrigin();
+          if (stored && ORIGINS[stored]) {
+            activeOrigin = stored;
+          }
+          hideOriginModal();
+          if (!data) {
+            startApp();
+          } else {
+            renderSectionNav();
+            renderSectionContent();
+          }
+        }
+      });
+    });
+  }
+
   async function init() {
+    setupLanding();
     setupOriginModal();
-    setupChangeCity();
     setupBookModal();
     setupFamilyModal();
     setupDirectionNav();
     setupOriginNav();
     setupSectionNav();
 
-    // Check stored origin
+    // Check stored origin (restore it silently but don't skip landing)
     var stored = getStoredOrigin();
     if (stored && ORIGINS[stored]) {
       activeOrigin = stored;
-      hideOriginModal();
-    } else {
-      showOriginModal();
-      return; // Wait for origin selection before loading data
     }
 
-    startApp();
+    // Skip landing for deep links (e.g. ?flight=xxx or ?section=hotels)
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('flight') || params.get('section') || params.get('dir')) {
+      hideLanding();
+      if (stored && ORIGINS[stored]) {
+        hideOriginModal();
+        startApp();
+      } else {
+        showOriginModal();
+      }
+      return;
+    }
+
+    // Always show landing screen first
+    showLanding();
   }
 
   // ---- Confirmed Flights ----
@@ -4810,9 +4990,11 @@
     var urlSection = new URLSearchParams(window.location.search).get('section');
     if (urlSection === 'hotels' || urlSection === 'itinerary') {
       activeSection = urlSection;
-      renderSectionNav();
-      renderSectionContent();
     }
+    // Always render section nav/content to reflect activeSection (set by landing or URL)
+    renderSectionNav();
+    renderSectionContent();
+
     var urlDir = new URLSearchParams(window.location.search).get('dir');
     if (urlDir === 'return' || urlDir === 'multicity') {
       activeDirection = urlDir;
