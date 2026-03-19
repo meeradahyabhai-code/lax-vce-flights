@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Dahyabhai Vacation Planner</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
   :root {
     --ink: #0a0a0f;
@@ -896,17 +898,17 @@
     display: flex; gap: 8px; align-items: center;
   }
   .hotel-range-slider {
-    -webkit-appearance: none; appearance: none; width: 100px; height: 4px;
-    border-radius: 2px; background: var(--fog); outline: none;
+    -webkit-appearance: none; appearance: none; width: 140px; height: 6px;
+    border-radius: 3px; background: var(--fog); outline: none;
     cursor: pointer;
   }
   .hotel-range-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+    -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
     border-radius: 50%; background: var(--lagoon); cursor: pointer;
-    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    border: 2.5px solid #fff; box-shadow: 0 1px 5px rgba(0,0,0,0.25);
   }
   .hotel-range-slider::-moz-range-thumb {
-    width: 16px; height: 16px; border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     background: var(--lagoon); cursor: pointer;
     border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   }
@@ -920,11 +922,92 @@
   }
   @media (max-width: 900px) {
     .hotel-filters { gap: 10px; }
-    .hotel-range-slider { width: 80px; }
+    .hotel-range-slider { width: 110px; }
   }
 
   /* Hotel loading */
   .hotel-loading { text-align: center; padding: 40px 20px; }
+
+  /* ── Hotel map ── */
+  .hotel-map-toggle {
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    padding: 5px 12px; border-radius: 9999px; border: 1px solid var(--fog);
+    background: #fff; color: var(--ink); cursor: pointer; transition: all 0.15s;
+    margin-bottom: 12px;
+  }
+  .hotel-map-toggle:hover { border-color: var(--lagoon); color: var(--lagoon); }
+  .hotel-map-toggle.active { background: var(--lagoon); color: #fff; border-color: var(--lagoon); }
+  #hotel-map-container {
+    height: 350px; border-radius: 12px; margin-bottom: 16px;
+    border: 1px solid var(--fog); overflow: hidden;
+  }
+  #hotel-map-container.hidden { display: none; }
+  @media (max-width: 600px) {
+    #hotel-map-container { height: 250px; }
+  }
+  @keyframes goldPulse {
+    0% { box-shadow: 0 0 0 0 rgba(184,149,58,0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(184,149,58,0); }
+    100% { box-shadow: 0 0 0 0 rgba(184,149,58,0); }
+  }
+  .hotel-card.map-highlight {
+    border-color: var(--gold); animation: goldPulse 1s ease-out;
+  }
+
+  /* ── Hotel heart/save ── */
+  .hotel-img-wrap { position: relative; }
+  .hotel-heart-btn {
+    position: absolute; top: 8px; right: 8px; z-index: 5;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
+    border: none; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    transition: transform 0.15s;
+  }
+  .hotel-heart-btn:hover { transform: scale(1.1); }
+  .hotel-heart-btn svg { width: 18px; height: 18px; stroke: #64748b; fill: none; stroke-width: 2; transition: all 0.2s; }
+  .hotel-heart-btn.hearted svg { stroke: #e11d48; fill: #e11d48; }
+  @keyframes heartPop {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+  .hotel-heart-btn.hearted { animation: heartPop 0.35s ease-out; }
+  .hotel-heart-count {
+    position: absolute; top: 2px; right: 2px;
+    min-width: 16px; height: 16px; border-radius: 8px;
+    background: var(--azure); color: #fff;
+    font-family: var(--sans); font-size: 10px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 4px; line-height: 1;
+  }
+  .hotel-heart-count.hidden { display: none; }
+
+  /* ── Hotel card tightened layout ── */
+  .hotel-price-row {
+    display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap;
+  }
+  .hotel-price-row .hotel-price { margin-top: 0; }
+  .hotel-price-row .points-ai-trigger { margin: 0; }
+  .hotel-badges-row { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin: 4px 0; }
+  .hotel-meta-line {
+    font-family: var(--sans); font-size: 12px; font-weight: 400;
+    color: #64748b; margin-top: 4px;
+  }
+  .hotel-meta-line svg { vertical-align: -2px; margin-right: 3px; }
+  .hotel-details-toggle {
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    color: var(--azure); background: none; border: none; cursor: pointer;
+    padding: 6px 0 2px; display: block;
+  }
+  .hotel-details-toggle:hover { color: var(--lagoon); }
+  .hotel-details-body { display: none; }
+  .hotel-details-body.open { display: block; }
+  .hotel-cta-row {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px;
+  }
+  .hotel-cta-row .hotel-view-btn { margin-top: 0; }
+  .hotel-cta-row .hotel-points-link { margin-top: 0; display: inline; }
 
   /* ── Confirmed Flights ── */
   .cf-section { margin-bottom: 48px; }
@@ -1302,6 +1385,7 @@
   <div id="hotel-smart-checkin"></div>
   <div id="hotel-picker-area"></div>
   <div id="hotel-filters-area"></div>
+  <div id="hotel-map-area"></div>
   <div id="hotel-results"></div>
 
   <!-- Family Picks (hotel) -->
@@ -3162,7 +3246,7 @@
   let hotelLoading = false;
   let hotelExpandedColumns = new Set();
   let smartCheckinDismissed = false;
-  var hotelFilters = { stars: new Set(), maxPrice: Infinity, maxDistance: Infinity };
+  var hotelFilters = { stars: new Set(), maxPrice: 350, maxDistance: 3.5 };
   var lastHotelResult = null;
 
   const HOTEL_CHECK_IN_DATES = ['2026-06-28', '2026-06-29', '2026-06-30'];
@@ -3510,9 +3594,23 @@
   }
 
   function hotelCardHTML(h, rank) {
-    var imgHtml = h.image_url
+    var imgInner = h.image_url
       ? '<img class="hotel-card-img" src="' + escHtml(h.image_url) + '" alt="' + escHtml(h.name) + '" loading="lazy">'
       : '<div class="hotel-card-img" style="background:var(--fog);display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px;">No image</div>';
+
+    // Heart button
+    var hotelFid = 'HOTEL:' + h.name + '|' + h.check_in;
+    var counts = getFlightCounts(hotelFid);
+    var userName = getUserName();
+    var isHearted = userName && counts.interested.indexOf(userName) !== -1;
+    var heartCount = counts.interested.length;
+    var heartSvg = '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+    var heartBtn = '<button class="hotel-heart-btn' + (isHearted ? ' hearted' : '') + '" data-hotel-fid="' + escHtml(hotelFid) + '" data-hotel-name="' + escHtml(h.name) + '" data-hotel-checkin="' + escHtml(h.check_in || '') + '" data-hotel-rate="' + (h.rate_per_night || 0) + '" data-hotel-url="' + escHtml(h.google_hotels_url || '') + '">' +
+      heartSvg +
+      '<span class="hotel-heart-count' + (heartCount === 0 ? ' hidden' : '') + '">' + heartCount + '</span>' +
+    '</button>';
+
+    var imgHtml = '<div class="hotel-img-wrap">' + imgInner + heartBtn + '</div>';
 
     var loyaltyBadge = '';
     if (h.brand === 'marriott') {
@@ -3529,64 +3627,22 @@
       });
     }
 
-    var distanceHtml = '';
+    // Distance + rating condensed to one line
+    var metaParts = [];
     if (h.distance_mi != null && h.landmark_name) {
-      distanceHtml = '<div class="hotel-distance">' +
-        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
-        h.distance_mi + ' mi from ' + escHtml(h.landmark_name) +
-        ' <span style="color:#b0b0c0;">(' + h.distance_km + ' km)</span>' +
-      '</div>';
+      metaParts.push('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
+        h.distance_mi + ' mi from ' + escHtml(h.landmark_name));
     }
-
-    // Google Places user rating (1-5 scale)
-    var ratingHtml = '';
     if (h.overall_rating) {
-      ratingHtml = '<div class="hotel-rating">' +
-        '<span class="hotel-rating-num">' + h.overall_rating + '</span>/5' +
-        (h.reviews ? ' <span style="color:#94a3b8;font-size:12px;">(' + h.reviews.toLocaleString() + ' reviews)</span>' : '') +
-      '</div>';
+      metaParts.push(h.overall_rating + '/5' +
+        (h.reviews ? ' (' + h.reviews.toLocaleString() + ')' : ''));
     }
-
-    // SerpAPI pricing (or "Check price" for Places-only hotels)
-    var nights = h.nights || 1;
-    var priceHtml;
-    if (h.places_only || !h.rate_per_night) {
-      var checkUrl = h.loyalty_url || h.google_maps_url || h.website || '';
-      var brandLabel = h.brand === 'marriott' ? 'Marriott.com' : h.brand === 'hilton' ? 'Hilton.com' : 'hotel site';
-      priceHtml = '<div class="hotel-price" style="font-size:16px;color:#6366f1;">' +
-        (checkUrl ? '<a href="' + escHtml(checkUrl) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Check price on ' + brandLabel + '</a>' : 'Price not available') +
-        '</div>';
-    } else {
-      priceHtml = '<div class="hotel-price">$' + h.rate_per_night.toLocaleString() +
-        '<span style="font-size:14px;font-weight:300;color:#94a3b8">/night</span></div>' +
-        '<div class="hotel-price-sub">$' + h.total_rate.toLocaleString() + ' total (' +
-        nights + ' night' + (nights !== 1 ? 's' : '') + ')</div>';
-    }
-
-    var scoreBadge = '<span class="badge" style="background:' + hotelScoreColor(h.score) + ';color:#fff;font-size:10px;">' + hotelScoreLabel(h.score) + '</span>';
-
-    // Google Places review snippet
-    var snippetHtml = '';
-    if (h.review_snippets && h.review_snippets.length > 0) {
-      var snip = h.review_snippets[0];
-      snippetHtml = '<div style="margin-top:8px;padding:8px 10px;background:var(--fog);border-radius:8px;font-size:12px;color:#64748b;line-height:1.5;">' +
-        '\u201c' + escHtml(snip.text.slice(0, 120)) + (snip.text.length > 120 ? '...' : '') + '\u201d' +
-        '<div style="font-size:11px;color:#94a3b8;margin-top:2px;">&mdash; ' + escHtml(snip.author) +
-        (snip.time ? ', ' + escHtml(snip.time) : '') + '</div>' +
-      '</div>';
-    } else if (h.editorial_summary) {
-      snippetHtml = '<div style="margin-top:8px;padding:8px 10px;background:var(--fog);border-radius:8px;font-size:12px;color:#64748b;line-height:1.5;">' +
-        escHtml(h.editorial_summary.slice(0, 150)) + '</div>';
-    }
-
-    // SerpAPI Google Hotels booking link (or Google Maps for Places-only)
-    var viewUrl = h.google_hotels_url || h.google_maps_url || h.website || '';
-    var viewLabel = h.google_hotels_url ? 'View Hotel' : (h.google_maps_url ? 'View on Maps' : 'Visit Website');
-    var viewBtn = viewUrl
-      ? '<a class="hotel-view-btn" href="' + escHtml(viewUrl) + '" target="_blank" rel="noopener">' + viewLabel + '</a>'
+    var metaLine = metaParts.length > 0
+      ? '<div class="hotel-meta-line">' + metaParts.join(' &middot; ') + '</div>'
       : '';
 
-    // Hotel Points AI button
+    // Price + Points AI on same row
+    var nights = h.nights || 1;
     var hotelData = encodeURIComponent(JSON.stringify({
       name: h.name, brand: h.brand || 'independent',
       star_class: h.star_class, rate_per_night: h.rate_per_night,
@@ -3594,14 +3650,61 @@
       city: activeHotelCity || 'venice', cc_programs: h.cc_programs || [],
       check_in: h.check_in, overall_rating: h.overall_rating
     }));
-    var hotelPointsAIBtn = '<button class="points-ai-trigger hotel-points-ai-trigger" data-hotel="' + hotelData + '">' +
+    var hotelPointsAIBtn = '<button class="points-ai-trigger hotel-points-ai-trigger" data-hotel="' + hotelData + '" title="Points AI">' +
       sparkleSVG() + '<span class="points-ai-label">Points AI</span></button>';
 
-    // Google Places loyalty link
+    var priceHtml;
+    if (h.places_only || !h.rate_per_night) {
+      var checkUrl = h.loyalty_url || h.google_maps_url || h.website || '';
+      var brandLabel = h.brand === 'marriott' ? 'Marriott.com' : h.brand === 'hilton' ? 'Hilton.com' : 'hotel site';
+      priceHtml = '<div class="hotel-price-row">' +
+        '<div class="hotel-price" style="font-size:16px;color:#6366f1;">' +
+        (checkUrl ? '<a href="' + escHtml(checkUrl) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Check price on ' + brandLabel + '</a>' : 'Price not available') +
+        '</div>' + hotelPointsAIBtn + '</div>';
+    } else {
+      priceHtml = '<div class="hotel-price-row">' +
+        '<div class="hotel-price">$' + h.rate_per_night.toLocaleString() +
+        '<span style="font-size:14px;font-weight:300;color:#94a3b8">/night</span></div>' +
+        '<span style="font-size:12px;color:#94a3b8;">&middot; $' + h.total_rate.toLocaleString() + ' total</span>' +
+        hotelPointsAIBtn +
+      '</div>';
+    }
+
+    var scoreBadge = '<span class="badge" style="background:' + hotelScoreColor(h.score) + ';color:#fff;font-size:10px;">' + hotelScoreLabel(h.score) + '</span>';
+
+    // Collapsible details
+    var detailsContent = '';
+    if (h.address) {
+      detailsContent += '<div class="hotel-address">' + escHtml(h.address) + '</div>';
+    }
+    if (h.review_snippets && h.review_snippets.length > 0) {
+      var snip = h.review_snippets[0];
+      detailsContent += '<div style="margin-top:8px;padding:8px 10px;background:var(--fog);border-radius:8px;font-size:12px;color:#64748b;line-height:1.5;">' +
+        '\u201c' + escHtml(snip.text.slice(0, 120)) + (snip.text.length > 120 ? '...' : '') + '\u201d' +
+        '<div style="font-size:11px;color:#94a3b8;margin-top:2px;">&mdash; ' + escHtml(snip.author) +
+        (snip.time ? ', ' + escHtml(snip.time) : '') + '</div>' +
+      '</div>';
+    } else if (h.editorial_summary) {
+      detailsContent += '<div style="margin-top:8px;padding:8px 10px;background:var(--fog);border-radius:8px;font-size:12px;color:#64748b;line-height:1.5;">' +
+        escHtml(h.editorial_summary.slice(0, 150)) + '</div>';
+    }
+    var detailsToggle = detailsContent
+      ? '<button class="hotel-details-toggle">More details \u25BC</button><div class="hotel-details-body">' + detailsContent + '</div>'
+      : '';
+
+    // CTA row: View Hotel + loyalty link
+    var viewUrl = h.google_hotels_url || h.google_maps_url || h.website || '';
+    var viewLabel = h.google_hotels_url ? 'View Hotel' : (h.google_maps_url ? 'View on Maps' : 'Visit Website');
+    var viewBtn = viewUrl
+      ? '<a class="hotel-view-btn" href="' + escHtml(viewUrl) + '" target="_blank" rel="noopener">' + viewLabel + '</a>'
+      : '';
     var pointsLink = '';
     if (h.loyalty_url) {
       pointsLink = '<a class="hotel-points-link" href="' + escHtml(h.loyalty_url) + '" target="_blank" rel="noopener">Check points price \u2197</a>';
     }
+    var ctaRow = (viewBtn || pointsLink)
+      ? '<div class="hotel-cta-row">' + viewBtn + pointsLink + '</div>'
+      : '';
 
     var interestData = encodeURIComponent(JSON.stringify({
       primary_airline: h.name,
@@ -3616,22 +3719,19 @@
       google_flights_url: h.google_hotels_url || '',
       type: 'hotel',
     }));
-    var hotelFid = 'HOTEL:' + h.name + '|' + h.check_in;
 
-    return '<div class="hotel-card">' +
+    var cardId = 'hcard-' + escHtml(h.name).replace(/[^a-zA-Z0-9]/g, '_');
+
+    return '<div class="hotel-card" id="' + cardId + '" data-hotel-name="' + escHtml(h.name) + '">' +
       imgHtml +
       '<div class="hotel-card-body">' +
         '<div class="hotel-card-name">' + escHtml(h.name) + '</div>' +
         '<div class="hotel-stars">' + hotelStars(h.star_class || 0) + '</div> ' + scoreBadge +
-        '<div>' + loyaltyBadge + ccBadges + '</div>' +
-        distanceHtml +
-        ratingHtml +
         priceHtml +
-        (h.address ? '<div class="hotel-address">' + escHtml(h.address) + '</div>' : '') +
-        snippetHtml +
-        viewBtn +
-        hotelPointsAIBtn +
-        pointsLink +
+        '<div class="hotel-badges-row">' + loyaltyBadge + ccBadges + '</div>' +
+        metaLine +
+        detailsToggle +
+        ctaRow +
         '<a class="interest-link" data-fid="' + escHtml(hotelFid) +
           '" data-flight="' + interestData + '">See family interest</a>' +
       '</div>' +
@@ -3749,7 +3849,7 @@
     var hilton = (result.best_hilton || []).filter(passesHotelFilter);
 
     if (overall.length === 0) {
-      el.innerHTML = '<div class="status">No hotels match your filters.</div>';
+      el.innerHTML = '<div class="status">No properties available with current filters.</div>';
       renderHotelFooter(0);
       return;
     }
@@ -3786,10 +3886,15 @@
       return html;
     }
 
+    var hasActiveFilters = hotelFilters.stars.size > 0 ||
+      hotelFilters.maxPrice !== Infinity ||
+      hotelFilters.maxDistance !== Infinity;
+    var filterSuffix = hasActiveFilters ? ' with current filters' : '';
+
     var html = '<div class="hotel-columns">' +
-      columnHTML('Best Overall', overall, overallVisible, 'overall', 'No hotels found.') +
-      columnHTML('Best Marriott', marriott, marriottVisible, 'marriott', 'No Marriott properties available in Venice.') +
-      columnHTML('Best Hilton', hilton, hiltonVisible, 'hilton', 'No Hilton properties available in Venice.') +
+      columnHTML('Best Overall', overall, overallVisible, 'overall', 'No properties available' + filterSuffix + '.') +
+      columnHTML('Best Marriott', marriott, marriottVisible, 'marriott', 'No Marriott properties available' + filterSuffix + '.') +
+      columnHTML('Best Hilton', hilton, hiltonVisible, 'hilton', 'No Hilton properties available' + filterSuffix + '.') +
     '</div>';
 
     el.innerHTML = html;
@@ -3811,6 +3916,10 @@
     // Attach hotel interest handlers
     attachHotelInterestHandlers();
     attachHotelPointsAIHandlers();
+    attachHotelHeartHandlers(result);
+    attachHotelDetailsToggles();
+    attachHotelCardMapHandlers();
+    renderHotelMap(result);
     renderHotelFooter(overall.length);
   }
 
@@ -3834,6 +3943,293 @@
         el.textContent = parts.join(' \u00b7 ');
         el.classList.add('has-picks');
       }
+    });
+  }
+
+  // ---- Hotel heart/save ----
+  function attachHotelHeartHandlers(result) {
+    document.querySelectorAll('#hotel-results .hotel-heart-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (btn.classList.contains('hearted')) {
+          // Already hearted — subtle feedback
+          btn.style.transform = 'scale(1.1)';
+          setTimeout(function () { btn.style.transform = ''; }, 200);
+          return;
+        }
+        var name = getUserName();
+        if (!name) {
+          promptName();
+          return;
+        }
+        // Log to sheets
+        var hotel = {
+          name: btn.dataset.hotelName,
+          check_in: btn.dataset.hotelCheckin,
+          rate_per_night: parseFloat(btn.dataset.hotelRate) || 0,
+          google_hotels_url: btn.dataset.hotelUrl
+        };
+        logHotelToSheets('interested', hotel);
+        // Update local state
+        var fid = btn.dataset.hotelFid;
+        sheetRows.push({
+          action: 'interested', name: name,
+          flight_id: fid, airline: hotel.name,
+          flight_date: hotel.check_in, price: hotel.rate_per_night,
+          fare_type: 'Hotel', timestamp: new Date().toISOString()
+        });
+        // Update UI
+        btn.classList.add('hearted');
+        var countEl = btn.querySelector('.hotel-heart-count');
+        var newCount = parseInt(countEl.textContent || '0') + 1;
+        countEl.textContent = newCount;
+        countEl.classList.remove('hidden');
+        // Update interest link for this card
+        attachHotelInterestHandlers();
+      });
+    });
+  }
+
+  // ---- Hotel details toggle ----
+  function attachHotelDetailsToggles() {
+    document.querySelectorAll('#hotel-results .hotel-details-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var body = btn.nextElementSibling;
+        var isOpen = body.classList.toggle('open');
+        btn.textContent = isOpen ? 'Less details \u25B2' : 'More details \u25BC';
+      });
+    });
+  }
+
+  // ---- Hotel map ----
+  var hotelMapVisible = true;
+  var hotelMapInstance = null;
+
+  function renderHotelMap(result) {
+    var mapArea = document.getElementById('hotel-map-area');
+    if (!result) { mapArea.innerHTML = ''; return; }
+
+    // Collect all hotels with coordinates, dedupe by name
+    var all = (result.best_overall || []).concat(result.best_marriott || []).concat(result.best_hilton || []);
+    var seen = {};
+    var hotels = [];
+    all.forEach(function (h) {
+      if (h.latitude && h.longitude && !seen[h.name]) {
+        seen[h.name] = true;
+        hotels.push(h);
+      }
+    });
+
+    if (hotels.length === 0) {
+      mapArea.innerHTML = '';
+      return;
+    }
+
+    // Render toggle + container if not already there
+    if (!document.getElementById('hotel-map-container')) {
+      mapArea.innerHTML =
+        '<button class="hotel-map-toggle active" id="hotel-map-toggle-btn">Hide Map</button>' +
+        '<div id="hotel-map-container"></div>';
+      document.getElementById('hotel-map-toggle-btn').addEventListener('click', function () {
+        hotelMapVisible = !hotelMapVisible;
+        var container = document.getElementById('hotel-map-container');
+        var btn = document.getElementById('hotel-map-toggle-btn');
+        container.classList.toggle('hidden', !hotelMapVisible);
+        btn.classList.toggle('active', hotelMapVisible);
+        btn.textContent = hotelMapVisible ? 'Hide Map' : 'Show Map';
+        if (hotelMapVisible) {
+          if (!hotelMapInstance) {
+            initHotelMap(hotels);
+          } else {
+            hotelMapInstance.invalidateSize();
+          }
+        }
+      });
+      // Init map immediately since visible by default
+      if (!hotelMapInstance) {
+        setTimeout(function () { initHotelMap(hotels); }, 50);
+      }
+    }
+
+    // If map is visible, rebuild markers (preserve tile layer and San Marco)
+    if (hotelMapVisible && hotelMapInstance) {
+      hotelMapInstance.eachLayer(function (layer) {
+        if (layer instanceof L.Marker && layer.options.icon !== sanMarcoIcon) {
+          hotelMapInstance.removeLayer(layer);
+        }
+      });
+      addHotelMarkers(hotelMapInstance, hotels);
+    }
+  }
+
+  var hotelMarkerMap = {}; // name → L.Marker
+
+  var selectedHotelMarkerName = null;
+
+  function hotelPriceIcon(price, color, selected) {
+    var bg = selected ? color : '#fff';
+    var fg = selected ? '#fff' : '#1a1a1a';
+    var bedSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="' + fg + '" style="vertical-align:-2px;" xmlns="http://www.w3.org/2000/svg"><path d="M7 14c1.66 0 3-1.34 3-3S8.66 8 7 8s-3 1.34-3 3 1.34 3 3 3zm0-4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/><path d="M19 7h-8v7H3V5H1v15h2v-3h18v3h2V11c0-2.21-1.79-4-4-4zm2 8h-8V9h6c1.1 0 2 .9 2 2v4z"/></svg>';
+    var label = price ? '$' + price : bedSvg;
+    var border = selected ? color : '#d1d5db';
+    var shadow = selected ? '0 2px 8px rgba(0,0,0,0.3)' : '0 1px 4px rgba(0,0,0,0.15)';
+    var fontWeight = selected ? '700' : '600';
+    var scale = selected ? 'transform:scale(1.1);' : '';
+    var zClass = selected ? 'hotel-marker-selected' : 'hotel-marker';
+    var html = '<div class="' + zClass + '" style="' +
+      'background:' + bg + ';color:' + fg + ';border:1.5px solid ' + border + ';' +
+      'border-radius:20px;padding:4px 10px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;' +
+      'font-size:12px;font-weight:' + fontWeight + ';white-space:nowrap;' +
+      'box-shadow:' + shadow + ';cursor:pointer;' + scale +
+      'transition:all 0.15s ease;display:inline-block;">' + label + '</div>';
+    // Measure approximate width
+    var w = price ? Math.max(label.length * 8 + 20, 48) : 36;
+    return L.divIcon({
+      className: '',
+      iconSize: [w, 28],
+      iconAnchor: [w / 2, 14],
+      popupAnchor: [0, -16],
+      html: html
+    });
+  }
+
+  function hotelIcon(color) {
+    return hotelPriceIcon(null, color, false);
+  }
+
+  var sanMarcoIcon = L.divIcon({
+    className: '',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -12],
+    html: '<svg width="24" height="24" viewBox="0 0 24 24" fill="#b8953a" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">' +
+      '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>' +
+    '</svg>'
+  });
+
+  function initHotelMap(hotels) {
+    hotelMapInstance = L.map('hotel-map-container', {
+      scrollWheelZoom: false,
+      touchZoom: true,
+      tap: true,
+      center: [45.4341, 12.3388],
+      zoom: 14
+    });
+    // Enable scroll/pinch zoom once user clicks into the map
+    hotelMapInstance.on('click', function () {
+      hotelMapInstance.scrollWheelZoom.enable();
+    });
+    // Disable again when mouse leaves to avoid hijacking page scroll
+    document.getElementById('hotel-map-container').addEventListener('mouseleave', function () {
+      hotelMapInstance.scrollWheelZoom.disable();
+    });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      maxZoom: 19,
+      subdomains: 'abcd'
+    }).addTo(hotelMapInstance);
+
+    // Piazza San Marco landmark
+    L.marker([45.4341, 12.3388], { icon: sanMarcoIcon, zIndexOffset: 1000 })
+      .addTo(hotelMapInstance)
+      .bindPopup('<strong>Piazza San Marco</strong><br><span style="font-size:12px;color:#64748b;">Primary landmark for distance</span>');
+
+    addHotelMarkers(hotelMapInstance, hotels);
+  }
+
+  function selectHotelMarker(name) {
+    var brandColors = { marriott: '#7b2d26', hilton: '#003b5c' };
+    // Deselect previous
+    if (selectedHotelMarkerName && hotelMarkerMap[selectedHotelMarkerName]) {
+      var prev = hotelMarkerMap[selectedHotelMarkerName];
+      var ph = prev._hotelData;
+      if (ph) {
+        var pc = brandColors[ph.brand] || '#1a3a6b';
+        prev.setIcon(hotelPriceIcon(ph.rate_per_night, pc, false));
+        prev.setZIndexOffset(0);
+      }
+    }
+    // Select new
+    selectedHotelMarkerName = name;
+    if (name && hotelMarkerMap[name]) {
+      var cur = hotelMarkerMap[name];
+      var ch = cur._hotelData;
+      if (ch) {
+        var cc = brandColors[ch.brand] || '#1a3a6b';
+        cur.setIcon(hotelPriceIcon(ch.rate_per_night, cc, true));
+        cur.setZIndexOffset(1000);
+      }
+    }
+  }
+
+  function addHotelMarkers(map, hotels) {
+    var brandColors = { marriott: '#7b2d26', hilton: '#003b5c' };
+    hotelMarkerMap = {};
+    hotels.forEach(function (h) {
+      var color = brandColors[h.brand] || '#1a3a6b';
+      var isSelected = selectedHotelMarkerName === h.name;
+      var marker = L.marker([h.latitude, h.longitude], {
+        icon: hotelPriceIcon(h.rate_per_night, color, isSelected),
+        zIndexOffset: isSelected ? 1000 : 0
+      }).addTo(map);
+      marker._hotelData = h;
+      hotelMarkerMap[h.name] = marker;
+      var priceStr = h.rate_per_night ? '$' + h.rate_per_night + '/night' : 'Check price';
+      marker.bindPopup(
+        '<strong>' + escHtml(h.name) + '</strong><br>' +
+        '<span style="color:#b8953a;">' + hotelStars(h.star_class || 0) + '</span><br>' +
+        priceStr + '<br>' +
+        '<a href="#" class="hotel-map-view" data-hotel-name="' + escHtml(h.name) + '" style="color:#1a3a6b;font-weight:500;">View card \u2193</a>'
+      );
+      marker.on('click', function () {
+        selectHotelMarker(h.name);
+      });
+    });
+    // Attach popup link handlers
+    map.on('popupopen', function (e) {
+      var link = e.popup.getElement().querySelector('.hotel-map-view');
+      if (link) {
+        link.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          scrollToHotelCard(link.dataset.hotelName);
+          map.closePopup();
+        });
+      }
+    });
+  }
+
+  function scrollToHotelCard(name) {
+    var card = document.querySelector('#hotel-results .hotel-card[data-hotel-name="' + CSS.escape(name) + '"]');
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('map-highlight');
+      setTimeout(function () { card.classList.remove('map-highlight'); }, 1500);
+    }
+  }
+
+  function panToHotelOnMap(name) {
+    if (!hotelMapInstance || !hotelMapVisible) return;
+    var marker = hotelMarkerMap[name];
+    if (marker) {
+      selectHotelMarker(name);
+      var mapEl = document.getElementById('hotel-map-container');
+      mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function () {
+        hotelMapInstance.invalidateSize();
+        hotelMapInstance.setView(marker.getLatLng(), 16, { animate: true });
+        marker.openPopup();
+      }, 300);
+    }
+  }
+
+  function attachHotelCardMapHandlers() {
+    document.querySelectorAll('#hotel-results .hotel-card[data-hotel-name]').forEach(function (card) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function (e) {
+        // Don't intercept clicks on buttons, links, or interactive elements
+        if (e.target.closest('a, button, input, .points-ai-trigger')) return;
+        panToHotelOnMap(card.dataset.hotelName);
+      });
     });
   }
 
@@ -3999,6 +4395,7 @@
     "Bhula Joshila P.",
     "Bhula Piyush H.",
     "Chatha Sandhya",
+    "Chhabria Philo",
     "Dahyabhai Jayshri",
     "Dahyabhai Meera C.",
     "Dahyabhai Naresh",
@@ -4018,6 +4415,8 @@
     "Patel Ameera K.",
     "Patel Damyanti",
     "Patel Ronil",
+    "Ranchlod Amish",
+    "Ranchlod Deena",
   ];
   var confirmedOutbound = [];
   var confirmedReturn = [];
