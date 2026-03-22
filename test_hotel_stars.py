@@ -105,10 +105,10 @@ class TestStarLookup(unittest.TestCase):
 
     def setUp(self):
         # Reset cached lookup so each test gets a fresh load
-        hotel_agent._star_lookup = None
+        hotel_agent._star_lookups = {}
 
     def tearDown(self):
-        hotel_agent._star_lookup = None
+        hotel_agent._star_lookups = {}
 
     def test_load_star_lookup_returns_dict(self):
         """load_star_lookup() returns a dict with 400+ entries."""
@@ -141,10 +141,10 @@ class TestApplyOfficialStars(unittest.TestCase):
     """Tests 10-14: exact, fuzzy, reorder matching + skip/no-false-positive."""
 
     def setUp(self):
-        hotel_agent._star_lookup = None
+        hotel_agent._star_lookups = {}
 
     def tearDown(self):
-        hotel_agent._star_lookup = None
+        hotel_agent._star_lookups = {}
 
     def _make_hotel(self, name, star_class=0):
         return {

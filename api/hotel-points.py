@@ -19,7 +19,7 @@ HOTEL LOYALTY TRANSFER PARTNERS (credit card → hotel program):
 - Citi ThankYou → (no direct hotel transfers)
 - Capital One Miles → (no direct hotel transfers)
 
-APPROXIMATE POINTS PER NIGHT (Venice luxury hotels):
+APPROXIMATE POINTS PER NIGHT (luxury hotels):
 - Marriott Bonvoy: 40,000–80,000 points/night (Cat 5–7)
 - Hilton Honors: 50,000–95,000 points/night
 - World of Hyatt: 15,000–30,000 points/night (Cat 4–6)

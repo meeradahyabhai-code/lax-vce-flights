@@ -1,0 +1,499 @@
+{
+  "source": "Ravenna Tourism Official (turismo.ra.it)",
+  "url": "https://www.turismo.ra.it/en/accommodations/hotel-and-residence/",
+  "fetched": "2026-03-20",
+  "city": "Ravenna",
+  "count": 98,
+  "hotels": [
+    {
+      "name": "ULISSE",
+      "stars": 3,
+      "superior": true
+    },
+    {
+      "name": "Albergo del Cuore",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Millepini",
+      "stars": 3,
+      "superior": true
+    },
+    {
+      "name": "Hotel Adler",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Turismo Europa",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Duna Beach",
+      "stars": 1,
+      "superior": false
+    },
+    {
+      "name": "Hotel Bermuda",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Diga",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Alba",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Sant’Andrea",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Rosa e Cosetta",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Hotel Mosaico",
+      "stars": 3,
+      "superior": true
+    },
+    {
+      "name": "Hotel Palazzo Galletti Abbiosi",
+      "stars": 3,
+      "superior": true
+    },
+    {
+      "name": "Hotel X",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Hotel Anthisa",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Oceanomare",
+      "stars": 3,
+      "superior": true
+    },
+    {
+      "name": "Palazzo Bezzi",
+      "stars": 4,
+      "superior": true
+    },
+    {
+      "name": "Grand Hotel Mattei",
+      "stars": 4,
+      "superior": true
+    },
+    {
+      "name": "Hotel Cube",
+      "stars": 4,
+      "superior": false
+    },
+    {
+      "name": "Sant’Apollinare",
+      "stars": 1,
+      "superior": false
+    },
+    {
+      "name": "Autohotel",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Regina",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Nettuno",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Oasis",
+      "stars": 1,
+      "superior": false
+    },
+    {
+      "name": "Hotel Riviera",
+      "stars": 3,
+      "superior": true
+    },
+    {
+      "name": "Hotel Classicano",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Koko",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Villa Robinia",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Cenni",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Medusa",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Hotel Dafne",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel La Tavernetta",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "La Meridiana",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Columbia",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Corallo",
+      "stars": 4,
+      "superior": false
+    },
+    {
+      "name": "Hotel Maddalena",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Da Zama",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Hotel San Francisco",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Hotel Reno",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Adriatico",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Ravenna",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Piccolo Hotel",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Roma",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Minerva",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Italia",
+      "stars": 3,
+      "superior": true
+    },
+    {
+      "name": "B&B Hotel Ravenna",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Centrale Byron",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Albergo Cappello",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Astoria",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "NH Ravenna",
+      "stars": 4,
+      "superior": false
+    },
+    {
+      "name": "Hotel Classensis",
+      "stars": 3,
+      "superior": true
+    },
+    {
+      "name": "Hotel Bisanzio",
+      "stars": 4,
+      "superior": false
+    },
+    {
+      "name": "Hotel Diana",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Primula",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Delle Rose",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Tokio Village",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Strand Hotel Colorado",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Souvenir",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Saint Tropez",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Tokio Dipendenza",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Rock",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Rex",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Primavera",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Mediterraneo",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Marco",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Man",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Lima",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Levante sul mare",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Kennedy",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel De Paris",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel David",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Constellation",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Concord",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Classic",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Caesar",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Bikini – Tropicana",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Beverly",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Avana",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Asiago Beach",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Apollonia",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Bahamas",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Palace Lido",
+      "stars": 4,
+      "superior": false
+    },
+    {
+      "name": "Sorriso",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Krone",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel King Marte",
+      "stars": 3,
+      "superior": true
+    },
+    {
+      "name": "Hotel Antonella",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Mirage",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Antares",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Zeus – Beach Hotel",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Toschi",
+      "stars": 1,
+      "superior": false
+    },
+    {
+      "name": "Hotel Brasilia",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Astor",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Adler",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Smeralda",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Family Hotel Marina Beach",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Bella Romagna",
+      "stars": 2,
+      "superior": false
+    },
+    {
+      "name": "Grand Hotel Azzurra Club",
+      "stars": 3,
+      "superior": false
+    },
+    {
+      "name": "Hotel Otello",
+      "stars": 3,
+      "superior": false
+    }
+  ]
+}

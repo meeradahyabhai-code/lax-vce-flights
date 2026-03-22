@@ -3240,8 +3240,15 @@
   // ---- Section nav (Flights / Hotels) ----
   let activeSection = 'flights';  // 'flights' | 'hotels'
   let activeHotelCity = 'venice';
-  let hotelCheckIn = '2026-06-30';
-  let hotelCheckOut = '2026-07-03';
+  var CITY_DEFAULTS = {
+    venice:   { checkIn: '2026-06-30', checkOut: '2026-07-03' },
+    ravenna:  { checkIn: '2026-07-02', checkOut: '2026-07-03' },
+    istanbul: { checkIn: '2026-07-13', checkOut: '2026-07-14' }
+  };
+  var CITY_DISPLAY_NAMES = { venice: 'Venice', ravenna: 'Ravenna', istanbul: 'Istanbul' };
+  function hotelCityName() { return CITY_DISPLAY_NAMES[activeHotelCity] || activeHotelCity; }
+  let hotelCheckIn = CITY_DEFAULTS[activeHotelCity].checkIn;
+  let hotelCheckOut = CITY_DEFAULTS[activeHotelCity].checkOut;
   var hotelCache = {};  // keyed by "city|checkIn|checkOut"
   let hotelLoading = false;
   let hotelExpandedColumns = new Set();
@@ -3342,28 +3349,47 @@
     hero.style.backgroundPosition = 'center';
     hero.style.backgroundSize = 'cover';
     hero.style.backgroundRepeat = 'no-repeat';
-    document.querySelector('.hero-title').innerHTML = 'Venice Hotels';
-    document.querySelector('.hero-subtitle').innerHTML = 'Before the cruise &mdash; July 3, 2026';
+    var CITY_HERO_SUBTITLES = {
+      venice: 'Before the cruise &mdash; Jun 30 &ndash; Jul 3',
+      ravenna: 'Before the cruise &mdash; Jul 2 &ndash; 3',
+      istanbul: 'Post-cruise stay &mdash; Jul 13 &ndash; 14'
+    };
+    document.querySelector('.hero-title').innerHTML = hotelCityName() + ' Hotels';
+    document.querySelector('.hero-subtitle').innerHTML = CITY_HERO_SUBTITLES[activeHotelCity] || '';
     // Show hotel-specific AI briefing
     var el = document.getElementById('ai-briefing-text');
     var hotelKey = hotelCacheKey();
     if (hotelCache[hotelKey]) {
       var hData = hotelCache[hotelKey];
       var count = (hData.best_overall || []).length;
-      el.innerHTML = count + ' hotels found for Venice. Compare the best overall, Marriott Bonvoy, and Hilton Honors options below.';
+      el.innerHTML = count + ' hotels found for ' + hotelCityName() + '. Compare the best overall, Marriott Bonvoy, and Hilton Honors options below.';
     } else {
-      el.innerHTML = 'Search for Venice hotels to find the best options for your pre-cruise stay.';
+      el.innerHTML = 'Search for ' + hotelCityName() + ' hotels to find the best options for your stay.';
     }
   }
 
   function renderHotelCityNav() {
     var dirNav = document.getElementById('direction-nav');
     dirNav.style.display = '';
-    dirNav.innerHTML =
-      '<div class="hotel-city-nav">' +
-        '<button class="hotel-city-pill active" data-city="venice">Venice</button>' +
-        '<button class="hotel-city-pill" data-city="istanbul" disabled title="Coming soon">Istanbul</button>' +
-      '</div>';
+    var cities = ['venice', 'ravenna', 'istanbul'];
+    var pills = cities.map(function (c) {
+      return '<button class="hotel-city-pill' + (c === activeHotelCity ? ' active' : '') + '" data-city="' + c + '">' +
+        CITY_DISPLAY_NAMES[c] + '</button>';
+    }).join('');
+    dirNav.innerHTML = '<div class="hotel-city-nav">' + pills + '</div>';
+    dirNav.querySelectorAll('.hotel-city-pill').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var city = btn.getAttribute('data-city');
+        if (city === activeHotelCity) return;
+        activeHotelCity = city;
+        hotelCheckIn = CITY_DEFAULTS[city].checkIn;
+        hotelCheckOut = CITY_DEFAULTS[city].checkOut;
+        if (hotelMapInstance) { hotelMapInstance.remove(); hotelMapInstance = null; }
+        renderHotelCityNav();
+        updateHeroForHotels();
+        renderHotelPicker();
+      });
+    });
   }
 
   function hotelCacheKey() {
@@ -3437,35 +3463,54 @@
     function fmtOpt(d) {
       return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
     }
-    var ciOpts = HOTEL_CHECK_IN_DATES.map(function (d) {
-      return '<option value="' + d + '"' + (d === hotelCheckIn ? ' selected' : '') + '>' + fmtOpt(d) + '</option>';
-    }).join('');
-    var coOpts = HOTEL_CHECK_OUT_DATES.map(function (d) {
-      return '<option value="' + d + '"' + (d === hotelCheckOut ? ' selected' : '') + '>' + fmtOpt(d) + '</option>';
-    }).join('');
+    function fmtDate(d) {
+      return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    var nights = Math.round((new Date(hotelCheckOut) - new Date(hotelCheckIn)) / 86400000);
 
-    el.innerHTML = '<div class="hotel-picker">' +
-      '<label>Check-in</label>' +
-      '<select id="hotel-ci">' + ciOpts + '</select>' +
-      '<label>Check-out</label>' +
-      '<select id="hotel-co">' + coOpts + '</select>' +
-      '<button class="hotel-search-btn" id="hotel-search-btn">Search Hotels</button>' +
-    '</div>';
-
-    document.getElementById('hotel-ci').addEventListener('change', function () {
-      hotelCheckIn = this.value;
-    });
-    document.getElementById('hotel-co').addEventListener('change', function () {
-      hotelCheckOut = this.value;
-    });
-    document.getElementById('hotel-search-btn').addEventListener('click', function () {
-      searchHotels();
-    });
-
-    // If we already have cached results, show them
-    var key = hotelCacheKey();
-    if (hotelCache[key]) {
-      renderHotelResults(hotelCache[key]);
+    if (activeHotelCity === 'venice') {
+      // Venice: full date picker
+      var ciOpts = HOTEL_CHECK_IN_DATES.map(function (d) {
+        return '<option value="' + d + '"' + (d === hotelCheckIn ? ' selected' : '') + '>' + fmtOpt(d) + '</option>';
+      }).join('');
+      var coOpts = HOTEL_CHECK_OUT_DATES.map(function (d) {
+        return '<option value="' + d + '"' + (d === hotelCheckOut ? ' selected' : '') + '>' + fmtOpt(d) + '</option>';
+      }).join('');
+      el.innerHTML = '<div class="hotel-picker">' +
+        '<label>Check-in</label>' +
+        '<select id="hotel-ci">' + ciOpts + '</select>' +
+        '<label>Check-out</label>' +
+        '<select id="hotel-co">' + coOpts + '</select>' +
+        '<button class="hotel-search-btn" id="hotel-search-btn">Search Hotels</button>' +
+      '</div>';
+      document.getElementById('hotel-ci').addEventListener('change', function () {
+        hotelCheckIn = this.value;
+      });
+      document.getElementById('hotel-co').addEventListener('change', function () {
+        hotelCheckOut = this.value;
+      });
+      document.getElementById('hotel-search-btn').addEventListener('click', function () {
+        searchHotels();
+      });
+      // Show cached results if available
+      var key = hotelCacheKey();
+      if (hotelCache[key]) {
+        renderHotelResults(hotelCache[key]);
+      }
+    } else {
+      // Ravenna/Istanbul: fixed dates, auto-search
+      el.innerHTML = '<div class="hotel-picker">' +
+        '<span style="font-size:14px;color:#64748b;">' +
+          fmtDate(hotelCheckIn) + ' \u2013 ' + fmtDate(hotelCheckOut) +
+          ' \u00b7 ' + nights + ' night' + (nights !== 1 ? 's' : '') +
+        '</span>' +
+      '</div>';
+      var key = hotelCacheKey();
+      if (hotelCache[key]) {
+        renderHotelResults(hotelCache[key]);
+      } else {
+        searchHotels();
+      }
     }
   }
 
@@ -3528,7 +3573,7 @@
       })
       .catch(function () {
         // Fallback to static JSON (for local dev and when API is down)
-        fetch('hotels_venice.json')
+        fetch('hotels_' + activeHotelCity + '.json')
           .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
           .then(function (result) {
             hotelCache[key] = result;
@@ -3546,28 +3591,31 @@
       });
   }
 
-  var HOTEL_PHRASES = [
-    'Searching Venice hotels\u2026',
-    'Comparing rates and ratings\u2026',
-    'Finding Marriott & Hilton options\u2026',
-    'Scoring by value, location & quality\u2026',
-  ];
+  function getHotelPhrases() {
+    return [
+      'Searching ' + hotelCityName() + ' hotels\u2026',
+      'Comparing rates and ratings\u2026',
+      'Finding Marriott & Hilton options\u2026',
+      'Scoring by value, location & quality\u2026',
+    ];
+  }
 
   function renderHotelLoading() {
+    var phrases = getHotelPhrases();
     var el = document.getElementById('hotel-results');
     el.innerHTML = '<div class="hotel-loading">' +
       '<div class="mc-progress-bar"><div class="mc-progress-fill" id="hotel-fill"></div></div>' +
-      '<div class="mc-loading-phrase" id="hotel-phrase">' + HOTEL_PHRASES[0] + '</div>' +
+      '<div class="mc-loading-phrase" id="hotel-phrase">' + phrases[0] + '</div>' +
     '</div>';
     var phraseIdx = 0;
     var phraseEl = document.getElementById('hotel-phrase');
     var interval = setInterval(function () {
       if (!hotelLoading) { clearInterval(interval); return; }
-      phraseIdx = (phraseIdx + 1) % HOTEL_PHRASES.length;
+      phraseIdx = (phraseIdx + 1) % phrases.length;
       phraseEl.style.opacity = '0';
       setTimeout(function () {
         if (!phraseEl) return;
-        phraseEl.textContent = HOTEL_PHRASES[phraseIdx];
+        phraseEl.textContent = phrases[phraseIdx];
         phraseEl.style.opacity = '1';
       }, 300);
     }, 2000);
@@ -3594,9 +3642,15 @@
   }
 
   function hotelCardHTML(h, rank) {
+    var CITY_PLACEHOLDER_IMGS = {
+      venice: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&h=200&fit=crop',
+      ravenna: 'https://images.unsplash.com/photo-1600011250151-f618e0ae5ade?w=400&h=200&fit=crop',
+      istanbul: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=400&h=200&fit=crop'
+    };
+    var cityImg = CITY_PLACEHOLDER_IMGS[activeHotelCity] || CITY_PLACEHOLDER_IMGS.venice;
     var imgInner = h.image_url
       ? '<img class="hotel-card-img" src="' + escHtml(h.image_url) + '" alt="' + escHtml(h.name) + '" loading="lazy">'
-      : '<div class="hotel-card-img" style="background:var(--fog);display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px;">No image</div>';
+      : '<img class="hotel-card-img" src="' + cityImg + '" alt="' + hotelCityName() + '" loading="lazy" style="filter:brightness(0.7);">';
 
     // Heart button
     var hotelFid = 'HOTEL:' + h.name + '|' + h.check_in;
@@ -3836,7 +3890,7 @@
   function renderHotelResults(result) {
     var el = document.getElementById('hotel-results');
     if (!result) {
-      el.innerHTML = '<div class="status" style="color:#64748b;">Select your dates and click <strong>Search Hotels</strong> to find Venice hotels.</div>';
+      el.innerHTML = '<div class="status" style="color:#64748b;">Loading ' + hotelCityName() + ' hotels\u2026</div>';
       document.getElementById('hotel-filters-area').innerHTML = '';
       return;
     }
@@ -4054,7 +4108,7 @@
     // If map is visible, rebuild markers (preserve tile layer and San Marco)
     if (hotelMapVisible && hotelMapInstance) {
       hotelMapInstance.eachLayer(function (layer) {
-        if (layer instanceof L.Marker && layer.options.icon !== sanMarcoIcon) {
+        if (layer instanceof L.Marker && layer.options.icon !== landmarkIcon) {
           hotelMapInstance.removeLayer(layer);
         }
       });
@@ -4097,7 +4151,13 @@
     return hotelPriceIcon(null, color, false);
   }
 
-  var sanMarcoIcon = L.divIcon({
+  var CITY_LANDMARKS = {
+    venice:   { name: 'Piazza San Marco', lat: 45.4341, lng: 12.3388 },
+    ravenna:  { name: 'Piazza del Popolo', lat: 44.4169, lng: 12.1990 },
+    istanbul: { name: 'Galata Tower',     lat: 41.0256, lng: 28.9741 }
+  };
+
+  var landmarkIcon = L.divIcon({
     className: '',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
@@ -4108,11 +4168,12 @@
   });
 
   function initHotelMap(hotels) {
+    var lm = CITY_LANDMARKS[activeHotelCity] || CITY_LANDMARKS.venice;
     hotelMapInstance = L.map('hotel-map-container', {
       scrollWheelZoom: false,
       touchZoom: true,
       tap: true,
-      center: [45.4341, 12.3388],
+      center: [lm.lat, lm.lng],
       zoom: 14
     });
     // Enable scroll/pinch zoom once user clicks into the map
@@ -4129,10 +4190,10 @@
       subdomains: 'abcd'
     }).addTo(hotelMapInstance);
 
-    // Piazza San Marco landmark
-    L.marker([45.4341, 12.3388], { icon: sanMarcoIcon, zIndexOffset: 1000 })
+    // City landmark marker
+    L.marker([lm.lat, lm.lng], { icon: landmarkIcon, zIndexOffset: 1000 })
       .addTo(hotelMapInstance)
-      .bindPopup('<strong>Piazza San Marco</strong><br><span style="font-size:12px;color:#64748b;">Primary landmark for distance</span>');
+      .bindPopup('<strong>' + lm.name + '</strong><br><span style="font-size:12px;color:#64748b;">Primary landmark for distance</span>');
 
     addHotelMarkers(hotelMapInstance, hotels);
   }

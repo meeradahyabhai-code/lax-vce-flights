@@ -1,8 +1,10 @@
 """
-Hotel search module: Venice hotels — combined SerpAPI + Google Places API.
+Hotel search module — combined SerpAPI + Google Places API.
 
 SerpAPI Google Hotels → pricing ($/night, total), star class, photos, booking links
 Google Places API     → user ratings (1-5), review text, editorial summary, loyalty links
+
+Supports multiple cities: Venice, Ravenna, Istanbul.
 """
 
 import json
@@ -25,6 +27,7 @@ SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "")
 
 LANDMARKS = {
     "venice": {"name": "Piazza San Marco", "lat": 45.4341, "lng": 12.3388},
+    "ravenna": {"name": "Piazza del Popolo", "lat": 44.4169, "lng": 12.1990},
     "istanbul": {"name": "Galata Tower", "lat": 41.0256, "lng": 28.9741},
 }
 
@@ -60,8 +63,22 @@ AMEX_THC_VENICE = {
     "nh collection murano villa",
 }
 
+AMEX_FHR_ISTANBUL = {
+    "four seasons hotel istanbul at sultanahmet",
+    "four seasons hotel istanbul at the bosphorus",
+    "the ritz-carlton, istanbul",
+    "the st. regis istanbul",
+    "park hyatt istanbul - macka palas",
+    "raffles istanbul",
+    "shangri-la bosphorus, istanbul",
+    "ciragan palace kempinski istanbul",
+    "the peninsula istanbul",
+}
+
 CC_PROGRAMS = {
     "venice": {"fhr": AMEX_FHR_VENICE, "thc": AMEX_THC_VENICE},
+    "ravenna": {},
+    "istanbul": {"fhr": AMEX_FHR_ISTANBUL},
 }
 
 
@@ -77,8 +94,8 @@ def _match_cc_program(hotel_name: str, city_key: str) -> list[str]:
                 matched.append(prog_key)
                 break
             # Word overlap check
-            known_words = set(known.split()) - {"hotel", "the", "a", ",", "di", "venice", "venezia"}
-            name_words = set(name_lower.split()) - {"hotel", "the", "a", ",", "di", "venice", "venezia"}
+            known_words = set(known.split()) - {"hotel", "the", "a", ",", "di", "venice", "venezia", "istanbul", "ravenna"}
+            name_words = set(name_lower.split()) - {"hotel", "the", "a", ",", "di", "venice", "venezia", "istanbul", "ravenna"}
             if known_words and name_words and len(known_words & name_words) >= 2:
                 matched.append(prog_key)
                 break
@@ -131,7 +148,7 @@ def detect_brand(hotel_name: str) -> str:
 # Official star ratings from Regione del Veneto open data
 # ---------------------------------------------------------------------------
 
-_star_lookup: dict | None = None
+_star_lookups: dict[str, dict[str, int]] = {}
 
 
 def _normalize_star_name(name: str) -> str:
@@ -142,35 +159,35 @@ def _normalize_star_name(name: str) -> str:
     return n
 
 
-def load_star_lookup() -> dict[str, int]:
-    """Load official Venice hotel star ratings from JSON.
+def load_star_lookup(city_key: str = "venice") -> dict[str, int]:
+    """Load official hotel star ratings from JSON for a given city.
 
     Returns a dict mapping normalized hotel name -> star count (int).
-    Cached after first load.
+    Cached per city after first load. Returns empty dict for cities with no star file.
     """
-    global _star_lookup
-    if _star_lookup is not None:
-        return _star_lookup
+    if city_key in _star_lookups:
+        return _star_lookups[city_key]
 
     data_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "data", "hotel_stars_venice.json"
+        os.path.dirname(os.path.abspath(__file__)), "data", f"hotel_stars_{city_key}.json"
     )
-    _star_lookup = {}
+    lookup: dict[str, int] = {}
     try:
         with open(data_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         for h in data.get("hotels", []):
             norm = _normalize_star_name(h.get("name", ""))
             if norm and h.get("stars"):
-                _star_lookup[norm] = h["stars"]
+                lookup[norm] = h["stars"]
     except (FileNotFoundError, json.JSONDecodeError):
         pass
-    return _star_lookup
+    _star_lookups[city_key] = lookup
+    return lookup
 
 
-def apply_official_stars(hotels: list[dict]) -> list[dict]:
-    """Fill in star_class from official Veneto open data for hotels with star_class == 0."""
-    lookup = load_star_lookup()
+def apply_official_stars(hotels: list[dict], city_key: str = "venice") -> list[dict]:
+    """Fill in star_class from official data for hotels with star_class == 0."""
+    lookup = load_star_lookup(city_key)
     if not lookup:
         return hotels
 
@@ -328,6 +345,26 @@ def _extract_image(prop: dict) -> str:
     return prop.get("thumbnail", "") or ""
 
 
+def _extract_all_images(prop: dict) -> list[dict]:
+    """Extract all images from SerpAPI property (thumbnail + original)."""
+    raw = prop.get("images", [])
+    if not isinstance(raw, list):
+        return []
+    results = []
+    for img in raw:
+        if isinstance(img, dict):
+            entry = {}
+            if img.get("thumbnail"):
+                entry["thumbnail"] = img["thumbnail"]
+            if img.get("original_image"):
+                entry["original"] = img["original_image"]
+            if entry:
+                results.append(entry)
+        elif isinstance(img, str) and img:
+            results.append({"thumbnail": img})
+    return results
+
+
 # ---------------------------------------------------------------------------
 # Google Places API — user ratings, reviews, editorial summary
 # ---------------------------------------------------------------------------
@@ -479,6 +516,7 @@ def normalize_serpapi(raw_response: dict, check_in: str, check_out: str) -> list
             "check_out": check_out,
             "address": prop.get("description", ""),
             "image_url": _extract_image(prop),
+            "images": _extract_all_images(prop),
             "amenities": prop.get("amenities", []) or [],
             "google_hotels_url": prop.get("link", ""),
             "latitude": gps.get("latitude"),
@@ -603,6 +641,7 @@ def merge_places_data(hotels: list[dict], places_results: list[dict]) -> list[di
             "check_out": hotels[0].get("check_out", "") if hotels else "",
             "address": place.get("formatted_address", ""),
             "image_url": "",
+            "images": [],
             "amenities": [],
             "google_hotels_url": "",
             "overall_rating": 0,
@@ -783,16 +822,20 @@ def loyalty_url(hotel: dict) -> str:
     ci = hotel.get("check_in", "")
     co = hotel.get("check_out", "")
 
+    from urllib.parse import quote
+    city = hotel.get("city", "Venice, Italy")
+    city_encoded = quote(city)
+
     if hotel["brand"] == "marriott":
         return (
             f"https://www.marriott.com/search/default.mi?"
             f"fromDate={ci}&toDate={co}&"
-            f"searchType=InCity&destinationAddress=Venice%20Italy"
+            f"searchType=InCity&destinationAddress={city_encoded}"
         )
     elif hotel["brand"] == "hilton":
         return (
             f"https://www.hilton.com/en/search/?"
-            f"query=Venice%20Italy&"
+            f"query={city_encoded}&"
             f"arrivalDate={ci}&departureDate={co}"
         )
     return ""

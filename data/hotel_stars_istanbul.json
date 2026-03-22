@@ -1,0 +1,5574 @@
+{
+  "source": "Republic of Turkey Ministry of Culture and Tourism (KTB)",
+  "url": "https://www.ktb.gov.tr/genel/searchhotelgenel.en.aspx?lang=en",
+  "fetched": "2026-03-20",
+  "city": "Istanbul",
+  "count": 795,
+  "hotels": [
+    {
+      "name": "KENT OTELİ",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE SIGN DEĞİRMEN HOTEL",
+      "stars": 3,
+      "district": "ŞİLE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DİVAN İSTANBUL",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HILTON OTELİ",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KALYON OTELİ",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL TOPKAPI",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "INNPERA OTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "EBRU OTELİ",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "EYFEL OTELİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADISSON SAS BOSPHORUS",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BLUE WORLD OTEL",
+      "stars": 4,
+      "district": "BÜYÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND HİSAR",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND EMİN OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL VİCENZA",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CVK HOTELS",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "INTERCONTINENTAL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KAYA OTELİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE MARMARA TAKSİM",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MY DORA",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "STAR OTELİ",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MLS ŞİŞLİ HOTEL",
+      "stars": 2,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL PRİMA",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BARON OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BRİSTOL OTELİ",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL İNTER İSTANBUL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DEMPA OTELİ",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL GRAND WASHINGTON",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CROWNE PLAZA OLD CİTY İSTANBUL",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL YİĞİTALP",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AKGÜN İSTANBUL OTELİ",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LAMARTİNE OTELİ",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL VENERA",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA İSTANBUL OLD CITY",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BÜYÜK ŞAHİNLER OTELİ",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ERESİN HOTELS TOPKAPI",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND YAVUZ OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ILICAK OTELİ",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RICHMOND OTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL MARBLE",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOLIDAY INN İSTANBUL OLD CITY",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AVANTGARDE TAKSİM OTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ARMADA OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND SAĞCANLAR HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL RESIDENCE",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL NENA",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ORAN OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ALL SEASONS HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BLUE HOUSE",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SİLİVRİ PARK OTEL",
+      "stars": 3,
+      "district": "SİLİVRİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SEM SAN",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SHERATON İSTANBUL LEVENT",
+      "stars": 5,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SAMİR OTELİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOLIDAY INN İSTANBUL CITY",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CARTOON OTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FERONYA",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CİHANGİR OTELİ",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OCCİDENTAL TAKSİM HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND STAR OTELİ",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TOPKAPI INTER İSTANBUL HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "YENİ SARAY OTELİ",
+      "stars": 2,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND CEVAHİR HOTEL",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BEYCE OTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KAYA İSTANBUL FAIR & CONVENTION HOTEL",
+      "stars": 5,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "YÜKSEL OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA PLAZA BY WYNDHAM ISTANBUL CITY CENTER",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ATİK PAŞA FOUR SEASONS",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND VATAN OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ARTS HOTEL TAKSİM",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BÜYÜK KEBAN OTELİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE GREEN PARK PENDİK HOTELS&CONVENTION CENTER",
+      "stars": 5,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GÜMÜŞOVA RESORT OTEL",
+      "stars": 3,
+      "district": "SİLİVRİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ORKA ROYAL HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MARMARAY HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ORO HERMANOS HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOUBLETREE BY HİLTON İSTANBUL MODA",
+      "stars": 5,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND ÜNAL HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LE MERIDIEN İSTANBUL ETİLER",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LİMAK EURASIA LUXURY HOTEL",
+      "stars": 5,
+      "district": "BEYKOZ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "POINT OTEL BARBAROS",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CROWNE PLAZA İSTANBUL ASİA HOTEL & CONVENTİON CENTER",
+      "stars": 5,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ROYCE  HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ZAGREB OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WYNDHAM GRAND İSTANBUL LEVENT HOTEL& CONFERENCE CENTER",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE OLD CITY EDITION",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL ARTEMİS MARIN PRINCESS",
+      "stars": 5,
+      "district": "BÜYÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SORRISO HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DELTA HOTELS BY MARRIOTT İSTANBUL WEST",
+      "stars": 5,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TİLİA HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL PİSA",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İBİS OTEL ESENYURT",
+      "stars": 3,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL GRAND ÜMİT",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HİLTON GARDEN INN İSTANBUL AİRPORT",
+      "stars": 4,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE MERETTO OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TEMPO HOTEL 4.LEVENT",
+      "stars": 3,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SÖĞÜT OTELİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DR. KUŞHAN",
+      "stars": 4,
+      "district": "BEYKOZ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RENAISSANCE İSTANBUL POLAT BOSPHORUS HOTEL",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SAĞLIK-SEN OTEL TAKSİM",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DALAN OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GOLDEN AGE OTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GORRION HOTEL İSTANBUL",
+      "stars": 5,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MONACO OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "INERA HOTEL",
+      "stars": 4,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND AKSU OTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DELTA HOTELS BY MARRIOTT İSTANBUL LEVENT",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAMPTON BY HILTON İSTANBUL ZEYTİNBURNU",
+      "stars": 4,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND HILARIUM HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MAYİ HOTEL",
+      "stars": 4,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL EXPOCITY İSTANBUL",
+      "stars": 3,
+      "district": "AVCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND HOTEL SEFEROĞLU",
+      "stars": 3,
+      "district": "BAYRAMPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAFFLES İSTANBUL - ZORLU CENTER",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL DUO GALATA (I)",
+      "stars": 1,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL DUO GALATA ( II )",
+      "stars": 1,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ROTTA HOTEL",
+      "stars": 5,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VEYRON HOTELS",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAMPTON BY HILTON ATAKÖY HOTEL",
+      "stars": 4,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FOUR POİNTS FLEX BY SHERATON İSTANBUL TAKSİM SQUARE",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MOLTON MONAPART MECİDİYEKÖY",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RECİTAL OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL LA VİLLA BLANCHE",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VIALAND PALACE HOTEL",
+      "stars": 4,
+      "district": "EYÜP",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PEYK HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MIDTOWN",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PORT BOSPHORUS",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SHERATON İSTANBUL ATAKÖY OTEL",
+      "stars": 5,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PERULA HOTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KINGS CROSS HOTEL İSTANBUL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE WESTİST HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADISSON COLLECTION VADİSTANBUL",
+      "stars": 5,
+      "district": "SARIYER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BİRBEY OTELİ",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ÇIRAĞAN SARAYI OTELİ - ÇIRAĞAN PALACE KEMPİNSKİ İSTANBUL",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TULİP CITY HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MİNİ HAREM OTEL",
+      "stars": 3,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BEETHOVEN PREMIUM İSTANBUL HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE MARMARA PERA",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DEDEMAN İSTANBUL OTELİ",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BARIN OTELİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SÜRMELİ İSTANBUL OTELİ",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL BENLER",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE RİTZ  CARLTON",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TITANIC COMFORT HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CONRAD İSTANBUL BOSPHORUS",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "Radisson Hotel President Old Town İstanbul",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GOLD OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PRESTİGE OTELİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MOSAİC HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AVLONYA OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL NİPPON",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELAN OTELİ",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MÖVENPİCK HOTEL İSTANBUL BOSPHORUS",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MİNEO HOTEL",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND HALİÇ OTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE CETTİA İSTANBUL",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ORİENT MİNTUR OTELİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL POLAT RENAISSANCE",
+      "stars": 5,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KONAK OTELİ",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND HYATT İSTANBUL",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "YAŞMAK SULTAN OTELİ",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "YAVUZ 4 OTELİ",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE GREEN PARK-TAKSİM",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ADELA HOTEL",
+      "stars": 4,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE GREEN PARK",
+      "stars": 5,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE GREEN PARK HOTEL-MERTER",
+      "stars": 5,
+      "district": "GÜNGÖREN",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DİLA HOTEL",
+      "stars": 4,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BİLEK OTEL",
+      "stars": 4,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL GRAND ANKA",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SANTA SOPHIA",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "POINT OTEL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KADIKÖY RIHTIM OTELİ",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SİDONYA OTEL",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TAKSİM STAR HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BULVAR PALAS OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL MARRİOTT HOTEL ASİA",
+      "stars": 5,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MERTER GÜNEŞ OTELİ",
+      "stars": 4,
+      "district": "GÜNGÖREN",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BERR OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GOLDEN SİYAV HOTEL",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL SUADİYE",
+      "stars": 4,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TITANIC PORT OTEL",
+      "stars": 5,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DARKHILL HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELİTE WORLD COMFY İSTANBUL -TAKSİM",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE PERA HILL HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL OSAKA AİRPORT",
+      "stars": 3,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BYOTELL",
+      "stars": 5,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ESER OTEL PREMİUM & SPA",
+      "stars": 5,
+      "district": "BÜYÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND MARK OTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MERCURE İSTANBUL BAKIRKÖY",
+      "stars": 4,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL EPHESUS HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND REİS OTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND LİZA OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MERCURE ALTUNİZADE İSTANBUL",
+      "stars": 4,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND EYÜBOĞLU OTEL",
+      "stars": 3,
+      "district": "ÜMRANİYE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SVEO İSTANBUL OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AHC GRAND BAZAAR HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GLORIOUS HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PERA TULIP",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BÇ OTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CEVAHİR HOTEL İSTANBUL ASIA",
+      "stars": 5,
+      "district": "MALTEPE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ERZURUMLU OTEL",
+      "stars": 3,
+      "district": "SARIYER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL KURBAN",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL ASPEN İSTANBUL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOLIDAY INN İSTANBUL ŞİŞLİ",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL AMORE",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "EMİNÖNÜ DENİZLİ OTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WYNDHAM GRAND İSTANBUL KALAMIŞ MARİNA HOTEL",
+      "stars": 5,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND MİLAN OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL MARRİOTT HOTEL PENDİK",
+      "stars": 5,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SELECTUM CITY ATAŞEHİR",
+      "stars": 5,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOUBLETREE BY HİLTON İSTANBUL OLD TOWN",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL GOLDEN CİTY HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND HOTEL GÜLSOY",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOSSO DOSSİ HOTEL GOLDEN HORN",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CITY CENTER HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "YEŞİL PARK OTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADISSON BLU HOTEL İSTANBUL - ŞİŞLİ",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL İSTANBUL TREND",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AMETHYST HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADISSON BLU HOTEL İSTANBUL ASİA",
+      "stars": 5,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADISSON BLU HOTEL & SPA İSTANBUL - TUZLA",
+      "stars": 5,
+      "district": "TUZLA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND AŞİYAN OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HILTON İSTANBUL KOZYATAĞI CONFERENCE CENTER",
+      "stars": 5,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL MY ASSOS HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELİTE WORLD İSTANBUL FLORYA",
+      "stars": 5,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA PLAZA İSTANBUL TEKSTİLKENT",
+      "stars": 5,
+      "district": "ESENLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ASPALACE HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAN HOTEL",
+      "stars": 2,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOUBLETREE BY HILTON İSTANBUL - GAYRETTEPE",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CVK HOTELS & RESORTS - PARK BOSPHORUS İSTANBUL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MERCİA HOTELS & RESORT",
+      "stars": 4,
+      "district": "BÜYÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAST HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MÖVENPİCK HOTEL İSTANBUL GOLDEN HORN",
+      "stars": 5,
+      "district": "EYÜP",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND ÜNAL HOTEL - 2",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SENABİL HOTEL OLD CITY",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL SPECTRA",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VOLLEY HOTEL İSTANBUL ASİA",
+      "stars": 4,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "EMİN 2 HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WYNDHAM GRAND İSTANBUL EUROPE",
+      "stars": 5,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TEMPO HOTEL",
+      "stars": 3,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE 22 HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NİDYA HOTEL GALATAPORT",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAMPTON BY HİLTON İSTANBUL KURTKÖY",
+      "stars": 4,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AIR BOSS OTEL",
+      "stars": 4,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AC HOTEL MAÇKA BY MARRIOTT",
+      "stars": 4,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TOPKAPI GOLDEN TİME OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MAYA OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE ARTISAN İSTANBUL MGALLERY",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND HOTEL AVCILAR",
+      "stars": 3,
+      "district": "AVCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MARMA OTEL",
+      "stars": 5,
+      "district": "MALTEPE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE CİTYPORT HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "EURO PARK OTEL",
+      "stars": 5,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOUBLETREE BY HILTON İSTANBUL - PİYALEPAŞA OTEL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GOLDEN HORN SULTANAHMET",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL GOLDEN WAY",
+      "stars": 4,
+      "district": "ESENLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MIRACLE İSTANBUL ASIA HOTEL",
+      "stars": 5,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOLIDAY INN İSTANBUL TUZLA BAY",
+      "stars": 4,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOSSO DOSSİ HOTELS SPA & DOWNTOWN",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOSSO DOSSİ SULTANAHMET HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SHANGRI-LA BOSPHORUS",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOUBLE TREE BY HILTON İSTANBUL AVCILAR",
+      "stars": 5,
+      "district": "AVCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PULLMAN & MERCURE İSTANBUL AIRPORT HOTEL & CONVENTION CENTER",
+      "stars": 5,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOUBLE TREE BY HILTON İSTANBUL TOPKAPI",
+      "stars": 4,
+      "district": "BAYRAMPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HYATT REGENCY İSTANBUL ATAKÖY OTELİ",
+      "stars": 5,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PIANOFORTE HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL ARCADİA BLUE İSTANBUL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DAB HOTEL-ESENYURT",
+      "stars": 4,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MERCURE İSTANBUL BOMONTİ",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CİTYLOFT HOTEL",
+      "stars": 4,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LİV CİTY HOTELS",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TÜYAP PALAS",
+      "stars": 5,
+      "district": "BÜYÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE ST. REGIS İSTANBUL",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WORLD POİNT HOTEL İSTANBUL",
+      "stars": 4,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CROWNE PLAZA İSTANBUL HARBİYE",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LEVENT OTEL",
+      "stars": 3,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ROX OTEL ÇOBANÇEŞME",
+      "stars": 4,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ICON İSTANBUL HOTEL",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NAZ CITY HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL MARRIOTT HOTEL ŞİŞLİ",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADISSON BLU HOTEL İSTANBUL PERA",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WISH MORE OTEL İSTANBUL",
+      "stars": 5,
+      "district": "BAYRAMPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PARKHOUSE HOTEL & SPA",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND DE PERA OTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LASAGRADA HOTEL",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İBİS İSTANBUL WEST HOTEL",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL GRİTTİ PERA",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CROWNE PLAZA İSTANBUL FLORYA",
+      "stars": 5,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAMPTON BY HİLTON KAYAŞEHİR",
+      "stars": 3,
+      "district": "BAŞAKŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL DORA HOTEL",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL EMPİRE HOTEL",
+      "stars": 4,
+      "district": "BEYLİKDÜZÜ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND ARAS HOTEL HOTEL & SUITES",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FAVORİ HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MARNAS HOTELS",
+      "stars": 4,
+      "district": "BAYRAMPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CROWNE PLAZA İSTANBUL - ORYAPARK",
+      "stars": 5,
+      "district": "ÜMRANİYE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NEARPORT HOTEL SABİHA GÖKÇEN AIRPORT",
+      "stars": 4,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SAPKO AIRPORT HOTEL",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RİOS EDİTİON",
+      "stars": 3,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND LALELİ HOTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MAREPARK HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL ÖZVİLLA",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KLAS OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İBİS OTEL TUZLA",
+      "stars": 3,
+      "district": "TUZLA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PARK INN BY RADISSON İSTANBUL ATAŞEHİR",
+      "stars": 4,
+      "district": "ÜMRANİYE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PARK INN BY RADİSSON İSTANBUL ATATÜRK AİRPORT OTEL",
+      "stars": 5,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FAIRMONT QUASAR İSTANBUL",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LAZZONİ OTEL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HİLTON İSTANBUL MASLAK",
+      "stars": 5,
+      "district": "SARIYER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA ENCORE BAYRAMPAŞA",
+      "stars": 4,
+      "district": "BAYRAMPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GOLDEN TULIP HOTEL BAYRAMPAŞA",
+      "stars": 5,
+      "district": "BAYRAMPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM ISTANBUL FLORYA",
+      "stars": 4,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HILTON İSTANBUL BAKIRKÖY HOTEL & CONFERENCE CENTER",
+      "stars": 5,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HILTON GARDEN INN BEYLİKDÜZÜ",
+      "stars": 4,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NOVOTEL İSTANBUL BOSPHORUS",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OPERA OTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DAR-U SULTAN HOTELS",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CLARION HOTEL GOLDEN HORN",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTTOMAN'S LIFE HOTEL DELUXE",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BLİSSTANBUL HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BOF HOTELS BUSINESS",
+      "stars": 4,
+      "district": "ÜMRANİYE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AJWA HOTELS",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CLARION HOTEL İSTANBUL MAHMUTBEY",
+      "stars": 5,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND HARILTON",
+      "stars": 5,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA ENCORE BY WYNDHAM İSTANBULBASIN EXPRES",
+      "stars": 4,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PERA SANAT OTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CENTRO WESTSİDE İSTANBUL BY ROTANA HOTEL",
+      "stars": 5,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SHERATON GRAND İSTANBUL ATAŞEHİR HOTEL",
+      "stars": 5,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MLS Beyoğlu Hotel",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RİVER OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOUBLETREE BY HİLTON İSTANBUL - TUZLA",
+      "stars": 3,
+      "district": "TUZLA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA İSTANBUL ALİBEYKÖY",
+      "stars": 4,
+      "district": "EYÜP",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MERCURE İSTANBUL ÜMRANİYE OTEL",
+      "stars": 4,
+      "district": "ÜMRANİYE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOLIDAY INN İSTANBUL KADIKÖY",
+      "stars": 4,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PARK INN BY RADISSON İSTANBUL ODAYERİ",
+      "stars": 4,
+      "district": "EYÜP",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SOFITEL İSTANBUL TAKSİM",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE TANGO HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOUBLETREE BY HİLTON İSTANBUL ÜMRANİYE",
+      "stars": 5,
+      "district": "ÜMRANİYE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ANEMON BAKIRKÖY OTEL",
+      "stars": 1,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "REGARD HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE CITY OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AK STAR OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İBİS STYLES İSTANBUL BOMONTİ OTEL",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GALATA'S HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MODA RİVA'S HOTEL",
+      "stars": 2,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE G HOTELS",
+      "stars": 5,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MILLENNIUM İSTANBUL GOLDEN HORN OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MANORS HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İ.M.T TERMAL OTEL",
+      "stars": 4,
+      "district": "TUZLA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ISTANROOM BY KEO",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LIONEL HOTEL",
+      "stars": 5,
+      "district": "BAYRAMPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ACCOR OTEL İBİS - NOVOTEL",
+      "stars": 4,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel, Otel"
+    },
+    {
+      "name": "LEGACY OTTOMAN HOTEL",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DEMOKRASİ VE ÖZGÜRLÜKLER ADASI- BİRUN HOTEL",
+      "stars": 5,
+      "district": "ADALAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SORRISO DUE",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BVS BOSPHORUS HOTEL PERA",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WOW İSTANBUL OTEL",
+      "stars": 5,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel, Otel"
+    },
+    {
+      "name": "DEDEMAN BOSTANCI OTEL & CONVENTION CENTER - DEDEMAN PARK BOSTANCI",
+      "stars": 5,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel, Otel"
+    },
+    {
+      "name": "MOVENPICK HOTEL İSTANBUL ASIA AIRPORT",
+      "stars": 5,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ESER DIAMOND HOTEL SPA & CONVENTION CENTER İSTANBUL",
+      "stars": 5,
+      "district": "SİLİVRİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İBİS STYLES ATAŞEHİR OTELİ",
+      "stars": 4,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SERES HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DELİTA CITY HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WALTON OTEL",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL PANORAMA HOTEL",
+      "stars": 3,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RIXOS TERSANE İSTANBUL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM İSTANBUL TAKSİM HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KEMER GOLF & COUNTRY CLUB",
+      "stars": 4,
+      "district": "EYÜP",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Tatil Sitesi ve Villaları, Otel, Golf Tesisi"
+    },
+    {
+      "name": "FEBOR İSTANBUL BOMONTİ HOTEL & SPA",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VISION OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELİTE WORLD GRAND İSTANBUL-BASIN EKSPRES",
+      "stars": 5,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BRICKS HOTEL",
+      "stars": 5,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FATİH BABEL PARK HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SERENITY COMFORT HOTEL",
+      "stars": 5,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BARCELO İSTANBUL OTEL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM İSTANBUL PERA",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KURAN OTELİ",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOLIDAY INN EXPRESS ATAKÖY METRO",
+      "stars": 3,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NABU OTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BURDOCK HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HİLTON MALL OF İSTANBUL",
+      "stars": 5,
+      "district": "BAŞAKŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TRYP BY WYNDHAM İSTANBUL BASIN EKSPRES",
+      "stars": 5,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SHERATON İSTANBUL CITY CENTER",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND DURMAZ HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TRYP BY WYNDHAM TOPKAPI",
+      "stars": 4,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADAR OTEL",
+      "stars": 3,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND MAKEL HOTEL TOPKAPI",
+      "stars": 5,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TITANIC CITY HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SURA HAGIA SOPHIA HOTEL & SPA",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PERA CENTER HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "YÜKSEL İSTANBUL YENİKAPI HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GREAT FORTUNE DESIGN OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SKALİON HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MARD-INN HOTEL",
+      "stars": 4,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELITE WORD GRAND İSTANBUL-KÜÇÜKYALI",
+      "stars": 5,
+      "district": "MALTEPE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BRAM HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NOVA PLAZA ORION HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ADDRESS İSTANBUL",
+      "stars": 5,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "JW MARRIOTT İSTANBUL BOSPHORUS",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BEETHOVEN SENFONİ HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM BEYLİKDÜZÜ",
+      "stars": 5,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AKKA LUSH HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM İSTANBUL GOLDEN",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RİVA'S EKOLOJİK CLUB",
+      "stars": 3,
+      "district": "ÇEKMEKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE WOLF HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TITANIC BUSINESS HOTEL",
+      "stars": 5,
+      "district": "KARTAL",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CORNER HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "Aspera Hotel Golden Horn",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOLIDAY INN EXPRESS İSTANBUL",
+      "stars": 3,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "G-HAN OTEL",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MİDMAR HOTEL",
+      "stars": 4,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RIJJI HOTEL ISTANBUL OLD CITY",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FOUR SEVEN HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CELAL AĞA KONAĞI HOTEL & SPA",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LADY DİANA HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE WESTIN İSTANBUL NİŞANTAŞI",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CHER HOTEL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PLUS HOTEL ATAŞEHİR",
+      "stars": 3,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DANİS HOTEL SPA İSTANBUL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TRYP BY WYNDHAM ŞİŞLİ",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL ERBOY",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ORİENT EXPRESS HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FOUR POINTS BY SHERATON İSTANBUL KAĞITHANE",
+      "stars": 4,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RESIDENCE INN BY MARRIOTT  İSTANBUL ATAŞEHİR",
+      "stars": 4,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ERESİN HOTELS EXPRESS",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GLAMOUR HOTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "Hampton By Hilton İstanbul Arnavutköy",
+      "stars": 4,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AĞAOĞLU MY CITY HOTEL",
+      "stars": 4,
+      "district": "ÜMRANİYE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TİARA BÜYÜKADA OTEL",
+      "stars": 2,
+      "district": "ADALAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GÜNER BUSINESS",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WİNDSOR HOTEL & CONVENTİON CENTER İSTANBUL",
+      "stars": 5,
+      "district": "BAYRAMPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SEPTİMUM",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İBİS STYLES MERTER",
+      "stars": 5,
+      "district": "GÜNGÖREN",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AVANTGARDE HOTEL ŞİŞLİ",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PREMIER VİSTA OTEL",
+      "stars": 4,
+      "district": "SİLİVRİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TALEN OTEL",
+      "stars": 2,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE PENİNSULA İSTANBUL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE CONFORİUM HOTEL ZEYTİNBURNU",
+      "stars": 3,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "STAYSO BY CLOUD7 HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL DARKMEN",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DARKMEN HOTEL LALELİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CENTER HILL HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GREAT FORTUNE HOTEL&SPA",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND SİRKECİ HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ASPERA HOTEL ALTUNİZADE",
+      "stars": 4,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MELAS HOTEL İSTANBUL",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELİT PALACE HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AKKUŞ OTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE PARMA HOTEL  & SPA TAKSİM",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "JW MARRİOTT HOTEL İSTANBUL MARMARA SEA",
+      "stars": 5,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TAKSİM LİNE HOTEL",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BELLEZZA HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "POLO ROSSİ HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ROOM MATE EMİR OTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SULTAN HAMİT HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FLORİNA HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LA QUINTA BY WYNDHAM GÜNEŞLİ",
+      "stars": 5,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAMPTON BY HİLTON İSTANBUL OLD CITY",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CROWNE PLAZA İSTANBUL BOSPHORUS HOTEL",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "APRİLİS PLUS HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BAKIRKÖY TAŞHAN BUSINESS& AIRPORT HOTEL",
+      "stars": 3,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PARK INN BY RADISSON ISTANBUL ASIA KAVACIK",
+      "stars": 4,
+      "district": "BEYKOZ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MY DREAM İSTANBUL HOTEL SİRKECİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE CRATON HOTEL",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DOSSO DOSSİ HOTEL YENİKAPI",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TAKSİM SQUARE HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GOLDEN ROYAL HOTEL İSTANBUL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VESPİA HOTEL",
+      "stars": 4,
+      "district": "BEYLİKDÜZÜ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA ENCORE  BY WYNDHAM İSTANBUL AVCILAR",
+      "stars": 4,
+      "district": "AVCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WANDA VISTA İSTANBUL OTEL",
+      "stars": 5,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE ELEGANT HOTEL",
+      "stars": 3,
+      "district": "EYÜP",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADISSON HARBİYE OTELİ",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CAPE PALACE HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MARDY OTEL",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BUSINESS LİFE HOTEL BAKIRKÖY",
+      "stars": 3,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DEMİRAY OTEL",
+      "stars": 5,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BYON OTEL",
+      "stars": 3,
+      "district": "ŞİLE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CARİNA GOLD HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE CENTRAL HOTEL İSTANBUL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DORA PERA HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VOGUE HOTEL SUPREME İSTANBUL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CONVERT OTEL",
+      "stars": 3,
+      "district": "SULTANGAZİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DEKALB OTEL",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VİTAL HOTEL FULYA",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GALATA TIMES",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HACIBAYRAM HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELİT ROYAL HOTEL",
+      "stars": 1,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İBİS İSTANBUL AİRPORT",
+      "stars": 4,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SUNLIGHT HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "STAYSO THE HOUSE HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HERMES COUNTRY CLUB",
+      "stars": 3,
+      "district": "BEYKOZ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA HOTEL BY WYNDHAM SABİHA GÖKÇEN AIRPORT",
+      "stars": 5,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WİSHMORE ŞİŞLİ OTEL",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ALTUNİZADE SUITES İSTANBUL CURIO COLLECTION BY HILTON",
+      "stars": 5,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA PLAZA BY WYNDHAM SİLİVRİ",
+      "stars": 5,
+      "district": "SİLİVRİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAMİTBEY HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LAND PARK HOTEL",
+      "stars": 4,
+      "district": "AVCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "B İSTANBUL HOTEL",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İBİS İSTANBUL ŞİŞLİ",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE PEARL PLUS AİRPORT OTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ASUR HOTEL İSTANBUL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "EMOS HOTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CONTİNENTAL AİRPORT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MİREN OTEL",
+      "stars": 3,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA ENCORE ARNAVUTKÖY",
+      "stars": 4,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL BOURSİER",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WORLD CLASS AIRPORT HOTEL",
+      "stars": 1,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CLASSES HOTEL",
+      "stars": 3,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FLY AND STAY AIRPORT HOTEL",
+      "stars": 1,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SEYİTHAN PALACE HOTEL",
+      "stars": 1,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL NEW AIRPORT HOTEL TRADE MARK COLLECTION BY WYNDHAM",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KAMPÜS İSTANBUL",
+      "stars": 5,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Turizm Kompleksi, Otel, Eğlence Merkezi"
+    },
+    {
+      "name": "MARS HOTEL",
+      "stars": 3,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE MAESTRO HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KING CITY HOTEL",
+      "stars": 3,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FOUR SİDES BEYOĞLU",
+      "stars": 1,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LİTROS HOTEL",
+      "stars": 3,
+      "district": "ESENLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE BOSFOR HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VİVA OLD CITY HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MUKARNAS PERA HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RİVA HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RIHTIM 51",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DELTA HOTELS BY MARRIOTT İSTANBUL KAĞITHANE",
+      "stars": 4,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VİP OTEL",
+      "stars": 1,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CROWNED HOTEL İSTANBUL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GÜNEY OTEL",
+      "stars": 2,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "Cİ PLUS HOTEL",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LİVRO HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ROMATEM OTEL",
+      "stars": 4,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ST.SOPHIA HOTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ESVE HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL RAVİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DNZT PLUS HOTEL",
+      "stars": 3,
+      "district": "KARTAL",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "La Vita Suites",
+      "stars": 1,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NEVİ HOTELS",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MERLİN HOTEL",
+      "stars": 3,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AYASULTAN HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAZİELLA GOLD HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ALIEE OTEL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ÇABUK BUTİK OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BUEM HOTEL KOŞUYOLU",
+      "stars": 4,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "POLATZADE HOTEL 1",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AKŞAM HAN 1917",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ROOT KARAKÖY",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "EL EMİN İSTANBUL HOTEL",
+      "stars": 4,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HALLMARK HOTEL&SPA",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RİVA’S SIRAPINAR",
+      "stars": 3,
+      "district": "ÇEKMEKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ZAZZONİ AİRPORT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA ENCORE BY WYNDHAM İSTANBUL ŞİŞLİ",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GARDEN ROOM & SUİT HOTEL",
+      "stars": 2,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AİRPORT TEVETOĞLU HOTEL",
+      "stars": 3,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ATRO HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FOUR POINTS BY SHERATON İSTANBUL",
+      "stars": 4,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SECOND 2 ND OTEL",
+      "stars": 1,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PERA RASSO HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "EMPIRE HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA HOTEL BY WYNDHAM",
+      "stars": 5,
+      "district": "GÜNGÖREN",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İLKAY OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SADARET HOTEL 1",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CELİNE Hotel Taxim",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ATAR AIRPORT OTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL VPLUS TAKSİM",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "INTERCITY AIRPORT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BEİJİNG HOTEL",
+      "stars": 1,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL YENİKAPI",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE GREAT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ARTS HOTEL HARBİYE",
+      "stars": 1,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BEST THE PARK HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MANDARİN ORIENTAL BOSPHORUS OTEL",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND ROYAL İSTANBUL",
+      "stars": 3,
+      "district": "SİLİVRİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OLİNDA HOTEL",
+      "stars": 3,
+      "district": "ŞİLE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "STRABELLA OTEL",
+      "stars": 1,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PALMERA HAGIA SOPHIA HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "UNION HOTEL KARAKÖY",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LİNA HOTEL",
+      "stars": 2,
+      "district": "BAYRAMPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BAVER HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DMR COMFORT HOTEL",
+      "stars": 1,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL SOYKAN İSTANBUL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ALRAZİ HOTEL",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NO12  HOTEL  SULTANAHMET",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WORLD POINT HOTEL BEŞYOL",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ATİK PALACE HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ERS LİFE OTEL",
+      "stars": 3,
+      "district": "SULTANBEYLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "INVENTIST HOTEL",
+      "stars": 5,
+      "district": "ÇEKMEKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ASKADARMAY OTEL",
+      "stars": 3,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SENYOR GARDEN HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AVCI PALACE  HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NEO HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KARAKÖY B-LOF OTEL",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL YUSUFPAŞA KONAĞI",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BORİS HOTEL",
+      "stars": 4,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GALATA RASSO HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SARATOGA HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İBİS STYLES İSTANBUL KURTKÖY",
+      "stars": 4,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AHRA OTEL",
+      "stars": 1,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MEYZİ HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ARAM OTEL",
+      "stars": 3,
+      "district": "KARTAL",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE GRAND MİRA HOTEL",
+      "stars": 4,
+      "district": "KARTAL",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MR BEYAZ HOTEL",
+      "stars": 2,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MODOĞLU",
+      "stars": 5,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FREYA OTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TAKSİM GÖNEN HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SAYEBAN GOLD HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MÖVENPİCK HOTEL İSTANBUL MARMARA SEA",
+      "stars": 5,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MARİUS HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "REİSLER OTEL KADIKÖY",
+      "stars": 4,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DREAM PARK OTEL",
+      "stars": 1,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE OMİYA OTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE BİANCHO PERA",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MED LIFE HOTEL",
+      "stars": 2,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NEWPORT OTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BLUE GİLROY OTEL (SELİMPAŞA KONAĞI)",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE NIRVANAS İSTANBUL HOTEL",
+      "stars": 4,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CERRAHOĞLU PRESTİJ OTELİ",
+      "stars": 5,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PUNTO OTEL",
+      "stars": 4,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ÇAKRA PALACE",
+      "stars": 1,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE SPOT",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "EDESAY BOMONTİ HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MEROS",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BALPETEK OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOME PLUS HOTEL",
+      "stars": 3,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WOXX HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NOVOTEL BOMONTİ",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DAYS HOTEL BY WYNDHAM MALTEPE",
+      "stars": 4,
+      "district": "MALTEPE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FLY POİNT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE GRAND TARABYA HOTEL",
+      "stars": 5,
+      "district": "SARIYER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "JAFF HOTELS & SPA NİŞANTAŞI",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SOLO HOTEL TAKSİM",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND HAMİT BY KARADAYI AIRPORT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VİZYON BEYAZIT OTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RİVA HOTEL NİŞANTAŞI",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OPERLA  AIRPORT HOTELS TRADEMARK COLLECTION BY WYNDHAM",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAMPTON BY HİLTON MERTER",
+      "stars": 3,
+      "district": "GÜNGÖREN",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HEAVEN PREMIUM AIRPORT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL MİDPOİNT HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA ENCORE BY WYNDHAM İSTANBUL KARTAL",
+      "stars": 4,
+      "district": "KARTAL",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SHISHLY PALACE OTEL",
+      "stars": 2,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BÜKE HOTEL BOMONTİ",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ASGARD HOTEL",
+      "stars": 3,
+      "district": "BEYLİKDÜZÜ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE BUSINESS CLASS HOTEL",
+      "stars": 2,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DAYS INN BY WYHNDHAM ISTANBUL BOMONTİ",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE CİTY PALACE HOTEL",
+      "stars": 2,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PİER HOTEL GÜNEŞLİ",
+      "stars": 2,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VERA LIFE HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAMPTON BY HİLTON SİRKECİ",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL ALTINAYAR",
+      "stars": 1,
+      "district": "ÇATALCA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOMEY AIRPORT HOTEL",
+      "stars": 2,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADISSON HOTEL İSTANBUL ARNAVUTKÖY",
+      "stars": 5,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FONTANA VERDE OTEL",
+      "stars": 2,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ORIENT EXPRESS",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PİYALEPAŞA COURTYARD BY MARRIOTT",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA PLAZA BY WYNDHAM İSTANBUL ATAKÖY",
+      "stars": 4,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GÜLER PALAS OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İMC HOTEL AND STUDİES",
+      "stars": 4,
+      "district": "SARIYER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL DES ARTS",
+      "stars": 1,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE ROOMS NİŞANTAŞI",
+      "stars": 2,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MARDOF OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GOLDEN RIVER HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE PRIVATE AIRPORT HOTEL",
+      "stars": 2,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NEW INN HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GREAT FORTUNE CREST",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PLUS PARK OTEL",
+      "stars": 1,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "E5 PARK OTEL",
+      "stars": 3,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MOJA CİTY HOTEL",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TRIP PARK HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HİSTORY OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VESS OTEL",
+      "stars": 2,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GÜNEŞLİ AİRPORT HOTEL",
+      "stars": 2,
+      "district": "BAĞCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BAKIRKÖY SİESTA OTEL",
+      "stars": 2,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel, Otel"
+    },
+    {
+      "name": "AVR OTEL",
+      "stars": 5,
+      "district": "GAZİOSMANPAŞA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GREAT FORTUNE CONCEPT HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İSTANBUL EFES HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İCON HOTEL BOMONTİ",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DESTİNY MARİNE HOTEL",
+      "stars": 3,
+      "district": "KARTAL",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AHC OLD CITY HOTEL",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RADISSON OTEL İSTANBUL MERTER",
+      "stars": 5,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İST ROYAL HOTEL",
+      "stars": 2,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "İST ROYAL HOTEL 1",
+      "stars": 2,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM TUZLA",
+      "stars": 3,
+      "district": "TUZLA",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "YENİMELEK OTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AXU AİRPORT HOTEL",
+      "stars": 2,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LUCKY HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SKYMOON HOTEL",
+      "stars": 2,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PREMİUM DEM HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NEW GARDEN AİRPORT HOTEL",
+      "stars": 2,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM ÜMRANİYE",
+      "stars": 4,
+      "district": "ÜMRANİYE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SAFA HOTEL OLD CİTY",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GALATA ISTANBUL HOTEL",
+      "stars": 1,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ZİRVESTA OTEL",
+      "stars": 1,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MAYS OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TRESS HOTEL",
+      "stars": 3,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HEAVEN İNN AİRPORT HOTEL",
+      "stars": 1,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "STYLE HOTEL ŞİŞLİ",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "QUINNOVA OTEL",
+      "stars": 1,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GOLDEN BAZAAR HOTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LE BANC OTEL",
+      "stars": 1,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WİSE HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE GATE HOTELS KADİKOY DOWNTOWN",
+      "stars": 3,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ACTÜEL LİFE HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ESPOİR HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "OTEL PARPALİ",
+      "stars": 1,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FOUR-G HOTEL PREMİUM",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KAĞITHANE ARENA RESORT OTEL",
+      "stars": 1,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE PEARL AİRPORT HOTEL",
+      "stars": 1,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ERK HOTEL OLDCITY",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL SEREN 2",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELİTE PARK HOTEL",
+      "stars": 1,
+      "district": "BEYLİKDÜZÜ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MN NAZLI HOTEL",
+      "stars": 2,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WYNDHAM GARDEN TUZLA",
+      "stars": 3,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VİV CİTY HOTEL",
+      "stars": 3,
+      "district": "BAHÇELİEVLER",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LUNET OLD CİTY HOTEL İSTANBUL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ESEN LIFE HOTEL",
+      "stars": 1,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE NEST HOTEL TAKSİM",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "NERA OTEL",
+      "stars": 1,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "LUNA CİTY HOTEL",
+      "stars": 1,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HERALDICROOM HOTEL",
+      "stars": 2,
+      "district": "ESENYURT",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE ELYSİUM TAKSİM",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOLIDAY INN EKSPRESS ARNAVUTKÖY",
+      "stars": 4,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FİLTAŞ HOTEL",
+      "stars": 3,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAYELİN HOTEL OLD TOWN",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM İSTANBUL ŞİLE",
+      "stars": 3,
+      "district": "ŞİLE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELİTE WORLD İSTANBUL TAKSİM",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE BEST OTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SAMİH CO OTEL",
+      "stars": 4,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "A11 HOTEL BOSPHORUS",
+      "stars": 3,
+      "district": "ÜSKÜDAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "FAMİLY RESORT HOTEL",
+      "stars": 3,
+      "district": "SİLİVRİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VOİR OTEL",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DRAGOS İSLAND HOTEL",
+      "stars": 2,
+      "district": "MALTEPE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "1890 İSTANBUL PALACE",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM ARNAVUTKÖY",
+      "stars": 4,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ŞİLE GÖNEN HOTEL",
+      "stars": 4,
+      "district": "ŞİLE",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL YENİ SEFA",
+      "stars": 2,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL NAUMPAŞA KONAĞI",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL ÖZSEFA",
+      "stars": 2,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GNC AIRPORT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HASDEM HOTEL",
+      "stars": 2,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ÇETİNPORT HOTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GRAND ÖZER HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ÇIRAĞAN HOTEL BOSPHORUS",
+      "stars": 3,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THEODOSIUS HOTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "URANUS ISTANBUL TOPKAPI HOTEL",
+      "stars": 5,
+      "district": "ZEYTİNBURNU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ORANGE HOTEL",
+      "stars": 2,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TURAN PRİNCE İSTANBUL",
+      "stars": 4,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL ÈMILION",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AĞVA SMİLE OTEL",
+      "stars": 1,
+      "district": "ŞİLE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SUR 1 OTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TRIP BOSPHORUS TAKSIM HOTEL",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAI PREMIUM İSTANBUL",
+      "stars": 2,
+      "district": "BAKIRKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PERA STAR OTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CVKPORT  BOSPHORUS HOTEL",
+      "stars": 5,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ATAŞEHİR EVREN OTEL",
+      "stars": 4,
+      "district": "ATAŞEHİR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "Crestium Hotels Taksim Prive & SPA",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HURRY INN OTEL",
+      "stars": 3,
+      "district": "GÜNGÖREN",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PL HOTEL",
+      "stars": 4,
+      "district": "KAĞITHANE",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VİSTAVOYAGE OTEL",
+      "stars": 3,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BELTUR BÜYÜKADA",
+      "stars": 3,
+      "district": "ADALAR",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "COMFORT DOWNTOWN HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PENDİK SAHİL HOTEL",
+      "stars": 3,
+      "district": "PENDİK",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HOTEL SÜREYYA",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELYSIAN AIRPORT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SANCAK HOTEL",
+      "stars": 2,
+      "district": "BÜYÜKÇEKMECE",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SWISSOTEL THE BOSPHORUS ISTANBUL",
+      "stars": 5,
+      "district": "BEŞİKTAŞ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SİSTİNA OLDCITY HOTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ABELİA MANSİON OTEL",
+      "stars": 2,
+      "district": "FATİH",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "RAMADA BY WYNDHAM ARNAVUTKÖY",
+      "stars": 5,
+      "district": "ARNAVUTKÖY",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PALARMO OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PARK DEDEMAN ŞİŞLİ",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HAMPTON BY HİLTON İSTANBUL ŞİŞLİ",
+      "stars": 4,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SEBA MERCITY",
+      "stars": 3,
+      "district": "KAĞITHANE",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VK KAHVECİOĞLU HOTEL",
+      "stars": 4,
+      "district": "AVCILAR",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TRYP BY WYNDHAM İSTANBUL BEYOĞLU",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GALATA FİL HOTEL",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE WAY HOTEL",
+      "stars": 3,
+      "district": "ŞİŞLİ",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CABA ŞİŞLİ OTEL",
+      "stars": 5,
+      "district": "ŞİŞLİ",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "SHELTON AİRPORT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HİLLTOWN AİRPORT HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ZİON HOME",
+      "stars": 2,
+      "district": "KADIKÖY",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MAROON HOTEL",
+      "stars": 4,
+      "district": "ÜMRANİYE",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE BAIL HOTEL",
+      "stars": 1,
+      "district": "FATİH",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ATAKÖŞKÜM",
+      "stars": 3,
+      "district": "TUZLA",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "AKGÜN OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ELİTE MARMARA EXPRESS",
+      "stars": 1,
+      "district": "BAHÇELİEVLER",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DREAM INN BOSPHORUS",
+      "stars": 3,
+      "district": "BEYOĞLU",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "THE CEMBERLITAS COLUMN HOTEL, A MEMBER OF RADISSON INDIVIDUALS",
+      "stars": 4,
+      "district": "FATİH",
+      "status": "Belgeli Tesisler",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "TARIK OTEL",
+      "stars": 3,
+      "district": "ZEYTİNBURNU",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CONCEPT PERA",
+      "stars": 1,
+      "district": "BEYOĞLU",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "HIGHWAY 34  OTEL",
+      "stars": 1,
+      "district": "KÜÇÜKÇEKMECE",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "KURFAL HOTEL",
+      "stars": 3,
+      "district": "ŞİLE",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "DELTA HOTELS BY MARRİOTT KARAKÖY",
+      "stars": 4,
+      "district": "BEYOĞLU",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "GFH GOMS HOTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "PERA LİFE HOTEL",
+      "stars": 2,
+      "district": "BEYOĞLU",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "STAYLAB OTEL",
+      "stars": 1,
+      "district": "BEYOĞLU",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BULTON HOTEL",
+      "stars": 3,
+      "district": "ARNAVUTKÖY",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "BZN AIRPORT HOTEL",
+      "stars": 2,
+      "district": "ARNAVUTKÖY",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "VATAN ASUR OTEL",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "CROWNE PLAZA İSTANBUL WEST BY IHG",
+      "stars": 5,
+      "district": "BÜYÜKÇEKMECE",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "MARKA ÇALIŞMASI DEVAM ETMEKTEDİR.",
+      "stars": 5,
+      "district": "ESENYURT",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "WESTPORT İSTANBUL HOTEL",
+      "stars": 3,
+      "district": "SİLİVRİ",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "ZALEL HOTELS OLD CITY",
+      "stars": 3,
+      "district": "FATİH",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    },
+    {
+      "name": "1314 OTEL",
+      "stars": 4,
+      "district": "ARNAVUTKÖY",
+      "status": "Başvuru",
+      "facility_type": "Otel"
+    }
+  ]
+}

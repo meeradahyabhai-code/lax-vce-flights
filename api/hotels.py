@@ -33,7 +33,14 @@ from serpapi_guard import BudgetExceeded, check_serpapi_budget, log_serpapi_call
 
 CITY_MAP = {
     "venice": "Venice, Italy",
+    "ravenna": "Ravenna, Italy",
     "istanbul": "Istanbul, Turkey",
+}
+
+CITY_DEFAULTS = {
+    "venice": {"check_in": "2026-06-30", "check_out": "2026-07-03"},
+    "ravenna": {"check_in": "2026-07-02", "check_out": "2026-07-03"},
+    "istanbul": {"check_in": "2026-07-13", "check_out": "2026-07-14"},
 }
 
 CACHE_DIR = os.path.join(
@@ -96,8 +103,8 @@ def _fresh_search(city_key: str, city_query: str, check_in: str, check_out: str)
     places_results = search_places(city_query)
     hotels = merge_places_data(hotels, places_results)
 
-    # 2b. Fill missing star ratings from official Veneto open data
-    hotels = apply_official_stars(hotels)
+    # 2b. Fill missing star ratings from official open data (if available for city)
+    hotels = apply_official_stars(hotels, city_key)
 
     # 3. Compute distances from landmark
     hotels = compute_distances(hotels, city_key)
@@ -111,7 +118,11 @@ def _fresh_search(city_key: str, city_query: str, check_in: str, check_out: str)
     # 6. Enrich top results with Place Details (free)
     hotels = enrich_with_details(hotels)
 
-    # 7. Categorize
+    # 7. Tag city on each hotel (for loyalty URLs)
+    for h in hotels:
+        h["city"] = city_query
+
+    # 8. Categorize
     categorized = categorize_hotels(hotels)
 
     call_log = get_serpapi_call_log()
@@ -141,8 +152,9 @@ class handler(BaseHTTPRequestHandler):
             params = parse_qs(parsed.query)
 
             city_key = params.get("city", ["venice"])[0].lower()
-            check_in = params.get("check_in", ["2026-06-30"])[0]
-            check_out = params.get("check_out", ["2026-07-03"])[0]
+            defaults = CITY_DEFAULTS.get(city_key, CITY_DEFAULTS["venice"])
+            check_in = params.get("check_in", [defaults["check_in"]])[0]
+            check_out = params.get("check_out", [defaults["check_out"]])[0]
 
             city_query = CITY_MAP.get(city_key, "Venice, Italy")
             cache_file = _cache_path(city_key, check_in, check_out)
