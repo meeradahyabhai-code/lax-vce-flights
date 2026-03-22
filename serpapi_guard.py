@@ -20,7 +20,9 @@ import smtplib
 import time
 from email.mime.text import MIMEText
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+# Use /tmp on Vercel (read-only filesystem), data/ locally
+_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+DATA_DIR = "/tmp" if os.environ.get("VERCEL") else _data_dir
 RATE_LOG_FILE = os.path.join(DATA_DIR, "serpapi_rate_log.json")
 
 # Threshold: max ad-hoc calls in a 24h rolling window

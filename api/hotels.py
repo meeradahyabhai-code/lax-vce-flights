@@ -43,9 +43,11 @@ CITY_DEFAULTS = {
     "istanbul": {"check_in": "2026-07-13", "check_out": "2026-07-14"},
 }
 
-CACHE_DIR = os.path.join(
+# Use /tmp on Vercel (read-only filesystem), data/ locally
+_data_dir = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data"
 )
+CACHE_DIR = "/tmp" if os.environ.get("VERCEL") else _data_dir
 CACHE_TTL = 48 * 3600  # 48 hours in seconds
 
 
