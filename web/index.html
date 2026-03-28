@@ -4079,11 +4079,12 @@
       return;
     }
 
-    // Render toggle + container if not already there
-    if (!document.getElementById('hotel-map-container')) {
+    // Render toggle + container if not already there, or if map was destroyed (city switch)
+    if (!document.getElementById('hotel-map-container') || !hotelMapInstance) {
       mapArea.innerHTML =
         '<button class="hotel-map-toggle active" id="hotel-map-toggle-btn">Hide Map</button>' +
         '<div id="hotel-map-container"></div>';
+      hotelMapVisible = true;
       document.getElementById('hotel-map-toggle-btn').addEventListener('click', function () {
         hotelMapVisible = !hotelMapVisible;
         var container = document.getElementById('hotel-map-container');
@@ -4100,9 +4101,7 @@
         }
       });
       // Init map immediately since visible by default
-      if (!hotelMapInstance) {
-        setTimeout(function () { initHotelMap(hotels); }, 50);
-      }
+      setTimeout(function () { initHotelMap(hotels); }, 50);
     }
 
     // If map is visible, rebuild markers (preserve tile layer and San Marco)

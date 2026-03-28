@@ -20,6 +20,7 @@ from hotel_agent import (
     categorize_hotels,
     compute_distances,
     enrich_with_details,
+    geocode_missing,
     loyalty_url,
     merge_places_data,
     normalize_serpapi,
@@ -105,7 +106,10 @@ def _fresh_search(city_key: str, city_query: str, check_in: str, check_out: str)
     places_results = search_places(city_query)
     hotels = merge_places_data(hotels, places_results)
 
-    # 2b. Fill missing star ratings from official open data (if available for city)
+    # 2b. Geocode hotels that still lack coordinates (free Places call per hotel)
+    hotels = geocode_missing(hotels, city_query)
+
+    # 2c. Fill missing star ratings from official open data (if available for city)
     hotels = apply_official_stars(hotels, city_key)
 
     # 3. Compute distances from landmark

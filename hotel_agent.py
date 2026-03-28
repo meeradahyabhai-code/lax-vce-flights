@@ -550,7 +550,8 @@ def _fuzzy_match_place(norm: str, lookup: dict) -> dict | None:
         return lookup[norm]
 
     STOP_WORDS = {"hotel", "the", "a", "di", "e", "in", "venice",
-                  "venezia", "italy", "&", "-", "collection", "resort",
+                  "venezia", "italy", "istanbul", "ravenna", "turkey",
+                  "&", "-", "collection", "resort",
                   "spa", "boutique", "suites"}
     h_words = set(norm.split()) - STOP_WORDS
     best_match = None
@@ -696,6 +697,49 @@ def enrich_with_details(hotels: list[dict], max_detail_calls: int = 10) -> list[
 
 
 # ---------------------------------------------------------------------------
+# Geocode missing coordinates via Places text search
+# ---------------------------------------------------------------------------
+
+def geocode_missing(hotels: list[dict], city: str) -> list[dict]:
+    """Fill in latitude/longitude for hotels that lack coordinates.
+
+    Uses a targeted Google Places text search by hotel name + city (free).
+    """
+    if not _places_key():
+        return hotels
+
+    missing = [h for h in hotels if not h.get("latitude")]
+    if not missing:
+        return hotels
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": _places_key(),
+        "X-Goog-FieldMask": "places.location,places.displayName",
+    }
+
+    for h in missing:
+        try:
+            body = {
+                "textQuery": f"{h['name']} hotel {city}",
+                "includedType": "lodging",
+                "maxResultCount": 1,
+            }
+            resp = requests.post(PLACES_SEARCH_URL, json=body, headers=headers, timeout=10)
+            resp.raise_for_status()
+            places = resp.json().get("places", [])
+            if places:
+                loc = places[0].get("location", {})
+                if loc.get("latitude"):
+                    h["latitude"] = loc["latitude"]
+                    h["longitude"] = loc["longitude"]
+        except Exception:
+            continue
+
+    return hotels
+
+
+# ---------------------------------------------------------------------------
 # Distance computation
 # ---------------------------------------------------------------------------
 
@@ -743,6 +787,7 @@ def score_hotels(hotels: list[dict]) -> list[dict]:
       score += star_bonus     (5★: -200, 4★: -100, 3★: 0, 2★: +100) (primary)
       score += rating_bonus   (4.5+: -50, 4.25+: -35, 4.0+: -20, 3.75+: -10) (tiebreaker)
       score += reviews_bonus  (5000+: -25, 2000+: -15, 1000+: -10)  (tiebreaker)
+      score += fhr_bonus      (FHR: -150, THC: -75)                 (cc program value)
       score += budget_penalty (if price > $350: +0.5 per $ over)
     """
     for h in hotels:
@@ -785,6 +830,13 @@ def score_hotels(hotels: list[dict]) -> list[dict]:
             score -= 15
         elif reviews >= 1000:
             score -= 10
+
+        # CC program bonus — FHR includes breakfast, upgrade, late checkout, $100+ credit
+        cc = h.get("cc_programs") or []
+        if "fhr" in cc:
+            score -= 150
+        elif "thc" in cc:
+            score -= 75
 
         # Budget penalty (only for priced hotels)
         if h["rate_per_night"] > 350:
