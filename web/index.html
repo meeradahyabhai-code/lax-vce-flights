@@ -1271,6 +1271,32 @@
     color: #94a3b8; min-width: 60px;
   }
 
+  /* ── Itinerary: Quick-Jump Nav ── */
+  .itin-quicknav {
+    display: flex; gap: 8px; justify-content: center;
+    padding: 16px 0 20px; margin-bottom: 8px;
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(to bottom, rgba(250,248,243,1) 80%, rgba(250,248,243,0));
+  }
+  .itin-quicknav-btn {
+    font-family: var(--sans); font-size: 14px; font-weight: 600;
+    padding: 10px 24px; border-radius: 9999px; cursor: pointer;
+    border: 2px solid var(--azure); background: #fff; color: var(--azure);
+    transition: all 0.2s; letter-spacing: 0.02em;
+  }
+  .itin-quicknav-btn:hover {
+    background: var(--azure); color: #fff;
+    box-shadow: 0 4px 12px rgba(26,58,107,0.2);
+  }
+  .itin-quicknav-btn.active {
+    background: var(--azure); color: #fff;
+    box-shadow: 0 2px 8px rgba(26,58,107,0.15);
+  }
+  @media (max-width: 600px) {
+    .itin-quicknav { gap: 6px; padding: 12px 0 16px; }
+    .itin-quicknav-btn { font-size: 12px; padding: 8px 14px; }
+  }
+
   /* ── Itinerary: Hotels ── */
   .itin-hotel-header {
     display: flex; align-items: center; justify-content: space-between;
@@ -1541,11 +1567,21 @@
 <div id="itinerary-section" style="display:none;">
 <div style="max-width:900px; margin:0 auto; padding:0 16px 48px;">
 
+  <!-- Quick-jump nav -->
+  <div class="itin-quicknav" id="itin-quicknav">
+    <button class="itin-quicknav-btn active" data-target="itin-flights-anchor">Flights</button>
+    <button class="itin-quicknav-btn" data-target="itin-hotels-anchor">Hotels</button>
+    <button class="itin-quicknav-btn" data-target="itin-cruise-anchor">Cruise</button>
+    <button class="itin-quicknav-btn" data-target="itin-excursions-anchor">Excursions</button>
+  </div>
+
   <!-- Section 1: Confirmed Flights -->
+  <div id="itin-flights-anchor"></div>
   <div id="confirmed-outbound"></div>
   <div id="confirmed-return"></div>
 
   <!-- Section 2: Hotels -->
+  <div id="itin-hotels-anchor"></div>
   <div class="itin-section">
     <div class="itin-hotel-header">
       <div class="itin-heading">Hotels</div>
@@ -1556,6 +1592,7 @@
   </div>
 
   <!-- Section 3: Cruise Schedule -->
+  <div id="itin-cruise-anchor"></div>
   <div class="itin-section">
     <div class="itin-heading">The Cruise</div>
     <div class="itin-rule"></div>
@@ -1564,6 +1601,7 @@
   </div>
 
   <!-- Section 4: Excursions -->
+  <div id="itin-excursions-anchor"></div>
   <div class="itin-section">
     <div class="itin-heading">Excursions</div>
     <div class="itin-rule"></div>
@@ -4864,6 +4902,35 @@
 
   // Wire up the Add Hotel button
   document.getElementById('add-hotel-btn').addEventListener('click', function () { openAddHotelModal(); });
+
+  // Wire up itinerary quick-nav buttons
+  document.querySelectorAll('.itin-quicknav-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('data-target');
+      var target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Update active state
+        document.querySelectorAll('.itin-quicknav-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      }
+    });
+  });
+
+  // Update quick-nav active state on scroll
+  var itinAnchors = ['itin-flights-anchor', 'itin-hotels-anchor', 'itin-cruise-anchor', 'itin-excursions-anchor'];
+  window.addEventListener('scroll', function () {
+    if (activeSection !== 'itinerary') return;
+    var scrollY = window.scrollY + 120;
+    var activeAnchor = itinAnchors[0];
+    itinAnchors.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollY) activeAnchor = id;
+    });
+    document.querySelectorAll('.itin-quicknav-btn').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-target') === activeAnchor);
+    });
+  });
 
   function openAddHotelModal() {
     var old = document.querySelector('.ahm-overlay');
