@@ -686,6 +686,32 @@
   .section-tab svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
   .section-tab .tab-label { white-space: nowrap; }
 
+  /* Shop sub-nav (Flights / Hotels toggle) */
+  .shop-subnav {
+    display: flex; justify-content: center; gap: 0;
+    padding: 0; margin: 0 auto; max-width: 320px;
+    background: var(--fog); border-radius: 10px;
+    overflow: hidden;
+  }
+  .shop-subnav-btn {
+    flex: 1; font-family: var(--sans); font-size: 14px; font-weight: 600;
+    padding: 10px 0; cursor: pointer; border: none;
+    background: transparent; color: #94a3b8;
+    transition: all 0.15s; text-align: center;
+  }
+  .shop-subnav-btn:hover { color: var(--azure); }
+  .shop-subnav-btn.active {
+    background: var(--azure); color: #fff; border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(26,58,107,0.15);
+  }
+
+  @media (max-width: 600px) {
+    .shop-subnav {
+      max-width: 100%; margin: 8px 16px 0; border-radius: 8px;
+    }
+    .shop-subnav-btn { font-size: 14px; padding: 12px 0; }
+  }
+
   @media (max-width: 600px) {
     .section-nav {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -1485,13 +1511,8 @@
   <div class="landing-cards">
     <div class="landing-card" data-dest="flights">
       <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
-      <div class="landing-card-label">Shop Flights</div>
-      <div class="landing-card-desc">Outbound to Venice, return from Istanbul</div>
-    </div>
-    <div class="landing-card" data-dest="hotels">
-      <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 7v14M21 7v14M6 11h4v4H6zM14 11h4v4h-4zM9 3h6l3 4H6l3-4z"/></svg></div>
-      <div class="landing-card-label">Shop Hotels</div>
-      <div class="landing-card-desc">Venice &amp; Istanbul stays before and after the cruise</div>
+      <div class="landing-card-label">Shop Flights &amp; Hotels</div>
+      <div class="landing-card-desc">Browse flights to Venice &amp; hotels for your stay</div>
     </div>
     <div class="landing-card" data-dest="itinerary">
       <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></div>
@@ -1529,12 +1550,17 @@
 <!-- Page content (hidden until origin selected) -->
 <div id="page-content" style="display:none;">
 
-<!-- Section nav: Flights / Hotels -->
+<!-- Section nav: Home / Shop / Itinerary -->
 <div class="section-nav" id="section-nav">
   <button class="section-tab" data-section="home"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 14 15 14 15 21"/></svg><span class="tab-label">Home</span></button>
-  <button class="section-tab active" data-section="flights"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg><span class="tab-label">Flights</span></button>
-  <button class="section-tab" data-section="hotels"><svg viewBox="0 0 24 24"><path d="M3 21h18M3 7v14M21 7v14M6 11h4v4H6zM14 11h4v4h-4zM9 3h6l3 4H6l3-4z"/></svg><span class="tab-label">Hotels</span></button>
+  <button class="section-tab active" data-section="shop"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg><span class="tab-label">Shop</span></button>
   <button class="section-tab" data-section="itinerary"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg><span class="tab-label">Itinerary</span></button>
+</div>
+
+<!-- Shop sub-nav: Flights / Hotels toggle -->
+<div class="shop-subnav" id="shop-subnav" style="display:none;">
+  <button class="shop-subnav-btn active" data-sub="flights">Flights</button>
+  <button class="shop-subnav-btn" data-sub="hotels">Hotels</button>
 </div>
 
 <!-- Hero -->
@@ -3483,6 +3509,8 @@
   var confirmedHotels = [];
   var confirmedHotelsLoaded = false;
 
+  var activeShopSub = 'flights'; // 'flights' | 'hotels'
+
   function setupSectionNav() {
     document.querySelectorAll('.section-tab').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -3491,18 +3519,52 @@
           showLanding();
           return;
         }
-        if (activeSection === section) return;
-        activeSection = section;
+        if (section === 'shop') {
+          activeSection = activeShopSub; // restore last sub-tab
+        } else {
+          if (activeSection === section) return;
+          activeSection = section;
+        }
+        renderSectionNav();
+        renderSectionContent();
+      });
+    });
+
+    // Shop sub-nav toggle
+    document.querySelectorAll('.shop-subnav-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var sub = btn.dataset.sub;
+        if (activeSection === sub) return;
+        activeShopSub = sub;
+        activeSection = sub;
         renderSectionNav();
         renderSectionContent();
       });
     });
   }
 
+  function isShopSection() {
+    return activeSection === 'flights' || activeSection === 'hotels';
+  }
+
   function renderSectionNav() {
     document.querySelectorAll('.section-tab').forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.section === activeSection);
+      var s = btn.dataset.section;
+      if (s === 'shop') {
+        btn.classList.toggle('active', isShopSection());
+      } else {
+        btn.classList.toggle('active', s === activeSection);
+      }
     });
+
+    // Show/hide shop sub-nav
+    var subNav = document.getElementById('shop-subnav');
+    if (subNav) {
+      subNav.style.display = isShopSection() ? '' : 'none';
+      document.querySelectorAll('.shop-subnav-btn').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.sub === activeSection);
+      });
+    }
   }
 
   function renderSectionContent() {
@@ -4940,22 +5002,23 @@
   }
 
   // Load Google Maps JS API for Places Autocomplete
-  var googleMapsLoaded = false;
+  var googleMapsReady = false;
+  var googleMapsLoading = false;
   function loadGoogleMapsAPI() {
-    if (googleMapsLoaded) return;
-    googleMapsLoaded = true;
+    if (googleMapsReady || googleMapsLoading) return;
+    googleMapsLoading = true;
     fetch('/api/maps_key')
       .then(function (r) { return r.json(); })
       .then(function (data) {
-        if (!data.key) return;
+        if (!data.key) { googleMapsLoading = false; return; }
         var script = document.createElement('script');
         script.src = 'https://maps.googleapis.com/maps/api/js?key=' + data.key + '&libraries=places';
         script.async = true;
+        script.onload = function () { googleMapsReady = true; };
         document.head.appendChild(script);
       })
-      .catch(function () { /* silent — autocomplete will fallback to plain input */ });
+      .catch(function () { googleMapsLoading = false; });
   }
-  // Pre-load when itinerary tab is shown
   loadGoogleMapsAPI();
 
   // Wire up the Add Hotel button
@@ -5050,9 +5113,11 @@
     ahmInitAutocomplete();
   }
 
-  function ahmInitAutocomplete() {
+  function ahmInitAutocomplete(retries) {
     var input = document.getElementById('ahm-hotel-search');
     if (!input) return;
+    retries = retries || 0;
+
     if (typeof google !== 'undefined' && google.maps && google.maps.places) {
       ahmAutocomplete = new google.maps.places.Autocomplete(input, {
         types: ['lodging'],
@@ -5081,8 +5146,14 @@
         };
         ahmShowStep2();
       });
+      input.placeholder = 'Start typing hotel name...';
+    } else if (retries < 20) {
+      // API still loading — retry in 300ms (up to 6 seconds)
+      input.placeholder = 'Loading hotel search...';
+      setTimeout(function () { ahmInitAutocomplete(retries + 1); }, 300);
     } else {
-      input.placeholder = 'Type hotel name (autocomplete unavailable)';
+      // Give up — fallback to plain text
+      input.placeholder = 'Type hotel name and press Enter';
       input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
           ahmParsed = { hotel_name: input.value, address: '', city: '', check_in: null, check_out: null };
