@@ -4939,6 +4939,25 @@
       '</div>';
   }
 
+  // Load Google Maps JS API for Places Autocomplete
+  var googleMapsLoaded = false;
+  function loadGoogleMapsAPI() {
+    if (googleMapsLoaded) return;
+    googleMapsLoaded = true;
+    fetch('/api/maps_key')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.key) return;
+        var script = document.createElement('script');
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=' + data.key + '&libraries=places';
+        script.async = true;
+        document.head.appendChild(script);
+      })
+      .catch(function () { /* silent — autocomplete will fallback to plain input */ });
+  }
+  // Pre-load when itinerary tab is shown
+  loadGoogleMapsAPI();
+
   // Wire up the Add Hotel button
   document.getElementById('add-hotel-btn').addEventListener('click', function () { openAddHotelModal(); });
 
