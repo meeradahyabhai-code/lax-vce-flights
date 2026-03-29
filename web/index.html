@@ -1293,8 +1293,14 @@
     box-shadow: 0 2px 8px rgba(26,58,107,0.15);
   }
   @media (max-width: 600px) {
-    .itin-quicknav { gap: 6px; padding: 12px 0 16px; }
-    .itin-quicknav-btn { font-size: 12px; padding: 8px 14px; }
+    .itin-quicknav {
+      gap: 4px; padding: 10px 0 14px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .itin-quicknav-btn {
+      font-size: 13px; font-weight: 700; padding: 10px 16px;
+      flex: 1; min-width: 0; text-align: center;
+    }
   }
 
   /* ── Itinerary: Hotels ── */
@@ -1427,11 +1433,44 @@
   .ahm-or-divider::after { right: 0; }
 
   @media (max-width: 600px) {
-    .cruise-day { gap: 10px; }
-    .cruise-day-date { min-width: 60px; font-size: 11px; }
-    .cruise-port-name { font-size: 14px; }
+    /* Modal */
+    .afm-overlay { padding: 12px; }
+    .afm-box { padding: 20px 16px 16px; }
+    .afm-title { font-size: 20px; }
+    .afm-upload-area { padding: 28px 16px; }
+    .afm-travelers { grid-template-columns: 1fr; gap: 2px; }
+    .afm-btn-primary { padding: 14px; font-size: 15px; }
+    .afm-btn-secondary { padding: 12px; }
+    .afm-field label { font-size: 12px; }
+    .afm-field input, .afm-field select { font-size: 16px; padding: 10px 12px; }
+
+    /* Cruise schedule */
+    .cruise-day { gap: 10px; padding: 14px 0; }
+    .cruise-day-date { min-width: 56px; font-size: 12px; }
+    .cruise-port-name { font-size: 15px; }
+    .cruise-times { font-size: 13px; }
+    .cruise-event { padding: 10px; }
+
+    /* Hotel cards */
     .itin-hotel-card { padding: 12px; }
-    .itin-hotel-travelers { flex-direction: column; align-items: flex-start; }
+    .itin-hotel-name { font-size: 16px; }
+    .itin-hotel-address { font-size: 13px; }
+    .itin-hotel-dates { font-size: 13px; }
+    .itin-hotel-travelers { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .itin-join-btn { padding: 8px 16px; font-size: 13px; min-height: 44px; }
+    .itin-hotel-empty { font-size: 14px; }
+
+    /* Excursions */
+    .itin-exc-item { flex-direction: column; align-items: flex-start; gap: 6px; padding: 14px 0; }
+    .itin-exc-port { font-size: 15px; }
+    .itin-exc-link { font-size: 14px; padding: 6px 0; }
+
+    /* Section headings */
+    .itin-heading { font-size: 24px; }
+    .itin-city-label { font-size: 15px; }
+
+    /* Add Hotel button */
+    #add-hotel-btn { font-size: 13px; padding: 8px 16px; min-height: 44px; }
   }
 </style>
 </head>
