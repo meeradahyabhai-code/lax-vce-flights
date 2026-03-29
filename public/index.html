@@ -1549,7 +1549,7 @@
   <div class="itin-section">
     <div class="itin-hotel-header">
       <div class="itin-heading">Hotels</div>
-      <button class="cf-add-btn" id="add-hotel-btn" onclick="openAddHotelModal()">+ Add Hotel</button>
+      <button class="cf-add-btn" id="add-hotel-btn">+ Add Hotel</button>
     </div>
     <div class="itin-rule"></div>
     <div id="itinerary-hotels"></div>
@@ -4774,7 +4774,7 @@
           html += displayNames || '<em style="color:#94a3b8">No travelers listed</em>';
         }
         html += '</div>';
-        html += '<button class="itin-join-btn" onclick="showJoinHotelPopover(this)" data-hid="' + (h.hotel_id || '') + '">+ Join</button>';
+        html += '<button class="itin-join-btn" data-hid="' + (h.hotel_id || '') + '">+ Join</button>';
         html += '</div>';
         html += '</div>';
       });
@@ -4783,12 +4783,16 @@
     });
 
     el.innerHTML = html;
+
+    // Wire up join buttons via event delegation
+    el.querySelectorAll('.itin-join-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { showJoinHotelPopover(btn); });
+    });
   }
 
   // ---- Itinerary: Join Hotel Popover ----
   function showJoinHotelPopover(btn) {
     var hid = btn.getAttribute('data-hid');
-    // Remove existing popover
     var old = document.querySelector('.hotel-join-popover');
     if (old) old.remove();
 
@@ -4807,15 +4811,19 @@
 
     pop.innerHTML =
       '<div class="afm-box" style="width:400px;">' +
-      '<button class="afm-close" onclick="this.closest(\'.hotel-join-popover\').remove()">&times;</button>' +
+      '<button class="afm-close hjp-close-btn">&times;</button>' +
       '<div class="afm-title">Join Hotel</div>' +
       '<p style="font-family:var(--sans);font-size:13px;color:#64748b;margin:8px 0 16px;">Who is staying at this hotel?</p>' +
       '<div class="afm-travelers" id="join-hotel-travelers">' + travelerHTML + '</div>' +
-      '<button class="afm-btn-primary" onclick="saveJoinHotel(\'' + hid + '\')">Join Hotel</button>' +
-      '<button class="afm-btn-secondary" onclick="this.closest(\'.hotel-join-popover\').remove()">Cancel</button>' +
+      '<button class="afm-btn-primary hjp-save-btn">Join Hotel</button>' +
+      '<button class="afm-btn-secondary hjp-cancel-btn">Cancel</button>' +
       '</div>';
 
     document.body.appendChild(pop);
+
+    pop.querySelector('.hjp-close-btn').addEventListener('click', function () { pop.remove(); });
+    pop.querySelector('.hjp-cancel-btn').addEventListener('click', function () { pop.remove(); });
+    pop.querySelector('.hjp-save-btn').addEventListener('click', function () { saveJoinHotel(hid); });
   }
 
   function saveJoinHotel(hotelId) {
@@ -4836,7 +4844,6 @@
     Promise.all(promises).then(function () {
       var pop = document.querySelector('.hotel-join-popover');
       if (pop) pop.remove();
-      // Refresh hotel data
       confirmedHotelsLoaded = false;
       renderItineraryHotels();
     });
@@ -4847,8 +4854,18 @@
   var ahmScreenshotDataUrl = null;
   var ahmAutocomplete = null;
 
+  function ahmStepsHTML(step) {
+    return '<div class="afm-steps">' +
+      '<span class="afm-step' + (step === 1 ? ' active' : (step > 1 ? ' done' : '')) + '">1. Add Hotel</span>' +
+      '<span class="afm-step' + (step === 2 ? ' active' : (step > 2 ? ' done' : '')) + '">2. Details</span>' +
+      '<span class="afm-step' + (step === 3 ? ' active' : '') + '">3. Travelers</span>' +
+      '</div>';
+  }
+
+  // Wire up the Add Hotel button
+  document.getElementById('add-hotel-btn').addEventListener('click', function () { openAddHotelModal(); });
+
   function openAddHotelModal() {
-    // Remove any existing modal
     var old = document.querySelector('.ahm-overlay');
     if (old) old.remove();
 
@@ -4858,20 +4875,11 @@
     var overlay = document.createElement('div');
     overlay.className = 'afm-overlay ahm-overlay';
 
-    function stepsHTML(step) {
-      return '<div class="afm-steps">' +
-        '<span class="afm-step' + (step === 1 ? ' active' : (step > 1 ? ' done' : '')) + '">1. Add Hotel</span>' +
-        '<span class="afm-step' + (step === 2 ? ' active' : (step > 2 ? ' done' : '')) + '">2. Details</span>' +
-        '<span class="afm-step' + (step === 3 ? ' active' : '') + '">3. Travelers</span>' +
-        '</div>';
-    }
-
-    // Step 1: Upload or Search
     overlay.innerHTML =
       '<div class="afm-box">' +
-      '<button class="afm-close" onclick="closeAddHotelModal()">&times;</button>' +
+      '<button class="afm-close ahm-close-btn">&times;</button>' +
       '<div class="afm-title">Add Hotel</div>' +
-      stepsHTML(1) +
+      ahmStepsHTML(1) +
       '<div class="afm-upload-area" id="ahm-dropzone">' +
         '<div class="afm-upload-label">' +
           '<strong>Upload confirmation</strong><br>' +
@@ -4885,10 +4893,19 @@
         '<label style="display:block;font-family:var(--sans);font-size:11px;font-weight:500;color:#94a3b8;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:4px;">Search for hotel</label>' +
         '<input type="text" class="ahm-search-input" id="ahm-hotel-search" placeholder="Start typing hotel name...">' +
       '</div>' +
-      '<button class="afm-btn-secondary" onclick="ahmSkipToManual()">Enter details manually</button>' +
+      '<button class="afm-btn-secondary ahm-manual-btn">Enter details manually</button>' +
       '</div>';
 
     document.body.appendChild(overlay);
+
+    // Wire close button
+    overlay.querySelector('.ahm-close-btn').addEventListener('click', closeAddHotelModal);
+
+    // Wire manual entry button
+    overlay.querySelector('.ahm-manual-btn').addEventListener('click', function () {
+      ahmParsed = { hotel_name: '', address: '', city: '', check_in: null, check_out: null };
+      ahmShowStep2();
+    });
 
     // Set up dropzone
     var dropzone = document.getElementById('ahm-dropzone');
@@ -4940,7 +4957,6 @@
         ahmShowStep2();
       });
     } else {
-      // Fallback: plain text input — manual entry
       input.placeholder = 'Type hotel name (autocomplete unavailable)';
       input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
@@ -4965,7 +4981,6 @@
     var reader = new FileReader();
     reader.onload = function () {
       var dataUrl = reader.result;
-      // Compress if image
       if (file.type.indexOf('image') !== -1) {
         var img = new Image();
         img.onload = function () {
@@ -5011,23 +5026,10 @@
     });
   }
 
-  function ahmSkipToManual() {
-    ahmParsed = { hotel_name: '', address: '', city: '', check_in: null, check_out: null };
-    ahmShowStep2();
-  }
-
   function ahmShowStep2() {
     var box = document.querySelector('.ahm-overlay .afm-box');
     if (!box) return;
     var p = ahmParsed || {};
-
-    function stepsHTML(step) {
-      return '<div class="afm-steps">' +
-        '<span class="afm-step' + (step === 1 ? ' active' : (step > 1 ? ' done' : '')) + '">1. Add Hotel</span>' +
-        '<span class="afm-step' + (step === 2 ? ' active' : (step > 2 ? ' done' : '')) + '">2. Details</span>' +
-        '<span class="afm-step' + (step === 3 ? ' active' : '') + '">3. Travelers</span>' +
-        '</div>';
-    }
 
     function fieldHTML(label, key, val, required) {
       var cls = val ? 'afm-field parsed' : (required ? 'afm-field missing' : 'afm-field');
@@ -5047,9 +5049,9 @@
       '</select></div>';
 
     box.innerHTML =
-      '<button class="afm-close" onclick="closeAddHotelModal()">&times;</button>' +
+      '<button class="afm-close ahm-close-btn">&times;</button>' +
       '<div class="afm-title">Hotel Details</div>' +
-      stepsHTML(2) +
+      ahmStepsHTML(2) +
       fieldHTML('Hotel Name', 'hotel_name', p.hotel_name, true) +
       fieldHTML('Address', 'address', p.address, true) +
       citySelect +
@@ -5057,12 +5059,15 @@
         fieldHTML('Check-in', 'check_in', p.check_in, true) +
         fieldHTML('Check-out', 'check_out', p.check_out, true) +
       '</div>' +
-      '<button class="afm-btn-primary" onclick="ahmGoToStep3()">Next: Select Travelers</button>' +
-      '<button class="afm-btn-secondary" onclick="closeAddHotelModal()">Cancel</button>';
+      '<button class="afm-btn-primary ahm-next-btn">Next: Select Travelers</button>' +
+      '<button class="afm-btn-secondary ahm-cancel-btn">Cancel</button>';
+
+    box.querySelector('.ahm-close-btn').addEventListener('click', closeAddHotelModal);
+    box.querySelector('.ahm-cancel-btn').addEventListener('click', closeAddHotelModal);
+    box.querySelector('.ahm-next-btn').addEventListener('click', ahmGoToStep3);
   }
 
   function ahmGoToStep3() {
-    // Validate
     var name = document.getElementById('ahm-hotel_name').value.trim();
     var address = document.getElementById('ahm-address').value.trim();
     var city = document.getElementById('ahm-city').value;
@@ -5079,14 +5084,6 @@
     var box = document.querySelector('.ahm-overlay .afm-box');
     if (!box) return;
 
-    function stepsHTML(step) {
-      return '<div class="afm-steps">' +
-        '<span class="afm-step' + (step === 1 ? ' active' : (step > 1 ? ' done' : '')) + '">1. Add Hotel</span>' +
-        '<span class="afm-step' + (step === 2 ? ' active' : (step > 2 ? ' done' : '')) + '">2. Details</span>' +
-        '<span class="afm-step' + (step === 3 ? ' active' : '') + '">3. Travelers</span>' +
-        '</div>';
-    }
-
     var userName = getUserName().toLowerCase();
     var travelerHTML = '';
     if (typeof TRAVELERS !== 'undefined') {
@@ -5097,13 +5094,17 @@
     }
 
     box.innerHTML =
-      '<button class="afm-close" onclick="closeAddHotelModal()">&times;</button>' +
+      '<button class="afm-close ahm-close-btn">&times;</button>' +
       '<div class="afm-title">Select Travelers</div>' +
-      stepsHTML(3) +
+      ahmStepsHTML(3) +
       '<p style="font-family:var(--sans);font-size:13px;color:#64748b;margin-bottom:12px;">Who is staying at <strong>' + ahmParsed.hotel_name + '</strong>?</p>' +
       '<div class="afm-travelers" id="ahm-travelers">' + travelerHTML + '</div>' +
-      '<button class="afm-btn-primary" onclick="ahmSaveHotel()">Save Hotel</button>' +
-      '<button class="afm-btn-secondary" onclick="closeAddHotelModal()">Cancel</button>';
+      '<button class="afm-btn-primary ahm-save-btn">Save Hotel</button>' +
+      '<button class="afm-btn-secondary ahm-cancel-btn">Cancel</button>';
+
+    box.querySelector('.ahm-close-btn').addEventListener('click', closeAddHotelModal);
+    box.querySelector('.ahm-cancel-btn').addEventListener('click', closeAddHotelModal);
+    box.querySelector('.ahm-save-btn').addEventListener('click', ahmSaveHotel);
   }
 
   function ahmSaveHotel() {
@@ -5119,8 +5120,7 @@
     var hotelId = (p.hotel_name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '_' + p.city + '_' + p.check_in;
     var source = ahmScreenshotDataUrl ? 'screenshot' : 'manual';
 
-    // Save each traveler to Sheets
-    var btn = document.querySelector('.ahm-overlay .afm-btn-primary');
+    var btn = document.querySelector('.ahm-overlay .ahm-save-btn');
     if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
 
     var promises = travelers.map(function (traveler) {
@@ -5141,7 +5141,6 @@
 
     Promise.all(promises).then(function () {
       closeAddHotelModal();
-      // Refresh hotel data
       confirmedHotelsLoaded = false;
       renderItineraryHotels();
     }).catch(function () {
