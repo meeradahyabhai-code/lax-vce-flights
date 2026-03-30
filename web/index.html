@@ -4991,7 +4991,6 @@
   // ---- Itinerary: Add Hotel Modal ----
   var ahmParsed = null;
   var ahmScreenshotDataUrl = null;
-  var ahmAutocomplete = null;
 
   function ahmStepsHTML(step) {
     return '<div class="afm-steps">' +
@@ -5001,25 +5000,7 @@
       '</div>';
   }
 
-  // Load Google Maps JS API for Places Autocomplete
-  var googleMapsReady = false;
-  var googleMapsLoading = false;
-  function loadGoogleMapsAPI() {
-    if (googleMapsReady || googleMapsLoading) return;
-    googleMapsLoading = true;
-    fetch('/api/maps_key')
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (!data.key) { googleMapsLoading = false; return; }
-        var script = document.createElement('script');
-        script.src = 'https://maps.googleapis.com/maps/api/js?key=' + data.key + '&libraries=places';
-        script.async = true;
-        script.onload = function () { googleMapsReady = true; };
-        document.head.appendChild(script);
-      })
-      .catch(function () { googleMapsLoading = false; });
-  }
-  loadGoogleMapsAPI();
+  // Hotel search typeahead (server-side proxy, no Google Maps JS needed)
 
   // Wire up the Add Hotel button
   document.getElementById('add-hotel-btn').addEventListener('click', function () { openAddHotelModal(); });
@@ -5113,54 +5094,84 @@
     ahmInitAutocomplete();
   }
 
-  function ahmInitAutocomplete(retries) {
+  var ahmSearchTimer = null;
+
+  function ahmInitAutocomplete() {
     var input = document.getElementById('ahm-hotel-search');
     if (!input) return;
-    retries = retries || 0;
 
-    if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-      ahmAutocomplete = new google.maps.places.Autocomplete(input, {
-        types: ['lodging'],
-        fields: ['name', 'formatted_address', 'address_components', 'geometry']
-      });
-      ahmAutocomplete.addListener('place_changed', function () {
-        var place = ahmAutocomplete.getPlace();
-        if (!place || !place.name) return;
-        var city = '';
-        if (place.address_components) {
-          place.address_components.forEach(function (c) {
-            if (c.types.indexOf('locality') !== -1) {
-              var cl = c.long_name.toLowerCase();
-              if (cl.indexOf('venice') !== -1 || cl.indexOf('venezia') !== -1) city = 'venice';
-              else if (cl.indexOf('ravenna') !== -1) city = 'ravenna';
-              else if (cl.indexOf('istanbul') !== -1) city = 'istanbul';
-            }
-          });
-        }
-        ahmParsed = {
-          hotel_name: place.name,
-          address: place.formatted_address || '',
-          city: city,
-          check_in: null,
-          check_out: null
-        };
-        ahmShowStep2();
-      });
-      input.placeholder = 'Start typing hotel name...';
-    } else if (retries < 20) {
-      // API still loading — retry in 300ms (up to 6 seconds)
-      input.placeholder = 'Loading hotel search...';
-      setTimeout(function () { ahmInitAutocomplete(retries + 1); }, 300);
-    } else {
-      // Give up — fallback to plain text
-      input.placeholder = 'Type hotel name and press Enter';
-      input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') {
-          ahmParsed = { hotel_name: input.value, address: '', city: '', check_in: null, check_out: null };
+    // Create dropdown container
+    var dropdown = document.createElement('div');
+    dropdown.id = 'ahm-search-dropdown';
+    dropdown.style.cssText = 'position:absolute;left:0;right:0;background:#fff;border:1px solid var(--fog);border-top:none;border-radius:0 0 10px 10px;max-height:220px;overflow-y:auto;z-index:10;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.12);';
+    input.parentElement.style.position = 'relative';
+    input.parentElement.appendChild(dropdown);
+
+    input.addEventListener('input', function () {
+      var q = input.value.trim();
+      if (q.length < 2) { dropdown.style.display = 'none'; return; }
+      clearTimeout(ahmSearchTimer);
+      ahmSearchTimer = setTimeout(function () { ahmFetchSuggestions(q, dropdown); }, 350);
+    });
+
+    // Hide dropdown on outside click
+    document.addEventListener('click', function (e) {
+      if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    // Allow Enter to search manually
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        dropdown.style.display = 'none';
+        var q = input.value.trim();
+        if (q) {
+          ahmParsed = { hotel_name: q, address: '', city: '', check_in: null, check_out: null };
           ahmShowStep2();
         }
+      }
+    });
+  }
+
+  function ahmFetchSuggestions(query, dropdown) {
+    dropdown.innerHTML = '<div style="padding:12px;font-size:13px;color:#94a3b8;font-family:var(--sans);">Searching...</div>';
+    dropdown.style.display = '';
+
+    fetch('/api/hotel_search?q=' + encodeURIComponent(query))
+      .then(function (r) { return r.json(); })
+      .then(function (results) {
+        if (!results.length) {
+          dropdown.innerHTML = '<div style="padding:12px;font-size:13px;color:#94a3b8;font-family:var(--sans);">No hotels found. Press Enter to use typed name.</div>';
+          return;
+        }
+        dropdown.innerHTML = results.map(function (r) {
+          return '<div class="ahm-suggestion" data-name="' + escHtml(r.name) + '" data-address="' + escHtml(r.address) + '" data-city="' + (r.city || '') + '" style="padding:12px 14px;cursor:pointer;border-bottom:0.5px solid #eee;transition:background 0.1s;">' +
+            '<div style="font-family:var(--sans);font-size:14px;font-weight:500;color:var(--ink);">' + escHtml(r.name) + '</div>' +
+            '<div style="font-family:var(--sans);font-size:12px;color:#94a3b8;margin-top:2px;">' + escHtml(r.address) + '</div>' +
+          '</div>';
+        }).join('');
+
+        dropdown.querySelectorAll('.ahm-suggestion').forEach(function (el) {
+          el.addEventListener('mouseenter', function () { el.style.background = '#f8f6f1'; });
+          el.addEventListener('mouseleave', function () { el.style.background = ''; });
+          el.addEventListener('click', function () {
+            ahmParsed = {
+              hotel_name: el.getAttribute('data-name'),
+              address: el.getAttribute('data-address'),
+              city: el.getAttribute('data-city'),
+              check_in: null,
+              check_out: null
+            };
+            dropdown.style.display = 'none';
+            ahmShowStep2();
+          });
+        });
+      })
+      .catch(function () {
+        dropdown.innerHTML = '<div style="padding:12px;font-size:13px;color:#94a3b8;font-family:var(--sans);">Search unavailable. Press Enter to continue.</div>';
       });
-    }
   }
 
   function closeAddHotelModal() {
