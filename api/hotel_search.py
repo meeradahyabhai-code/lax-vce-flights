@@ -1,6 +1,7 @@
-"""Vercel serverless function — proxy Google Places text search for hotel autocomplete.
+"""Vercel serverless function — proxy Google Places Autocomplete for hotel typeahead.
 
-Accepts GET with ?q=hotel+name, returns matching lodging results as JSON.
+Accepts GET with ?q=hotel+name, returns matching lodging suggestions.
+Uses the Places Autocomplete (New) API — designed for typeahead, lower cost.
 Keeps the API key server-side.
 """
 
@@ -12,7 +13,8 @@ from urllib.parse import parse_qs, urlparse
 import requests
 
 GOOGLE_PLACES_API_KEY = os.environ.get("GOOGLE_PLACES_API_KEY", "").strip()
-PLACES_SEARCH_URL = "https://places.googleapis.com/v1/places:searchText"
+AUTOCOMPLETE_URL = "https://places.googleapis.com/v1/places:autocomplete"
+PLACE_DETAILS_URL = "https://places.googleapis.com/v1/places/"
 
 
 class handler(BaseHTTPRequestHandler):
@@ -27,47 +29,46 @@ class handler(BaseHTTPRequestHandler):
             if not GOOGLE_PLACES_API_KEY:
                 return self._json([])
 
+            # Step 1: Autocomplete suggestions
             resp = requests.post(
-                PLACES_SEARCH_URL,
+                AUTOCOMPLETE_URL,
                 headers={
                     "Content-Type": "application/json",
                     "X-Goog-Api-Key": GOOGLE_PLACES_API_KEY,
-                    "X-Goog-FieldMask": (
-                        "places.displayName,"
-                        "places.formattedAddress,"
-                        "places.addressComponents,"
-                        "places.location"
-                    ),
                 },
                 json={
-                    "textQuery": query + " hotel",
-                    "includedType": "lodging",
-                    "maxResultCount": 5,
+                    "input": query,
+                    "includedPrimaryTypes": ["lodging"],
                 },
                 timeout=8,
             )
             resp.raise_for_status()
-            places = resp.json().get("places", [])
+            suggestions = resp.json().get("suggestions", [])
 
             results = []
-            for p in places:
-                name = p.get("displayName", {}).get("text", "")
-                address = p.get("formattedAddress", "")
+            for s in suggestions:
+                pred = s.get("placePrediction", {})
+                if not pred:
+                    continue
+                place_id = pred.get("placeId", "")
+                main_text = pred.get("structuredFormat", {}).get("mainText", {}).get("text", "")
+                secondary_text = pred.get("structuredFormat", {}).get("secondaryText", {}).get("text", "")
+
+                # Infer city from secondary text
                 city = ""
-                for comp in p.get("addressComponents", []):
-                    types = comp.get("types", [])
-                    if "locality" in types:
-                        loc = comp.get("longText", "").lower()
-                        if "venice" in loc or "venezia" in loc:
-                            city = "venice"
-                        elif "ravenna" in loc:
-                            city = "ravenna"
-                        elif "istanbul" in loc:
-                            city = "istanbul"
+                sec_lower = secondary_text.lower()
+                if "venice" in sec_lower or "venezia" in sec_lower:
+                    city = "venice"
+                elif "ravenna" in sec_lower:
+                    city = "ravenna"
+                elif "istanbul" in sec_lower:
+                    city = "istanbul"
+
                 results.append({
-                    "name": name,
-                    "address": address,
+                    "name": main_text,
+                    "address": secondary_text,
                     "city": city,
+                    "place_id": place_id,
                 })
 
             self._json(results)
