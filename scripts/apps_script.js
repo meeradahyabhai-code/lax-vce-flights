@@ -211,6 +211,60 @@ function doGet(e) {
     return json({status: deleted ? 'ok' : 'not_found'});
   }
 
+  // ── LOG EXCURSION PICK ────────────────────────────────
+  if (action === 'log_excursion') {
+    const sheet = ss.getSheetByName('Excursion Picks');
+    if (!sheet) {
+      return json({status: 'error', message: 'Tab "Excursion Picks" not found. Run createExcursionPicksTab() first.'});
+    }
+    sheet.appendRow([
+      new Date(),
+      e.parameter.name || '',
+      e.parameter.port || '',
+      e.parameter.code || '',
+      e.parameter.title || '',
+      e.parameter.excursion_action || ''
+    ]);
+    return json({status: 'ok'});
+  }
+
+  // ── GET EXCURSION PICKS ───────────────────────────────
+  if (action === 'get_excursions') {
+    const sheet = ss.getSheetByName('Excursion Picks');
+    if (!sheet) return json([]);
+    const rows = sheet.getDataRange().getDisplayValues();
+    if (rows.length <= 1) return json([]);
+    const headers = rows[0];
+    const data = rows.slice(1)
+      .filter(r => r[1] && r[1].toString().trim() !== '')
+      .map(r => {
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h.toLowerCase().replace(/\s+/g, '_')] = r[i];
+        });
+        return obj;
+      });
+    return json(data);
+  }
+
+  // ── DELETE EXCURSION PICK ─────────────────────────────
+  if (action === 'delete_excursion') {
+    const sheet = ss.getSheetByName('Excursion Picks');
+    if (!sheet) return json({status: 'error', message: 'Tab not found'});
+    const pickName = (e.parameter.name || '').trim();
+    const pickCode = (e.parameter.code || '').trim();
+    const pickAction = (e.parameter.excursion_action || '').trim();
+    const rows = sheet.getDataRange().getDisplayValues();
+    let deleted = false;
+    for (let i = rows.length - 1; i >= 1; i--) {
+      if (rows[i][1] === pickName && rows[i][3] === pickCode && rows[i][5] === pickAction) {
+        sheet.deleteRow(i + 1);
+        deleted = true;
+      }
+    }
+    return json({status: deleted ? 'ok' : 'not_found'});
+  }
+
   // ── LOG FAMILY PICK ───────────────────────────────────
   if (e.parameter && e.parameter.name) {
     const sheet = ss.getActiveSheet();
@@ -317,6 +371,14 @@ function createConfirmedFlightTabs() {
     'Traveler', 'Airline', 'Flight Number', 'To (Airport)', 'To (City)',
     'Departure Date (IST)', 'Departure Time (IST)', 'Arrival Date', 'Arrival Time',
     'Stopover Airport', 'Stopover City', 'Flight ID', 'Added By', 'Timestamp'
+  ]]);
+}
+
+function createExcursionPicksTab() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const tab = ss.getSheetByName('Excursion Picks') || ss.insertSheet('Excursion Picks');
+  tab.getRange(1, 1, 1, 6).setValues([[
+    'Timestamp', 'Name', 'Port', 'Code', 'Title', 'Action'
   ]]);
 }
 

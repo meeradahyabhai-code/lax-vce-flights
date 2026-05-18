@@ -3,3 +3,8 @@ report.html
 __pycache__/
 .vercel
 .env*.local
+.DS_Store
+
+# Raw scraped shore-excursion HTML (input to scripts/parse_shorex.py)
+data/ncl_shorex.html
+data/ncl_shorex_files/

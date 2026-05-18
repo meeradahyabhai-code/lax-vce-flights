@@ -218,6 +218,54 @@
     .ai-briefing-text { font-size: 14px; }
   }
 
+  /* Ask AI input under briefing */
+  .ask-ai {
+    max-width: 640px; margin: 14px auto 0; text-align: left;
+  }
+  .ask-ai-row {
+    display: flex; gap: 8px; align-items: stretch;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(26,58,107,0.15);
+    border-radius: 14px; padding: 6px 6px 6px 16px;
+    box-shadow: 0 2px 12px rgba(10,10,15,0.05);
+  }
+  .ask-ai-input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-family: var(--sans); font-size: 14px; font-weight: 300;
+    color: var(--ink); padding: 8px 0;
+  }
+  .ask-ai-input::placeholder { color: #94a3b8; font-style: italic; }
+  .ask-ai-btn {
+    border: none; border-radius: 10px;
+    background: linear-gradient(135deg, #b044ff, #00c8ff);
+    color: #fff; font-family: var(--sans); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.3px; padding: 0 16px; cursor: pointer;
+    transition: filter 0.15s, opacity 0.15s;
+  }
+  .ask-ai-btn:hover { filter: brightness(1.08); }
+  .ask-ai-btn:disabled { opacity: 0.5; cursor: wait; }
+  .ask-ai-answer {
+    margin-top: 10px; padding: 14px 18px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid rgba(26,58,107,0.10);
+    border-radius: 12px;
+    font-family: var(--sans); font-size: 14px; font-weight: 300;
+    color: var(--ink); line-height: 1.6;
+    display: none;
+  }
+  .ask-ai-answer.active { display: block; }
+  .ask-ai-answer .ask-ai-meta {
+    display: block; margin-top: 6px;
+    font-size: 11px; color: #94a3b8; letter-spacing: 0.3px;
+  }
+  .ask-ai-answer.error { color: #b04444; }
+  @media (max-width: 600px) {
+    .ask-ai { margin-left: 0; margin-right: 0; }
+    .ask-ai-input { font-size: 13px; }
+  }
+
   /* Layout */
   .container { max-width: 680px; margin: 0 auto; padding: 0 16px 48px; }
 
@@ -461,6 +509,17 @@
     margin-top: 36px; border-top: 1px solid var(--fog); padding: 20px 0;
     text-align: center; font-size: 11px; font-weight: 300; color: #94a3b8;
   }
+  .refresh-link {
+    background: none; border: none; padding: 0;
+    color: var(--azure); font: inherit; cursor: pointer;
+    text-decoration: underline;
+  }
+  .refresh-link:hover { color: var(--lagoon); }
+  .refresh-status {
+    display: inline-block; margin-left: 8px;
+    color: var(--lagoon); font-style: italic;
+  }
+  .refresh-status.error { color: #b04444; font-style: normal; }
 
   /* Multi-city date picker */
   .mc-picker {
@@ -688,28 +747,27 @@
 
   /* Shop sub-nav (Flights / Hotels toggle) */
   .shop-subnav {
-    display: flex; justify-content: center; gap: 0;
-    padding: 0; margin: 0 auto; max-width: 320px;
-    background: var(--fog); border-radius: 10px;
-    overflow: hidden;
+    display: flex; justify-content: center; gap: 28px;
+    padding: 4px 0 0; margin: 0 auto;
+    border-bottom: 1px solid var(--fog);
   }
   .shop-subnav-btn {
-    flex: 1; font-family: var(--sans); font-size: 14px; font-weight: 600;
-    padding: 10px 0; cursor: pointer; border: none;
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    padding: 8px 4px 10px; cursor: pointer; border: none;
     background: transparent; color: #94a3b8;
-    transition: all 0.15s; text-align: center;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
   }
   .shop-subnav-btn:hover { color: var(--azure); }
   .shop-subnav-btn.active {
-    background: var(--azure); color: #fff; border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(26,58,107,0.15);
+    color: var(--azure); border-bottom-color: var(--gold);
   }
 
   @media (max-width: 600px) {
-    .shop-subnav {
-      max-width: 100%; margin: 8px 16px 0; border-radius: 8px;
-    }
-    .shop-subnav-btn { font-size: 14px; padding: 12px 0; }
+    .shop-subnav { gap: 32px; padding: 6px 16px 0; }
+    .shop-subnav-btn { font-size: 12px; padding: 10px 4px 12px; }
   }
 
   @media (max-width: 600px) {
@@ -1320,12 +1378,17 @@
   }
   @media (max-width: 600px) {
     .itin-quicknav {
-      gap: 4px; padding: 10px 0 14px;
-      flex-wrap: wrap; justify-content: center;
+      gap: 6px; padding: 10px 12px 14px;
+      flex-wrap: nowrap; justify-content: flex-start;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
     }
+    .itin-quicknav::-webkit-scrollbar { display: none; }
     .itin-quicknav-btn {
-      font-size: 13px; font-weight: 700; padding: 10px 16px;
-      flex: 1; min-width: 0; text-align: center;
+      font-size: 13px; font-weight: 700; padding: 9px 16px;
+      flex: 0 0 auto; text-align: center;
+      scroll-snap-align: start;
     }
   }
 
@@ -1421,8 +1484,170 @@
   .cruise-event-desc {
     font-family: var(--sans); font-size: 12px; font-weight: 300; color: #64748b;
   }
+  .cruise-event-theme {
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 4px; margin-top: 10px;
+  }
+  .cruise-event-theme-label {
+    font-family: var(--sans); font-size: 10px; font-weight: 700;
+    color: #1f2937; letter-spacing: 1.2px; text-transform: uppercase;
+  }
+  .cruise-event-theme-chip {
+    display: inline-flex; align-items: stretch;
+    border-radius: 999px; overflow: hidden;
+    border: 1.5px solid #000;
+    font-family: var(--sans); font-size: 12px; font-weight: 800;
+    letter-spacing: 1.2px; line-height: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .cruise-event-theme-black,
+  .cruise-event-theme-white {
+    padding: 7px 14px; display: inline-flex; align-items: center;
+  }
+  .cruise-event-theme-black { background: #000; color: #fff; }
+  .cruise-event-theme-white { background: #fff; color: #000; }
+  .cruise-event-theme-sub {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    color: #475569; font-style: italic; margin-top: 2px;
+  }
 
-  /* ── Itinerary: Excursions ── */
+  /* ── Itinerary: Transport ── */
+  .transport-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; user-select: none; padding: 2px 0;
+  }
+  .transport-toggle-caret {
+    font-family: var(--sans); font-size: 12px; color: #94a3b8;
+    transition: transform 0.15s ease;
+  }
+  .transport-toggle.collapsed .transport-toggle-caret { transform: rotate(-90deg); }
+  .transport-list { margin-top: 8px; }
+  .transport-list.hidden { display: none; }
+  .transport-row {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 10px 0; border-bottom: 0.5px solid #eee;
+  }
+  .transport-row:last-child { border-bottom: none; }
+  .transport-num {
+    font-family: var(--sans); font-size: 12px; font-weight: 600;
+    color: var(--azure); min-width: 22px; padding-top: 2px;
+  }
+  .transport-info { flex: 1; }
+  .transport-leg {
+    font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--ink);
+  }
+  .transport-meta {
+    font-family: var(--sans); font-size: 12px; font-weight: 300; color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  /* ── Itinerary: Excursions (rich list) ── */
+  .exc-port-group {
+    border-bottom: 0.5px solid #eee;
+  }
+  .exc-port-group:last-child { border-bottom: none; }
+  .exc-port-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; cursor: pointer; user-select: none;
+  }
+  .exc-port-header-left {
+    display: flex; align-items: baseline; gap: 10px; flex: 1; min-width: 0;
+  }
+  .exc-port-caret {
+    font-family: var(--sans); font-size: 12px; color: #94a3b8;
+    transition: transform 0.15s ease;
+  }
+  .exc-port-group.collapsed .exc-port-caret { transform: rotate(-90deg); }
+  .exc-port-name {
+    font-family: var(--sans); font-size: 15px; font-weight: 500; color: var(--ink);
+  }
+  .exc-port-date {
+    font-family: var(--sans); font-size: 12px; font-weight: 300; color: #94a3b8;
+  }
+  .exc-port-count {
+    font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--azure);
+    background: #eff6ff; padding: 4px 10px; border-radius: 12px;
+    display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  }
+  .exc-port-count .exc-port-caret { color: var(--azure); font-size: 10px; }
+  .exc-port-list {
+    padding-bottom: 12px;
+  }
+  .exc-port-group.collapsed .exc-port-list { display: none; }
+  .exc-card {
+    display: flex; gap: 12px; padding: 10px 0;
+    border-top: 0.5px solid #f1f5f9;
+  }
+  .exc-thumb {
+    width: 96px; height: 72px; border-radius: 6px; background: #f1f5f9;
+    flex-shrink: 0; overflow: hidden;
+  }
+  .exc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .exc-thumb-empty {
+    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    font-family: var(--sans); font-size: 20px; color: #cbd5e1;
+  }
+  .exc-body { flex: 1; min-width: 0; }
+  .exc-title {
+    font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .exc-title a { color: var(--ink); text-decoration: none; }
+  .exc-title a:hover { color: var(--azure); }
+  .exc-meta {
+    font-family: var(--sans); font-size: 12px; font-weight: 300; color: #94a3b8;
+    margin-bottom: 6px;
+  }
+  .exc-desc {
+    font-family: var(--sans); font-size: 12px; font-weight: 300; color: #64748b;
+    line-height: 1.4; margin-bottom: 8px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .exc-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .exc-see-row {
+    display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px;
+  }
+  .exc-see-link {
+    font-family: var(--sans); font-size: 11px; font-weight: 500;
+    color: var(--azure); cursor: pointer; text-decoration: none;
+    background: none; border: none; padding: 0;
+  }
+  .exc-see-link:hover { text-decoration: underline; }
+  .exc-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 10px; border-radius: 14px; cursor: pointer;
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    border: 1px solid #e2e8f0; background: #fff; color: #64748b;
+    transition: all 0.1s ease;
+  }
+  .exc-btn:hover { border-color: #cbd5e1; }
+  .exc-btn .exc-btn-icon { font-size: 13px; }
+  .exc-btn .exc-btn-count { font-weight: 400; color: #94a3b8; }
+  .exc-btn-interested.active {
+    background: #fffbeb; border-color: var(--gold); color: #b45309;
+  }
+  .exc-btn-interested.active .exc-btn-count { color: #b45309; }
+  .exc-btn-booked.active {
+    background: #ecfdf5; border-color: #10b981; color: #047857;
+  }
+  .exc-btn-booked.active .exc-btn-count { color: #047857; }
+
+  @media (max-width: 640px) {
+    .exc-card {
+      flex-direction: column; gap: 0; padding: 12px 0;
+    }
+    .exc-thumb {
+      width: 100%; height: 160px; border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .exc-title { font-size: 15px; }
+    .exc-meta { font-size: 12px; }
+    .exc-desc { -webkit-line-clamp: 3; font-size: 13px; }
+    .exc-btn { padding: 8px 14px; font-size: 13px; }
+  }
+
+  /* ── Itinerary: Excursions (legacy quick links) ── */
   .itin-exc-item {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 0; border-bottom: 0.5px solid #eee;
@@ -1586,6 +1811,15 @@
       <div class="ai-briefing-shimmer"></div>
     </div>
   </div>
+  <div class="ask-ai" id="ask-ai">
+    <div class="ask-ai-row">
+      <input type="text" class="ask-ai-input" id="ask-ai-input"
+        placeholder="Ask anything: 'show nonstops', 'cheapest morning flight', 'which day is best?'"
+        maxlength="500" autocomplete="off" />
+      <button class="ask-ai-btn" id="ask-ai-btn" type="button">Ask</button>
+    </div>
+    <div class="ask-ai-answer" id="ask-ai-answer"></div>
+  </div>
 </div>
 
 <!-- Flights section -->
@@ -1636,8 +1870,9 @@
   <div class="itin-quicknav" id="itin-quicknav">
     <button class="itin-quicknav-btn active" data-target="itin-flights-anchor">Flights</button>
     <button class="itin-quicknav-btn" data-target="itin-hotels-anchor">Hotels</button>
+    <button class="itin-quicknav-btn" data-target="itin-transport-anchor">Transport</button>
     <button class="itin-quicknav-btn" data-target="itin-cruise-anchor">Cruise</button>
-    <button class="itin-quicknav-btn" data-target="itin-excursions-anchor">Excursions</button>
+    <button class="itin-quicknav-btn" data-target="itin-excursions-anchor">Tours</button>
   </div>
 
   <!-- Section 1: Confirmed Flights -->
@@ -1656,6 +1891,18 @@
     <div id="itinerary-hotels"></div>
   </div>
 
+  <!-- Section 2.5: Transport (Venice to Ship) -->
+  <div id="itin-transport-anchor"></div>
+  <div class="itin-section">
+    <div class="transport-toggle" id="transport-toggle">
+      <div class="itin-heading">Getting to the Ship</div>
+      <div class="transport-toggle-caret">&#9662;</div>
+    </div>
+    <div class="itin-rule"></div>
+    <div class="itin-sub">Venice airport &rarr; Ravenna port</div>
+    <div id="transport-list" class="transport-list"></div>
+  </div>
+
   <!-- Section 3: Cruise Schedule -->
   <div id="itin-cruise-anchor"></div>
   <div class="itin-section">
@@ -1668,7 +1915,7 @@
   <!-- Section 4: Excursions -->
   <div id="itin-excursions-anchor"></div>
   <div class="itin-section">
-    <div class="itin-heading">Excursions</div>
+    <div class="itin-heading">Tours/Excursions</div>
     <div class="itin-rule"></div>
     <div id="itinerary-excursions"></div>
   </div>
@@ -2355,10 +2602,29 @@
   function renderDirectionNav() {
     var labels = ROUTE_LABELS[activeOrigin] || ROUTE_LABELS.LAX;
     var dirLabels = { outbound: 'Outbound', return: 'Return', multicity: 'Multi-City' };
-    document.querySelectorAll('.direction-pill').forEach(function (btn) {
-      var dir = btn.dataset.dir;
-      btn.classList.toggle('active', dir === activeDirection);
-      btn.innerHTML = dirLabels[dir] + ' &nbsp;' + (labels[dir] || '');
+    var dirNav = document.getElementById('direction-nav');
+    if (!dirNav) return;
+    // Always rebuild from scratch so leftover hotel-city pills get cleared
+    // when the user navigates Hotels -> Flights.
+    var dirs = ['outbound', 'return', 'multicity'];
+    dirNav.innerHTML = dirs.map(function (d) {
+      var active = d === activeDirection ? ' active' : '';
+      return '<button class="direction-pill' + active + '" data-dir="' + d + '">' +
+        dirLabels[d] + ' &nbsp;' + (labels[d] || '') + '</button>';
+    }).join('');
+    dirNav.querySelectorAll('.direction-pill').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (activeDirection === btn.dataset.dir) return;
+        activeDirection = btn.dataset.dir;
+        activeDate = null;
+        activeFilters.clear();
+        expandedDates.clear();
+        renderDirectionNav();
+        updateHero();
+        renderTabs();
+        renderFilters();
+        renderFlights();
+      });
     });
   }
 
@@ -2603,6 +2869,95 @@
     renderTabs();
     renderFilters();
     renderFlights();
+    maybeRefreshActiveOrigin();
+  }
+
+  // ---- Per-origin freshness check ----
+  var FRESH_TTL_MS = 48 * 60 * 60 * 1000;  // 48h, must match api/refresh_flights.py
+  var refreshingOrigins = {};
+
+  function originIsStale(origin) {
+    var od = (data || {})[origin];
+    if (!od) return true;
+    var cachedAt = od._cached_at;
+    if (!cachedAt) return true;  // no per-origin cache, fall back is legacy
+    var ageMs = Date.now() - (cachedAt * 1000);
+    return ageMs > FRESH_TTL_MS;
+  }
+
+  function originAgeText(origin) {
+    var od = (data || {})[origin];
+    if (!od || !od._cached_at) return '';
+    var ageMins = Math.round((Date.now() - od._cached_at * 1000) / 60000);
+    if (ageMins < 1) return 'just now';
+    if (ageMins < 60) return ageMins + ' min ago';
+    var ageHrs = Math.round(ageMins / 60);
+    if (ageHrs < 48) return ageHrs + ' hr ago';
+    return Math.round(ageHrs / 24) + ' days ago';
+  }
+
+  async function maybeRefreshActiveOrigin(opts) {
+    opts = opts || {};
+    var origin = activeOrigin;
+    if (!origin) return;
+    if (refreshingOrigins[origin]) return;
+    if (!opts.force && !originIsStale(origin)) {
+      renderFooter((data && data[origin] && data[origin].outbound && data[origin].outbound.flights || []).length);
+      return;
+    }
+
+    refreshingOrigins[origin] = true;
+    setRefreshStatus('Refreshing ' + origin + ' flights…');
+
+    try {
+      var resp = await fetch('/api/refresh_flights?origin=' + encodeURIComponent(origin));
+      var json = await resp.json();
+      if (!resp.ok) throw new Error(json.error || ('HTTP ' + resp.status));
+
+      // Merge new origin payload into data
+      data = data || {};
+      data[origin] = {
+        outbound: json.outbound,
+        return: json['return'],
+        _cached_at: json._cached_at,
+        _refreshed_at: json._refreshed_at,
+      };
+
+      // Re-score (scoring lives client-side)
+      if (data[origin].outbound && data[origin].outbound.flights) {
+        scoreAndSortFlights(data[origin].outbound.flights, origin, 'outbound');
+      }
+      if (data[origin]['return'] && data[origin]['return'].flights) {
+        scoreAndSortFlights(data[origin]['return'].flights, origin, 'return');
+      }
+
+      // Persist to localStorage
+      try {
+        localStorage.setItem(FLIGHT_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data }));
+      } catch (e) { /* quota */ }
+
+      // Re-render if user is still on this origin
+      if (activeOrigin === origin) {
+        renderTabs();
+        renderFlights();
+      }
+    } catch (e) {
+      setRefreshStatus('Refresh failed: ' + (e.message || e), true);
+      setTimeout(function () { setRefreshStatus(''); }, 4000);
+      return;
+    } finally {
+      refreshingOrigins[origin] = false;
+    }
+
+    setRefreshStatus('');
+  }
+
+  function setRefreshStatus(msg, isError) {
+    var el = document.getElementById('refresh-status');
+    if (!el) return;
+    if (!msg) { el.textContent = ''; el.classList.remove('error'); return; }
+    el.textContent = msg;
+    el.classList.toggle('error', !!isError);
   }
 
   function updateHero() {
@@ -2623,6 +2978,104 @@
   // ---- AI Briefing ----
   function summaryKey() {
     return activeOrigin + '|' + activeDirection;
+  }
+
+  function buildCruiseSummary() {
+    if (typeof CRUISE_PORTS === 'undefined' || !CRUISE_PORTS.length) return null;
+    var embark = null, disembark = null;
+    CRUISE_PORTS.forEach(function (p) {
+      if (p.type === 'embark') embark = p;
+      if (p.type === 'disembark') disembark = p;
+    });
+    if (!embark || !disembark) return null;
+    return {
+      embark_date: embark.date,
+      embark_port: embark.label,
+      embark_depart: embark.depart || '',
+      disembark_date: disembark.date,
+      disembark_port: disembark.label,
+      disembark_arrive: disembark.arrive || '',
+    };
+  }
+
+  function summarizeConfirmedForBriefing(dir, origin) {
+    var rows = dir === 'return' ? confirmedReturn : confirmedOutbound;
+    if (!Array.isArray(rows) || rows.length === 0) return [];
+
+    var cityByCode = { LAX: 'Los Angeles', AKL: 'Auckland', ATL: 'Atlanta', YVR: 'Vancouver' };
+    var originCity = cityByCode[origin] || origin;
+    var RETURN_DATES = { '2026-07-13': 1, '2026-07-14': 1, '2026-07-15': 1 };
+
+    var out = [];
+    var isObjArr = rows[0] && typeof rows[0] === 'object' && !Array.isArray(rows[0]);
+    var headerKeys = null;
+    if (!isObjArr && rows.length > 1) {
+      headerKeys = rows[0].map(function (h) {
+        return String(h).toLowerCase().replace(/[\s()]+/g, '_');
+      });
+    }
+
+    function norm(obj) {
+      var n = {};
+      Object.keys(obj).forEach(function (k) {
+        n[k.toLowerCase().replace(/[\s()]+/g, '_')] = obj[k];
+      });
+      n.traveler = String(n.traveler || n.name || '').trim();
+      n.airline = String(n.airline || '').trim();
+      n.departure_airport = String(n.departure_airport || n.from_airport_ || '').trim();
+      n.departure_date = String(n.departure_date || n.departure_date_ist_ || n.flight_date || '').trim();
+      n.arrival_date = String(n.arrival_date || '').trim();
+      n.arrival_time = String(n.arrival_time || n.arrival_time_vce_ || '').trim();
+      n.departure_time = String(n.departure_time || n.departure_time_ist_ || '').trim();
+      n.action = String(n.action || '').trim();
+      n.fare_type = String(n.fare_type || '').trim();
+      return n;
+    }
+
+    function pushRow(obj) {
+      if (!obj.traveler) return;
+      if (headerKeys) {
+        if (obj.action && obj.action !== 'booked' && obj.fare_type !== 'Confirmed') return;
+      }
+      var dep = obj.departure_airport.toUpperCase();
+      var flightDate = (obj.departure_date || obj.arrival_date || '').slice(0, 10);
+      var isReturnRow = (dep === 'IST') || RETURN_DATES[flightDate];
+      if (dir === 'outbound' && isReturnRow) return;
+      if (dir === 'return' && !isReturnRow) return;
+      if (dir === 'outbound') {
+        var depUp = dep;
+        var matchesOrigin =
+          depUp === origin ||
+          depUp.indexOf(origin) !== -1 ||
+          (obj.departure_airport || '').toLowerCase().indexOf(originCity.toLowerCase()) !== -1;
+        if (depUp && !matchesOrigin) return;
+      }
+      var firstName = (obj.traveler.split(/\s+/)[0] || obj.traveler).replace(/[,.]$/, '');
+      out.push({
+        name: firstName,
+        airline: obj.airline,
+        date: (dir === 'outbound' ? (obj.arrival_date || obj.departure_date) : obj.departure_date).slice(0, 10),
+        time: dir === 'outbound' ? obj.arrival_time : obj.departure_time,
+      });
+    }
+
+    if (isObjArr) {
+      rows.forEach(function (r) { pushRow(norm(r)); });
+    } else if (headerKeys) {
+      for (var i = 1; i < rows.length; i++) {
+        var obj = {};
+        for (var j = 0; j < rows[i].length; j++) obj[headerKeys[j] || j] = rows[i][j];
+        pushRow(norm(obj));
+      }
+    }
+
+    var seen = {};
+    return out.filter(function (r) {
+      var k = r.name + '|' + r.date + '|' + r.airline;
+      if (seen[k]) return false;
+      seen[k] = 1;
+      return true;
+    }).slice(0, 25);
   }
 
   function renderAIBriefing() {
@@ -2668,6 +3121,7 @@
         primary_airline: f.primary_airline,
         search_date: f.search_date,
         departure_time: f.departure_time,
+        arrival_time: f.arrival_time,
         stops: f.stops,
         price: f.economy_main_price || f.basic_economy_price || f.price,
         score: f.score
@@ -2677,9 +3131,13 @@
         sf.return_airline = f.return_leg.primary_airline || '';
         sf.return_date = f.return_leg.search_date || '';
         sf.return_stops = f.return_leg.stops;
+        sf.return_arrival_time = f.return_leg.arrival_time || '';
       }
       return sf;
     });
+
+    var cruise = buildCruiseSummary();
+    var confirmed = summarizeConfirmedForBriefing(dir, origin);
 
     fetch('/api/summary', {
       method: 'POST',
@@ -2690,6 +3148,8 @@
         flights: summaryFlights,
         family_picks: picks.slice(0, 20),
         days_until_travel: daysToGo(),
+        cruise: cruise,
+        confirmed_travelers: confirmed,
       }),
     })
     .then(function (r) { return r.json(); })
@@ -2703,6 +3163,190 @@
     .catch(function () {
       var el = document.getElementById('ai-briefing-text');
       if (summaryKey() === key) el.innerHTML = 'Flight data updated daily. Check back each morning for today\'s best picks.';
+    });
+  }
+
+  // ---- Ask AI (chat under hero) ----
+  var askAILog = [];           // timestamps of API calls (client-side rate limit)
+  var ASK_AI_MAX = 10;
+  var ASK_AI_WINDOW = 5 * 60 * 1000;  // 5 minutes
+
+  function showAskAnswer(text, isError) {
+    var el = document.getElementById('ask-ai-answer');
+    el.classList.toggle('error', !!isError);
+    el.innerHTML = text;
+    el.classList.add('active');
+  }
+
+  function clearAskAnswer() {
+    var el = document.getElementById('ask-ai-answer');
+    el.classList.remove('active', 'error');
+    el.innerHTML = '';
+  }
+
+  function checkAskRateLimit() {
+    var now = Date.now();
+    askAILog = askAILog.filter(function (t) { return t > now - ASK_AI_WINDOW; });
+    if (askAILog.length >= ASK_AI_MAX) return false;
+    askAILog.push(now);
+    return true;
+  }
+
+  // Try to match the question to existing filters. Returns label of applied
+  // filter(s) or null if no match.
+  function tryFilterMatch(qRaw) {
+    var q = qRaw.toLowerCase();
+    var matched = [];
+
+    // Direction switches
+    if (/\b(return|coming back|fly home|home from)\b/.test(q) && activeDirection !== 'return') {
+      activeDirection = 'return';
+      matched.push('Return flights');
+    } else if (/\b(outbound|going to venice|to venice|depart)\b/.test(q) && activeDirection !== 'outbound') {
+      activeDirection = 'outbound';
+      matched.push('Outbound flights');
+    } else if (/\b(multi[-\s]?city|open[-\s]?jaw)\b/.test(q) && activeDirection !== 'multicity') {
+      activeDirection = 'multicity';
+      matched.push('Multi-city');
+    }
+
+    // Filter toggles
+    var toAdd = new Set();
+    if (/\bnonstop|non-stop|direct\b/.test(q)) toAdd.add('nonstop');
+    if (/\b1\s*stop|one\s*stop|single\s*stop\b/.test(q)) toAdd.add('1stop');
+    if (/\bmorning|early|am\b/.test(q)) toAdd.add('morning');
+    if (/\bevening|night|late|pm\b/.test(q)) toAdd.add('evening');
+    if (/\bunder\s*\$?1[,]?000\b|cheap|budget|less than 1000|under a thousand/.test(q)) toAdd.add('under1000');
+
+    if (toAdd.size > 0) {
+      activeFilters.clear();
+      toAdd.forEach(function (id) {
+        activeFilters.add(id);
+        var f = FILTERS.find(function (x) { return x.id === id; });
+        if (f) matched.push(f.label);
+      });
+    }
+
+    // "show all", "clear filters", "reset"
+    if (/\b(clear|reset|show all|remove filters?)\b/.test(q) && toAdd.size === 0) {
+      activeFilters.clear();
+      matched.push('Cleared filters');
+    }
+
+    return matched.length > 0 ? matched : null;
+  }
+
+  function applyAndRenderFilters() {
+    if (typeof renderDirectionNav === 'function') renderDirectionNav();
+    if (typeof renderTabs === 'function') renderTabs();
+    if (typeof renderFilters === 'function') renderFilters();
+    if (typeof renderFlights === 'function') renderFlights();
+  }
+
+  function getHotelContextPayload() {
+    if (!lastHotelResult) return null;
+    var pool = []
+      .concat(lastHotelResult.best_overall || [])
+      .concat(lastHotelResult.best_marriott || [])
+      .concat(lastHotelResult.best_hilton || []);
+    // Dedupe by name, keep first occurrence
+    var seen = {};
+    var hotels = [];
+    pool.forEach(function (h) {
+      if (h && h.name && !seen[h.name]) {
+        seen[h.name] = true;
+        hotels.push(h);
+      }
+    });
+    return {
+      hotels: hotels,
+      city: (typeof activeHotelCity !== 'undefined' ? activeHotelCity : 'venice'),
+      check_in: (typeof hotelCheckIn !== 'undefined' ? hotelCheckIn : ''),
+      check_out: (typeof hotelCheckOut !== 'undefined' ? hotelCheckOut : ''),
+    };
+  }
+
+  async function askAIQuestion(question) {
+    var q = (question || '').trim();
+    if (!q) return;
+
+    var btn = document.getElementById('ask-ai-btn');
+    btn.disabled = true;
+    var onHotels = (activeSection === 'hotels');
+
+    try {
+      // 1. Keyword path (free, instant) — flights tab only
+      if (!onHotels) {
+        var matched = tryFilterMatch(q);
+        if (matched) {
+          applyAndRenderFilters();
+          showAskAnswer('Applied: ' + matched.join(', ') + '.');
+          return;
+        }
+      }
+
+      // 2. Rate limit before API call
+      if (!checkAskRateLimit()) {
+        showAskAnswer('Slow down — limit is 10 questions per 5 minutes.', true);
+        return;
+      }
+
+      // 3. API fallback
+      showAskAnswer('Thinking…');
+      var body;
+      if (onHotels) {
+        var ctx = getHotelContextPayload();
+        if (!ctx || ctx.hotels.length === 0) {
+          showAskAnswer('Hotel data is still loading. Try again in a moment.', true);
+          return;
+        }
+        body = Object.assign({ question: q, context: 'hotels' }, ctx);
+      } else {
+        body = {
+          question: q,
+          context: 'flights',
+          flights: getActiveFlights(),
+          origin: activeOrigin,
+          direction: activeDirection,
+          active_date: activeDate || '',
+        };
+      }
+      var resp = await fetch('/api/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      var json = await resp.json();
+      if (!resp.ok) {
+        showAskAnswer(json.error || 'Couldn\'t get an answer right now.', true);
+        return;
+      }
+      showAskAnswer(json.answer || 'No answer returned.');
+    } catch (e) {
+      showAskAnswer('Network error. Try again.', true);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function updateAskAIPlaceholder(mode) {
+    var input = document.getElementById('ask-ai-input');
+    if (!input) return;
+    if (mode === 'hotels') {
+      input.placeholder = "Ask anything: 'highest rated near St Mark's', 'cheapest 4-star', 'closest Marriott'";
+    } else {
+      input.placeholder = "Ask anything: 'show nonstops', 'cheapest morning flight', 'which day is best?'";
+    }
+    clearAskAnswer();
+  }
+
+  function setupAskAI() {
+    var input = document.getElementById('ask-ai-input');
+    var btn = document.getElementById('ask-ai-btn');
+    if (!input || !btn) return;
+    btn.addEventListener('click', function () { askAIQuestion(input.value); });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); askAIQuestion(input.value); }
     });
   }
 
@@ -3304,8 +3948,6 @@
     var html = '';
     if (booked.length > 0) {
       html += booked.map(function (r) { return familyCardHTML(r); }).join('');
-    } else {
-      html += '<div class="family-empty">No bookings yet.</div>';
     }
 
     if (interested.length > 0) {
@@ -3458,10 +4100,23 @@
   }
 
   function renderFooter(count) {
-    var od = getOriginData();
-    var gen = od && od.outbound ? od.outbound.generated : '';
-    document.getElementById('footer').textContent =
-      'Generated ' + gen + ' \u00b7 ' + count + ' flights shown \u00b7 Prices in USD';
+    var footer = document.getElementById('footer');
+    var ageText = originAgeText(activeOrigin);
+    var status = (count + ' flights shown \u00b7 Prices in USD');
+    var ageHtml = ageText
+      ? ' \u00b7 Last refreshed ' + escHtml(ageText)
+      : '';
+    var refreshBtn = data && data[activeOrigin]
+      ? ' \u00b7 <button type="button" class="refresh-link" id="refresh-flights-btn">Refresh now</button>'
+      : '';
+    footer.innerHTML = status + ageHtml + refreshBtn +
+      ' <span id="refresh-status" class="refresh-status"></span>';
+    var btn = document.getElementById('refresh-flights-btn');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        maybeRefreshActiveOrigin({ force: true });
+      });
+    }
   }
 
   // ---- Section nav (Flights / Hotels) ----
@@ -3490,19 +4145,41 @@
   var CRUISE_PORTS = [
     { date: '2026-07-03', label: 'Venice (Ravenna), Italy', type: 'embark', depart: '5:00 PM' },
     { date: '2026-07-04', label: 'Dubrovnik, Croatia',      type: 'port',   arrive: '10:00 AM', depart: '11:59 PM' },
-    { date: '2026-07-05', label: 'Kotor, Montenegro',       type: 'port',   arrive: '7:00 AM',  depart: '6:00 PM' },
+    { date: '2026-07-05', label: 'Bar, Montenegro',         type: 'port',   arrive: '7:00 AM',  depart: '6:00 PM' },
     { date: '2026-07-06', label: 'At Sea',                  type: 'sea' },
     { date: '2026-07-07', label: 'Athens (Piraeus), Greece', type: 'port',   arrive: '5:30 AM',  depart: '5:00 PM' },
     { date: '2026-07-08', label: 'Kusadasi, Turkey',        type: 'port',   arrive: '7:00 AM',  depart: '4:00 PM' },
     { date: '2026-07-09', label: 'Rhodes, Greece',          type: 'port',   arrive: '7:00 AM',  depart: '5:00 PM' },
     { date: '2026-07-10', label: 'Santorini, Greece',       type: 'port',   arrive: '7:00 AM',  depart: '10:00 PM' },
     { date: '2026-07-11', label: 'At Sea',                  type: 'sea' },
-    { date: '2026-07-12', label: 'Istanbul, Turkey',        type: 'disembark', arrive: '7:00 AM' }
+    { date: '2026-07-12', label: 'Istanbul, Turkey',        type: 'port',      arrive: '7:00 AM',  depart: 'Overnight' },
+    { date: '2026-07-13', label: 'Istanbul, Turkey',        type: 'disembark', arrive: '8:00 AM' }
+  ];
+
+  // ---- Excursions state ----
+  var EXCURSIONS = [];           // all excursions from /excursions.json
+  var EXCURSION_PICKS = [];      // rows from Sheets
+  var excursionsLoaded = false;
+  var excursionPortsOpen = {};   // port_key -> bool (collapsed state)
+
+  // ---- Transport legs (Venice airport to cruise port) ----
+  var TRANSPORT_LEGS = [
+    { num: 1, leg: 'Venice airport (VCE) &rarr; Venice hotel', meta: 'TBD' },
+    { num: 2, leg: 'Venice hotel &rarr; Venezia Santa Lucia station', meta: 'TBD' },
+    { num: 3, leg: 'Train: Venezia S.L. &rarr; Ravenna', meta: 'TBD' },
+    { num: 4, leg: 'Ravenna hotel &rarr; Cruise port', meta: 'TBD' }
   ];
 
   var GROUP_EVENTS = [
-    // Add group events here as they're planned:
-    // { date: '2026-07-04', time: '7:00 PM', name: 'Family Welcome Dinner', desc: 'Dubrovnik restaurant TBD' },
+    { date: '2026-07-03', name: 'Group Dinner at Los Lobos', time: '5:00 pm', desc: "Welcome dinner + Alayna's birthday" },
+    {
+      date: '2026-07-06',
+      name: 'Naresh + Milestone Birthday Celebration',
+      time: '3:00–6:00 pm',
+      desc: 'Photoshoot & cake, dinner to follow',
+      theme: { label: 'Dress Code', value: 'Black & White', sub: 'Wear black, white, or both' },
+    },
+    { date: '2026-07-11', name: 'Group Dinner at Los Lobos', time: '5:00 pm', desc: '' },
   ];
 
   // ---- Confirmed hotel bookings (fetched from Sheets) ----
@@ -3593,6 +4270,7 @@
       renderSmartCheckin();
       renderHotelPicker();
       renderHotelFamilyPicks();
+      updateAskAIPlaceholder('hotels');
     } else if (activeSection === 'itinerary') {
       itinerarySection.style.display = '';
       dirNav.style.display = 'none';
@@ -3600,8 +4278,10 @@
       renderConfirmedTable('outbound');
       renderConfirmedTable('return');
       renderItineraryHotels();
+      renderTransport();
       renderCruiseSchedule();
-      renderExcursionLinks();
+      renderExcursions();
+      Promise.all([loadExcursions(), fetchExcursionPicks()]).then(renderExcursions);
     } else {
       // Shop Flights
       flightsSection.style.display = '';
@@ -3614,6 +4294,7 @@
       renderTabs();
       renderFilters();
       renderFlights();
+      updateAskAIPlaceholder('flights');
     }
   }
 
@@ -3674,6 +4355,14 @@
         hotelCheckIn = CITY_DEFAULTS[city].checkIn;
         hotelCheckOut = CITY_DEFAULTS[city].checkOut;
         if (hotelMapInstance) { hotelMapInstance.remove(); hotelMapInstance = null; }
+        // Clear previous city's leftover results + map + filters so Istanbul
+        // hotels don't sit under the Venice header while a search is pending.
+        var resultsEl = document.getElementById('hotel-results');
+        if (resultsEl) resultsEl.innerHTML = '';
+        var mapEl = document.getElementById('hotel-map-area');
+        if (mapEl) mapEl.innerHTML = '';
+        var filtersEl = document.getElementById('hotel-filters-area');
+        if (filtersEl) filtersEl.innerHTML = '';
         renderHotelCityNav();
         updateHeroForHotels();
         renderHotelPicker();
@@ -3781,10 +4470,18 @@
       document.getElementById('hotel-search-btn').addEventListener('click', function () {
         searchHotels();
       });
-      // Show cached results if available
+      // Show cached results if available, otherwise prompt to search
       var key = hotelCacheKey();
       if (hotelCache[key]) {
         renderHotelResults(hotelCache[key]);
+      } else {
+        var resultsEl = document.getElementById('hotel-results');
+        if (resultsEl) {
+          resultsEl.innerHTML =
+            '<div class="status" style="padding:32px 16px;text-align:center;color:#64748b;font-size:14px;font-weight:300;">' +
+              'Pick your check-in and check-out dates, then tap <strong>Search Hotels</strong> to find Venice options.' +
+            '</div>';
+        }
       }
     } else {
       // Ravenna/Istanbul: fixed dates, auto-search
@@ -4711,6 +5408,7 @@
     setupDirectionNav();
     setupOriginNav();
     setupSectionNav();
+    setupAskAI();
 
     // Check stored origin (restore it silently but don't skip landing)
     var stored = getStoredOrigin();
@@ -4733,6 +5431,30 @@
 
     // Always show landing screen first
     showLanding();
+  }
+
+  // ---- Itinerary: Transport ----
+  function renderTransport() {
+    var el = document.getElementById('transport-list');
+    if (!el) return;
+    var html = '';
+    TRANSPORT_LEGS.forEach(function (t) {
+      html += '<div class="transport-row">';
+      html += '<div class="transport-num">' + t.num + '</div>';
+      html += '<div class="transport-info">';
+      html += '<div class="transport-leg">' + t.leg + '</div>';
+      if (t.meta) html += '<div class="transport-meta">' + t.meta + '</div>';
+      html += '</div></div>';
+    });
+    el.innerHTML = html;
+    var toggle = document.getElementById('transport-toggle');
+    if (toggle && !toggle.dataset.wired) {
+      toggle.dataset.wired = '1';
+      toggle.addEventListener('click', function () {
+        el.classList.toggle('hidden');
+        toggle.classList.toggle('collapsed');
+      });
+    }
   }
 
   // ---- Itinerary: Cruise Schedule ----
@@ -4778,6 +5500,20 @@
           html += '<div class="cruise-event">';
           html += '<div class="cruise-event-name">&#9733; ' + ev.name + (ev.time ? ' &middot; ' + ev.time : '') + '</div>';
           if (ev.desc) html += '<div class="cruise-event-desc">' + ev.desc + '</div>';
+          if (ev.theme) {
+            html += '<div class="cruise-event-theme">';
+            if (ev.theme.label) {
+              html += '<span class="cruise-event-theme-label">' + ev.theme.label + '</span>';
+            }
+            html += '<span class="cruise-event-theme-chip">' +
+                      '<span class="cruise-event-theme-black">BLACK</span>' +
+                      '<span class="cruise-event-theme-white">&amp; WHITE</span>' +
+                    '</span>';
+            if (ev.theme.sub) {
+              html += '<span class="cruise-event-theme-sub">' + ev.theme.sub + '</span>';
+            }
+            html += '</div>';
+          }
           html += '</div>';
         }
       });
@@ -4787,30 +5523,284 @@
     el.innerHTML = html;
   }
 
-  // ---- Itinerary: Excursion Links ----
-  function renderExcursionLinks() {
+  // ---- Itinerary: Excursions ----
+  // Map a port_key to which cruise date it happens on
+  function cruiseDateForPortKey(key) {
+    for (var i = 0; i < CRUISE_PORTS.length; i++) {
+      var p = CRUISE_PORTS[i];
+      if (p.type === 'sea' || p.type === 'embark') continue;
+      var lbl = (p.label || '').toLowerCase();
+      if (key === 'dubrovnik' && lbl.indexOf('dubrovnik') >= 0) return p.date;
+      if (key === 'bar' && lbl.indexOf('bar') >= 0) return p.date;
+      if (key === 'kotor' && lbl.indexOf('kotor') >= 0) return p.date;
+      if (key === 'athens' && (lbl.indexOf('athens') >= 0 || lbl.indexOf('piraeus') >= 0)) return p.date;
+      if (key === 'kusadasi' && lbl.indexOf('kusadasi') >= 0) return p.date;
+      if (key === 'rhodes' && lbl.indexOf('rhodes') >= 0) return p.date;
+      if (key === 'santorini' && lbl.indexOf('santorini') >= 0) return p.date;
+      if (key === 'istanbul' && lbl.indexOf('istanbul') >= 0) return p.date;
+    }
+    return null;
+  }
+
+  function loadExcursions() {
+    return fetch('excursions.json?v=' + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        EXCURSIONS = (j && j.excursions) || [];
+        excursionsLoaded = true;
+      })
+      .catch(function () { EXCURSIONS = []; excursionsLoaded = true; });
+  }
+
+  function fetchExcursionPicks() {
+    return fetch(SHEETS_URL + '?action=get_excursions')
+      .then(function (r) { return r.json(); })
+      .then(function (rows) {
+        EXCURSION_PICKS = Array.isArray(rows) ? rows : [];
+      })
+      .catch(function () { EXCURSION_PICKS = []; });
+  }
+
+  function getExcursionCounts(code) {
+    var booked = [], interested = [];
+    for (var i = 0; i < EXCURSION_PICKS.length; i++) {
+      var r = EXCURSION_PICKS[i];
+      if (String(r.code) !== String(code)) continue;
+      if (r.action === 'booked') booked.push(r.name || 'Someone');
+      else if (r.action === 'interested') interested.push(r.name || 'Someone');
+    }
+    return { booked: booked, interested: interested };
+  }
+
+  function userHasExcursionPick(code, action) {
+    var name = (getUserName() || '').trim();
+    if (!name) return false;
+    for (var i = 0; i < EXCURSION_PICKS.length; i++) {
+      var r = EXCURSION_PICKS[i];
+      if (String(r.code) === String(code) && r.action === action && (r.name || '') === name) return true;
+    }
+    return false;
+  }
+
+  function toggleExcursionPick(code, action, btnEl) {
+    var name = (getUserName() || '').trim();
+    if (!name) {
+      promptName();
+      return;
+    }
+    var exc = null;
+    for (var i = 0; i < EXCURSIONS.length; i++) { if (EXCURSIONS[i].code === code) { exc = EXCURSIONS[i]; break; } }
+    if (!exc) return;
+
+    var already = userHasExcursionPick(code, action);
+    var other = action === 'booked' ? 'interested' : 'booked';
+    var hadOther = !already && userHasExcursionPick(code, other);
+
+    // Optimistic update (mutually exclusive: choosing one clears the other)
+    EXCURSION_PICKS = EXCURSION_PICKS.filter(function (r) {
+      if (String(r.code) !== String(code) || (r.name || '') !== name) return true;
+      if (already && r.action === action) return false;
+      if (hadOther && r.action === other) return false;
+      return true;
+    });
+    if (!already) {
+      EXCURSION_PICKS.push({ name: name, port: exc.port || '', code: code, title: exc.title || '', action: action });
+    }
+    updateExcursionCard(code);
+
+    function send(verb, actionVal) {
+      var params = new URLSearchParams({
+        action: verb,
+        name: name,
+        port: exc.port || '',
+        code: code,
+        title: exc.title || '',
+        excursion_action: actionVal
+      });
+      return fetch(SHEETS_URL + '?' + params.toString(), { mode: 'no-cors' }).catch(function () {});
+    }
+
+    if (hadOther) send('delete_excursion', other);
+    send(already ? 'delete_excursion' : 'log_excursion', action);
+
+    setTimeout(function () {
+      fetchExcursionPicks().then(function () { updateExcursionCard(code); });
+    }, 1800);
+  }
+
+  function updateExcursionCard(code) {
+    var card = document.querySelector('.exc-card[data-code="' + code + '"]');
+    if (!card) return;
+    var counts = getExcursionCounts(code);
+    var iBtn = card.querySelector('.exc-btn-interested');
+    var bBtn = card.querySelector('.exc-btn-booked');
+    if (iBtn) iBtn.classList.toggle('active', userHasExcursionPick(code, 'interested'));
+    if (bBtn) bBtn.classList.toggle('active', userHasExcursionPick(code, 'booked'));
+    var seeRow = card.querySelector('.exc-see-row');
+    if (seeRow) {
+      var sh = '';
+      if (counts.interested.length > 0) {
+        sh += '<button class="exc-see-link exc-see-interested" data-code="' + code + '" data-type="interested">See ' +
+          counts.interested.length + ' interested</button>';
+      }
+      if (counts.booked.length > 0) {
+        sh += '<button class="exc-see-link exc-see-booked" data-code="' + code + '" data-type="booked">See ' +
+          counts.booked.length + ' booked</button>';
+      }
+      seeRow.innerHTML = sh;
+      seeRow.querySelectorAll('.exc-see-link').forEach(function (l) {
+        l.addEventListener('click', function (ev) {
+          ev.stopPropagation();
+          showExcursionNamesModal(l.getAttribute('data-code'), l.getAttribute('data-type'));
+        });
+      });
+    }
+  }
+
+  function showExcursionNamesModal(code, type) {
+    var exc = null;
+    for (var i = 0; i < EXCURSIONS.length; i++) { if (EXCURSIONS[i].code === code) { exc = EXCURSIONS[i]; break; } }
+    var counts = getExcursionCounts(code);
+    var names = type === 'booked' ? counts.booked : counts.interested;
+    var label = type === 'booked' ? 'Booked' : 'Interested';
+    var body = document.getElementById('fi-modal-body');
+    var html = '';
+    if (exc) {
+      html += '<div class="fi-summary">';
+      html += '<div class="fi-airline">' + escHtml(exc.title || '') + '</div>';
+      html += '<div class="fi-detail">' + escHtml(exc.port || '') + '</div>';
+      html += '</div>';
+    }
+    html += '<div class="fi-section-label">' + label + '</div>';
+    if (names.length === 0) {
+      html += '<div class="fi-empty">Nobody yet</div>';
+    } else {
+      html += '<div class="fi-name-list">' + names.map(escHtml).join('<br>') + '</div>';
+    }
+    body.innerHTML = html;
+    document.getElementById('fi-modal').classList.add('active');
+  }
+
+  function renderExcursions() {
     var el = document.getElementById('itinerary-excursions');
     if (!el) return;
+    if (!excursionsLoaded) {
+      el.innerHTML = '<div class="itin-hotel-empty">Loading excursions&hellip;</div>';
+      return;
+    }
     var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var html = '';
-    CRUISE_PORTS.forEach(function (p) {
-      if (p.type === 'sea') return;
-      var d = new Date(p.date + 'T12:00:00');
-      var dow = days[d.getDay()];
-      var mon = months[d.getMonth()];
-      var day = d.getDate();
-      var portName = p.label.split(',')[0];
-      var searchQuery = encodeURIComponent(portName + ' shore excursions');
-      html += '<div class="itin-exc-item">';
-      html += '<div><div class="itin-exc-port">' + p.label + '</div>';
-      html += '<div class="itin-exc-date">' + dow + ', ' + mon + ' ' + day + '</div></div>';
-      html += '<a class="itin-exc-link" href="https://www.google.com/search?q=' + searchQuery + '" target="_blank" rel="noopener">Browse excursions &#8599;</a>';
-      html += '</div>';
+
+    // Group by port_key and sort in cruise-date order
+    var groups = {};
+    EXCURSIONS.forEach(function (e) {
+      var k = e.port_key || 'other';
+      (groups[k] = groups[k] || []).push(e);
     });
-    if (!html) html = '<div class="itin-hotel-empty">No port days to show</div>';
+
+    var portOrder = ['dubrovnik', 'kotor', 'athens', 'kusadasi', 'rhodes', 'santorini', 'istanbul'];
+    var html = '';
+    portOrder.forEach(function (key) {
+      var list = groups[key];
+      if (!list || list.length === 0) return;
+      var dateStr = cruiseDateForPortKey(key);
+      var dateLabel = '';
+      if (dateStr) {
+        var d = new Date(dateStr + 'T12:00:00');
+        dateLabel = days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+      }
+      var portLabel = list[0].port || key;
+      var isOpen = excursionPortsOpen[key] === true;
+      html += '<div class="exc-port-group' + (isOpen ? '' : ' collapsed') + '" data-portkey="' + key + '">';
+      html += '<div class="exc-port-header">';
+      html += '<div class="exc-port-header-left">';
+      html += '<span class="exc-port-name">' + escHtml(portLabel) + '</span>';
+      if (dateLabel) html += '<span class="exc-port-date">' + dateLabel + '</span>';
+      html += '</div>';
+      html += '<span class="exc-port-count">See ' + list.length + (list.length === 1 ? ' option' : ' options') +
+        ' <span class="exc-port-caret">&#9662;</span></span>';
+      html += '</div>';
+      html += '<div class="exc-port-list">';
+      list.forEach(function (e) {
+        var counts = getExcursionCounts(e.code);
+        var iActive = userHasExcursionPick(e.code, 'interested');
+        var bActive = userHasExcursionPick(e.code, 'booked');
+        html += '<div class="exc-card" data-code="' + escHtml(e.code || '') + '">';
+        html += '<div class="exc-thumb">';
+        if (e.image) {
+          html += '<img src="' + escHtml(e.image) + '" alt="" loading="lazy" onerror="this.parentNode.innerHTML=\'<div class=exc-thumb-empty>&#9875;</div>\'">';
+        } else {
+          html += '<div class="exc-thumb-empty">&#9875;</div>';
+        }
+        html += '</div>';
+        html += '<div class="exc-body">';
+        var titleInner = escHtml(e.title || '');
+        if (e.detail_url) {
+          html += '<div class="exc-title"><a href="' + escHtml(e.detail_url) + '" target="_blank" rel="noopener">' + titleInner + '</a></div>';
+        } else {
+          html += '<div class="exc-title">' + titleInner + '</div>';
+        }
+        var metaParts = [];
+        if (e.duration) metaParts.push(escHtml(e.duration));
+        if (e.activity_level) metaParts.push('Activity ' + e.activity_level + '/5');
+        if (typeof e.adult_from === 'number') metaParts.push('$' + e.adult_from.toFixed(0) + '+');
+        html += '<div class="exc-meta">' + metaParts.join(' &middot; ') + '</div>';
+        if (e.description) html += '<div class="exc-desc">' + escHtml(e.description) + '</div>';
+        html += '<div class="exc-actions">';
+        html += '<button class="exc-btn exc-btn-interested' + (iActive ? ' active' : '') +
+          '" data-code="' + escHtml(e.code) + '" data-action="interested">' +
+          '<span class="exc-btn-icon">&#9733;</span> Interested</button>';
+        html += '<button class="exc-btn exc-btn-booked' + (bActive ? ' active' : '') +
+          '" data-code="' + escHtml(e.code) + '" data-action="booked">' +
+          '<span class="exc-btn-icon">&#10003;</span> Booked</button>';
+        html += '</div>';
+        html += '<div class="exc-see-row">';
+        if (counts.interested.length > 0) {
+          html += '<button class="exc-see-link exc-see-interested" data-code="' + escHtml(e.code) + '" data-type="interested">See ' +
+            counts.interested.length + ' interested</button>';
+        }
+        if (counts.booked.length > 0) {
+          html += '<button class="exc-see-link exc-see-booked" data-code="' + escHtml(e.code) + '" data-type="booked">See ' +
+            counts.booked.length + ' booked</button>';
+        }
+        html += '</div>';
+        html += '</div></div>';
+      });
+      html += '</div></div>';
+    });
+
+    if (!html) html = '<div class="itin-hotel-empty">No excursions to show</div>';
     el.innerHTML = html;
+
+    // Wire up port header toggles
+    el.querySelectorAll('.exc-port-group').forEach(function (g) {
+      var header = g.querySelector('.exc-port-header');
+      var key = g.getAttribute('data-portkey');
+      header.addEventListener('click', function () {
+        var nowOpen = g.classList.toggle('collapsed') ? false : true;
+        excursionPortsOpen[key] = nowOpen;
+      });
+    });
+
+    // Wire up interested/booked buttons
+    el.querySelectorAll('.exc-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        toggleExcursionPick(btn.getAttribute('data-code'), btn.getAttribute('data-action'), btn);
+      });
+    });
+
+    // Wire up "See N" name links
+    el.querySelectorAll('.exc-see-link').forEach(function (l) {
+      l.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        showExcursionNamesModal(l.getAttribute('data-code'), l.getAttribute('data-type'));
+      });
+    });
   }
+
+  // Keep legacy alias so any other callers still work
+  function renderExcursionLinks() { renderExcursions(); }
 
   // ---- Itinerary: Hotels Display ----
   function fetchConfirmedHotels(callback) {
@@ -5020,7 +6010,7 @@
   });
 
   // Update quick-nav active state on scroll
-  var itinAnchors = ['itin-flights-anchor', 'itin-hotels-anchor', 'itin-cruise-anchor', 'itin-excursions-anchor'];
+  var itinAnchors = ['itin-flights-anchor', 'itin-hotels-anchor', 'itin-transport-anchor', 'itin-cruise-anchor', 'itin-excursions-anchor'];
   window.addEventListener('scroll', function () {
     if (activeSection !== 'itinerary') return;
     var scrollY = window.scrollY + 120;
@@ -6475,6 +7465,7 @@
     renderTabs();
     renderFlights();
     sheetReady.then(function () { fetchAISummary(); });
+    maybeRefreshActiveOrigin();
 
     // Handle ?flight= URL param
     var flightParam = new URLSearchParams(window.location.search).get('flight');

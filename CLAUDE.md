@@ -1,4 +1,78 @@
-# CLAUDE.md — lax-vce-flights
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Family vacation planner for a cruise trip (LAX/AKL/ATL/YVR to Venice, return from Istanbul). Single-page vanilla HTML/JS/CSS frontend with Python serverless backend on Vercel. Flight data is pre-generated offline; hotel data is cached on first search.
+
+## Commands
+
+```bash
+# Run all tests (506 tests, ~0.1s)
+python3 -m pytest
+
+# Run a single test file
+python3 -m pytest test_flight_agent.py
+
+# Run a specific test
+python3 -m pytest test_flight_agent.py::TestClassName::test_name -v
+
+# Refresh flight data (42 SerpAPI calls, REQUIRES APPROVAL for --force)
+python3 scripts/refresh_flights.py
+
+# Fetch hotel star ratings (free, Veneto open data)
+python3 scripts/fetch_hotel_stars.py
+
+# Deploy (free, no API calls triggered)
+vercel --prod
+
+# Sync frontend after editing (MUST do after any web/index.html change)
+cp web/index.html public/index.html
+```
+
+## Architecture
+
+### Data flow
+
+```
+Flights:  scripts/refresh_flights.py → data/flights_cache.json → api/flights.py → browser
+          (42 SerpAPI calls, 48h)       (static JSON, ~250KB)     (reads file, $0)
+
+Hotels:   browser request → api/hotels.py → check data/hotels_cache_*.json
+                                           → fresh? serve cached ($0)
+                                           → stale? SerpAPI (1 call) + Google Places (free) → cache → serve
+```
+
+### Key modules
+
+- **`flight_agent.py`** (1726 lines) — core pipeline: SerpAPI search, Skyscanner search, normalize, dedup, filter, score, fare labeling. All business logic lives here; API endpoints are thin wrappers.
+- **`hotel_agent.py`** (893 lines) — hotel search pipeline: SerpAPI Hotels + Google Places for ratings/reviews. Multi-city support (Venice, Ravenna, Istanbul). Credit card program data (Amex FHR/THC, Chase LPB) for perks matching.
+- **`serpapi_guard.py`** — rate limiter for ad-hoc SerpAPI calls. 24h rolling window, email alerts on threshold breach. All non-scheduled API calls must go through this.
+- **`web/index.html`** (6973 lines) — entire frontend in one file. Always edit here, then copy to `public/index.html`.
+
+### API endpoints (Vercel serverless, all in `api/`)
+
+| Endpoint | Method | Cost | Purpose |
+|----------|--------|------|---------|
+| `flights.py` | GET | $0 | Serve cached flight data |
+| `hotels.py` | GET | 0-1 SerpAPI | Hotel search with 48h cache |
+| `hotel_search.py` | GET | 0-1 SerpAPI | Hotel search variant |
+| `summary.py` | POST | OpenAI | AI flight briefing (4 bullets) |
+| `points.py` | POST | OpenAI | Points/miles strategy for a flight |
+| `hotel-points.py` | POST | OpenAI | Points strategy for a hotel |
+| `multicity.py` | GET | 2 SerpAPI | Multi-city search (needs approval) |
+| `parse_screenshot.py` | POST | OpenAI | Extract flight details from booking screenshot |
+| `parse_hotel.py` | POST | OpenAI | Parse hotel property details |
+
+### Conventions
+
+- Vercel serverless handlers use `BaseHTTPRequestHandler` with a `handler` class
+- All SerpAPI calls outside scheduled refresh must use `serpapi_guard.check_serpapi_budget()` before calling and `log_serpapi_calls()` after
+- CDN caching: `s-maxage=172800, stale-while-revalidate=172800` for flights; 48h file-based cache for hotels
+- Origins: LAX, AKL (allows 2 stops), ATL, YVR. Defined in `flight_agent.ROUTES`
+- Trip dates: depart 2026-06-28/29/30, return 2026-07-13/14/15
+- Tests are at project root (`test_*.py`), no test framework config needed
 
 ## Spending Rules (READ THIS FIRST)
 
