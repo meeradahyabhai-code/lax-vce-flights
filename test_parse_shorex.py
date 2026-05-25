@@ -18,6 +18,9 @@ class TestPortKey(unittest.TestCase):
     def test_kotor(self):
         self.assertEqual(parse_shorex.port_key("Kotor, Montenegro"), "kotor")
 
+    def test_bar(self):
+        self.assertEqual(parse_shorex.port_key("Bar, Montenegro"), "bar")
+
     def test_athens_variants(self):
         self.assertEqual(parse_shorex.port_key("Athens, Greece"), "athens")
         self.assertEqual(parse_shorex.port_key("Piraeus (Athens), Greece"), "athens")
@@ -109,7 +112,7 @@ class TestFullParse(unittest.TestCase):
 
     def test_expected_ports_present(self):
         port_keys = {e["port_key"] for e in self.data["excursions"]}
-        required = {"dubrovnik", "kotor", "athens", "kusadasi", "rhodes", "santorini", "istanbul"}
+        required = {"dubrovnik", "bar", "athens", "kusadasi", "rhodes", "santorini", "istanbul"}
         missing = required - port_keys
         self.assertEqual(missing, set(), f"Missing ports: {missing}")
 
@@ -146,7 +149,7 @@ class TestFullParse(unittest.TestCase):
         for e in self.data["excursions"]:
             by_port.setdefault(e["port_key"], 0)
             by_port[e["port_key"]] += 1
-        for port in ("dubrovnik", "kotor", "athens", "kusadasi", "rhodes", "santorini", "istanbul"):
+        for port in ("dubrovnik", "bar", "athens", "kusadasi", "rhodes", "santorini", "istanbul"):
             self.assertGreaterEqual(by_port.get(port, 0), 5, f"Too few excursions for {port}")
 
 

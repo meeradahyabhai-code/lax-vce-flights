@@ -13,6 +13,7 @@ WEB_OUT_PATH = ROOT / "web" / "excursions.json"
 PORT_TO_KEY = {
     "dubrovnik": "dubrovnik",
     "kotor": "kotor",
+    "bar": "bar",
     "athens": "athens",
     "piraeus": "athens",
     "kusadasi": "kusadasi",
