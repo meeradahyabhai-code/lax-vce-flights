@@ -1463,6 +1463,10 @@
   .cruise-dot-port { background: var(--azure); }
   .cruise-dot-sea { background: #d1d5db; }
   .cruise-day-info { flex: 1; }
+  .cruise-port-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 8px; flex-wrap: wrap;
+  }
   .cruise-port-name {
     font-family: var(--sans); font-size: 15px; font-weight: 500; color: var(--ink);
   }
@@ -1470,6 +1474,11 @@
     font-family: var(--sans); font-size: 12px; font-weight: 300; color: #94a3b8;
     margin-top: 2px;
   }
+  .cruise-weather {
+    font-family: var(--sans); font-size: 12px; font-weight: 400; color: #64748b;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .cruise-weather-icon { margin-right: 4px; }
   .cruise-sea-label {
     font-family: var(--sans); font-size: 15px; font-weight: 400;
     color: #94a3b8; font-style: italic;
@@ -4216,6 +4225,9 @@
     { date: '2026-07-13', label: 'Istanbul, Turkey',        type: 'disembark', arrive: '8:00 AM' }
   ];
 
+  // ---- Port climate (avg July weather, 10-yr normals) ----
+  var PORT_CLIMATE = {};         // keyed by ISO date, e.g. "2026-07-03": {high, low, rain_chance, icon}
+
   // ---- Excursions state ----
   var EXCURSIONS = [];           // all excursions from /excursions.json
   var EXCURSION_PICKS = [];      // rows from Sheets
@@ -4343,6 +4355,7 @@
       renderOnboard();
       renderExcursions();
       Promise.all([loadExcursions(), fetchExcursionPicks()]).then(renderExcursions);
+      loadPortClimate().then(renderCruiseSchedule);
     } else {
       // Shop Flights
       flightsSection.style.display = '';
@@ -5543,7 +5556,19 @@
       if (p.type === 'sea') {
         html += '<div class="cruise-sea-label">At Sea</div>';
       } else {
-        html += '<div class="cruise-port-name">' + p.label + '</div>';
+        var wx = PORT_CLIMATE[p.date];
+        var wxHtml = '';
+        if (wx) {
+          var rainStr = wx.rain_chance > 5 ? (' &middot; ' + wx.rain_chance + '% rain') : '';
+          wxHtml = '<div class="cruise-weather">'
+            + '<span class="cruise-weather-icon">' + weatherIconHtml(wx.icon) + '</span>'
+            + wx.high + '° / ' + wx.low + '°' + rainStr
+            + '</div>';
+        }
+        html += '<div class="cruise-port-row">'
+          + '<div class="cruise-port-name">' + p.label + '</div>'
+          + wxHtml
+          + '</div>';
         var times = '';
         if (p.type === 'embark') {
           times = 'Embark &middot; Depart ' + p.depart;
@@ -5680,6 +5705,19 @@
         excursionsLoaded = true;
       })
       .catch(function () { EXCURSIONS = []; excursionsLoaded = true; });
+  }
+
+  function loadPortClimate() {
+    return fetch('port_climate.json?v=' + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (j) { PORT_CLIMATE = j || {}; })
+      .catch(function () { PORT_CLIMATE = {}; });
+  }
+
+  function weatherIconHtml(icon) {
+    if (icon === 'rain') return '☔';   // umbrella w/ rain
+    if (icon === 'cloud') return '⛅';  // sun behind cloud
+    return '☀️';                  // sun
   }
 
   function fetchExcursionPicks() {
