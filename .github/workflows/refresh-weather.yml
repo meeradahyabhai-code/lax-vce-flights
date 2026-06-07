@@ -1,0 +1,42 @@
+name: Refresh Port Weather
+
+# Rebuilds data/port_climate.json daily. Each port-day automatically switches
+# from 10-yr July climate normals to a live Open-Meteo forecast once it falls
+# inside the ~16-day window. Commits only when the data actually changes; the
+# push auto-deploys via the Vercel GitHub integration. Self-retires after the
+# trip (the script no-ops once today is past 2026-07-14).
+#
+# Open-Meteo is free and needs no key, so there are no secrets here.
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 13:00 UTC daily (~6am PT)
+  workflow_dispatch:        # manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Rebuild port weather (forecast when in-window, else normals)
+        run: python scripts/fetch_port_weather.py
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet -- data/port_climate.json public/port_climate.json web/port_climate.json; then
+            echo "No weather change; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/port_climate.json public/port_climate.json web/port_climate.json
+          git commit -m "Refresh port weather (auto): forecast/normals update"
+          git push

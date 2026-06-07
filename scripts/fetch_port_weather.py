@@ -1,20 +1,31 @@
 #!/usr/bin/env python3
 """
-Fetch climate normals for each cruise port and write data/port_climate.json.
+Build data/port_climate.json for each cruise port-day.
 
-Source: Open-Meteo archive API (free, no key). Pulls daily max/min temp and
-precipitation for July 3-13 across the past 10 years, averages them.
+Hybrid source, chosen per port-day based on how far out it is from "today":
+  - Inside the ~16-day forecast window  -> Open-Meteo FORECAST API (real-time).
+  - Beyond the window                   -> 10-year July climate NORMALS
+                                           (Open-Meteo archive API).
+
+This means the dashboard automatically switches each port-day from "typical
+July weather" to a real forecast as the trip approaches, with no manual flip.
+Run daily (see .github/workflows/refresh-weather.yml) so forecasts stay fresh.
+
+Both APIs are free and need no key.
 
 Output schema (keyed by ISO date in the cruise itinerary):
   {
-    "2026-07-03": {"high": 82, "low": 71, "rain_chance": 8, "icon": "sun"},
+    "2026-07-03": {"high": 82, "low": 71, "rain_chance": 8,
+                   "icon": "sun", "source": "normal"},
     ...
   }
+  source is "forecast" (live) or "normal" (climate average).
 """
 import json
 import sys
 import urllib.parse
 import urllib.request
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -38,19 +49,32 @@ PORTS = [
     ("2026-07-13", 41.0082, 28.9784),  # Istanbul (disembark)
 ]
 
-YEARS = list(range(2015, 2025))  # 2015-2024 inclusive
-RAIN_THRESHOLD_MM = 1.0  # day counts as "wet" if precip >= this
+YEARS = list(range(2015, 2025))  # 2015-2024 inclusive, for climate normals
+RAIN_THRESHOLD_MM = 1.0  # a past day counts as "wet" if precip >= this
 ICON_RAIN_PCT = 50
 ICON_CLOUD_PCT = 20
 
+# Open-Meteo forecast horizon. The API serves up to 16 days; stay just inside.
+FORECAST_WINDOW_DAYS = 15
+# Stop doing anything once the trip is over (the action keeps the last data).
+LAST_TRIP_DAY = date(2026, 7, 14)
 
-def fetch_port(lat: float, lon: float, mm_dd: tuple[int, int]) -> dict:
-    """Pull all daily values for the cruise day across YEARS, return averages."""
-    month, day = mm_dd
-    highs, lows, wet_days = [], [], 0
-    total_days = 0
 
-    # One call per port covering all years; filter to the exact day Python-side.
+def _icon_for(rain_pct: int) -> str:
+    if rain_pct >= ICON_RAIN_PCT:
+        return "rain"
+    if rain_pct >= ICON_CLOUD_PCT:
+        return "cloud"
+    return "sun"
+
+
+def _get_json(url: str) -> dict:
+    with urllib.request.urlopen(url, timeout=30) as r:
+        return json.load(r)
+
+
+def fetch_port_normal(lat: float, lon: float, month: int, day: int) -> dict:
+    """10-year average for this calendar day (climate normal)."""
     url = (
         "https://archive-api.open-meteo.com/v1/archive?"
         + urllib.parse.urlencode({
@@ -63,14 +87,13 @@ def fetch_port(lat: float, lon: float, mm_dd: tuple[int, int]) -> dict:
             "timezone": "auto",
         })
     )
-    with urllib.request.urlopen(url, timeout=30) as r:
-        payload = json.load(r)
-
+    payload = _get_json(url)
     dates = payload["daily"]["time"]
     tmax = payload["daily"]["temperature_2m_max"]
     tmin = payload["daily"]["temperature_2m_min"]
     precip = payload["daily"]["precipitation_sum"]
 
+    highs, lows, wet_days, total = [], [], 0, 0
     for iso, hi, lo, pr in zip(dates, tmax, tmin, precip):
         _, mo, dy = iso.split("-")
         if int(mo) != month or int(dy) != day:
@@ -81,31 +104,86 @@ def fetch_port(lat: float, lon: float, mm_dd: tuple[int, int]) -> dict:
         lows.append(lo)
         if pr is not None and pr >= RAIN_THRESHOLD_MM:
             wet_days += 1
-        total_days += 1
+        total += 1
 
     if not highs:
-        raise RuntimeError(f"No data for {lat},{lon} on {month:02d}-{day:02d}")
+        raise RuntimeError(f"No archive data for {lat},{lon} on {month:02d}-{day:02d}")
 
-    rain_pct = round(100 * wet_days / total_days)
+    rain_pct = round(100 * wet_days / total)
     return {
         "high": round(sum(highs) / len(highs)),
         "low": round(sum(lows) / len(lows)),
         "rain_chance": rain_pct,
-        "icon": "rain" if rain_pct >= ICON_RAIN_PCT else ("cloud" if rain_pct >= ICON_CLOUD_PCT else "sun"),
+        "icon": _icon_for(rain_pct),
+        "source": "normal",
     }
 
 
-def main() -> int:
+def fetch_port_forecast(lat: float, lon: float, iso_date: str) -> dict | None:
+    """Real forecast for iso_date, or None if it isn't in the returned window."""
+    url = (
+        "https://api.open-meteo.com/v1/forecast?"
+        + urllib.parse.urlencode({
+            "latitude": lat,
+            "longitude": lon,
+            "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+            "temperature_unit": "fahrenheit",
+            "timezone": "auto",
+            "forecast_days": 16,
+        })
+    )
+    payload = _get_json(url)
+    daily = payload.get("daily", {})
+    times = daily.get("time", [])
+    if iso_date not in times:
+        return None
+    i = times.index(iso_date)
+    hi = daily["temperature_2m_max"][i]
+    lo = daily["temperature_2m_min"][i]
+    pop = daily.get("precipitation_probability_max", [None] * len(times))[i]
+    if hi is None or lo is None:
+        return None
+    rain_pct = int(round(pop)) if pop is not None else 0
+    return {
+        "high": round(hi),
+        "low": round(lo),
+        "rain_chance": rain_pct,
+        "icon": _icon_for(rain_pct),
+        "source": "forecast",
+    }
+
+
+def build(today: date) -> dict:
     out: dict[str, dict] = {}
     for iso_date, lat, lon in PORTS:
-        _, mo, dy = iso_date.split("-")
-        try:
-            out[iso_date] = fetch_port(lat, lon, (int(mo), int(dy)))
-        except Exception as e:
-            print(f"FAIL {iso_date} ({lat},{lon}): {e}", file=sys.stderr)
-            return 1
-        d = out[iso_date]
-        print(f"{iso_date}  {d['high']:>3}/{d['low']:<3}  rain {d['rain_chance']:>2}%  {d['icon']}")
+        target = date.fromisoformat(iso_date)
+        delta = (target - today).days
+        data = None
+        if 0 <= delta <= FORECAST_WINDOW_DAYS:
+            try:
+                data = fetch_port_forecast(lat, lon, iso_date)
+            except Exception as e:
+                print(f"forecast failed {iso_date} ({lat},{lon}): {e}", file=sys.stderr)
+        if data is None:
+            mo, dy = target.month, target.day
+            data = fetch_port_normal(lat, lon, mo, dy)
+        out[iso_date] = data
+        print(f"{iso_date}  {data['high']:>3}/{data['low']:<3}  "
+              f"rain {data['rain_chance']:>2}%  {data['icon']:<5}  {data['source']}")
+    return out
+
+
+def main() -> int:
+    today = date.today()
+    if today > LAST_TRIP_DAY:
+        print(f"{today} is past the trip ({LAST_TRIP_DAY}); leaving data as-is.")
+        return 0
+
+    try:
+        out = build(today)
+    except Exception as e:
+        print(f"FAIL: {e}", file=sys.stderr)
+        return 1
 
     payload = json.dumps(out, indent=2) + "\n"
     for p in OUT_PATHS:
