@@ -1697,11 +1697,11 @@
     margin: var(--space-3) 0 var(--space-1);
     font-feature-settings: var(--nums-tabular);
   }
-  .packing-group { margin-top: var(--space-4); }
+  .packing-group { margin-top: var(--space-5); }
   .packing-group-title {
-    font-family: var(--sans); font-size: var(--fs-caption); font-weight: var(--fw-semibold);
-    line-height: var(--lh-caption); color: var(--text-secondary);
-    letter-spacing: 0.12em; text-transform: uppercase;
+    font-family: var(--sans); font-size: var(--fs-headline); font-weight: var(--fw-semibold);
+    line-height: var(--lh-headline); color: var(--text-primary);
+    letter-spacing: var(--tracking-body);
     margin-bottom: var(--space-1);
   }
   .packing-group-note {
@@ -6509,7 +6509,7 @@
   });
 
   // Update quick-nav active state on scroll
-  var itinAnchors = ['itin-flights-anchor', 'itin-hotels-anchor', 'itin-transport-anchor', 'itin-cruise-anchor', 'itin-excursions-anchor'];
+  var itinAnchors = ['itin-flights-anchor', 'itin-hotels-anchor', 'itin-transport-anchor', 'itin-cruise-anchor', 'itin-excursions-anchor', 'itin-packing-anchor'];
   window.addEventListener('scroll', function () {
     if (activeSection !== 'itinerary') return;
     var scrollY = window.scrollY + 120;
