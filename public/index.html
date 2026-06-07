@@ -16,7 +16,7 @@
     --gold: #b8953a;
     --gold-light: #d4af6a;
     --fog: #eeeef4;
-    --paper: #fcfcfd;
+    --paper: #faf8f3;
 
     /* Type family */
     --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
@@ -77,7 +77,7 @@
   /* ── Landing screen ── */
   .landing-screen {
     position: fixed; inset: 0; z-index: 2500;
-    background: #faf8f3;
+    background: var(--paper);
     display: flex; align-items: center; justify-content: center;
     flex-direction: column; padding: 24px;
   }
@@ -130,7 +130,7 @@
   /* ── Origin selection modal ── */
   .origin-modal {
     position: fixed; inset: 0; z-index: 2000;
-    background: #faf8f3;
+    background: var(--paper);
     display: flex; align-items: center; justify-content: center;
     flex-direction: column; padding: 24px;
   }
@@ -781,7 +781,7 @@
   /* ── Section nav (top bar desktop, bottom bar mobile) ── */
   .section-nav {
     display: flex; gap: 0; justify-content: center;
-    background: #faf8f3; padding: 12px 0 0; position: relative; z-index: 10;
+    background: var(--paper); padding: 12px 0 0; position: relative; z-index: 10;
   }
   .section-tab {
     font-family: var(--sans); font-size: 13px; font-weight: 500;
