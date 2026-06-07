@@ -23,6 +23,7 @@ Output schema (keyed by ISO date in the cruise itinerary):
 """
 import json
 import sys
+import time
 import urllib.parse
 import urllib.request
 from datetime import date
@@ -68,9 +69,26 @@ def _icon_for(rain_pct: int) -> str:
     return "sun"
 
 
-def _get_json(url: str) -> dict:
-    with urllib.request.urlopen(url, timeout=30) as r:
-        return json.load(r)
+def _get_json(url: str, attempts: int = 4) -> dict:
+    """GET JSON with retries — Open-Meteo occasionally times out the TLS handshake."""
+    last = None
+    for i in range(attempts):
+        try:
+            with urllib.request.urlopen(url, timeout=45) as r:
+                return json.load(r)
+        except Exception as e:  # noqa: BLE001 — network blips of any kind
+            last = e
+            if i < attempts - 1:
+                time.sleep(2 * (i + 1))  # 2s, 4s, 6s backoff
+    raise last
+
+
+def _load_prev() -> dict:
+    """Last good data, used as a fallback if a port can't be fetched this run."""
+    try:
+        return json.loads(OUT_PATHS[0].read_text())
+    except Exception:
+        return {}
 
 
 def fetch_port_normal(lat: float, lon: float, month: int, day: int) -> dict:
@@ -153,7 +171,7 @@ def fetch_port_forecast(lat: float, lon: float, iso_date: str) -> dict | None:
     }
 
 
-def build(today: date) -> dict:
+def build(today: date, prev: dict) -> dict:
     out: dict[str, dict] = {}
     for iso_date, lat, lon in PORTS:
         target = date.fromisoformat(iso_date)
@@ -165,8 +183,19 @@ def build(today: date) -> dict:
             except Exception as e:
                 print(f"forecast failed {iso_date} ({lat},{lon}): {e}", file=sys.stderr)
         if data is None:
-            mo, dy = target.month, target.day
-            data = fetch_port_normal(lat, lon, mo, dy)
+            try:
+                data = fetch_port_normal(lat, lon, target.month, target.day)
+            except Exception as e:
+                print(f"normal failed {iso_date} ({lat},{lon}): {e}", file=sys.stderr)
+        if data is None:
+            # Both fetches failed this run — keep the last good value so a
+            # transient network blip never wipes the weather.
+            if iso_date in prev:
+                data = prev[iso_date]
+                print(f"{iso_date}  kept previous value (fetch failed)")
+                out[iso_date] = data
+                continue
+            raise RuntimeError(f"no data and no previous value for {iso_date}")
         out[iso_date] = data
         print(f"{iso_date}  {data['high']:>3}/{data['low']:<3}  "
               f"rain {data['rain_chance']:>2}%  {data['icon']:<5}  {data['source']}")
@@ -180,7 +209,7 @@ def main() -> int:
         return 0
 
     try:
-        out = build(today)
+        out = build(today, _load_prev())
     except Exception as e:
         print(f"FAIL: {e}", file=sys.stderr)
         return 1
