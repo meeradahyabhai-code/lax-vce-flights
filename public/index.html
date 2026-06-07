@@ -1704,6 +1704,12 @@
     letter-spacing: 0.12em; text-transform: uppercase;
     margin-bottom: var(--space-1);
   }
+  .packing-group-note {
+    font-family: var(--sans); font-size: var(--fs-caption); font-weight: var(--fw-regular);
+    line-height: var(--lh-caption); color: var(--text-tertiary);
+    letter-spacing: 0; text-transform: none;
+    margin-bottom: var(--space-2);
+  }
   .packing-item {
     display: flex; align-items: flex-start; gap: var(--space-2);
     padding: var(--space-2) 0; cursor: pointer;
@@ -4446,10 +4452,11 @@
       { id: 'hl-toiletries', text: 'Toiletries (travel size)' },
       { id: 'hl-lipbalm', text: 'Lip balm with SPF' },
     ] },
-    { title: 'Clothes', items: [
+    { title: 'Clothes', note: '10 cruise days + days before & after', items: [
       { id: 'cl-tops', text: 'Light, breathable tops' },
       { id: 'cl-bottoms', text: 'Shorts / light pants / sundresses' },
-      { id: 'cl-swim', text: 'Swimwear (x2)' },
+      { id: 'cl-underwear', text: 'Underwear (2+ per day recommended)' },
+      { id: 'cl-swim', text: 'Swimwear (4-5)' },
       { id: 'cl-formal', text: '1 black and/or white formal-ish outfit', flag: 'Jul 6' },
       { id: 'cl-modest', text: 'Modest top + scarf (mosque & church visits)', flag: 'Ports' },
       { id: 'cl-walkshoes', text: 'Comfortable walking shoes', flag: 'Ports' },
@@ -4458,7 +4465,6 @@
       { id: 'cl-hat', text: 'Hat + sunglasses' },
     ] },
     { title: 'Beach & day bag', items: [
-      { id: 'bg-daybag', text: 'Day backpack / tote' },
       { id: 'bg-water', text: 'Reusable water bottle' },
       { id: 'bg-towel', text: 'Quick-dry towel (ship provides pool towels)' },
       { id: 'bg-drybag', text: 'Dry bag / ziplocks for wet gear' },
@@ -5964,6 +5970,7 @@
     PACKING_GROUPS.forEach(function (g) {
       html += '<div class="packing-group">';
       html += '<div class="packing-group-title">' + g.title + '</div>';
+      if (g.note) html += '<div class="packing-group-note">' + g.note + '</div>';
       g.items.forEach(function (it) {
         var on = checked.has(it.id);
         html += '<label class="packing-item' + (on ? ' checked' : '') + '">';
