@@ -1414,7 +1414,7 @@
 
   /* ── Itinerary: Quick-Jump Nav ── */
   .itin-quicknav {
-    display: flex; gap: var(--space-2); justify-content: center; flex-wrap: wrap;
+    display: flex; gap: var(--space-2); justify-content: flex-start; flex-wrap: wrap;
     padding: var(--space-4) 0 var(--space-5); margin-bottom: var(--space-2);
     position: sticky; top: 0; z-index: 100;
     background: linear-gradient(to bottom, rgba(250,248,243,1) 80%, rgba(250,248,243,0));
@@ -1437,7 +1437,7 @@
   @media (max-width: 600px) {
     .itin-quicknav {
       gap: var(--space-2); padding: var(--space-3);
-      flex-wrap: wrap; justify-content: center;
+      flex-wrap: wrap; justify-content: flex-start;
     }
     .itin-quicknav-btn {
       font-size: var(--fs-meta); font-weight: var(--fw-medium); padding: 8px 14px;
