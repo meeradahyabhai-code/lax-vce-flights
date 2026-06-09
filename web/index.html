@@ -2087,8 +2087,8 @@
     <button class="itin-quicknav-btn" data-target="itin-hotels-anchor">Hotels</button>
     <button class="itin-quicknav-btn" data-target="itin-transport-anchor">Transport</button>
     <button class="itin-quicknav-btn" data-target="itin-cruise-anchor">Cruise</button>
-    <button class="itin-quicknav-btn" data-target="itin-excursions-anchor">Tours</button>
     <button class="itin-quicknav-btn" data-target="itin-packing-anchor">Packing</button>
+    <button class="itin-quicknav-btn" data-target="itin-excursions-anchor">Tours</button>
   </div>
 
   <!-- Section 1: Confirmed Flights -->
@@ -2138,15 +2138,7 @@
     </div>
   </div>
 
-  <!-- Section 4: Excursions -->
-  <div id="itin-excursions-anchor"></div>
-  <div class="itin-section">
-    <div class="itin-heading">Tours/Excursions</div>
-    <div class="itin-rule"></div>
-    <div id="itinerary-excursions"></div>
-  </div>
-
-  <!-- Section 5: Packing Guide -->
+  <!-- Section 4: Packing Guide -->
   <div id="itin-packing-anchor"></div>
   <div class="itin-section">
     <div class="packing-toggle" id="packing-toggle">
@@ -2156,6 +2148,14 @@
     <div class="itin-rule"></div>
     <div class="itin-sub">What to expect, what to remember, and a checklist you can tick off. Saved for you on this device.</div>
     <div id="packing-body" class="packing-body"></div>
+  </div>
+
+  <!-- Section 5: Excursions -->
+  <div id="itin-excursions-anchor"></div>
+  <div class="itin-section">
+    <div class="itin-heading">Tours/Excursions</div>
+    <div class="itin-rule"></div>
+    <div id="itinerary-excursions"></div>
   </div>
 
 </div>
@@ -6505,7 +6505,7 @@
   });
 
   // Update quick-nav active state on scroll
-  var itinAnchors = ['itin-flights-anchor', 'itin-hotels-anchor', 'itin-transport-anchor', 'itin-cruise-anchor', 'itin-excursions-anchor', 'itin-packing-anchor'];
+  var itinAnchors = ['itin-flights-anchor', 'itin-hotels-anchor', 'itin-transport-anchor', 'itin-cruise-anchor', 'itin-packing-anchor', 'itin-excursions-anchor'];
   window.addEventListener('scroll', function () {
     if (activeSection !== 'itinerary') return;
     var scrollY = window.scrollY + 120;
