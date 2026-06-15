@@ -8,3 +8,6 @@ __pycache__/
 # Raw scraped shore-excursion HTML (input to scripts/parse_shorex.py)
 data/ncl_shorex.html
 data/ncl_shorex_files/
+
+# Local-only Google Cloud TTS key (never commit)
+.gcp_tts_key

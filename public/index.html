@@ -1785,7 +1785,12 @@
   .ph-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--fog); }
   .ph-row:last-child { border-bottom: none; }
   .ph-en { color: var(--text-primary); font-size: 15px; }
-  .ph-native { color: var(--azure); font-size: 15px; }
+  .ph-native { color: var(--azure); font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .ph-speak { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; padding: 0; border: 1px solid var(--border-strong); background: var(--bg-surface); border-radius: 9999px; color: var(--azure); cursor: pointer; transition: background .15s, border-color .15s, transform .1s; }
+  .ph-speak:hover { border-color: var(--azure); background: rgba(26,58,107,0.06); }
+  .ph-speak:active { transform: scale(0.92); }
+  .ph-speak.playing { background: var(--azure); color: #fff; border-color: var(--azure); }
+  .ph-speak svg { width: 16px; height: 16px; display: block; }
   .ph-phon { color: var(--text-secondary); font-size: 13px; font-style: italic; white-space: nowrap; }
   .food-row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--fog); }
   .food-name { color: var(--text-primary); font-size: 15px; }
@@ -6243,6 +6248,35 @@
     return html;
   }
 
+  // ── Phrase pronunciation audio (pre-generated native-voice clips) ──
+  // manifest.json maps the exact native phrase text -> mp3 filename in /audio/.
+  var SPEAKER_SVG = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a8 8 0 0 1 0 12"/></svg>';
+  var PHRASE_AUDIO = null, _phraseAudioPromise = null, _phraseAudioEl = null;
+  function loadPhraseAudio() {
+    if (_phraseAudioPromise) return _phraseAudioPromise;
+    _phraseAudioPromise = fetch('/audio/manifest.json')
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (m) { PHRASE_AUDIO = m || {}; return PHRASE_AUDIO; })
+      .catch(function () { PHRASE_AUDIO = {}; return PHRASE_AUDIO; });
+    return _phraseAudioPromise;
+  }
+  function playPhrase(native, btn) {
+    loadPhraseAudio().then(function (m) {
+      var file = m[native];
+      if (!file) return;
+      if (_phraseAudioEl) { try { _phraseAudioEl.pause(); } catch (e) {} }
+      document.querySelectorAll('.ph-speak.playing').forEach(function (b) { b.classList.remove('playing'); });
+      _phraseAudioEl = new Audio('/audio/' + file);
+      var clear = function () { if (btn) btn.classList.remove('playing'); };
+      if (btn) {
+        btn.classList.add('playing');
+        _phraseAudioEl.addEventListener('ended', clear);
+        _phraseAudioEl.addEventListener('error', clear);
+      }
+      _phraseAudioEl.play().catch(clear);
+    });
+  }
+
   // Reference content (Phrases / Food / Good to Know) shown as pills — one panel at a time
   function referenceHtml(date, guide) {
     var uid = 'ref-' + date;
@@ -6255,7 +6289,8 @@
     h += '<div class="cday-panel" data-ref="' + uid + '" data-panel="phrases">';
     (guide.phrases || []).forEach(function (p) {
       h += '<div class="ph-row"><span class="ph-en">' + escHtml(p.en) + '</span>' +
-        '<span class="ph-native">' + escHtml(p.native) + '</span>' +
+        '<span class="ph-native"><span class="ph-native-txt">' + escHtml(p.native) + '</span>' +
+        '<button class="ph-speak" type="button" aria-label="Hear how to say it">' + SPEAKER_SVG + '</button></span>' +
         '<span class="ph-phon">' + escHtml(p.phon) + '</span></div>';
     });
     h += '</div>';
@@ -6286,11 +6321,22 @@
         });
       });
     });
+    scope.querySelectorAll('.ph-speak').forEach(function (btn) {
+      if (btn.dataset.wired) return;
+      btn.dataset.wired = '1';
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var row = btn.closest('.ph-row');
+        var txt = row && row.querySelector('.ph-native-txt');
+        if (txt) playPhrase(txt.textContent, btn);
+      });
+    });
   }
 
   function renderCruiseSchedule() {
     var el = document.getElementById('cruise-schedule');
     if (!el) return;
+    loadPhraseAudio();
     loadAddedExcursions();
     var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
