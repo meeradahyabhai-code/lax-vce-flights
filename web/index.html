@@ -6556,7 +6556,7 @@
           '<input class="modal-input axm-in" id="axm-title" placeholder="Title *">' +
           '<div class="axm-field-label">Date *</div>' +
           '<input class="modal-input axm-in" id="axm-date" type="date" value="' + date + '">' +
-          '<div class="axm-field-label">Start time *</div>' +
+          '<div class="axm-field-label">Start time (optional)</div>' +
           '<div class="axm-row">' +
             '<select class="modal-input axm-in" id="axm-hr"><option value="">Hr</option>' + hrOpts + '</select>' +
             '<select class="modal-input axm-in" id="axm-min">' + minOpts + '</select>' +
@@ -6587,12 +6587,14 @@
 
     var saveBtn = ov.querySelector('#axm-save');
     function reqFilled() {
+      var hr = ov.querySelector('#axm-hr').value, ampm = ov.querySelector('#axm-ampm').value, min = ov.querySelector('#axm-min').value;
+      var anyTime = hr !== '' || ampm !== '' || min !== '00';   // any time field touched
+      var timeOk = !anyTime || (hr !== '' && ampm !== '');       // then hour + AM/PM are both required
       return ov.querySelector('#axm-title').value.trim() !== '' &&
         ov.querySelector('#axm-date').value !== '' &&
-        ov.querySelector('#axm-hr').value !== '' &&
-        ov.querySelector('#axm-ampm').value !== '' &&
         ov.querySelector('#axm-dur').value !== '' &&
-        ov.querySelector('#axm-price').value !== '';
+        ov.querySelector('#axm-price').value !== '' &&
+        timeOk;
     }
     function refresh() { saveBtn.disabled = !reqFilled(); }
     ov.querySelectorAll('.axm-in').forEach(function (el2) {
@@ -6705,10 +6707,11 @@
         var hr = ov.querySelector('#axm-hr').value;
         var min = ov.querySelector('#axm-min').value || '00';
         var ampm = ov.querySelector('#axm-ampm').value;
+        var startTime = (hr && ampm) ? (hr + ':' + min + ' ' + ampm) : '';
         var rec = {
           port_date: ov.querySelector('#axm-date').value || date, port_label: port,
           title: ov.querySelector('#axm-title').value.trim(),
-          start_time: hr + ':' + min + ' ' + ampm,
+          start_time: startTime,
           duration: ov.querySelector('#axm-dur').value + ' ' + ov.querySelector('#axm-durunit').value,
           price: ov.querySelector('#axm-price').value,
           currency: ov.querySelector('#axm-currency').value,
