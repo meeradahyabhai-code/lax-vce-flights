@@ -22,6 +22,9 @@
     },
     "api/parse_screenshot.py": {
       "maxDuration": 30
+    },
+    "api/parse_excursion.py": {
+      "maxDuration": 30
     }
   },
   "rewrites": [

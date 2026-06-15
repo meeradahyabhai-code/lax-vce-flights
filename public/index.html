@@ -113,11 +113,7 @@
   }
   .landing-card-label {
     font-family: var(--serif); font-size: 24px; font-weight: 400;
-    color: var(--azure); margin-bottom: 6px;
-  }
-  .landing-card-desc {
-    font-family: var(--sans); font-size: 13px; font-weight: 300;
-    color: #94a3b8; line-height: 1.4;
+    color: var(--azure); margin-bottom: 0;
   }
   .landing-welcome {
     font-family: var(--sans); font-size: 14px; font-weight: 400;
@@ -201,6 +197,61 @@
     width: 80px; height: 1px; background: var(--gold);
     margin: 32px auto 0;
   }
+
+  /* Slim hero for Our Trip (no tall image; content starts near top) */
+  .hero.hero-slim { padding: 30px 24px 18px; background: var(--paper); }
+  .hero.hero-slim .hero-title { font-size: clamp(30px, 6vw, 44px); margin-top: 8px; }
+  .hero.hero-slim .hero-subtitle { font-size: 17px; margin-top: 4px; }
+  .hero.hero-slim .hero-rule { margin-top: 16px; }
+
+  /* Our Trip: sticky nav wrapper (phase toggle + quick links — always on screen) */
+  .trip-nav {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--paper); border-bottom: 1px solid var(--fog);
+    padding: 10px 0 0; margin-bottom: 20px;
+  }
+  /* Our Trip phase toggle (segmented control) */
+  .trip-phase-toggle {
+    display: flex; gap: 4px;
+    background: rgba(10,10,15,0.05);
+    border-radius: 9999px; padding: 4px;
+    max-width: 420px; margin: 0 auto 10px;
+  }
+  /* Our Trip section tab strip (single row, app-style underline tabs) */
+  .trip-subnav {
+    display: flex; gap: 2px; justify-content: center;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .trip-subnav::-webkit-scrollbar { display: none; }
+  .trip-subnav-tab {
+    flex: 0 0 auto; border: none; background: transparent; cursor: pointer;
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    color: var(--text-secondary); padding: 9px 16px; white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .trip-subnav-tab:hover { color: var(--azure); }
+  .trip-subnav-tab.active { color: var(--azure); border-bottom-color: var(--azure); }
+  /* Clear the sticky trip-nav when jumping to a section */
+  #itin-flights-anchor, #itin-hotels-anchor, #itin-transport-anchor,
+  #itin-packing-anchor, #itin-cruise-anchor, #itin-onboard-anchor, #itin-excursions-anchor {
+    scroll-margin-top: 140px;
+  }
+  .trip-phase-btn {
+    flex: 1; border: none; cursor: pointer;
+    font-family: var(--sans); font-size: 15px; font-weight: 500;
+    color: var(--text-secondary); background: transparent;
+    border-radius: 9999px; padding: 10px 12px;
+    transition: background 0.18s ease, color 0.18s ease;
+  }
+  .trip-phase-btn:hover { color: var(--azure); }
+  .trip-phase-btn.active {
+    background: var(--azure); color: #fff;
+    box-shadow: 0 1px 4px rgba(26,58,107,0.25);
+  }
+  .trip-phase { animation: tripfade 0.22s ease; }
+  @keyframes tripfade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
   /* Direction nav */
   .direction-nav {
@@ -781,8 +832,8 @@
 
   /* ── Section nav (top bar desktop, bottom bar mobile) ── */
   .section-nav {
-    display: flex; gap: 0; justify-content: center;
-    background: var(--paper); padding: 12px 0 0; position: relative; z-index: 10;
+    display: flex; gap: 8px; justify-content: flex-start;
+    background: var(--paper); padding: 14px 0 0 40px; position: relative; z-index: 10;
   }
   .section-tab {
     font-family: var(--sans); font-size: 13px; font-weight: 500;
@@ -1412,39 +1463,6 @@
     min-width: 60px;
   }
 
-  /* ── Itinerary: Quick-Jump Nav ── */
-  .itin-quicknav {
-    display: flex; gap: var(--space-2); justify-content: flex-start; flex-wrap: wrap;
-    padding: var(--space-4) 0 var(--space-5); margin-bottom: var(--space-2);
-    position: sticky; top: 0; z-index: 100;
-    background: linear-gradient(to bottom, rgba(250,248,243,1) 80%, rgba(250,248,243,0));
-  }
-  .itin-quicknav-btn {
-    font-family: var(--sans); font-size: var(--fs-meta); font-weight: var(--fw-medium);
-    line-height: var(--lh-meta);
-    padding: 8px 18px; border-radius: 9999px; cursor: pointer;
-    border: 1px solid var(--border-strong); background: var(--bg-surface);
-    color: var(--text-secondary);
-    letter-spacing: var(--tracking-meta);
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
-  }
-  .itin-quicknav-btn:hover {
-    color: var(--text-primary); border-color: var(--ink);
-  }
-  .itin-quicknav-btn.active {
-    background: var(--ink); color: #fff; border-color: var(--ink);
-  }
-  @media (max-width: 600px) {
-    .itin-quicknav {
-      gap: var(--space-2); padding: var(--space-3);
-      flex-wrap: wrap; justify-content: flex-start;
-    }
-    .itin-quicknav-btn {
-      font-size: var(--fs-meta); font-weight: var(--fw-medium); padding: 8px 14px;
-      flex: 0 0 auto; text-align: center;
-    }
-  }
-
   /* ── Itinerary: Hotels ── */
   .itin-hotel-header {
     display: flex; align-items: center; justify-content: space-between;
@@ -1610,15 +1628,132 @@
   /* ── Itinerary: Transport ── */
   .transport-toggle {
     display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer; user-select: none; padding: var(--space-1) 0;
+    cursor: pointer; user-select: none;
+    padding: 16px 18px;
+    background: var(--bg-surface); border: 1px solid var(--fog); border-radius: 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
+  .transport-toggle:hover { border-color: var(--azure); box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+  .transport-toggle { scroll-margin-top: 90px; }
+  /* card header replaces the divider; hide the rule (and the collapsed subtitle) */
+  .transport-toggle + .itin-rule { display: none; }
+  .transport-toggle.collapsed + .itin-rule + .itin-sub { display: none; }
   .transport-toggle-caret {
-    font-family: var(--sans); font-size: var(--fs-meta); color: var(--text-tertiary);
-    transition: transform 0.15s ease;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(26,58,107,0.10); font-size: 0;
+    transition: transform 0.18s ease, background 0.18s ease;
   }
+  .transport-toggle-caret::before {
+    content: ''; width: 16px; height: 16px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231a3a6b' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+  .transport-toggle:hover .transport-toggle-caret { background: rgba(26,58,107,0.18); }
   .transport-toggle.collapsed .transport-toggle-caret { transform: rotate(-90deg); }
   .transport-list { margin-top: var(--space-2); }
   .transport-list.hidden { display: none; }
+  /* Shared collapsible body for Before We Sail accordion sections */
+  .acc-body { margin-top: var(--space-2); }
+  .acc-body.hidden { display: none; }
+  /* Tighter, standard spacing between Before We Sail accordion cards */
+  #phase-before-sail .itin-section { margin-bottom: 12px; }
+
+  /* ── The Cruise: collapsible day cards ── */
+  .cday { background: var(--bg-surface); border: 1px solid var(--fog); border-radius: 12px; margin-bottom: 12px; }
+  .cday-head { display: flex; align-items: flex-start; gap: 16px; padding: 16px 18px; }
+  .cday-x > .cday-head { cursor: pointer; }
+  .cday-x:hover { border-color: var(--azure); box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+  .cday-date { flex: 0 0 auto; width: 56px; font-family: var(--sans); font-weight: 600; font-size: 15px; color: var(--azure); line-height: 1.25; font-feature-settings: var(--nums-tabular); }
+  .cday-date .cday-dow { display: block; font-size: 11px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
+  .cday-main { flex: 1; min-width: 0; }
+  .cday-toprow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .cday-port { font-family: var(--serif); font-size: 21px; font-weight: 400; color: var(--text-primary); line-height: 1.2; }
+  .cday-sea { font-style: italic; color: var(--text-secondary); }
+  .cday-weather { font-family: var(--sans); font-size: 14px; color: var(--text-secondary); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; font-feature-settings: var(--nums-tabular); }
+  .cday-times { font-family: var(--sans); font-size: 14px; color: var(--text-secondary); margin-top: 3px; font-feature-settings: var(--nums-tabular); }
+  .cday-caret { align-self: center; }
+  .cday:not(.open) .cday-caret { transform: rotate(-90deg); }
+  .cday-body { padding: 0 18px 18px; }
+  .cday-body.hidden { display: none; }
+  .cday-sec-label { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-tertiary); margin: 4px 0 12px; }
+  .cday-exc { display: flex; flex-direction: column; gap: 12px; }
+  .cday-exc-empty { font-family: var(--sans); font-size: 14px; color: var(--text-tertiary); padding: 2px 0; }
+  .cday-add-exc {
+    margin-top: 12px; width: 100%; cursor: pointer;
+    font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--azure);
+    background: rgba(26,58,107,0.06); border: 1px dashed var(--azure); border-radius: 10px; padding: 12px;
+    transition: background 0.15s;
+  }
+  .cday-add-exc:hover { background: rgba(26,58,107,0.12); }
+
+  /* Group-added excursion cards (inside a day) */
+  .gx-card { border: 1px solid var(--fog); border-radius: 10px; padding: 14px 16px; background: var(--bg-surface); }
+  .gx-title { font-family: var(--sans); font-size: 16px; font-weight: 600; color: var(--text-primary); }
+  .gx-meta { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 3px; font-feature-settings: var(--nums-tabular); }
+  .gx-sub { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+  .gx-going { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
+  .gx-going-label { font-weight: 600; color: var(--text-primary); }
+  .gx-none { font-style: italic; color: var(--text-tertiary); }
+  .gx-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .gx-join, .gx-roster {
+    font-family: var(--sans); font-size: 13px; font-weight: 500; padding: 7px 16px;
+    border-radius: 9999px; cursor: pointer; border: 1px solid var(--azure);
+    background: var(--azure); color: #fff; transition: background 0.15s, color 0.15s;
+  }
+  .gx-join.joined { background: var(--lagoon); border-color: var(--lagoon); }
+  .gx-roster { background: transparent; color: var(--azure); }
+  .gx-roster:hover { background: rgba(26,58,107,0.08); }
+
+  /* Add-excursion / who's-going modal */
+  .modal.axm { max-width: 460px; width: 92%; max-height: 88vh; overflow-y: auto; }
+  .axm-upload {
+    display: block; text-align: center; cursor: pointer; border: 1px dashed var(--azure);
+    border-radius: 10px; padding: 12px; color: var(--azure); background: rgba(26,58,107,0.05);
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+  }
+  .axm-hint { font-family: var(--sans); font-size: 11px; color: var(--text-tertiary); margin: 4px 0 0; }
+  .axm-upstatus { font-family: var(--sans); font-size: 12px; color: var(--text-secondary); margin: 6px 0; min-height: 14px; }
+  .axm-or { text-align: center; font-family: var(--sans); font-size: 12px; color: var(--text-tertiary); margin: 8px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .axm-in { margin-bottom: 8px; }
+  .axm-row { display: flex; gap: 8px; }
+  .axm-row .axm-in { flex: 1; min-width: 0; }
+  .axm-going-label { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--text-primary); margin: 10px 0 6px; }
+  .axm-field-label { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--text-secondary); margin: 8px 0 4px; }
+  .rost-list { max-height: 180px; overflow-y: auto; border: 1px solid var(--fog); border-radius: 10px; padding: 8px 12px; }
+  .rost-row { display: block; font-family: var(--sans); font-size: 14px; color: var(--text-primary); padding: 5px 0; cursor: pointer; }
+  .rost-row input { margin-right: 8px; }
+  .axm-foot {
+    display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;
+    position: sticky; bottom: -1px; background: #fff; padding: 12px 0 2px;
+    border-top: 1px solid var(--fog);
+  }
+  .axm-row .modal-input { min-width: 0; }
+  .modal-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .cday-ref { margin-top: 22px; }
+  .cday-pills { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .cday-pill { border: 1px solid var(--border-strong); background: var(--bg-surface); color: var(--text-secondary); font-family: var(--sans); font-size: 13px; font-weight: 500; padding: 7px 16px; border-radius: 9999px; cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
+  .cday-pill:hover { color: var(--azure); border-color: var(--azure); }
+  .cday-pill.active { background: var(--azure); color: #fff; border-color: var(--azure); }
+  .cday-panel.hidden { display: none; }
+  .ph-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--fog); }
+  .ph-row:last-child { border-bottom: none; }
+  .ph-en { color: var(--text-primary); font-size: 15px; }
+  .ph-native { color: var(--azure); font-size: 15px; }
+  .ph-phon { color: var(--text-secondary); font-size: 13px; font-style: italic; white-space: nowrap; }
+  .food-row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--fog); }
+  .food-name { color: var(--text-primary); font-size: 15px; }
+  .food-veg { color: var(--lagoon); font-weight: 700; }
+  .food-note { color: var(--text-secondary); font-size: 13px; text-align: right; }
+  .food-legend { font-size: 12px; color: var(--text-tertiary); margin-top: 10px; }
+  .tip-row { position: relative; color: var(--text-secondary); font-size: 15px; line-height: 1.55; padding: 7px 0 7px 20px; }
+  .tip-row::before { content: '•'; position: absolute; left: 4px; top: 6px; color: var(--azure); font-weight: 700; }
+  .food-must { color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: 0.4px; white-space: nowrap; margin-left: 4px; }
+  .gx-person { display: inline-block; background: rgba(26,58,107,0.08); color: var(--azure); font-family: var(--sans); font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 9999px; margin: 3px 4px 0 0; }
+  .gx-sub a { color: var(--azure); font-weight: 500; }
+  @media (max-width: 600px) {
+    .ph-row { grid-template-columns: 1fr auto; }
+    .ph-phon { grid-column: 1 / -1; }
+  }
 
   /* Onboard the ship */
   .onboard-block { margin-top: var(--space-6); }
@@ -1675,17 +1810,13 @@
   .onboard-tip-icon { flex-shrink: 0; }
 
   /* Packing guide */
-  .packing-toggle {
-    display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer; user-select: none; padding: var(--space-1) 0;
-  }
-  .packing-toggle.collapsed .transport-toggle-caret { transform: rotate(-90deg); }
   .packing-body { margin-top: var(--space-2); }
   .packing-body.hidden { display: none; }
   .packing-summary {
-    padding: var(--space-3); background: var(--bg-canvas); border-radius: 8px;
-    font-family: var(--sans); font-size: var(--fs-meta); font-weight: var(--fw-regular);
-    line-height: var(--lh-meta); color: var(--text-secondary);
+    padding: 14px 16px; background: rgba(26,58,107,0.04);
+    border-left: 3px solid var(--azure); border-radius: 8px;
+    font-family: var(--sans); font-size: var(--fs-body); font-weight: var(--fw-regular);
+    line-height: 1.6; color: var(--text-secondary);
   }
   .packing-progress {
     font-family: var(--sans); font-size: var(--fs-meta); font-weight: var(--fw-medium);
@@ -1827,7 +1958,7 @@
   }
   .exc-see-link {
     font-family: var(--sans); font-size: var(--fs-caption); font-weight: var(--fw-medium);
-    color: var(--text-primary); cursor: pointer; text-decoration: underline;
+    color: var(--azure); cursor: pointer; text-decoration: underline;
     text-underline-offset: 2px;
     background: none; border: none; padding: 0;
     letter-spacing: var(--tracking-meta);
@@ -1951,13 +2082,11 @@
   <div class="landing-cards">
     <div class="landing-card" data-dest="flights">
       <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
-      <div class="landing-card-label">Shop Flights &amp; Hotels</div>
-      <div class="landing-card-desc">Browse flights to Venice &amp; hotels for your stay</div>
+      <div class="landing-card-label">Shop</div>
     </div>
     <div class="landing-card" data-dest="itinerary">
       <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></div>
-      <div class="landing-card-label">Itinerary</div>
-      <div class="landing-card-desc">Confirmed bookings &amp; trip timeline</div>
+      <div class="landing-card-label">Our Trip</div>
     </div>
   </div>
 </div>
@@ -1994,7 +2123,7 @@
 <div class="section-nav" id="section-nav">
   <button class="section-tab" data-section="home"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 14 15 14 15 21"/></svg><span class="tab-label">Home</span></button>
   <button class="section-tab active" data-section="shop"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg><span class="tab-label">Shop</span></button>
-  <button class="section-tab" data-section="itinerary"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg><span class="tab-label">Itinerary</span></button>
+  <button class="section-tab" data-section="itinerary"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg><span class="tab-label">Our Trip</span></button>
 </div>
 
 <!-- Shop sub-nav: Flights / Hotels toggle -->
@@ -2081,81 +2210,107 @@
 <div id="itinerary-section" style="display:none;">
 <div style="max-width:900px; margin:0 auto; padding:0 16px 48px;">
 
-  <!-- Quick-jump nav -->
-  <div class="itin-quicknav" id="itin-quicknav">
-    <button class="itin-quicknav-btn active" data-target="itin-flights-anchor">Flights</button>
-    <button class="itin-quicknav-btn" data-target="itin-hotels-anchor">Hotels</button>
-    <button class="itin-quicknav-btn" data-target="itin-transport-anchor">Transport</button>
-    <button class="itin-quicknav-btn" data-target="itin-cruise-anchor">Cruise</button>
-    <button class="itin-quicknav-btn" data-target="itin-packing-anchor">Packing</button>
-    <button class="itin-quicknav-btn" data-target="itin-excursions-anchor">Tours</button>
-  </div>
-
-  <!-- Section 1: Confirmed Flights -->
-  <div id="itin-flights-anchor"></div>
-  <div id="confirmed-outbound"></div>
-  <div id="confirmed-return"></div>
-
-  <!-- Section 2: Hotels -->
-  <div id="itin-hotels-anchor"></div>
-  <div class="itin-section">
-    <div class="itin-hotel-header">
-      <div class="itin-heading">Hotels</div>
-      <button class="cf-add-btn" id="add-hotel-btn">+ Add Hotel</button>
+  <!-- Sticky app nav: phase toggle + section tab strip -->
+  <div class="trip-nav" id="trip-nav">
+    <div class="trip-phase-toggle" id="trip-phase-toggle">
+      <button class="trip-phase-btn active" data-phase="before-sail">Before We Sail</button>
+      <button class="trip-phase-btn" data-phase="cruise">The Cruise</button>
     </div>
-    <div class="itin-rule"></div>
-    <div id="itinerary-hotels"></div>
-  </div>
-
-  <!-- Section 2.5: Transport (Venice to Ship) -->
-  <div id="itin-transport-anchor"></div>
-  <div class="itin-section">
-    <div class="transport-toggle" id="transport-toggle">
-      <div class="itin-heading">Getting to the Ship</div>
-      <div class="transport-toggle-caret">&#9662;</div>
+    <div class="trip-subnav" id="subnav-cruise" style="display:none;">
+      <button class="trip-subnav-tab active" data-target="itin-cruise-anchor">Days</button>
+      <button class="trip-subnav-tab" data-target="itin-onboard-anchor">Helpful Links</button>
+      <button class="trip-subnav-tab" data-target="itin-excursions-anchor">Tours</button>
     </div>
-    <div class="itin-rule"></div>
-    <div class="itin-sub">Venice airport &rarr; Ravenna port</div>
-    <div id="transport-list" class="transport-list"></div>
   </div>
 
-  <!-- Section 3: Cruise Schedule -->
-  <div id="itin-cruise-anchor"></div>
-  <div class="itin-section">
-    <div class="itin-heading">The Cruise</div>
-    <div class="itin-rule"></div>
-    <div class="itin-sub">Jul 3 &ndash; 12, 2026 &middot; Venice to Istanbul</div>
-    <div id="cruise-schedule"></div>
+  <!-- ============ BEFORE WE SAIL ============ -->
+  <div class="trip-phase" id="phase-before-sail">
 
-    <!-- Onboard the ship -->
-    <div class="onboard-block">
-      <div class="onboard-toggle" id="onboard-toggle">
-        <div class="onboard-title">Onboard Cruise - helpful links</div>
+    <!-- Confirmed Flights -->
+    <div id="itin-flights-anchor"></div>
+    <div class="itin-section">
+      <div class="transport-toggle collapsed" id="flights-toggle">
+        <div class="itin-heading">Flights</div>
         <div class="transport-toggle-caret">&#9662;</div>
       </div>
-      <div class="onboard-sub">Tap a category to see what&rsquo;s on the ship</div>
-      <div id="onboard-list" class="onboard-list"></div>
+      <div class="itin-rule"></div>
+      <div class="acc-body hidden" id="flights-body">
+        <div id="confirmed-outbound"></div>
+        <div id="confirmed-return"></div>
+      </div>
+    </div>
+
+    <!-- Hotels -->
+    <div id="itin-hotels-anchor"></div>
+    <div class="itin-section">
+      <div class="transport-toggle collapsed" id="hotels-toggle">
+        <div class="itin-heading">Hotels</div>
+        <div class="transport-toggle-caret">&#9662;</div>
+      </div>
+      <div class="itin-rule"></div>
+      <div class="acc-body hidden" id="hotels-body">
+        <div class="itin-hotel-header" style="justify-content:flex-end; margin-bottom:8px;">
+          <button class="cf-add-btn" id="add-hotel-btn">+ Add Hotel</button>
+        </div>
+        <div id="itinerary-hotels"></div>
+      </div>
+    </div>
+
+    <!-- Transport (Venice to Ship) -->
+    <div id="itin-transport-anchor"></div>
+    <div class="itin-section">
+      <div class="transport-toggle collapsed" id="transport-toggle">
+        <div class="itin-heading">Getting to the Ship</div>
+        <div class="transport-toggle-caret">&#9662;</div>
+      </div>
+      <div class="itin-rule"></div>
+      <div class="itin-sub">Venice airport &rarr; Ravenna port</div>
+      <div id="transport-list" class="transport-list hidden"></div>
+    </div>
+
+    <!-- Packing Guide -->
+    <div id="itin-packing-anchor"></div>
+    <div class="itin-section">
+      <div class="transport-toggle collapsed" id="packing-toggle">
+        <div class="itin-heading">Packing Guide</div>
+        <div class="transport-toggle-caret">&#9662;</div>
+      </div>
+      <div class="itin-rule"></div>
+      <div class="itin-sub">What to expect, what to remember, and a checklist you can tick off. Saved for you on this device.</div>
+      <div id="packing-body" class="packing-body hidden"></div>
     </div>
   </div>
 
-  <!-- Section 4: Packing Guide -->
-  <div id="itin-packing-anchor"></div>
-  <div class="itin-section">
-    <div class="packing-toggle" id="packing-toggle">
-      <div class="itin-heading">Packing Guide</div>
-      <div class="transport-toggle-caret">&#9662;</div>
-    </div>
-    <div class="itin-rule"></div>
-    <div class="itin-sub">What to expect, what to remember, and a checklist you can tick off. Saved for you on this device.</div>
-    <div id="packing-body" class="packing-body"></div>
-  </div>
+  <!-- ============ THE CRUISE ============ -->
+  <div class="trip-phase" id="phase-cruise" style="display:none;">
 
-  <!-- Section 5: Excursions -->
-  <div id="itin-excursions-anchor"></div>
-  <div class="itin-section">
-    <div class="itin-heading">Tours/Excursions</div>
-    <div class="itin-rule"></div>
-    <div id="itinerary-excursions"></div>
+    <!-- Cruise Schedule -->
+    <div id="itin-cruise-anchor"></div>
+    <div class="itin-section">
+      <div class="itin-heading">The Cruise</div>
+      <div class="itin-rule"></div>
+      <div class="itin-sub">Jul 3 &ndash; 12, 2026 &middot; Venice to Istanbul</div>
+      <div id="cruise-schedule"></div>
+
+      <!-- Onboard the ship -->
+      <div id="itin-onboard-anchor"></div>
+      <div class="onboard-block">
+        <div class="onboard-toggle" id="onboard-toggle">
+          <div class="onboard-title">Onboard Cruise - helpful links</div>
+          <div class="transport-toggle-caret">&#9662;</div>
+        </div>
+        <div class="onboard-sub">Tap a category to see what&rsquo;s on the ship</div>
+        <div id="onboard-list" class="onboard-list"></div>
+      </div>
+    </div>
+
+    <!-- Excursions -->
+    <div id="itin-excursions-anchor"></div>
+    <div class="itin-section">
+      <div class="itin-heading">Tours offered through NCL</div>
+      <div class="itin-rule"></div>
+      <div id="itinerary-excursions"></div>
+    </div>
   </div>
 
 </div>
@@ -3201,6 +3356,10 @@
   function updateHero() {
     var cfg = HEROES[activeDirection];
     var hero = document.querySelector('.hero');
+    hero.classList.remove('hero-slim');
+    document.getElementById('countdown-pill').style.display = '';
+    document.getElementById('ask-ai').style.display = '';
+    document.querySelector('.hero-rule').style.display = '';
     hero.style.backgroundImage =
       'linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)), ' +
       "url('" + cfg.image + "')";
@@ -4337,6 +4496,16 @@
     return div.innerHTML;
   }
 
+  // Returns a safe http(s) URL (quote/control chars percent-encoded by the URL
+  // serializer) or null. escHtml does NOT escape quotes, so never put a raw
+  // user URL into an href attribute — run it through this first.
+  function safeUrl(u) {
+    try {
+      var p = new URL(u);
+      return (p.protocol === 'http:' || p.protocol === 'https:') ? p.href : null;
+    } catch (e) { return null; }
+  }
+
   function renderFooter(count) {
     var footer = document.getElementById('footer');
     var ageText = originAgeText(activeOrigin);
@@ -4402,6 +4571,188 @@
   var EXCURSION_PICKS = [];      // rows from Sheets
   var excursionsLoaded = false;
   var excursionPortsOpen = {};   // port_key -> bool (collapsed state)
+  var cruiseDayOpen = {};        // ISO date -> bool (expanded state of a cruise day card)
+
+  // ---- Per-port guide (phrases / food / good-to-know). Built out port by port. ----
+  var GREEK_PHRASES = [
+    { en: 'Hello', native: 'Γεια σας', phon: 'YAH-sas' },
+    { en: 'Thank you', native: 'Ευχαριστώ', phon: 'ef-kha-ri-STOH' },
+    { en: 'Please / You’re welcome', native: 'Παρακαλώ', phon: 'pa-ra-ka-LOH' },
+    { en: 'Yes / No', native: 'Ναι / Όχι', phon: 'neh / OH-hee' },
+    { en: 'How much is it?', native: 'Πόσο κάνει;', phon: 'PO-so KA-nee' },
+    { en: 'Cheers!', native: 'Στην υγειά μας', phon: 'stin yee-AH mas' },
+  ];
+  var TURKISH_PHRASES = [
+    { en: 'Hello', native: 'Merhaba', phon: 'MER-ha-ba' },
+    { en: 'Thank you', native: 'Teşekkürler', phon: 'teh-shek-koor-LER' },
+    { en: 'Please', native: 'Lütfen', phon: 'LOOT-fen' },
+    { en: 'Yes / No', native: 'Evet / Hayır', phon: 'EH-vet / HA-yuhr' },
+    { en: 'How much is it?', native: 'Ne kadar?', phon: 'neh ka-DAR' },
+    { en: 'Cheers!', native: 'Şerefe!', phon: 'sheh-reh-FEH' },
+  ];
+  // Montenegrin/Croatian are closely related — shared coastal phrases
+  var SOUTH_SLAVIC_PHRASES = [
+    { en: 'Hello / Good day', native: 'Dobar dan', phon: 'DOH-bar dahn' },
+    { en: 'Thank you', native: 'Hvala', phon: 'HVAH-lah' },
+    { en: 'Please / You’re welcome', native: 'Molim', phon: 'MOH-leem' },
+    { en: 'Yes / No', native: 'Da / Ne', phon: 'dah / neh' },
+    { en: 'How much is it?', native: 'Koliko košta?', phon: 'KOH-lee-ko KOSH-ta' },
+    { en: 'Cheers!', native: 'Živjeli!', phon: 'ZHEEV-yeh-lee' },
+  ];
+
+  var PORT_GUIDE = {
+    venice: {
+      phrases: [
+        { en: 'Hello / Good day', native: 'Buongiorno', phon: 'bwon-JOR-no' },
+        { en: 'Thank you', native: 'Grazie', phon: 'GRAH-tsyeh' },
+        { en: 'Please / You’re welcome', native: 'Prego', phon: 'PREH-go' },
+        { en: 'Yes / No', native: 'Sì / No', phon: 'see / no' },
+        { en: 'How much is it?', native: 'Quanto costa?', phon: 'KWAN-to KOS-ta' },
+        { en: 'Cheers!', native: 'Salute!', phon: 'sah-LOO-teh' },
+      ],
+      food: [
+        { name: 'Piadina', note: 'Romagna flatbread, fillings', veg: true },
+        { name: 'Cappelletti in brodo', note: 'cheese pasta in broth', veg: true },
+        { name: 'Squacquerone cheese', note: 'soft spreadable cheese', veg: true },
+        { name: 'Passatelli', note: 'breadcrumb pasta in broth', veg: true },
+        { name: 'Adriatic grilled seafood', note: 'mussels, sardines, fish' },
+        { name: 'Zuppa inglese', note: 'custard sponge dessert', veg: true },
+      ],
+      tips: [
+        'Italy uses the euro; carry small cash since cafés and small shops may not take cards.',
+        'Cover shoulders and knees to enter Ravenna’s basilicas, or you may be turned away.',
+        'Tipping isn’t expected; round up or leave a euro or two, and check for a “coperto” or “servizio” already on the bill.',
+        'Many shops and some churches close midday for riposo (about 12:30 to 3pm), so plan around it.',
+        'Validate paper regional bus and train tickets in the platform machines before boarding or risk a fine.',
+      ],
+    },
+    dubrovnik: {
+      phrases: SOUTH_SLAVIC_PHRASES,
+      food: [
+        { name: 'Crni rižot', note: 'black squid-ink risotto' },
+        { name: 'Pašticada', note: 'wine-braised beef, gnocchi' },
+        { name: 'Peka', note: 'meat baked under a bell' },
+        { name: 'Šporki makaruli', note: 'pasta in meat sauce' },
+        { name: 'Soparnik', note: 'Swiss chard savory pie', veg: true },
+        { name: 'Rožata', note: 'Dalmatian caramel custard', veg: true },
+      ],
+      tips: [
+        'Croatia uses the euro (since 2023), so carry euros rather than old kuna.',
+        'Cover shoulders and knees and remove hats in churches like the Cathedral.',
+        'Tipping isn’t mandatory, but rounding up or about 10% for good service is appreciated.',
+        'Walk the Old Town city walls right at opening (around 8am) to beat heat and crowds; shade is scarce, so bring water, sunscreen, and a hat.',
+        'It’s illegal to walk through the Old Town in swimwear, so cover up away from the beach.',
+      ],
+    },
+    bar: {
+      phrases: SOUTH_SLAVIC_PHRASES,
+      food: [
+        { name: 'Black risotto', note: 'squid-ink seafood rice' },
+        { name: 'Buzara', note: 'shellfish in wine sauce' },
+        { name: 'Grilled octopus', note: 'olive oil, lemon, herbs' },
+        { name: 'Njeguški pršut', note: 'smoked dry-cured ham' },
+        { name: 'Fresh grilled fish', note: 'whole Adriatic catch' },
+        { name: 'Njeguški cheese', note: 'aged sheep-milk cheese', veg: true },
+      ],
+      tips: [
+        'Montenegro uses the euro despite not being in the EU, so no exchange is needed.',
+        'Tipping isn’t mandatory, but 10 to 20% is appreciated for good service.',
+        'Dress modestly at churches and monasteries (cover shoulders and knees; women may need a head covering).',
+        'Carry some cash, as smaller tavernas and shops in Stari Bar may not accept cards.',
+        'Locals are warm, and a relaxed, unhurried pace at meals is the norm.',
+      ],
+    },
+    athens: {
+      phrases: GREEK_PHRASES,
+      food: [
+        { name: 'Souvlaki', note: 'grilled skewers in pita' },
+        { name: 'Moussaka', note: 'eggplant, meat, béchamel bake' },
+        { name: 'Spanakopita', note: 'flaky spinach-feta pie', veg: true },
+        { name: 'Greek salad', note: 'tomato, feta, olives', veg: true },
+        { name: 'Loukoumades', note: 'honey-drizzled doughnuts', veg: true },
+        { name: 'Baklava', note: 'layered nut-honey pastry', veg: true },
+      ],
+      tips: [
+        'Greece uses the euro; cash is still king, so carry small coins and bills.',
+        'Tipping isn’t mandatory, but rounding up or about 10% in cash for good service is appreciated.',
+        'For Orthodox churches, cover shoulders and knees; carry a sleeved top and avoid shorts or short skirts.',
+        'At the Acropolis wear anti-slip shoes and start early, as the marble is uneven and slippery.',
+        'From Piraeus, the metro reaches the Acropolis in about 20 to 30 minutes; watch for pickpockets, and note many shops close 2 to 5pm.',
+      ],
+    },
+    kusadasi: {
+      phrases: TURKISH_PHRASES,
+      food: [
+        { name: 'Çipura (sea bream)', note: 'grilled fresh Aegean fish' },
+        { name: 'Midye dolma', note: 'rice-stuffed mussels' },
+        { name: 'Gözleme', note: 'griddled stuffed flatbread', veg: true },
+        { name: 'Meze', note: 'shared olive-oil small plates', veg: true },
+        { name: 'Fava', note: 'broad-bean purée dip', veg: true },
+        { name: 'Pide', note: 'Turkish boat-shaped flatbread', veg: true },
+      ],
+      tips: [
+        'Currency is the Turkish lira, but euros, dollars, and cards are widely accepted in tourist areas and the bazaar.',
+        'Tipping about 10% is appreciated if service isn’t included; round up taxis and tip guides.',
+        'At mosques, cover shoulders and legs, women cover their heads, and remove shoes before entering.',
+        'Bargaining is expected in the bazaar; start near half the asking price, but only haggle if you mean to buy.',
+        'Accepting an offered glass of tea (çay) is a friendly gesture, not an obligation to buy.',
+      ],
+    },
+    rhodes: {
+      phrases: GREEK_PHRASES,
+      food: [
+        { name: 'Pitaroudia', note: 'fried chickpea fritters', veg: true },
+        { name: 'Melekouni', note: 'sesame-honey wedding sweet', veg: true },
+        { name: 'Grilled octopus', note: 'charcoal-grilled with oregano' },
+        { name: 'Giaprakia', note: 'Rhodian stuffed grape leaves', veg: true },
+        { name: 'Kapamas', note: 'slow-cooked spiced goat' },
+        { name: 'Souma', note: 'local grape-pomace spirit', veg: true },
+      ],
+      tips: [
+        'Currency is the euro; cards are widely accepted, but carry cash for market stalls and tips.',
+        'Tipping is modest and not obligatory; rounding up or 5 to 10% at restaurants is plenty.',
+        'Cover shoulders and knees for churches and monasteries; no shorts, so bring a light scarf.',
+        'Cruise ships dock about 1 km from the Old Town, an easy 15-minute walk through the medieval gate.',
+        'Old Town streets are cobbled and maze-like, so wear comfortable shoes and save an offline map.',
+      ],
+    },
+    santorini: {
+      phrases: GREEK_PHRASES,
+      food: [
+        { name: 'Fava', note: 'creamy split-pea purée', veg: true },
+        { name: 'Tomatokeftedes', note: 'cherry tomato fritters', veg: true },
+        { name: 'White eggplant', note: 'sweet volcanic variety', veg: true },
+        { name: 'Assyrtiko wine', note: 'crisp volcanic white', veg: true },
+        { name: 'Greek salad with capers', note: 'local tomatoes, capers', veg: true },
+        { name: 'Grilled fresh seafood', note: 'daily caldera catch' },
+      ],
+      tips: [
+        'Currency is the euro; carry small notes and coins for tips and small shops.',
+        'Tipping is modest: round up or leave 5 to 10% at tavernas.',
+        'From Fira old port the cable car (about €6) gets long queues on cruise days, so allow up to an hour and head down about 2 hours before last boarding.',
+        'Oia is packed at sunset, so arrive early or watch from Fira or Imerovigli instead.',
+        'Churches enforce modest dress (cover shoulders and knees, bring a scarf), and there’s little shade, so bring a hat, water, and sunscreen.',
+      ],
+    },
+    istanbul: {
+      phrases: TURKISH_PHRASES,
+      food: [
+        { name: 'Döner kebab', note: 'spit-roasted seasoned meat' },
+        { name: 'Simit', note: 'sesame bread ring', veg: true },
+        { name: 'Balık ekmek', note: 'grilled fish sandwich' },
+        { name: 'Lahmacun', note: 'thin minced-meat flatbread' },
+        { name: 'Baklava', note: 'syrupy layered nut pastry', veg: true },
+        { name: 'Menemen', note: 'eggs with tomato, peppers', veg: true },
+      ],
+      tips: [
+        'Currency is the Turkish lira; pay card transactions in lira (not your home currency), and use exchange offices rather than the airport.',
+        'Tipping isn’t mandatory, but about 10% is appreciated in restaurants; round up taxi fares.',
+        'Mosques require modest dress (shoulders and knees covered), women cover their heads, and everyone removes shoes.',
+        'Bargaining is expected at the Grand Bazaar; counter well below the first price and keep it friendly.',
+        'Greet shopkeepers with “Merhaba” and accept the offered tea graciously; the Grand and Spice Bazaars close Sundays.',
+      ],
+    },
+  };
 
   // ---- Transport legs (Venice airport to cruise port) ----
   var TRANSPORT_LEGS = [
@@ -4465,6 +4816,7 @@
       { id: 'bg-towel', text: 'Quick-dry towel (ship provides pool towels)' },
       { id: 'bg-drybag', text: 'Dry bag / ziplocks for wet gear' },
       { id: 'bg-snacks', text: 'Snacks for long port days' },
+      { id: 'bg-umbrella', text: 'Compact umbrella (rain + shade)' },
     ] },
     { title: 'Smart extras', items: [
       { id: 'ex-laundry', text: 'Laundry bag + detergent sheets' },
@@ -4513,6 +4865,66 @@
 
   function isShopSection() {
     return activeSection === 'flights' || activeSection === 'hotels';
+  }
+
+  // ---- Our Trip phase toggle (Before We Sail | The Cruise) ----
+  function getTripPhase() {
+    return localStorage.getItem('dcf_trip_phase') === 'cruise' ? 'cruise' : 'before-sail';
+  }
+  function applyTripPhase(phase) {
+    phase = (phase === 'cruise') ? 'cruise' : 'before-sail';
+    localStorage.setItem('dcf_trip_phase', phase);
+    var before = document.getElementById('phase-before-sail');
+    var cruise = document.getElementById('phase-cruise');
+    if (before) before.style.display = (phase === 'before-sail') ? '' : 'none';
+    if (cruise) cruise.style.display = (phase === 'cruise') ? '' : 'none';
+    var snCruise = document.getElementById('subnav-cruise');
+    if (snCruise) snCruise.style.display = (phase === 'cruise') ? '' : 'none';
+    document.querySelectorAll('.trip-phase-btn').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.phase === phase);
+    });
+    updateTripSubnavActive();
+  }
+  // Highlight the section tab whose anchor is currently in view (scroll-spy)
+  function updateTripSubnavActive() {
+    if (activeSection !== 'itinerary') return;
+    if (getTripPhase() !== 'cruise') return; // Before We Sail uses accordion cards, not a subnav strip
+    var strip = document.getElementById('subnav-cruise');
+    if (!strip) return;
+    var tabs = strip.querySelectorAll('.trip-subnav-tab');
+    if (!tabs.length) return;
+    var y = window.scrollY + 160;
+    var activeTarget = tabs[0].dataset.target;
+    tabs.forEach(function (t) {
+      var el = document.getElementById(t.dataset.target);
+      if (el && el.offsetTop <= y) activeTarget = t.dataset.target;
+    });
+    tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.target === activeTarget); });
+  }
+  function setupTripPhase() {
+    document.querySelectorAll('.trip-phase-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { applyTripPhase(btn.dataset.phase); });
+    });
+    document.querySelectorAll('.trip-subnav-tab').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var t = document.getElementById(btn.dataset.target);
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    window.addEventListener('scroll', updateTripSubnavActive);
+    // Before We Sail accordion sections (Flights, Hotels) — same collapse pattern as Transport/Packing
+    [['flights-toggle', 'flights-body'], ['hotels-toggle', 'hotels-body']].forEach(function (pair) {
+      var head = document.getElementById(pair[0]);
+      var body = document.getElementById(pair[1]);
+      if (head && body && !head.dataset.wired) {
+        head.dataset.wired = '1';
+        head.addEventListener('click', function () {
+          var nowHidden = body.classList.toggle('hidden');
+          head.classList.toggle('collapsed');
+          if (!nowHidden) head.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+    });
   }
 
   function renderSectionNav() {
@@ -4576,6 +4988,7 @@
       renderExcursions();
       Promise.all([loadExcursions(), fetchExcursionPicks()]).then(renderExcursions);
       loadPortClimate().then(function () { renderCruiseSchedule(); renderPacking(); });
+      applyTripPhase(getTripPhase());
     } else {
       // Shop Flights
       flightsSection.style.display = '';
@@ -4594,19 +5007,24 @@
 
   function updateHeroForItinerary() {
     var hero = document.querySelector('.hero');
-    hero.style.backgroundImage =
-      'linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)), ' +
-      "url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600')";
-    hero.style.backgroundPosition = 'center';
-    hero.style.backgroundSize = 'cover';
-    hero.style.backgroundRepeat = 'no-repeat';
-    document.querySelector('.hero-title').innerHTML = 'Trip Itinerary';
+    hero.classList.add('hero-slim');
+    hero.style.backgroundImage = 'none';
+    document.querySelector('.hero-title').innerHTML = 'Our Trip';
     document.querySelector('.hero-subtitle').innerHTML = 'Venice &middot; Mediterranean Cruise &middot; Istanbul';
     document.getElementById('ai-briefing').style.display = 'none';
+    // Declutter: the countdown, the flight Ask box, and the rule don't belong here
+    document.getElementById('countdown-pill').style.display = 'none';
+    document.getElementById('ask-ai').style.display = 'none';
+    document.querySelector('.hero-rule').style.display = 'none';
   }
 
   function updateHeroForHotels() {
     var hero = document.querySelector('.hero');
+    hero.classList.remove('hero-slim');
+    document.getElementById('countdown-pill').style.display = '';
+    document.getElementById('ask-ai').style.display = '';
+    document.querySelector('.hero-rule').style.display = '';
+    document.getElementById('ai-briefing').style.display = '';
     hero.style.backgroundImage =
       'linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)), ' +
       "url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600')";
@@ -5696,6 +6114,7 @@
 
   async function init() {
     setupLanding();
+    setupTripPhase();
     setupOriginModal();
     setupBookModal();
     setupFamilyModal();
@@ -5745,88 +6164,473 @@
     if (toggle && !toggle.dataset.wired) {
       toggle.dataset.wired = '1';
       toggle.addEventListener('click', function () {
-        el.classList.toggle('hidden');
+        var nowHidden = el.classList.toggle('hidden');
         toggle.classList.toggle('collapsed');
+        if (!nowHidden) toggle.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
   }
 
   // ---- Itinerary: Cruise Schedule ----
+  function todayISO() {
+    var n = new Date();
+    return n.getFullYear() + '-' + ('0' + (n.getMonth() + 1)).slice(-2) + '-' + ('0' + n.getDate()).slice(-2);
+  }
+
+  // Group-event block (welcome dinner, milestone celebration, etc.) — shown in the day summary
+  function cruiseEventHtml(ev) {
+    var html = '<div class="cruise-event">';
+    html += '<div class="cruise-event-name">&#9733; ' + ev.name + (ev.time ? ' &middot; ' + ev.time : '') + '</div>';
+    if (ev.desc) html += '<div class="cruise-event-desc">' + ev.desc + '</div>';
+    if (ev.theme) {
+      html += '<div class="cruise-event-theme">';
+      if (ev.theme.label) html += '<span class="cruise-event-theme-label">' + ev.theme.label + '</span>';
+      html += '<span class="cruise-event-theme-chip">' +
+                '<span class="cruise-event-theme-black">BLACK</span>' +
+                '<span class="cruise-event-theme-white">&amp; WHITE</span>' +
+              '</span>';
+      if (ev.theme.sub) html += '<span class="cruise-event-theme-sub">' + ev.theme.sub + '</span>';
+      html += '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  // Reference content (Phrases / Food / Good to Know) shown as pills — one panel at a time
+  function referenceHtml(date, guide) {
+    var uid = 'ref-' + date;
+    var h = '<div class="cday-ref">';
+    h += '<div class="cday-pills">';
+    h += '<button class="cday-pill active" data-ref="' + uid + '" data-panel="phrases">Phrases</button>';
+    h += '<button class="cday-pill" data-ref="' + uid + '" data-panel="food">Food</button>';
+    h += '<button class="cday-pill" data-ref="' + uid + '" data-panel="tips">Good to Know</button>';
+    h += '</div>';
+    h += '<div class="cday-panel" data-ref="' + uid + '" data-panel="phrases">';
+    (guide.phrases || []).forEach(function (p) {
+      h += '<div class="ph-row"><span class="ph-en">' + escHtml(p.en) + '</span>' +
+        '<span class="ph-native">' + escHtml(p.native) + '</span>' +
+        '<span class="ph-phon">' + escHtml(p.phon) + '</span></div>';
+    });
+    h += '</div>';
+    h += '<div class="cday-panel hidden" data-ref="' + uid + '" data-panel="food">';
+    (guide.food || []).forEach(function (f, idx) {
+      h += '<div class="food-row"><span class="food-name">' + escHtml(f.name) +
+        (f.veg ? ' <span class="food-veg">*</span>' : '') +
+        (idx === 0 ? ' <span class="food-must">&#9733; Must try</span>' : '') + '</span>' +
+        (f.note ? '<span class="food-note">' + escHtml(f.note) + '</span>' : '') + '</div>';
+    });
+    h += '<div class="food-legend">* vegetarian</div></div>';
+    h += '<div class="cday-panel hidden" data-ref="' + uid + '" data-panel="tips">';
+    (guide.tips || []).forEach(function (t) { h += '<div class="tip-row">' + escHtml(t) + '</div>'; });
+    h += '</div></div>';
+    return h;
+  }
+
+  function wireReferencePills(scope) {
+    scope.querySelectorAll('.cday-pill').forEach(function (pill) {
+      if (pill.dataset.wired) return;
+      pill.dataset.wired = '1';
+      pill.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var ref = pill.getAttribute('data-ref'), panel = pill.getAttribute('data-panel');
+        scope.querySelectorAll('.cday-pill[data-ref="' + ref + '"]').forEach(function (p) { p.classList.toggle('active', p === pill); });
+        scope.querySelectorAll('.cday-panel[data-ref="' + ref + '"]').forEach(function (pn) {
+          pn.classList.toggle('hidden', pn.getAttribute('data-panel') !== panel);
+        });
+      });
+    });
+  }
+
   function renderCruiseSchedule() {
     var el = document.getElementById('cruise-schedule');
     if (!el) return;
+    loadAddedExcursions();
     var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    var today = todayISO();
+
     var html = '';
     CRUISE_PORTS.forEach(function (p) {
       var d = new Date(p.date + 'T12:00:00');
-      var dow = days[d.getDay()];
-      var mon = months[d.getMonth()];
-      var day = d.getDate();
-      var dotClass = 'cruise-dot ';
-      if (p.type === 'embark' || p.type === 'disembark') dotClass += 'cruise-dot-embark';
-      else if (p.type === 'port') dotClass += 'cruise-dot-port';
-      else dotClass += 'cruise-dot-sea';
+      var dow = days[d.getDay()], mon = months[d.getMonth()], day = d.getDate();
+      var guide = PORT_GUIDE[(p.label || '').split(/[,(]/)[0].trim().toLowerCase()] || null;
+      var expandable = (p.type !== 'sea');
+      var isOpen = cruiseDayOpen[p.date] === true || (expandable && p.date === today);
 
-      html += '<div class="cruise-day">';
-      html += '<div class="cruise-day-date"><span class="cruise-day-dow">' + dow + '</span>' + mon + ' ' + day + '</div>';
-      html += '<div class="' + dotClass + '"></div>';
-      html += '<div class="cruise-day-info">';
-
+      html += '<div class="cday' + (expandable ? ' cday-x' : '') + (isOpen ? ' open' : '') + '" data-date="' + p.date + '">';
+      html += '<div class="cday-head">';
+      html += '<div class="cday-date"><span class="cday-dow">' + dow + '</span>' + mon + ' ' + day + '</div>';
+      html += '<div class="cday-main">';
       if (p.type === 'sea') {
-        html += '<div class="cruise-sea-label">At Sea</div>';
+        html += '<div class="cday-port cday-sea">At Sea</div>';
       } else {
-        var wx = PORT_CLIMATE[p.date];
-        var wxHtml = '';
+        var wx = PORT_CLIMATE[p.date], wxHtml = '';
         if (wx) {
           var rainStr = wx.rain_chance > 5 ? (' &middot; ' + wx.rain_chance + '% rain') : '';
-          wxHtml = '<div class="cruise-weather">'
-            + '<span class="cruise-weather-icon">' + weatherIconHtml(wx.icon) + '</span>'
-            + wx.high + '° / ' + wx.low + '°' + rainStr
-            + '</div>';
+          wxHtml = '<span class="cday-weather"><span class="cruise-weather-icon">' + weatherIconHtml(wx.icon) + '</span>' +
+            wx.high + '&deg; / ' + wx.low + '&deg;' + rainStr + '</span>';
         }
-        html += '<div class="cruise-port-row">'
-          + '<div class="cruise-port-name">' + p.label + '</div>'
-          + wxHtml
-          + '</div>';
+        html += '<div class="cday-toprow"><div class="cday-port">' + p.label + '</div>' + wxHtml + '</div>';
         var times = '';
-        if (p.type === 'embark') {
-          times = 'Embark &middot; Depart ' + p.depart;
-        } else if (p.type === 'disembark') {
-          times = 'Arrive ' + p.arrive + ' &middot; Disembark';
-        } else {
-          if (p.arrive && p.depart) times = 'Arrive ' + p.arrive + ' &middot; Depart ' + p.depart;
-        }
-        if (times) html += '<div class="cruise-times">' + times + '</div>';
+        if (p.type === 'embark') times = 'Embark &middot; Depart ' + p.depart;
+        else if (p.type === 'disembark') times = 'Arrive ' + p.arrive + ' &middot; Disembark';
+        else if (p.arrive && p.depart) times = 'Arrive ' + p.arrive + ' &middot; Depart ' + p.depart;
+        if (times) html += '<div class="cday-times">' + times + '</div>';
       }
+      GROUP_EVENTS.forEach(function (ev) { if (ev.date === p.date) html += cruiseEventHtml(ev); });
+      html += '</div>'; // cday-main
+      if (expandable) html += '<div class="cday-caret transport-toggle-caret">&#9662;</div>';
+      html += '</div>'; // cday-head
 
-      // Group events for this date
-      GROUP_EVENTS.forEach(function (ev) {
-        if (ev.date === p.date) {
-          html += '<div class="cruise-event">';
-          html += '<div class="cruise-event-name">&#9733; ' + ev.name + (ev.time ? ' &middot; ' + ev.time : '') + '</div>';
-          if (ev.desc) html += '<div class="cruise-event-desc">' + ev.desc + '</div>';
-          if (ev.theme) {
-            html += '<div class="cruise-event-theme">';
-            if (ev.theme.label) {
-              html += '<span class="cruise-event-theme-label">' + ev.theme.label + '</span>';
-            }
-            html += '<span class="cruise-event-theme-chip">' +
-                      '<span class="cruise-event-theme-black">BLACK</span>' +
-                      '<span class="cruise-event-theme-white">&amp; WHITE</span>' +
-                    '</span>';
-            if (ev.theme.sub) {
-              html += '<span class="cruise-event-theme-sub">' + ev.theme.sub + '</span>';
-            }
-            html += '</div>';
-          }
-          html += '</div>';
-        }
-      });
-
-      html += '</div></div>';
+      if (expandable) {
+        html += '<div class="cday-body' + (isOpen ? '' : ' hidden') + '">';
+        html += '<div class="cday-sec-label">Excursions / Tours</div>';
+        html += '<div class="cday-exc" id="cdayexc-' + p.date + '"></div>';
+        html += '<button class="cday-add-exc" data-date="' + p.date + '" data-port="' + escHtml(p.label) + '">+ Add an excursion</button>';
+        if (guide) html += referenceHtml(p.date, guide);
+        html += '</div>';
+      }
+      html += '</div>'; // cday
     });
     el.innerHTML = html;
+
+    // Wire expand/collapse for each expandable day
+    el.querySelectorAll('.cday-x > .cday-head').forEach(function (head) {
+      head.addEventListener('click', function () {
+        var card = head.parentNode;
+        var open = card.classList.toggle('open');
+        var body = card.querySelector('.cday-body');
+        if (body) body.classList.toggle('hidden', !open);
+        cruiseDayOpen[card.getAttribute('data-date')] = open;
+      });
+    });
+    el.querySelectorAll('.cday-add-exc').forEach(function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        openAddExcursionModal(btn.getAttribute('data-date'), btn.getAttribute('data-port'));
+      });
+    });
+    wireReferencePills(el);
+    el.querySelectorAll('.cday-exc').forEach(function (c) {
+      renderAddedExcursions(c.id.replace('cdayexc-', ''));
+    });
+  }
+
+  // ---- Group-added excursions: Supabase (cross-user) + localStorage cache (instant + offline reads) ----
+  var SUPABASE_URL = 'https://vmpmkeisipzbzcrpssia.supabase.co';
+  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZtcG1rZWlzaXB6YnpjcnBzc2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NjY2NzgsImV4cCI6MjA5NzA0MjY3OH0.5vGXT6bDYUY59e2VnBQjzY2vDn9jhJsaYLt_wHZiU1Y';
+  function sbHeaders(extra) {
+    return Object.assign({ apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }, extra || {});
+  }
+  function sbInsert(table, body) {
+    return fetch(SUPABASE_URL + '/rest/v1/' + table, {
+      method: 'POST',
+      headers: sbHeaders({ 'Content-Type': 'application/json', Prefer: 'return=representation' }),
+      body: JSON.stringify(body)
+    }).then(function (r) { if (!r.ok) throw new Error('insert ' + r.status); return r.json(); })
+      .then(function (j) { return Array.isArray(body) ? j : j[0]; });
+  }
+  function sbDelete(table, query) {
+    return fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + query, { method: 'DELETE', headers: sbHeaders() });
+  }
+  function sbSetJoins(excId, travelers) {
+    return sbDelete('excursion_joins', 'excursion_id=eq.' + excId)
+      .then(function () { if (travelers.length) return sbInsert('excursion_joins', travelers.map(function (t) { return { excursion_id: excId, traveler: t }; })); });
+  }
+
+  var ADDED_EXCURSIONS = {};
+  function persistAddedExcursions() {
+    try { localStorage.setItem('dcf_added_excursions', JSON.stringify(ADDED_EXCURSIONS)); } catch (e) {}
+  }
+  function addedExcursionsFor(date) { return ADDED_EXCURSIONS[date] || []; }
+  function findExc(date, id) { return addedExcursionsFor(date).filter(function (r) { return r.id === id; })[0]; }
+  function priceSymbol(cur) { return cur === 'EUR' ? '€' : cur === 'GBP' ? '£' : cur === 'TRY' ? '₺' : '$'; }
+
+  function loadAddedExcursions() {
+    // Instant paint from cache (also the offline source); then refresh from Supabase.
+    try { ADDED_EXCURSIONS = JSON.parse(localStorage.getItem('dcf_added_excursions') || '{}') || {}; }
+    catch (e) { ADDED_EXCURSIONS = {}; }
+    sbRefreshExcursions();
+  }
+  function sbRefreshExcursions() {
+    Promise.all([
+      fetch(SUPABASE_URL + '/rest/v1/excursions?select=*&order=created_at.asc', { headers: sbHeaders() }).then(function (r) { return r.ok ? r.json() : null; }),
+      fetch(SUPABASE_URL + '/rest/v1/excursion_joins?select=excursion_id,traveler', { headers: sbHeaders() }).then(function (r) { return r.ok ? r.json() : null; })
+    ]).then(function (res) {
+      var excs = res[0], joins = res[1];
+      if (!excs) return; // offline / failed: keep the cached copy
+      var joinMap = {};
+      (joins || []).forEach(function (j) { (joinMap[j.excursion_id] = joinMap[j.excursion_id] || []).push(j.traveler); });
+      var grouped = {};
+      excs.forEach(function (e) {
+        e.joins = joinMap[e.id] || [];
+        (grouped[e.port_date] = grouped[e.port_date] || []).push(e);
+      });
+      ADDED_EXCURSIONS = grouped;
+      persistAddedExcursions();
+      document.querySelectorAll('.cday-exc').forEach(function (c) { renderAddedExcursions(c.id.replace('cdayexc-', '')); });
+    }).catch(function () {});
+  }
+
+  // Insert excursion + joins into Supabase, then update the local cache.
+  // Screenshots are NOT stored (they're parsed for fields only) — booking
+  // confirmations can contain names / confirmation numbers / payment info.
+  function saveAddedExcursion(rec) {
+    return sbInsert('excursions', {
+      port_date: rec.port_date, port_label: rec.port_label, title: rec.title,
+      start_time: rec.start_time, duration: rec.duration, price: rec.price, currency: rec.currency,
+      operator: rec.operator || null, meeting_point: rec.meeting_point || null,
+      link: rec.link || null, notes: rec.notes || null, added_by: rec.added_by || null
+    }).then(function (row) {
+      rec.id = row.id;
+      var joins = rec.joins || [];
+      var step = joins.length ? sbInsert('excursion_joins', joins.map(function (t) { return { excursion_id: row.id, traveler: t }; })) : Promise.resolve();
+      return step.then(function () {
+        (ADDED_EXCURSIONS[rec.port_date] = ADDED_EXCURSIONS[rec.port_date] || []).push(rec);
+        persistAddedExcursions();
+      });
+    });
+  }
+  function toggleJoin(date, id, traveler) {
+    var rec = findExc(date, id); if (!rec) return;
+    rec.joins = rec.joins || [];
+    var i = rec.joins.indexOf(traveler);
+    if (i >= 0) {
+      rec.joins.splice(i, 1);
+      sbDelete('excursion_joins', 'excursion_id=eq.' + id + '&traveler=eq.' + encodeURIComponent(traveler)).catch(function () {});
+    } else {
+      rec.joins.push(traveler);
+      sbInsert('excursion_joins', { excursion_id: id, traveler: traveler }).catch(function () {});
+    }
+    persistAddedExcursions();
+  }
+
+  function renderAddedExcursions(date) {
+    var el = document.getElementById('cdayexc-' + date);
+    if (!el) return;
+    var list = addedExcursionsFor(date);
+    if (!list.length) { el.innerHTML = '<div class="cday-exc-empty">No excursions added yet.</div>'; return; }
+    var me = getUserName();
+    var html = '';
+    list.forEach(function (r) {
+      html += '<div class="gx-card"><div class="gx-body">';
+      html += '<div class="gx-title">' + escHtml(r.title) + '</div>';
+      var meta = [];
+      if (r.start_time) meta.push(escHtml(r.start_time));
+      if (r.duration) meta.push(escHtml(r.duration));
+      if (r.price) meta.push(priceSymbol(r.currency) + escHtml(String(r.price)));
+      if (meta.length) html += '<div class="gx-meta">' + meta.join(' &middot; ') + '</div>';
+      if (r.meeting_point) html += '<div class="gx-sub">Meet: ' + escHtml(r.meeting_point) + '</div>';
+      if (r.notes) html += '<div class="gx-sub">' + escHtml(r.notes) + '</div>';
+      var safeLink = safeUrl(r.link);
+      if (safeLink) html += '<div class="gx-sub"><a href="' + escHtml(safeLink) + '" target="_blank" rel="noopener">Booking link &#8599;</a></div>';
+      var joins = r.joins || [];
+      html += '<div class="gx-going"><span class="gx-going-label">Going</span> ' +
+        (joins.length ? joins.map(function (n) { return '<span class="gx-person">' + escHtml(n) + '</span>'; }).join('') : '<span class="gx-none">no one yet</span>') + '</div>';
+      var iAmIn = me && joins.indexOf(me) >= 0;
+      html += '<div class="gx-actions">' +
+        '<button class="gx-join' + (iAmIn ? ' joined' : '') + '" data-date="' + date + '" data-id="' + escHtml(r.id) + '">' +
+        (iAmIn ? '✓ You’re going' : 'Join') + '</button>' +
+        '<button class="gx-roster" data-date="' + date + '" data-id="' + escHtml(r.id) + '">Who’s going</button>' +
+        '</div></div></div>';
+    });
+    el.innerHTML = html;
+    el.querySelectorAll('.gx-join').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var me2 = getUserName();
+        if (!me2) { promptName(); return; }
+        toggleJoin(b.getAttribute('data-date'), b.getAttribute('data-id'), me2);
+        renderAddedExcursions(b.getAttribute('data-date'));
+      });
+    });
+    el.querySelectorAll('.gx-roster').forEach(function (b) {
+      b.addEventListener('click', function () { openJoinRosterModal(b.getAttribute('data-date'), b.getAttribute('data-id')); });
+    });
+  }
+
+  function rosterChecklist(checkedNames) {
+    return TRAVELERS.map(function (name) {
+      var on = checkedNames.indexOf(name) >= 0;
+      return '<label class="rost-row"><input type="checkbox" value="' + escHtml(name) + '"' + (on ? ' checked' : '') + '> ' + escHtml(name) + '</label>';
+    }).join('');
+  }
+
+  function openJoinRosterModal(date, id) {
+    var rec = findExc(date, id); if (!rec) return;
+    rec.joins = rec.joins || [];
+    var ov = document.createElement('div');
+    ov.className = 'modal-overlay active';
+    ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
+      '<div class="modal-title">Who’s going?</div>' +
+      '<div class="modal-sub">' + escHtml(rec.title) + '</div>' +
+      '<div class="rost-list">' + rosterChecklist(rec.joins) + '</div>' +
+      '<div class="axm-foot"><button class="modal-btn" data-act="cancel" type="button">Cancel</button>' +
+      '<button class="modal-btn modal-btn-primary" data-act="save" type="button">Save</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function (e) {
+      var act = e.target.getAttribute && e.target.getAttribute('data-act');
+      if (e.target === ov || act === 'cancel') { ov.remove(); return; }
+      if (act === 'save') {
+        rec.joins = Array.prototype.slice.call(ov.querySelectorAll('.rost-list input:checked')).map(function (c) { return c.value; });
+        persistAddedExcursions();
+        sbSetJoins(id, rec.joins).catch(function () {});
+        ov.remove();
+        renderAddedExcursions(date);
+      }
+    });
+  }
+
+  // "14:30" -> {hr:'2', min:'30', ampm:'PM'} for prefilling the structured time selects
+  function to12h(hhmm) {
+    var m = /^(\d{1,2}):(\d{2})/.exec(hhmm || '');
+    if (!m) return null;
+    var h = parseInt(m[1], 10), min = m[2];
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    var h12 = h % 12; if (h12 === 0) h12 = 12;
+    return { hr: String(h12), min: min, ampm: ampm };
+  }
+  function parseDuration(s) {
+    s = (s || '').toLowerCase().replace(/½/g, '.5').replace(/¼/g, '.25').replace(/¾/g, '.75').replace(/\s+\./g, '.');
+    var unit = /min/.test(s) ? 'minutes' : 'hours';
+    var mixed = s.match(/(\d+)\s+(\d+)\s*\/\s*(\d+)/);   // "3 1/2"
+    if (mixed) return { num: String(+mixed[1] + (+mixed[2]) / (+mixed[3])), unit: unit };
+    var frac = s.match(/(\d+)\s*\/\s*(\d+)/);            // "1/2"
+    if (frac) return { num: String((+frac[1]) / (+frac[2])), unit: unit };
+    var dec = s.match(/\d+(?:\.\d+)?/);                  // "3" or "3.5"
+    return { num: dec ? dec[0] : '', unit: unit };
+  }
+
+  function openAddExcursionModal(date, port) {
+    var ov = document.createElement('div');
+    ov.className = 'modal-overlay active';
+    var me = getUserName();
+    var hrOpts = '';
+    for (var h = 1; h <= 12; h++) hrOpts += '<option value="' + h + '">' + h + '</option>';
+    var minOpts = '';
+    ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'].forEach(function (m) { minOpts += '<option value="' + m + '">:' + m + '</option>'; });
+    ov.innerHTML =
+      '<div class="modal axm" style="text-align:left;">' +
+        '<div class="modal-title">Add an excursion</div>' +
+        '<div class="modal-sub">' + escHtml(port) + '</div>' +
+        '<label class="axm-upload">&#128247; Upload booking screenshot' +
+          '<input type="file" accept="image/*" id="axm-file" style="display:none;"></label>' +
+        '<div class="axm-hint">Used only to fill in the form below; the image isn’t saved.</div>' +
+        '<div class="axm-upstatus" id="axm-upstatus"></div>' +
+        '<div class="axm-or">or enter manually</div>' +
+        '<input class="modal-input axm-in" id="axm-title" placeholder="Title *">' +
+        '<div class="axm-field-label">Date *</div>' +
+        '<input class="modal-input axm-in" id="axm-date" type="date" value="' + date + '">' +
+        '<div class="axm-field-label">Start time *</div>' +
+        '<div class="axm-row">' +
+          '<select class="modal-input axm-in" id="axm-hr"><option value="">Hr</option>' + hrOpts + '</select>' +
+          '<select class="modal-input axm-in" id="axm-min">' + minOpts + '</select>' +
+          '<select class="modal-input axm-in" id="axm-ampm"><option value="">AM/PM</option><option>AM</option><option>PM</option></select>' +
+        '</div>' +
+        '<div class="axm-field-label">Duration *</div>' +
+        '<div class="axm-row">' +
+          '<input class="modal-input axm-in" id="axm-dur" type="number" min="0" step="0.5" inputmode="decimal" placeholder="e.g. 3">' +
+          '<select class="modal-input axm-in" id="axm-durunit"><option value="hours">hours</option><option value="minutes">minutes</option></select>' +
+        '</div>' +
+        '<div class="axm-field-label">Price per person *</div>' +
+        '<div class="axm-row">' +
+          '<input class="modal-input axm-in" id="axm-price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 45">' +
+          '<select class="modal-input axm-in" id="axm-currency" style="max-width:88px;"><option>USD</option><option>EUR</option><option>GBP</option><option>TRY</option></select>' +
+        '</div>' +
+        '<input class="modal-input axm-in" id="axm-operator" placeholder="Operator / source (optional)">' +
+        '<input class="modal-input axm-in" id="axm-meet" placeholder="Meeting point (optional)">' +
+        '<input class="modal-input axm-in" id="axm-link" placeholder="Booking link (optional)">' +
+        '<input class="modal-input axm-in" id="axm-notes" placeholder="Notes (optional)">' +
+        '<div class="axm-going-label">Who’s going?</div>' +
+        '<div class="rost-list">' + rosterChecklist(me ? [me] : []) + '</div>' +
+        '<div class="axm-foot"><button class="modal-btn" data-act="cancel" type="button">Cancel</button>' +
+        '<button class="modal-btn modal-btn-primary" id="axm-save" data-act="save" type="button" disabled>Save</button></div>' +
+      '</div>';
+    document.body.appendChild(ov);
+
+    var saveBtn = ov.querySelector('#axm-save');
+    function reqFilled() {
+      return ov.querySelector('#axm-title').value.trim() !== '' &&
+        ov.querySelector('#axm-date').value !== '' &&
+        ov.querySelector('#axm-hr').value !== '' &&
+        ov.querySelector('#axm-ampm').value !== '' &&
+        ov.querySelector('#axm-dur').value !== '' &&
+        ov.querySelector('#axm-price').value !== '';
+    }
+    function refresh() { saveBtn.disabled = !reqFilled(); }
+    ov.querySelectorAll('.axm-in').forEach(function (el2) {
+      el2.addEventListener('input', refresh);
+      el2.addEventListener('change', refresh);
+    });
+
+    ov.querySelector('#axm-file').addEventListener('change', function (ev) {
+      var f = ev.target.files && ev.target.files[0]; if (!f) return;
+      var status = ov.querySelector('#axm-upstatus');
+      status.textContent = 'Reading screenshot…';
+      var reader = new FileReader();
+      reader.onload = function () {
+        fetch('/api/parse_excursion', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: reader.result, port_date: date })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (d && d.parsed) {
+              var p = d.parsed;
+              if (p.title) ov.querySelector('#axm-title').value = p.title;
+              if (p.date) ov.querySelector('#axm-date').value = p.date;
+              var t = to12h(p.start_time);
+              if (t) { ov.querySelector('#axm-hr').value = t.hr; ov.querySelector('#axm-min').value = t.min; ov.querySelector('#axm-ampm').value = t.ampm; }
+              if (p.duration) { var du = parseDuration(p.duration); if (du.num) ov.querySelector('#axm-dur').value = du.num; ov.querySelector('#axm-durunit').value = du.unit; }
+              if (p.price) ov.querySelector('#axm-price').value = (String(p.price).match(/[\d.]+/) || [''])[0];
+              if (p.currency) ov.querySelector('#axm-currency').value = p.currency;
+              if (p.operator) ov.querySelector('#axm-operator').value = p.operator;
+              if (p.meeting_point) ov.querySelector('#axm-meet').value = p.meeting_point;
+              if (p.link) ov.querySelector('#axm-link').value = p.link;
+              if (p.notes) ov.querySelector('#axm-notes').value = p.notes;
+              status.textContent = 'Filled from screenshot — check the fields, then Save.';
+            } else {
+              status.textContent = (d && d.error) ? d.error : 'Could not read it — enter the details manually.';
+            }
+            refresh();
+          })
+          .catch(function () { status.textContent = 'Upload needs the live site (not local) — enter manually for now.'; });
+      };
+      reader.readAsDataURL(f);
+    });
+
+    ov.addEventListener('click', function (e) {
+      var act = e.target.getAttribute && e.target.getAttribute('data-act');
+      if (e.target === ov || act === 'cancel') { ov.remove(); return; }
+      if (act === 'save') {
+        if (!reqFilled()) return;
+        var hr = ov.querySelector('#axm-hr').value;
+        var min = ov.querySelector('#axm-min').value || '00';
+        var ampm = ov.querySelector('#axm-ampm').value;
+        var rec = {
+          port_date: ov.querySelector('#axm-date').value || date, port_label: port,
+          title: ov.querySelector('#axm-title').value.trim(),
+          start_time: hr + ':' + min + ' ' + ampm,
+          duration: ov.querySelector('#axm-dur').value + ' ' + ov.querySelector('#axm-durunit').value,
+          price: ov.querySelector('#axm-price').value,
+          currency: ov.querySelector('#axm-currency').value,
+          operator: ov.querySelector('#axm-operator').value.trim(),
+          meeting_point: ov.querySelector('#axm-meet').value.trim(),
+          link: ov.querySelector('#axm-link').value.trim(),
+          notes: ov.querySelector('#axm-notes').value.trim(),
+          added_by: getUserName() || '',
+          joins: Array.prototype.slice.call(ov.querySelectorAll('.rost-list input:checked')).map(function (c) { return c.value; })
+        };
+        saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+        saveAddedExcursion(rec)
+          .then(function () { ov.remove(); renderAddedExcursions(rec.port_date); if (rec.port_date !== date) renderAddedExcursions(date); })
+          .catch(function () {
+            saveBtn.disabled = false; saveBtn.textContent = 'Save';
+            ov.querySelector('#axm-upstatus').textContent = 'Could not save. Check your connection and try again.';
+          });
+        return;
+      }
+    });
   }
 
   // ---- Itinerary: Onboard the ship ----
@@ -5892,8 +6696,9 @@
     if (toggle && !toggle.dataset.wired) {
       toggle.dataset.wired = '1';
       toggle.addEventListener('click', function () {
-        el.classList.toggle('hidden');
+        var nowHidden = el.classList.toggle('hidden');
         toggle.classList.toggle('collapsed');
+        if (!nowHidden) toggle.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
   }
@@ -5999,8 +6804,9 @@
     if (toggle && !toggle.dataset.wired) {
       toggle.dataset.wired = '1';
       toggle.addEventListener('click', function () {
-        el.classList.toggle('hidden');
+        var nowHidden = el.classList.toggle('hidden');
         toggle.classList.toggle('collapsed');
+        if (!nowHidden) toggle.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
   }
@@ -6176,6 +6982,73 @@
     document.getElementById('fi-modal').classList.add('active');
   }
 
+  // Single excursion card HTML (shared by the Tours catalog and the cruise day cards)
+  function excursionCardHtml(e) {
+    var counts = getExcursionCounts(e.code);
+    var iActive = userHasExcursionPick(e.code, 'interested');
+    var bActive = userHasExcursionPick(e.code, 'booked');
+    var html = '<div class="exc-card" data-code="' + escHtml(e.code || '') + '">';
+    html += '<div class="exc-thumb">';
+    if (e.image) {
+      html += '<img src="' + escHtml(e.image) + '" alt="" loading="lazy" onerror="this.parentNode.innerHTML=\'<div class=exc-thumb-empty>&#9875;</div>\'">';
+    } else {
+      html += '<div class="exc-thumb-empty">&#9875;</div>';
+    }
+    html += '</div>';
+    html += '<div class="exc-body">';
+    var titleInner = escHtml(e.title || '');
+    if (e.detail_url) {
+      html += '<div class="exc-title"><a href="' + escHtml(e.detail_url) + '" target="_blank" rel="noopener">' + titleInner + '</a></div>';
+    } else {
+      html += '<div class="exc-title">' + titleInner + '</div>';
+    }
+    var metaParts = [];
+    if (e.duration) metaParts.push(escHtml(e.duration));
+    if (e.activity_level) metaParts.push('Activity ' + e.activity_level + '/5');
+    if (typeof e.adult_from === 'number') metaParts.push('$' + e.adult_from.toFixed(0) + '+');
+    html += '<div class="exc-meta">' + metaParts.join(' &middot; ') + '</div>';
+    if (e.description) html += '<div class="exc-desc">' + escHtml(e.description) + '</div>';
+    html += '<div class="exc-actions">';
+    html += '<button class="exc-btn exc-btn-interested' + (iActive ? ' active' : '') +
+      '" data-code="' + escHtml(e.code) + '" data-action="interested">' +
+      '<span class="exc-btn-icon">&#9733;</span> Interested</button>';
+    html += '<button class="exc-btn exc-btn-booked' + (bActive ? ' active' : '') +
+      '" data-code="' + escHtml(e.code) + '" data-action="booked">' +
+      '<span class="exc-btn-icon">&#10003;</span> Booked</button>';
+    html += '</div>';
+    html += '<div class="exc-see-row">';
+    if (counts.interested.length > 0) {
+      html += '<button class="exc-see-link exc-see-interested" data-code="' + escHtml(e.code) + '" data-type="interested">See ' +
+        counts.interested.length + ' interested</button>';
+    }
+    if (counts.booked.length > 0) {
+      html += '<button class="exc-see-link exc-see-booked" data-code="' + escHtml(e.code) + '" data-type="booked">See ' +
+        counts.booked.length + ' booked</button>';
+    }
+    html += '</div></div></div>';
+    return html;
+  }
+
+  // Wire Interested/Booked + "See N" buttons within any container (idempotent)
+  function wireExcursionButtons(scope) {
+    scope.querySelectorAll('.exc-btn').forEach(function (btn) {
+      if (btn.dataset.wired) return;
+      btn.dataset.wired = '1';
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        toggleExcursionPick(btn.getAttribute('data-code'), btn.getAttribute('data-action'), btn);
+      });
+    });
+    scope.querySelectorAll('.exc-see-link').forEach(function (l) {
+      if (l.dataset.wired) return;
+      l.dataset.wired = '1';
+      l.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        showExcursionNamesModal(l.getAttribute('data-code'), l.getAttribute('data-type'));
+      });
+    });
+  }
+
   function renderExcursions() {
     var el = document.getElementById('itinerary-excursions');
     if (!el) return;
@@ -6216,51 +7089,7 @@
         ' <span class="exc-port-caret">&#9662;</span></span>';
       html += '</div>';
       html += '<div class="exc-port-list">';
-      list.forEach(function (e) {
-        var counts = getExcursionCounts(e.code);
-        var iActive = userHasExcursionPick(e.code, 'interested');
-        var bActive = userHasExcursionPick(e.code, 'booked');
-        html += '<div class="exc-card" data-code="' + escHtml(e.code || '') + '">';
-        html += '<div class="exc-thumb">';
-        if (e.image) {
-          html += '<img src="' + escHtml(e.image) + '" alt="" loading="lazy" onerror="this.parentNode.innerHTML=\'<div class=exc-thumb-empty>&#9875;</div>\'">';
-        } else {
-          html += '<div class="exc-thumb-empty">&#9875;</div>';
-        }
-        html += '</div>';
-        html += '<div class="exc-body">';
-        var titleInner = escHtml(e.title || '');
-        if (e.detail_url) {
-          html += '<div class="exc-title"><a href="' + escHtml(e.detail_url) + '" target="_blank" rel="noopener">' + titleInner + '</a></div>';
-        } else {
-          html += '<div class="exc-title">' + titleInner + '</div>';
-        }
-        var metaParts = [];
-        if (e.duration) metaParts.push(escHtml(e.duration));
-        if (e.activity_level) metaParts.push('Activity ' + e.activity_level + '/5');
-        if (typeof e.adult_from === 'number') metaParts.push('$' + e.adult_from.toFixed(0) + '+');
-        html += '<div class="exc-meta">' + metaParts.join(' &middot; ') + '</div>';
-        if (e.description) html += '<div class="exc-desc">' + escHtml(e.description) + '</div>';
-        html += '<div class="exc-actions">';
-        html += '<button class="exc-btn exc-btn-interested' + (iActive ? ' active' : '') +
-          '" data-code="' + escHtml(e.code) + '" data-action="interested">' +
-          '<span class="exc-btn-icon">&#9733;</span> Interested</button>';
-        html += '<button class="exc-btn exc-btn-booked' + (bActive ? ' active' : '') +
-          '" data-code="' + escHtml(e.code) + '" data-action="booked">' +
-          '<span class="exc-btn-icon">&#10003;</span> Booked</button>';
-        html += '</div>';
-        html += '<div class="exc-see-row">';
-        if (counts.interested.length > 0) {
-          html += '<button class="exc-see-link exc-see-interested" data-code="' + escHtml(e.code) + '" data-type="interested">See ' +
-            counts.interested.length + ' interested</button>';
-        }
-        if (counts.booked.length > 0) {
-          html += '<button class="exc-see-link exc-see-booked" data-code="' + escHtml(e.code) + '" data-type="booked">See ' +
-            counts.booked.length + ' booked</button>';
-        }
-        html += '</div>';
-        html += '</div></div>';
-      });
+      list.forEach(function (e) { html += excursionCardHtml(e); });
       html += '</div></div>';
     });
 
@@ -6277,21 +7106,7 @@
       });
     });
 
-    // Wire up interested/booked buttons
-    el.querySelectorAll('.exc-btn').forEach(function (btn) {
-      btn.addEventListener('click', function (ev) {
-        ev.stopPropagation();
-        toggleExcursionPick(btn.getAttribute('data-code'), btn.getAttribute('data-action'), btn);
-      });
-    });
-
-    // Wire up "See N" name links
-    el.querySelectorAll('.exc-see-link').forEach(function (l) {
-      l.addEventListener('click', function (ev) {
-        ev.stopPropagation();
-        showExcursionNamesModal(l.getAttribute('data-code'), l.getAttribute('data-type'));
-      });
-    });
+    wireExcursionButtons(el);
   }
 
   // Keep legacy alias so any other callers still work
@@ -6489,35 +7304,6 @@
 
   // Wire up the Add Hotel button
   document.getElementById('add-hotel-btn').addEventListener('click', function () { openAddHotelModal(); });
-
-  // Wire up itinerary quick-nav buttons
-  document.querySelectorAll('.itin-quicknav-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var targetId = btn.getAttribute('data-target');
-      var target = document.getElementById(targetId);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        // Update active state
-        document.querySelectorAll('.itin-quicknav-btn').forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-      }
-    });
-  });
-
-  // Update quick-nav active state on scroll
-  var itinAnchors = ['itin-flights-anchor', 'itin-hotels-anchor', 'itin-transport-anchor', 'itin-cruise-anchor', 'itin-packing-anchor', 'itin-excursions-anchor'];
-  window.addEventListener('scroll', function () {
-    if (activeSection !== 'itinerary') return;
-    var scrollY = window.scrollY + 120;
-    var activeAnchor = itinAnchors[0];
-    itinAnchors.forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el && el.offsetTop <= scrollY) activeAnchor = id;
-    });
-    document.querySelectorAll('.itin-quicknav-btn').forEach(function (b) {
-      b.classList.toggle('active', b.getAttribute('data-target') === activeAnchor);
-    });
-  });
 
   function openAddHotelModal() {
     var old = document.querySelector('.ahm-overlay');
