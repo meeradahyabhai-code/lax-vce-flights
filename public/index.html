@@ -1713,6 +1713,9 @@
   }
   .axm-hint { font-family: var(--sans); font-size: 11px; color: var(--text-tertiary); margin: 4px 0 0; }
   .axm-upstatus { font-family: var(--sans); font-size: 12px; color: var(--text-secondary); margin: 6px 0; min-height: 14px; }
+  .axm-upstatus.loading { color: var(--text-secondary); }
+  .axm-upstatus.ok { color: var(--lagoon); font-weight: 600; }
+  .axm-upstatus.err { color: #b3261e; }
   .axm-or { text-align: center; font-family: var(--sans); font-size: 12px; color: var(--text-tertiary); margin: 8px 0; text-transform: uppercase; letter-spacing: 1px; }
   .axm-in { margin-bottom: 8px; }
   .axm-row { display: flex; gap: 8px; }
@@ -6666,7 +6669,8 @@
     ov.querySelector('#axm-file').addEventListener('change', function (ev) {
       var f = ev.target.files && ev.target.files[0]; if (!f) return;
       var status = ov.querySelector('#axm-upstatus');
-      status.textContent = 'Reading screenshot…';
+      status.className = 'axm-upstatus loading';
+      status.textContent = 'Reading your screenshot…';
       var reader = new FileReader();
       reader.onload = function () {
         fetch('/api/parse_excursion', {
@@ -6688,13 +6692,20 @@
               if (p.meeting_point) ov.querySelector('#axm-meet').value = p.meeting_point;
               if (p.link) ov.querySelector('#axm-link').value = p.link;
               if (p.notes) ov.querySelector('#axm-notes').value = p.notes;
-              status.textContent = 'Filled from screenshot — check the fields, then Save.';
+              status.className = 'axm-upstatus ok';
+              status.textContent = '✓ Filled from your screenshot. Review the details below.';
+              refresh();
+              setTimeout(function () { status.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
             } else {
-              status.textContent = (d && d.error) ? d.error : 'Could not read it — enter the details manually.';
+              status.className = 'axm-upstatus err';
+              status.textContent = (d && d.error) ? d.error : 'Could not read it. Enter the details manually below.';
+              refresh();
             }
-            refresh();
           })
-          .catch(function () { status.textContent = 'Upload needs the live site (not local) — enter manually for now.'; });
+          .catch(function () {
+            status.className = 'axm-upstatus err';
+            status.textContent = 'Could not read it. Enter the details manually below.';
+          });
       };
       reader.readAsDataURL(f);
     });
