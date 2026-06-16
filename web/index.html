@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="DFC2026">
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -89,16 +89,6 @@
     /* Respect notch / rounded corners / home indicator in the installed (standalone) app */
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
-  }
-  /* Status bar is now translucent (immersive video on Home). Keep the light app
-     screens clear of the clock/battery; Home is a fixed full-bleed overlay so it's unaffected. */
-  #page-content { padding-top: env(safe-area-inset-top, 0px); }
-  /* Subtle scrim behind the translucent status bar on light screens so the clock/battery
-     stay legible over cream. Hidden on Home (page-content is display:none there). */
-  #page-content::before {
-    content: ''; position: fixed; top: 0; left: 0; right: 0;
-    height: env(safe-area-inset-top, 0px); z-index: 40; pointer-events: none;
-    background: linear-gradient(180deg, rgba(8,14,26,0.28), rgba(8,14,26,0));
   }
 
   /* ── Landing screen ── */
@@ -255,7 +245,7 @@
 
   /* Our Trip: sticky nav wrapper (phase toggle + quick links — always on screen) */
   .trip-nav {
-    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30;
+    position: sticky; top: 0; z-index: 30;
     background: var(--paper); border-bottom: 1px solid var(--fog);
     padding: 10px 0 0; margin-bottom: 20px;
   }
@@ -285,7 +275,7 @@
   /* Clear the sticky trip-nav when jumping to a section */
   #itin-flights-anchor, #itin-hotels-anchor, #itin-transport-anchor,
   #itin-packing-anchor, #itin-cruise-anchor, #itin-onboard-anchor, #itin-excursions-anchor {
-    scroll-margin-top: calc(140px + env(safe-area-inset-top, 0px));
+    scroll-margin-top: 140px;
   }
   .trip-phase-btn {
     flex: 1; border: none; cursor: pointer; white-space: nowrap;
