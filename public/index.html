@@ -2379,8 +2379,8 @@
   <!-- Sticky app nav: phase toggle + section tab strip -->
   <div class="trip-nav" id="trip-nav">
     <div class="trip-phase-toggle" id="trip-phase-toggle">
-      <button class="trip-phase-btn active" data-phase="before-sail">Before We Sail</button>
-      <button class="trip-phase-btn" data-phase="cruise">The Cruise</button>
+      <button class="trip-phase-btn" data-phase="before-sail">Before We Sail</button>
+      <button class="trip-phase-btn active" data-phase="cruise">The Cruise</button>
       <button class="trip-phase-btn" data-phase="bookings">My Bookings</button>
     </div>
     <div class="trip-subnav" id="subnav-cruise" style="display:none;">
@@ -2391,7 +2391,7 @@
   </div>
 
   <!-- ============ BEFORE WE SAIL ============ -->
-  <div class="trip-phase" id="phase-before-sail">
+  <div class="trip-phase" id="phase-before-sail" style="display:none;">
 
     <!-- Confirmed Flights -->
     <div id="itin-flights-anchor"></div>
@@ -2449,7 +2449,7 @@
   </div>
 
   <!-- ============ THE CRUISE ============ -->
-  <div class="trip-phase" id="phase-cruise" style="display:none;">
+  <div class="trip-phase" id="phase-cruise">
 
     <!-- Cruise Schedule -->
     <div id="itin-cruise-anchor"></div>
@@ -5238,7 +5238,7 @@
       renderExcursions();
       Promise.all([loadExcursions(), fetchExcursionPicks()]).then(function () { renderExcursions(); refreshMyBookingsIfActive(); });
       loadPortClimate().then(function () { renderCruiseSchedule(); renderPacking(); });
-      applyTripPhase(getTripPhase());
+      applyTripPhase('cruise'); // opening Our Trip lands on The Cruise; the toggle still switches
     } else {
       // Shop Flights
       flightsSection.style.display = '';
