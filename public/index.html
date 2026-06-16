@@ -1709,10 +1709,26 @@
   .cday-times { font-family: var(--sans); font-size: 14px; color: var(--text-secondary); margin-top: 3px; font-feature-settings: var(--nums-tabular); }
   .cday-caret { align-self: center; }
   .cday:not(.open) .cday-caret { transform: rotate(-90deg); }
+
+  /* Cinematic port cards — the destination image IS the card (Ritz, not a baked-in thumbnail) */
+  .cday-cine { background: #0e1f38; border: none; overflow: hidden; box-shadow: 0 8px 26px rgba(14,31,56,0.14); }
+  .cday-cine > .cday-head { display: block; padding: 0; position: relative; min-height: 176px;
+    background-size: cover; background-position: center; }
+  .cday-cine .cday-scrim { position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(8,14,26,.5) 0%, rgba(8,14,26,.08) 34%, rgba(8,14,26,.42) 74%, rgba(8,14,26,.86) 100%); }
+  .cday-cine .cday-head-inner { position: relative; min-height: 176px; display: flex; flex-direction: column; justify-content: space-between; padding: 16px 18px; }
+  .cday-cine .cday-htop { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .cday-cine .cday-eyebrow { color: #fff; font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; opacity: .96; text-shadow: 0 1px 10px rgba(0,0,0,.45); font-feature-settings: var(--nums-tabular); }
+  .cday-cine .cday-weather { color: #fff; background: rgba(255,255,255,.18); backdrop-filter: blur(6px); padding: 5px 11px; border-radius: 999px; font-size: 13px; }
+  .cday-cine .cday-hbot { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+  .cday-cine .cday-port { color: #fff; font-family: var(--serif); font-size: 28px; font-weight: 500; line-height: 1.08; text-shadow: 0 2px 20px rgba(0,0,0,.45); }
+  .cday-cine .cday-times { color: #fff; opacity: .95; font-size: 14px; margin-top: 5px; text-shadow: 0 1px 12px rgba(0,0,0,.5); font-feature-settings: var(--nums-tabular); }
+  .cday-cine .cday-caret-w { flex: 0 0 auto; color: #fff; font-size: 16px; line-height: 1; opacity: .95; transition: transform .2s; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
+  .cday-cine:not(.open) .cday-caret-w { transform: rotate(-90deg); }
+  .cday-cine .cday-body { background: var(--bg-surface); padding: 4px 18px 18px; }
+  .cday-cine .cday-events-strip { background: var(--bg-surface); padding: 14px 18px 2px; }
   .cday-body { padding: 0 18px 18px; }
   .cday-body.hidden { display: none; }
-  .cday-banner { margin: 2px 0 18px; border-radius: 12px; overflow: hidden; height: 160px; box-shadow: 0 6px 20px rgba(14,31,56,0.10); }
-  .cday-banner img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.86) contrast(.96) brightness(.96); }
   .cday-sec-label { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-tertiary); margin: 4px 0 12px; }
   .cday-exc { display: flex; flex-direction: column; gap: 12px; }
   .cday-exc-empty { font-family: var(--sans); font-size: 14px; color: var(--text-tertiary); padding: 2px 0; }
@@ -2051,6 +2067,8 @@
     background: #f0f9f3; border-color: #2f7d4b; color: #2f7d4b;
   }
   .exc-btn-booked.active .exc-btn-count { color: #2f7d4b; }
+  .exc-btn-ncl { text-decoration: none; color: var(--azure); border-color: var(--azure); }
+  .exc-btn-ncl:hover { background: var(--azure); color: #fff; border-color: var(--azure); }
 
   @media (max-width: 640px) {
     .exc-card {
@@ -2144,7 +2162,7 @@
 <!-- Landing screen -->
 <div class="landing-screen" id="landing-screen">
   <div class="cine" id="cine">
-    <video class="cine-video" id="cine-video" muted loop playsinline preload="none" poster="/media/sea-poster.jpg"></video>
+    <video class="cine-video" id="cine-video" muted loop playsinline preload="none" poster="/media/sea-day-poster.jpg"></video>
     <div class="cine-scrim"></div>
     <div class="cine-hero">
       <div class="cine-hero-eyebrow">July 2026</div>
@@ -6115,19 +6133,22 @@
   }
 
   // ---- Cinematic Home (serene ambient video hero, Ritz/Aman mood) ----
-  var cineVideoStarted = false;
   function initCineVideo() {
     var v = document.getElementById('cine-video');
     if (!v) return;
+    // Day = serene Mediterranean blue; night = golden-hour sunset.
+    var hr = new Date().getHours();
+    var base = (hr < 6 || hr >= 19) ? 'sea-night' : 'sea-day';
+    v.setAttribute('poster', '/media/' + base + '-poster.jpg');
     var conn = navigator.connection || {};
     // Poster-first: on data-saver / reduced-motion / offline, keep the still poster only (no video download).
     if (conn.saveData === true || navigator.onLine === false ||
         (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-    if (!cineVideoStarted) {
+    var want = '/media/' + base + '.mp4';
+    if (v.getAttribute('src') !== want) {
       v.muted = true;
-      v.setAttribute('src', '/media/sea.mp4');
+      v.setAttribute('src', want);
       v.load();
-      cineVideoStarted = true;
     }
     var p = v.play();
     if (p && p.catch) p.catch(function () {}); // autoplay blocked -> poster stays, no error
@@ -6374,34 +6395,48 @@
       var expandable = (p.type !== 'sea');
       var isOpen = cruiseDayOpen[p.date] === true || (expandable && p.date === today);
 
-      html += '<div class="cday' + (expandable ? ' cday-x' : '') + (isOpen ? ' open' : '') + '" data-date="' + p.date + '">';
-      html += '<div class="cday-head">';
-      html += '<div class="cday-date"><span class="cday-dow">' + dow + '</span>' + mon + ' ' + day + '</div>';
-      html += '<div class="cday-main">';
-      if (p.type === 'sea') {
-        html += '<div class="cday-port cday-sea">At Sea</div>';
-      } else {
-        var wx = PORT_CLIMATE[p.date], wxHtml = '';
-        if (wx) {
-          var rainStr = wx.rain_chance > 5 ? (' &middot; ' + wx.rain_chance + '% rain') : '';
-          wxHtml = '<span class="cday-weather"><span class="cruise-weather-icon">' + weatherIconHtml(wx.icon) + '</span>' +
-            wx.high + '&deg; / ' + wx.low + '&deg;' + rainStr + '</span>';
-        }
-        html += '<div class="cday-toprow"><div class="cday-port">' + p.label + '</div>' + wxHtml + '</div>';
-        var times = '';
-        if (p.type === 'embark') times = 'Embark &middot; Depart ' + p.depart;
-        else if (p.type === 'disembark') times = 'Arrive ' + p.arrive + ' &middot; Disembark';
-        else if (p.arrive && p.depart) times = 'Arrive ' + p.arrive + ' &middot; Depart ' + p.depart;
-        if (times) html += '<div class="cday-times">' + times + '</div>';
+      var hasImg = expandable && PORT_IMAGES[portSlug];
+      // shared bits
+      var wx = PORT_CLIMATE[p.date], wxHtml = '';
+      if (wx && p.type !== 'sea') {
+        var rainStr = wx.rain_chance > 5 ? (' &middot; ' + wx.rain_chance + '% rain') : '';
+        wxHtml = '<span class="cday-weather"><span class="cruise-weather-icon">' + weatherIconHtml(wx.icon) + '</span>' +
+          wx.high + '&deg; / ' + wx.low + '&deg;' + rainStr + '</span>';
       }
-      GROUP_EVENTS.forEach(function (ev) { if (ev.date === p.date) html += cruiseEventHtml(ev); });
-      html += '</div>'; // cday-main
-      if (expandable) html += '<div class="cday-caret transport-toggle-caret">&#9662;</div>';
-      html += '</div>'; // cday-head
+      var times = '';
+      if (p.type === 'embark') times = 'Embark &middot; Depart ' + p.depart;
+      else if (p.type === 'disembark') times = 'Arrive ' + p.arrive + ' &middot; Disembark';
+      else if (p.arrive && p.depart) times = 'Arrive ' + p.arrive + ' &middot; Depart ' + p.depart;
+      var eventsHtml = '';
+      GROUP_EVENTS.forEach(function (ev) { if (ev.date === p.date) eventsHtml += cruiseEventHtml(ev); });
+
+      html += '<div class="cday' + (expandable ? ' cday-x' : '') + (hasImg ? ' cday-cine' : '') + (isOpen ? ' open' : '') + '" data-date="' + p.date + '">';
+      if (hasImg) {
+        // Cinematic destination card: the image sets the card's whole mood, text overlaid.
+        html += '<div class="cday-head" style="background-image:url(/media/' + portSlug + '.jpg)">';
+        html += '<div class="cday-scrim"></div>';
+        html += '<div class="cday-head-inner">';
+        html += '<div class="cday-htop"><span class="cday-eyebrow">' + dow + ' &middot; ' + mon + ' ' + day + '</span>' + wxHtml + '</div>';
+        html += '<div class="cday-hbot"><div><div class="cday-port">' + p.label + '</div>' +
+          (times ? '<div class="cday-times">' + times + '</div>' : '') + '</div>' +
+          '<span class="cday-caret-w">&#9662;</span></div>';
+        html += '</div></div>'; // head-inner, head
+        // Group events stay visible even when the card is collapsed (schedule highlights)
+        if (eventsHtml) html += '<div class="cday-events-strip">' + eventsHtml + '</div>';
+      } else {
+        html += '<div class="cday-head">';
+        html += '<div class="cday-date"><span class="cday-dow">' + dow + '</span>' + mon + ' ' + day + '</div>';
+        html += '<div class="cday-main">';
+        if (p.type === 'sea') html += '<div class="cday-port cday-sea">At Sea</div>';
+        else { html += '<div class="cday-toprow"><div class="cday-port">' + p.label + '</div>' + wxHtml + '</div>'; if (times) html += '<div class="cday-times">' + times + '</div>'; }
+        html += eventsHtml;
+        html += '</div>'; // cday-main
+        if (expandable) html += '<div class="cday-caret transport-toggle-caret">&#9662;</div>';
+        html += '</div>'; // cday-head
+      }
 
       if (expandable) {
         html += '<div class="cday-body' + (isOpen ? '' : ' hidden') + '">';
-        if (PORT_IMAGES[portSlug]) html += '<div class="cday-banner"><img src="/media/' + portSlug + '.jpg" alt="' + escHtml(p.label) + '" loading="lazy"></div>';
         html += '<div class="cday-sec-label">Excursions / Tours</div>';
         html += '<div class="cday-exc" id="cdayexc-' + p.date + '"></div>';
         html += '<button class="cday-add-exc" data-date="' + p.date + '" data-port="' + escHtml(p.label) + '">+ Add an excursion</button>';
@@ -7227,6 +7262,11 @@
     html += '<button class="exc-btn exc-btn-booked' + (bActive ? ' active' : '') +
       '" data-code="' + escHtml(e.code) + '" data-action="booked">' +
       '<span class="exc-btn-icon">&#10003;</span> Booked</button>';
+    var nclUrl = (typeof safeUrl === 'function') ? safeUrl(e.detail_url) : e.detail_url;
+    if (nclUrl) {
+      html += '<a class="exc-btn exc-btn-ncl" href="' + escHtml(nclUrl) + '" target="_blank" rel="noopener">' +
+        'View on NCL <span class="exc-btn-icon">&#8599;</span></a>';
+    }
     html += '</div>';
     html += '<div class="exc-see-row">';
     if (counts.interested.length > 0) {
@@ -7243,7 +7283,7 @@
 
   // Wire Interested/Booked + "See N" buttons within any container (idempotent)
   function wireExcursionButtons(scope) {
-    scope.querySelectorAll('.exc-btn').forEach(function (btn) {
+    scope.querySelectorAll('.exc-btn[data-action]').forEach(function (btn) {
       if (btn.dataset.wired) return;
       btn.dataset.wired = '1';
       btn.addEventListener('click', function (ev) {
