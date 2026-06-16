@@ -101,31 +101,17 @@
 
   /* ── Cinematic Home carousel (Aritzia/Ritz editorial: full-bleed graded imagery) ── */
   .cine { position: relative; flex: 1 1 auto; overflow: hidden; background: #0e1f38; }
-  .cine-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .9s ease; pointer-events: none; }
-  .cine-slide.on { opacity: 1; pointer-events: auto; }
-  .cine-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-    filter: saturate(.8) contrast(.95) brightness(.86); transform: scale(1.06); will-change: transform; }
-  .cine-slide.on .cine-img { animation: cineKB 16s ease-out forwards; }
-  @keyframes cineKB { from { transform: scale(1.06); } to { transform: scale(1.16); } }
+  .cine-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(.82) contrast(.96) brightness(.9); }
   .cine-scrim { position: absolute; inset: 0; background:
-    linear-gradient(180deg, rgba(8,14,26,.55) 0%, rgba(8,14,26,.12) 24%, rgba(8,14,26,.04) 44%, rgba(8,14,26,.5) 74%, rgba(8,14,26,.9) 100%); }
-  .cine-text { position: absolute; left: 0; right: 0; bottom: 0;
-    padding: 0 calc(26px + env(safe-area-inset-right,0px)) calc(46px + env(safe-area-inset-bottom,0px)) calc(26px + env(safe-area-inset-left,0px)); }
-  .cine-eyebrow { color: #fff; font-weight: 500; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; opacity: .95; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
-  .cine-headline { color: #fff; font-weight: 700; font-size: clamp(46px, 14vw, 64px); line-height: .96; letter-spacing: -1px; text-shadow: 0 2px 28px rgba(0,0,0,.32); }
-  .cine-copy { color: #fff; font-size: 16px; font-weight: 400; line-height: 1.45; opacity: .94; max-width: 30ch; margin-top: 16px; }
-  .cine-link { display: inline-block; margin-top: 16px; color: #fff; font-size: 15px; font-weight: 600; letter-spacing: .2px; border-bottom: 1px solid rgba(255,255,255,.85); padding-bottom: 2px; cursor: pointer; }
-  .cine-top { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center;
-    padding: calc(18px + env(safe-area-inset-top,0px)) calc(20px + env(safe-area-inset-right,0px)) 0 calc(22px + env(safe-area-inset-left,0px)); z-index: 3; }
-  .cine-brand { color: #fff; font-family: var(--serif); font-size: 20px; font-weight: 500; font-style: italic; letter-spacing: .3px; text-shadow: 0 1px 14px rgba(0,0,0,.4); }
-  .cine-count { color: #fff; font-size: 12px; font-weight: 600; letter-spacing: .4px; background: rgba(255,255,255,.16); backdrop-filter: blur(6px); padding: 6px 12px; border-radius: 999px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .cine-dots { position: absolute; bottom: calc(16px + env(safe-area-inset-bottom,0px)); left: 0; right: 0; display: flex; gap: 7px; justify-content: center; z-index: 3; }
-  .cine-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.45); cursor: pointer; transition: width .25s, background .25s; }
-  .cine-dot.on { background: #fff; width: 22px; border-radius: 4px; }
-  .cine-toggle { position: absolute; bottom: calc(11px + env(safe-area-inset-bottom,0px)); right: calc(16px + env(safe-area-inset-right,0px));
-    width: 38px; height: 38px; border: none; border-radius: 50%; background: rgba(255,255,255,.18); backdrop-filter: blur(6px); color: #fff;
-    display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3; }
-  .cine-toggle svg { width: 15px; height: 15px; }
+    linear-gradient(180deg, rgba(8,14,26,.42) 0%, rgba(8,14,26,.1) 28%, rgba(8,14,26,.06) 50%, rgba(8,14,26,.5) 80%, rgba(8,14,26,.86) 100%); }
+  .cine-hero { position: absolute; left: 0; right: 0; bottom: 0; text-align: center;
+    padding: 0 calc(28px + env(safe-area-inset-right,0px)) calc(54px + env(safe-area-inset-bottom,0px)) calc(28px + env(safe-area-inset-left,0px)); }
+  .cine-hero-eyebrow { color: #fff; font-weight: 500; font-size: 12px; letter-spacing: 4px; text-transform: uppercase; opacity: .9; margin-bottom: 10px; }
+  .cine-hero-title { color: #fff; font-family: var(--serif); font-weight: 500; font-style: italic; font-size: clamp(38px, 11vw, 54px); line-height: 1.02; letter-spacing: -.5px; text-shadow: 0 2px 28px rgba(0,0,0,.36); }
+  .cine-hero-sub { color: #fff; font-size: 15px; font-weight: 400; opacity: .92; margin-top: 12px; letter-spacing: .2px; }
+  .cine-hero-count { color: #fff; font-size: 13px; font-weight: 500; opacity: .9; margin-top: 18px; letter-spacing: .3px; }
+  .cine-hero-count b { font-weight: 700; font-variant-numeric: tabular-nums; }
   .cine-nav { flex: 0 0 auto; display: flex; background: var(--paper); border-top: 1px solid var(--border-strong); padding-bottom: env(safe-area-inset-bottom, 0px); }
   .cine-tab { flex: 1; background: none; border: none; padding: 11px 0 9px; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .2px; color: var(--text-secondary); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .cine-tab.active { color: var(--azure); }
@@ -1725,6 +1711,8 @@
   .cday:not(.open) .cday-caret { transform: rotate(-90deg); }
   .cday-body { padding: 0 18px 18px; }
   .cday-body.hidden { display: none; }
+  .cday-banner { margin: 2px 0 18px; border-radius: 12px; overflow: hidden; height: 160px; box-shadow: 0 6px 20px rgba(14,31,56,0.10); }
+  .cday-banner img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.86) contrast(.96) brightness(.96); }
   .cday-sec-label { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-tertiary); margin: 4px 0 12px; }
   .cday-exc { display: flex; flex-direction: column; gap: 12px; }
   .cday-exc-empty { font-family: var(--sans); font-size: 14px; color: var(--text-tertiary); padding: 2px 0; }
@@ -2156,13 +2144,14 @@
 <!-- Landing screen -->
 <div class="landing-screen" id="landing-screen">
   <div class="cine" id="cine">
-    <div class="cine-slides" id="cine-slides"></div>
-    <div class="cine-top">
-      <div class="cine-brand">Dahyabhai Cruise</div>
-      <div class="cine-count" id="landing-countdown"><span id="landing-countdown-days"></span> days to go</div>
+    <video class="cine-video" id="cine-video" muted loop playsinline preload="none" poster="/media/sea-poster.jpg"></video>
+    <div class="cine-scrim"></div>
+    <div class="cine-hero">
+      <div class="cine-hero-eyebrow">July 2026</div>
+      <div class="cine-hero-title">Dahyabhai Family Cruise</div>
+      <div class="cine-hero-sub">Venice to Istanbul &middot; 11 nights at sea</div>
+      <div class="cine-hero-count" id="landing-countdown"><b id="landing-countdown-days"></b> days to go</div>
     </div>
-    <div class="cine-dots" id="cine-dots"></div>
-    <button class="cine-toggle" id="cine-toggle" type="button" aria-label="Pause slideshow"></button>
   </div>
   <nav class="cine-nav" id="cine-nav">
     <button class="cine-tab active" type="button" data-dest="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><polyline points="9 21 9 14 15 14 15 21"/></svg><span>Home</span></button>
@@ -6125,98 +6114,28 @@
       count + ' hotels shown \u00b7 Prices in USD per night';
   }
 
-  // ---- Cinematic Home carousel ----
-  var DEST_SLIDES = [
-    { slug: 'venice',    name: 'Venice',    date: '2026-07-03', copy: 'Set off from the canals, with Ravenna’s golden mosaics close by.' },
-    { slug: 'dubrovnik', name: 'Dubrovnik', date: '2026-07-04', copy: 'Walk the medieval walls above the bluest Adriatic.' },
-    { slug: 'bar',       name: 'Montenegro',date: '2026-07-05', copy: 'A hidden coast of fjords, olive groves and fortress towns.' },
-    { slug: 'athens',    name: 'Athens',    date: '2026-07-07', copy: 'The Acropolis at golden hour, crowning the ancient city.' },
-    { slug: 'kusadasi',  name: 'Kuşadası', date: '2026-07-08', copy: 'The marble avenues of ancient Ephesus, steps from the Aegean.' },
-    { slug: 'rhodes',    name: 'Rhodes',    date: '2026-07-09', copy: 'A walled medieval town opening onto a turquoise bay.' },
-    { slug: 'santorini', name: 'Santorini', date: '2026-07-10', copy: 'Whitewashed cliffs over the caldera, and the famous Oia sunset.' },
-    { slug: 'istanbul',  name: 'Istanbul',  date: '2026-07-12', copy: 'Where two continents meet: domes, bazaars and the Bosphorus.' }
-  ];
-  var PLAY_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5v14l12-7z"/></svg>';
-  var PAUSE_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
-  var cineIdx = 0, cineTimer = null, cinePaused = false, cineBuilt = false;
-
-  function slideEyebrow(dateISO) {
-    var d = new Date(dateISO + 'T12:00:00');
-    var dows = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    var mons = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var dayN = Math.round((d - new Date('2026-07-03T12:00:00')) / 86400000) + 1;
-    return 'Day ' + dayN + ' · ' + dows[d.getDay()] + ' ' + mons[d.getMonth()] + ' ' + d.getDate();
-  }
-  function buildCinematic() {
-    var slidesEl = document.getElementById('cine-slides'), dotsEl = document.getElementById('cine-dots');
-    if (!slidesEl) return;
-    if (!cineBuilt) {
-      var sh = '', dh = '';
-      DEST_SLIDES.forEach(function (s, i) {
-        sh += '<div class="cine-slide" data-date="' + s.date + '">' +
-          '<img class="cine-img" alt="' + escHtml(s.name) + '" ' + (i === 0 ? 'src' : 'data-src') + '="/media/' + s.slug + '.jpg">' +
-          '<div class="cine-scrim"></div>' +
-          '<div class="cine-text">' +
-          '<div class="cine-eyebrow">' + slideEyebrow(s.date) + '</div>' +
-          '<div class="cine-headline">' + escHtml(s.name) + '</div>' +
-          '<div class="cine-copy">' + escHtml(s.copy) + '</div>' +
-          '<span class="cine-link" data-date="' + s.date + '">See the day</span>' +
-          '</div></div>';
-        dh += '<span class="cine-dot" data-i="' + i + '"></span>';
-      });
-      slidesEl.innerHTML = sh; dotsEl.innerHTML = dh;
-      dotsEl.querySelectorAll('.cine-dot').forEach(function (d) {
-        d.addEventListener('click', function () { cineShow(+d.getAttribute('data-i'), true); });
-      });
-      slidesEl.querySelectorAll('.cine-link').forEach(function (a) {
-        a.addEventListener('click', function (e) { e.stopPropagation(); goToPort(a.getAttribute('data-date')); });
-      });
-      var cineEl = document.getElementById('cine'), sx = 0;
-      cineEl.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
-      cineEl.addEventListener('touchend', function (e) {
-        var dx = e.changedTouches[0].clientX - sx;
-        if (Math.abs(dx) > 45) cineShow(cineIdx + (dx < 0 ? 1 : -1), true);
-      });
-      var tog = document.getElementById('cine-toggle');
-      tog.innerHTML = PAUSE_SVG;
-      tog.addEventListener('click', function () {
-        cinePaused = !cinePaused;
-        tog.innerHTML = cinePaused ? PLAY_SVG : PAUSE_SVG;
-        tog.setAttribute('aria-label', cinePaused ? 'Play slideshow' : 'Pause slideshow');
-        cineAuto();
-      });
-      cineBuilt = true;
+  // ---- Cinematic Home (serene ambient video hero, Ritz/Aman mood) ----
+  var cineVideoStarted = false;
+  function initCineVideo() {
+    var v = document.getElementById('cine-video');
+    if (!v) return;
+    var conn = navigator.connection || {};
+    // Poster-first: on data-saver / reduced-motion / offline, keep the still poster only (no video download).
+    if (conn.saveData === true || navigator.onLine === false ||
+        (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    if (!cineVideoStarted) {
+      v.muted = true;
+      v.setAttribute('src', '/media/sea.mp4');
+      v.load();
+      cineVideoStarted = true;
     }
-    cineShow(cineIdx, false);
-    cineAuto();
+    var p = v.play();
+    if (p && p.catch) p.catch(function () {}); // autoplay blocked -> poster stays, no error
   }
-  function cineShow(i, user) {
-    var slides = document.querySelectorAll('.cine-slide');
-    if (!slides.length) return;
-    i = (i + slides.length) % slides.length; cineIdx = i;
-    var saveData = navigator.connection && navigator.connection.saveData;
-    slides.forEach(function (sl, j) {
-      sl.classList.toggle('on', j === i);
-      if (j === i) {
-        var img = sl.querySelector('.cine-img');
-        if (img && !img.getAttribute('src') && img.dataset.src) img.src = img.dataset.src;
-        // restart the Ken-Burns each time the slide becomes active
-        if (img) { img.style.animation = 'none'; void img.offsetWidth; img.style.animation = ''; }
-        if (!saveData) {
-          var nx = slides[(i + 1) % slides.length].querySelector('.cine-img');
-          if (nx && !nx.getAttribute('src') && nx.dataset.src) nx.src = nx.dataset.src;
-        }
-      }
-    });
-    document.querySelectorAll('.cine-dot').forEach(function (d, j) { d.classList.toggle('on', j === i); });
-    if (user) cineAuto();
+  function pauseCineVideo() {
+    var v = document.getElementById('cine-video');
+    if (v) { try { v.pause(); } catch (e) {} }
   }
-  function cineAuto() {
-    if (cineTimer) { clearInterval(cineTimer); cineTimer = null; }
-    if (cinePaused) return;
-    cineTimer = setInterval(function () { cineShow(cineIdx + 1, false); }, 6000);
-  }
-  function cineStop() { if (cineTimer) { clearInterval(cineTimer); cineTimer = null; } }
 
   // Enter an app section from the Home nav (mirrors the old landing-card flow)
   function enterDest(dest) {
@@ -6238,21 +6157,6 @@
     }
   }
 
-  // "See the day" — deep-link from a Home slide into that port in The Cruise
-  function goToPort(dateISO) {
-    cineStop();
-    localStorage.setItem('dcf_trip_phase', 'cruise');
-    cruiseDayOpen[dateISO] = true;
-    enterDest('itinerary');
-    applyTripPhase('cruise');
-    var tries = 0;
-    (function seek() {
-      var card = document.querySelector('.cday[data-date="' + dateISO + '"]');
-      if (card && card.offsetParent !== null) { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
-      if (tries++ < 40) setTimeout(seek, 80);
-    })();
-  }
-
   // ---- Init ----
   // ---- Landing screen ----
   function showLanding() {
@@ -6262,12 +6166,12 @@
     var days = Math.ceil((TRIP - new Date()) / 86400000);
     var cEl = document.getElementById('landing-countdown-days');
     if (cEl) cEl.textContent = days > 0 ? days : 0;
-    buildCinematic();
+    initCineVideo();
   }
 
   function hideLanding() {
     document.getElementById('landing-screen').classList.add('hidden');
-    cineStop();
+    pauseCineVideo();
   }
 
   function setupLanding() {
@@ -6449,6 +6353,8 @@
     });
   }
 
+  // Ports that have a filmic destination photo in /media (shown atop the open day card)
+  var PORT_IMAGES = { venice: 1, dubrovnik: 1, bar: 1, athens: 1, kusadasi: 1, rhodes: 1, santorini: 1, istanbul: 1 };
   function renderCruiseSchedule() {
     var el = document.getElementById('cruise-schedule');
     if (!el) return;
@@ -6463,7 +6369,8 @@
     CRUISE_PORTS.forEach(function (p) {
       var d = new Date(p.date + 'T12:00:00');
       var dow = days[d.getDay()], mon = months[d.getMonth()], day = d.getDate();
-      var guide = PORT_GUIDE[(p.label || '').split(/[,(]/)[0].trim().toLowerCase()] || null;
+      var portSlug = (p.label || '').split(/[,(]/)[0].trim().toLowerCase();
+      var guide = PORT_GUIDE[portSlug] || null;
       var expandable = (p.type !== 'sea');
       var isOpen = cruiseDayOpen[p.date] === true || (expandable && p.date === today);
 
@@ -6494,6 +6401,7 @@
 
       if (expandable) {
         html += '<div class="cday-body' + (isOpen ? '' : ' hidden') + '">';
+        if (PORT_IMAGES[portSlug]) html += '<div class="cday-banner"><img src="/media/' + portSlug + '.jpg" alt="' + escHtml(p.label) + '" loading="lazy"></div>';
         html += '<div class="cday-sec-label">Excursions / Tours</div>';
         html += '<div class="cday-exc" id="cdayexc-' + p.date + '"></div>';
         html += '<button class="cday-add-exc" data-date="' + p.date + '" data-port="' + escHtml(p.label) + '">+ Add an excursion</button>';
