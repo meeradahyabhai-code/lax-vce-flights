@@ -12,30 +12,33 @@
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:26px 18px;max-width:520px;margin:0 auto}
   .wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
   .ic{width:150px;height:150px;border-radius:34px;overflow:hidden;position:relative;box-shadow:0 8px 22px rgba(14,31,56,.28)}
-  .ic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.35) contrast(1.04) brightness(1.05)}
-  .v{position:absolute;inset:0;background:radial-gradient(95% 95% at 50% 42%,rgba(8,20,45,.04),rgba(8,20,45,.28))}
-  /* D (Santorini) keeps its original richer/darker treatment */
-  .D img{filter:saturate(.9) contrast(1) brightness(.82)}
-  .D .v{background:radial-gradient(120% 120% at 50% 40%,rgba(8,14,26,.1),rgba(8,14,26,.62))}
-  .ct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.55)}
+  .ic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .ct{position:absolute;inset:0;display:flex;flex-direction:column;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.55)}
   .cap{font-size:13px;font-weight:600;color:#1a3a6b}
-  .A .dfc{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:52px;line-height:.9;text-shadow:0 2px 14px rgba(0,0,0,.5)}
-  .A .yr{font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;letter-spacing:6px;color:#d8b766;margin-top:8px;text-indent:6px}
-  .B .dfc{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;letter-spacing:1px}
-  .B .rule{width:40px;height:1px;background:rgba(255,255,255,.7);margin:7px 0}
-  .B .yr{font-family:'DM Sans',sans-serif;font-weight:500;font-size:12px;letter-spacing:4px;text-indent:4px}
-  .C .dfc{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:44px;letter-spacing:7px;text-indent:7px;text-shadow:0 2px 14px rgba(0,0,0,.5)}
-  .C .yr{font-family:'DM Sans',sans-serif;font-weight:500;font-size:12px;letter-spacing:4px;opacity:.9;margin-top:5px;text-indent:4px}
-  .D .dfc{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:52px;line-height:.9;text-shadow:0 2px 14px rgba(0,0,0,.5)}
-  .D .yr{font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;letter-spacing:6px;color:#d8b766;margin-top:8px;text-indent:6px}
+  .dfc{font-family:'Cormorant Garamond',serif;font-weight:600;line-height:.9}
+  .yr{font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:5px;text-indent:5px}
+  /* A-C: vivid Mediterranean sea */
+  .sea img{filter:saturate(1.35) contrast(1.04) brightness(1.05)}
+  .sea .v{position:absolute;inset:0;background:radial-gradient(95% 95% at 50% 42%,rgba(8,20,45,.04),rgba(8,20,45,.28))}
+  .A .ct{align-items:center;justify-content:center}.A .dfc{font-size:52px}.A .yr{font-size:14px;margin-top:8px;color:#e6c477}
+  .B .ct{align-items:center;justify-content:center}.B .dfc{font-size:34px}.B .rule{width:40px;height:1px;background:rgba(255,255,255,.7);margin:7px 0}.B .yr{font-size:12px;letter-spacing:4px}
+  .C .ct{align-items:center;justify-content:center}.C .dfc{font-size:44px;letter-spacing:7px;text-indent:7px}.C .yr{font-size:12px;letter-spacing:4px;margin-top:5px}
+  /* D/E: elevated Santorini */
+  .D img{object-position:62% 38%;transform:scale(1.28);filter:saturate(1.02) contrast(1.02) brightness(.95)}
+  .D .v{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,26,.12) 0%,rgba(8,14,26,0) 42%,rgba(8,14,26,.62) 100%)}
+  .D .ct{align-items:flex-start;justify-content:flex-end;padding:18px}.D .dfc{font-size:40px}.D .yr{font-size:12px;margin-top:6px;color:#e6c477}
+  .E img{object-position:50% 42%;transform:scale(1.16);filter:saturate(1.02) contrast(1.02) brightness(.9)}
+  .E .v{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,26,.4),rgba(8,14,26,.18) 45%,rgba(8,14,26,.5))}
+  .E .ct{align-items:center;justify-content:center}.E .dfc{font-size:50px}.E .yr{font-size:13px;margin-top:8px;color:#e6c477}
 </style></head>
 <body>
   <h1>DFC2026 icon</h1>
-  <div class="sub">Four directions &middot; tell Claude the letter you like (or tweaks)</div>
+  <div class="sub">Tell Claude the letter you like (or tweaks)</div>
   <div class="grid">
-    <div class="wrap"><div class="ic A"><img src="/media/sea-day-poster.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">A &middot; sea + gold year</div></div>
-    <div class="wrap"><div class="ic B"><img src="/media/sea-day-poster.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="rule"></div><div class="yr">2026</div></div></div><div class="cap">B &middot; sea + thin rule</div></div>
-    <div class="wrap"><div class="ic C"><img src="/media/sea-day-poster.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">C &middot; spaced, all white</div></div>
-    <div class="wrap"><div class="ic D"><img src="/media/santorini.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">D &middot; Santorini + gold</div></div>
+    <div class="wrap"><div class="ic sea A"><img src="/media/sea-day-poster.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">A &middot; sea + gold year</div></div>
+    <div class="wrap"><div class="ic sea B"><img src="/media/sea-day-poster.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="rule"></div><div class="yr">2026</div></div></div><div class="cap">B &middot; sea + thin rule</div></div>
+    <div class="wrap"><div class="ic sea C"><img src="/media/sea-day-poster.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">C &middot; sea, spaced</div></div>
+    <div class="wrap"><div class="ic E"><img src="/media/santorini.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">E &middot; Santorini, centered (rec)</div></div>
+    <div class="wrap"><div class="ic D"><img src="/media/santorini.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">D &middot; Santorini, editorial</div></div>
   </div>
 </body></html>
