@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>DFC2026 icon options</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@500;600&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:#faf8f3;font-family:'DM Sans',sans-serif;color:#1a3a6b;padding:28px 20px 60px;text-align:center}
@@ -13,32 +13,26 @@
   .wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
   .ic{width:150px;height:150px;border-radius:34px;overflow:hidden;position:relative;box-shadow:0 8px 22px rgba(14,31,56,.28)}
   .ic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .ct{position:absolute;inset:0;display:flex;flex-direction:column;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.55)}
+  .ct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.6)}
   .cap{font-size:13px;font-weight:600;color:#1a3a6b}
-  .dfc{font-family:'Cormorant Garamond',serif;font-weight:600;line-height:.9}
-  .yr{font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:5px;text-indent:5px}
-  /* A-C: vivid Mediterranean sea */
-  .sea img{filter:saturate(1.35) contrast(1.04) brightness(1.05)}
-  .sea .v{position:absolute;inset:0;background:radial-gradient(95% 95% at 50% 42%,rgba(8,20,45,.04),rgba(8,20,45,.28))}
-  .A .ct{align-items:center;justify-content:center}.A .dfc{font-size:52px}.A .yr{font-size:14px;margin-top:8px;color:#e6c477}
-  .B .ct{align-items:center;justify-content:center}.B .dfc{font-size:34px}.B .rule{width:40px;height:1px;background:rgba(255,255,255,.7);margin:7px 0}.B .yr{font-size:12px;letter-spacing:4px}
-  .C .ct{align-items:center;justify-content:center}.C .dfc{font-size:44px;letter-spacing:7px;text-indent:7px}.C .yr{font-size:12px;letter-spacing:4px;margin-top:5px}
-  /* D/E: elevated Santorini */
-  .D img{object-position:62% 38%;transform:scale(1.28);filter:saturate(1.02) contrast(1.02) brightness(.95)}
-  .D .v{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,26,.12) 0%,rgba(8,14,26,0) 42%,rgba(8,14,26,.62) 100%)}
-  .D .ct{align-items:flex-start;justify-content:flex-end;padding:18px}.D .dfc{font-size:40px}.D .yr{font-size:12px;margin-top:6px;color:#e6c477}
-  .E img{object-position:50% 42%;transform:scale(1.16);filter:saturate(1.02) contrast(1.02) brightness(.9)}
-  .E .v{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,26,.4),rgba(8,14,26,.18) 45%,rgba(8,14,26,.5))}
-  .E .ct{align-items:center;justify-content:center}.E .dfc{font-size:50px}.E .yr{font-size:13px;margin-top:8px;color:#e6c477}
+  .dfc{font-family:'Cormorant Garamond',serif;font-weight:600;line-height:.9;font-size:50px}
+  .yr{font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:5px;text-indent:5px;color:#e6c477;font-size:13px;margin-top:8px}
+  /* A,B: rich deep ocean (boat + wake reads as sea) */
+  .sea img{filter:saturate(1.3) contrast(1.06) brightness(1.0)}
+  .sea .v{position:absolute;inset:0;background:radial-gradient(95% 95% at 50% 46%,rgba(6,16,38,.06),rgba(6,16,38,.42))}
+  .seabright img{filter:saturate(1.45) contrast(1.05) brightness(1.12)}
+  /* C,D: Santorini, dark + moody (recognizable, not washed) */
+  .san img{filter:saturate(.92) brightness(.8)}
+  .san .v{position:absolute;inset:0;background:radial-gradient(120% 120% at 50% 40%,rgba(8,14,26,.12),rgba(8,14,26,.66))}
+  .santight img{object-position:50% 38%;transform:scale(1.2)}
 </style></head>
 <body>
   <h1>DFC2026 icon</h1>
-  <div class="sub">Tell Claude the letter you like (or tweaks)</div>
+  <div class="sub">Round 2 &middot; tell Claude the letter you like</div>
   <div class="grid">
-    <div class="wrap"><div class="ic sea A"><img src="/media/sea-day-poster.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">A &middot; sea + gold year</div></div>
-    <div class="wrap"><div class="ic sea B"><img src="/media/sea-day-poster.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="rule"></div><div class="yr">2026</div></div></div><div class="cap">B &middot; sea + thin rule</div></div>
-    <div class="wrap"><div class="ic sea C"><img src="/media/sea-day-poster.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">C &middot; sea, spaced</div></div>
-    <div class="wrap"><div class="ic E"><img src="/media/santorini.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">E &middot; Santorini, centered (rec)</div></div>
-    <div class="wrap"><div class="ic D"><img src="/media/santorini.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">D &middot; Santorini, editorial</div></div>
+    <div class="wrap"><div class="ic sea"><img src="/media/icon-sea.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">A &middot; deep ocean</div></div>
+    <div class="wrap"><div class="ic sea seabright"><img src="/media/icon-sea.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">B &middot; brighter ocean</div></div>
+    <div class="wrap"><div class="ic san"><img src="/media/santorini.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">C &middot; Santorini, moody</div></div>
+    <div class="wrap"><div class="ic san santight"><img src="/media/santorini.jpg"><div class="v"></div><div class="ct"><div class="dfc">DFC</div><div class="yr">2026</div></div></div><div class="cap">D &middot; Santorini, tighter</div></div>
   </div>
 </body></html>
