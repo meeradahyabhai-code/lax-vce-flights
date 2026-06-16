@@ -94,14 +94,42 @@
   /* ── Landing screen ── */
   .landing-screen {
     position: fixed; inset: 0; z-index: 2500;
-    background: var(--paper);
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column;
-    /* Keep content clear of the notch / rounded corners / home indicator in standalone */
-    padding: max(24px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px));
-    overflow-y: auto;
+    background: #0e1f38;
+    display: flex; flex-direction: column; overflow: hidden;
   }
   .landing-screen.hidden { display: none; }
+
+  /* ── Cinematic Home carousel (Aritzia/Ritz editorial: full-bleed graded imagery) ── */
+  .cine { position: relative; flex: 1 1 auto; overflow: hidden; background: #0e1f38; }
+  .cine-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .9s ease; pointer-events: none; }
+  .cine-slide.on { opacity: 1; pointer-events: auto; }
+  .cine-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(.8) contrast(.95) brightness(.86); transform: scale(1.06); will-change: transform; }
+  .cine-slide.on .cine-img { animation: cineKB 16s ease-out forwards; }
+  @keyframes cineKB { from { transform: scale(1.06); } to { transform: scale(1.16); } }
+  .cine-scrim { position: absolute; inset: 0; background:
+    linear-gradient(180deg, rgba(8,14,26,.55) 0%, rgba(8,14,26,.12) 24%, rgba(8,14,26,.04) 44%, rgba(8,14,26,.5) 74%, rgba(8,14,26,.9) 100%); }
+  .cine-text { position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 0 calc(26px + env(safe-area-inset-right,0px)) calc(46px + env(safe-area-inset-bottom,0px)) calc(26px + env(safe-area-inset-left,0px)); }
+  .cine-eyebrow { color: #fff; font-weight: 500; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; opacity: .95; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+  .cine-headline { color: #fff; font-weight: 700; font-size: clamp(46px, 14vw, 64px); line-height: .96; letter-spacing: -1px; text-shadow: 0 2px 28px rgba(0,0,0,.32); }
+  .cine-copy { color: #fff; font-size: 16px; font-weight: 400; line-height: 1.45; opacity: .94; max-width: 30ch; margin-top: 16px; }
+  .cine-link { display: inline-block; margin-top: 16px; color: #fff; font-size: 15px; font-weight: 600; letter-spacing: .2px; border-bottom: 1px solid rgba(255,255,255,.85); padding-bottom: 2px; cursor: pointer; }
+  .cine-top { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center;
+    padding: calc(18px + env(safe-area-inset-top,0px)) calc(20px + env(safe-area-inset-right,0px)) 0 calc(22px + env(safe-area-inset-left,0px)); z-index: 3; }
+  .cine-brand { color: #fff; font-family: var(--serif); font-size: 20px; font-weight: 500; font-style: italic; letter-spacing: .3px; text-shadow: 0 1px 14px rgba(0,0,0,.4); }
+  .cine-count { color: #fff; font-size: 12px; font-weight: 600; letter-spacing: .4px; background: rgba(255,255,255,.16); backdrop-filter: blur(6px); padding: 6px 12px; border-radius: 999px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cine-dots { position: absolute; bottom: calc(16px + env(safe-area-inset-bottom,0px)); left: 0; right: 0; display: flex; gap: 7px; justify-content: center; z-index: 3; }
+  .cine-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.45); cursor: pointer; transition: width .25s, background .25s; }
+  .cine-dot.on { background: #fff; width: 22px; border-radius: 4px; }
+  .cine-toggle { position: absolute; bottom: calc(11px + env(safe-area-inset-bottom,0px)); right: calc(16px + env(safe-area-inset-right,0px));
+    width: 38px; height: 38px; border: none; border-radius: 50%; background: rgba(255,255,255,.18); backdrop-filter: blur(6px); color: #fff;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3; }
+  .cine-toggle svg { width: 15px; height: 15px; }
+  .cine-nav { flex: 0 0 auto; display: flex; background: var(--paper); border-top: 1px solid var(--border-strong); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .cine-tab { flex: 1; background: none; border: none; padding: 11px 0 9px; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .2px; color: var(--text-secondary); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .cine-tab.active { color: var(--azure); }
+  .cine-tab svg { width: 22px; height: 22px; }
   .landing-title {
     font-family: var(--serif); font-size: clamp(36px, 8vw, 56px);
     font-weight: 300; font-style: italic; color: var(--azure);
@@ -2127,20 +2155,20 @@
 
 <!-- Landing screen -->
 <div class="landing-screen" id="landing-screen">
-  <div class="landing-title">Dahyabhai Vacation</div>
-  <div class="landing-sub">Venice &middot; Mediterranean Cruise &middot; Istanbul</div>
-  <div class="hero-pill" id="landing-countdown" style="margin-bottom:24px;">&#128336; <span id="landing-countdown-days"></span> DAYS UNTIL JULY 3, 2026</div>
-  <div class="landing-welcome hidden" id="landing-welcome"></div>
-  <div class="landing-cards">
-    <div class="landing-card" data-dest="flights">
-      <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
-      <div class="landing-card-label">Shop</div>
+  <div class="cine" id="cine">
+    <div class="cine-slides" id="cine-slides"></div>
+    <div class="cine-top">
+      <div class="cine-brand">Dahyabhai Cruise</div>
+      <div class="cine-count" id="landing-countdown"><span id="landing-countdown-days"></span> days to go</div>
     </div>
-    <div class="landing-card" data-dest="itinerary">
-      <div class="landing-card-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></div>
-      <div class="landing-card-label">Our Trip</div>
-    </div>
+    <div class="cine-dots" id="cine-dots"></div>
+    <button class="cine-toggle" id="cine-toggle" type="button" aria-label="Pause slideshow"></button>
   </div>
+  <nav class="cine-nav" id="cine-nav">
+    <button class="cine-tab active" type="button" data-dest="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><polyline points="9 21 9 14 15 14 15 21"/></svg><span>Home</span></button>
+    <button class="cine-tab" type="button" data-dest="flights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg><span>Shop</span></button>
+    <button class="cine-tab" type="button" data-dest="itinerary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Our Trip</span></button>
+  </nav>
 </div>
 
 <!-- Origin selection modal -->
@@ -6097,69 +6125,157 @@
       count + ' hotels shown \u00b7 Prices in USD per night';
   }
 
+  // ---- Cinematic Home carousel ----
+  var DEST_SLIDES = [
+    { slug: 'venice',    name: 'Venice',    date: '2026-07-03', copy: 'Set off from the canals, with Ravenna’s golden mosaics close by.' },
+    { slug: 'dubrovnik', name: 'Dubrovnik', date: '2026-07-04', copy: 'Walk the medieval walls above the bluest Adriatic.' },
+    { slug: 'bar',       name: 'Montenegro',date: '2026-07-05', copy: 'A hidden coast of fjords, olive groves and fortress towns.' },
+    { slug: 'athens',    name: 'Athens',    date: '2026-07-07', copy: 'The Acropolis at golden hour, crowning the ancient city.' },
+    { slug: 'kusadasi',  name: 'Kuşadası', date: '2026-07-08', copy: 'The marble avenues of ancient Ephesus, steps from the Aegean.' },
+    { slug: 'rhodes',    name: 'Rhodes',    date: '2026-07-09', copy: 'A walled medieval town opening onto a turquoise bay.' },
+    { slug: 'santorini', name: 'Santorini', date: '2026-07-10', copy: 'Whitewashed cliffs over the caldera, and the famous Oia sunset.' },
+    { slug: 'istanbul',  name: 'Istanbul',  date: '2026-07-12', copy: 'Where two continents meet: domes, bazaars and the Bosphorus.' }
+  ];
+  var PLAY_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5v14l12-7z"/></svg>';
+  var PAUSE_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+  var cineIdx = 0, cineTimer = null, cinePaused = false, cineBuilt = false;
+
+  function slideEyebrow(dateISO) {
+    var d = new Date(dateISO + 'T12:00:00');
+    var dows = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    var mons = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var dayN = Math.round((d - new Date('2026-07-03T12:00:00')) / 86400000) + 1;
+    return 'Day ' + dayN + ' · ' + dows[d.getDay()] + ' ' + mons[d.getMonth()] + ' ' + d.getDate();
+  }
+  function buildCinematic() {
+    var slidesEl = document.getElementById('cine-slides'), dotsEl = document.getElementById('cine-dots');
+    if (!slidesEl) return;
+    if (!cineBuilt) {
+      var sh = '', dh = '';
+      DEST_SLIDES.forEach(function (s, i) {
+        sh += '<div class="cine-slide" data-date="' + s.date + '">' +
+          '<img class="cine-img" alt="' + escHtml(s.name) + '" ' + (i === 0 ? 'src' : 'data-src') + '="/media/' + s.slug + '.jpg">' +
+          '<div class="cine-scrim"></div>' +
+          '<div class="cine-text">' +
+          '<div class="cine-eyebrow">' + slideEyebrow(s.date) + '</div>' +
+          '<div class="cine-headline">' + escHtml(s.name) + '</div>' +
+          '<div class="cine-copy">' + escHtml(s.copy) + '</div>' +
+          '<span class="cine-link" data-date="' + s.date + '">See the day</span>' +
+          '</div></div>';
+        dh += '<span class="cine-dot" data-i="' + i + '"></span>';
+      });
+      slidesEl.innerHTML = sh; dotsEl.innerHTML = dh;
+      dotsEl.querySelectorAll('.cine-dot').forEach(function (d) {
+        d.addEventListener('click', function () { cineShow(+d.getAttribute('data-i'), true); });
+      });
+      slidesEl.querySelectorAll('.cine-link').forEach(function (a) {
+        a.addEventListener('click', function (e) { e.stopPropagation(); goToPort(a.getAttribute('data-date')); });
+      });
+      var cineEl = document.getElementById('cine'), sx = 0;
+      cineEl.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+      cineEl.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - sx;
+        if (Math.abs(dx) > 45) cineShow(cineIdx + (dx < 0 ? 1 : -1), true);
+      });
+      var tog = document.getElementById('cine-toggle');
+      tog.innerHTML = PAUSE_SVG;
+      tog.addEventListener('click', function () {
+        cinePaused = !cinePaused;
+        tog.innerHTML = cinePaused ? PLAY_SVG : PAUSE_SVG;
+        tog.setAttribute('aria-label', cinePaused ? 'Play slideshow' : 'Pause slideshow');
+        cineAuto();
+      });
+      cineBuilt = true;
+    }
+    cineShow(cineIdx, false);
+    cineAuto();
+  }
+  function cineShow(i, user) {
+    var slides = document.querySelectorAll('.cine-slide');
+    if (!slides.length) return;
+    i = (i + slides.length) % slides.length; cineIdx = i;
+    var saveData = navigator.connection && navigator.connection.saveData;
+    slides.forEach(function (sl, j) {
+      sl.classList.toggle('on', j === i);
+      if (j === i) {
+        var img = sl.querySelector('.cine-img');
+        if (img && !img.getAttribute('src') && img.dataset.src) img.src = img.dataset.src;
+        // restart the Ken-Burns each time the slide becomes active
+        if (img) { img.style.animation = 'none'; void img.offsetWidth; img.style.animation = ''; }
+        if (!saveData) {
+          var nx = slides[(i + 1) % slides.length].querySelector('.cine-img');
+          if (nx && !nx.getAttribute('src') && nx.dataset.src) nx.src = nx.dataset.src;
+        }
+      }
+    });
+    document.querySelectorAll('.cine-dot').forEach(function (d, j) { d.classList.toggle('on', j === i); });
+    if (user) cineAuto();
+  }
+  function cineAuto() {
+    if (cineTimer) { clearInterval(cineTimer); cineTimer = null; }
+    if (cinePaused) return;
+    cineTimer = setInterval(function () { cineShow(cineIdx + 1, false); }, 6000);
+  }
+  function cineStop() { if (cineTimer) { clearInterval(cineTimer); cineTimer = null; } }
+
+  // Enter an app section from the Home nav (mirrors the old landing-card flow)
+  function enterDest(dest) {
+    hideLanding();
+    if (dest === 'flights') {
+      var stored = getStoredOrigin();
+      if (stored && ORIGINS[stored]) {
+        activeOrigin = stored; activeSection = 'flights'; hideOriginModal();
+        if (!data) { startApp(); } else { renderSectionNav(); renderSectionContent(); }
+      } else {
+        showOriginModal();
+      }
+    } else {
+      activeSection = dest;
+      var st = getStoredOrigin();
+      if (st && ORIGINS[st]) activeOrigin = st;
+      hideOriginModal();
+      if (!data) { startApp(); } else { renderSectionNav(); renderSectionContent(); }
+    }
+  }
+
+  // "See the day" — deep-link from a Home slide into that port in The Cruise
+  function goToPort(dateISO) {
+    cineStop();
+    localStorage.setItem('dcf_trip_phase', 'cruise');
+    cruiseDayOpen[dateISO] = true;
+    enterDest('itinerary');
+    applyTripPhase('cruise');
+    var tries = 0;
+    (function seek() {
+      var card = document.querySelector('.cday[data-date="' + dateISO + '"]');
+      if (card && card.offsetParent !== null) { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      if (tries++ < 40) setTimeout(seek, 80);
+    })();
+  }
+
   // ---- Init ----
   // ---- Landing screen ----
   function showLanding() {
     document.getElementById('landing-screen').classList.remove('hidden');
     document.getElementById('page-content').style.display = 'none';
     document.getElementById('origin-modal').classList.add('hidden');
-    // Show personalized welcome if we know the user
-    var name = getUserName();
-    var welcomeEl = document.getElementById('landing-welcome');
-    if (name) {
-      welcomeEl.textContent = 'Welcome back, ' + name;
-      welcomeEl.classList.remove('hidden');
-    } else {
-      welcomeEl.classList.add('hidden');
-    }
-    // Countdown on landing
     var days = Math.ceil((TRIP - new Date()) / 86400000);
     var cEl = document.getElementById('landing-countdown-days');
     if (cEl) cEl.textContent = days > 0 ? days : 0;
+    buildCinematic();
   }
 
   function hideLanding() {
     document.getElementById('landing-screen').classList.add('hidden');
+    cineStop();
   }
 
   function setupLanding() {
-    document.querySelectorAll('.landing-card').forEach(function (card) {
-      card.addEventListener('click', function () {
-        var dest = card.dataset.dest;
-        hideLanding();
-
-        if (dest === 'flights') {
-          // For flights, need origin selection first (if not stored)
-          var stored = getStoredOrigin();
-          if (stored && ORIGINS[stored]) {
-            activeOrigin = stored;
-            activeSection = 'flights';
-            hideOriginModal();
-            if (!data) {
-              startApp();
-            } else {
-              renderSectionNav();
-              renderSectionContent();
-            }
-          } else {
-            showOriginModal();
-            // Origin modal click will call startApp()
-          }
-        } else {
-          // Hotels or Itinerary — need data loaded but skip origin if we have one
-          activeSection = dest;
-          var stored = getStoredOrigin();
-          if (stored && ORIGINS[stored]) {
-            activeOrigin = stored;
-          }
-          hideOriginModal();
-          if (!data) {
-            startApp();
-          } else {
-            renderSectionNav();
-            renderSectionContent();
-          }
-        }
+    document.querySelectorAll('.cine-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var dest = tab.getAttribute('data-dest');
+        if (dest === 'home') return; // already home
+        enterDest(dest);
       });
     });
   }
