@@ -278,10 +278,10 @@
     scroll-margin-top: 140px;
   }
   .trip-phase-btn {
-    flex: 1; border: none; cursor: pointer;
-    font-family: var(--sans); font-size: 15px; font-weight: 500;
+    flex: 1; border: none; cursor: pointer; white-space: nowrap;
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
     color: var(--text-secondary); background: transparent;
-    border-radius: 9999px; padding: 10px 12px;
+    border-radius: 9999px; padding: 10px 6px;
     transition: background 0.18s ease, color 0.18s ease;
   }
   .trip-phase-btn:hover { color: var(--azure); }
@@ -789,6 +789,11 @@
     margin: 4px 0 2px;
   }
   .modal-text b { color: var(--text-primary); font-weight: 600; }
+  .name-ta { position: relative; text-align: left; margin-bottom: 6px; }
+  .name-results { margin-top: 8px; max-height: 240px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 2px; }
+  .name-result { display: block; width: 100%; text-align: left; padding: 12px 14px; border: none; border-radius: 10px; background: none; font-family: var(--sans); font-size: 15px; font-weight: 500; color: var(--text-primary); cursor: pointer; }
+  .name-result:hover { background: rgba(26,58,107,0.07); }
+  .name-noresult { padding: 12px 14px; font-family: var(--sans); font-size: 13px; color: var(--text-secondary); }
   .modal-input {
     width: 100%; padding: 12px 16px; border: 1px solid var(--fog);
     border-radius: 10px; font-family: var(--sans); font-size: 15px;
@@ -1760,6 +1765,27 @@
   .cday-body { padding: 0 18px 18px; }
   .cday-body.hidden { display: none; }
   .cday-sec-label { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-secondary); margin: 6px 0 14px; }
+
+  /* My Bookings — personal journey timeline */
+  .mb-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 4px 0 20px; }
+  .mb-eyebrow { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-secondary); }
+  .mb-name { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(28px, 7vw, 38px); color: var(--azure); line-height: 1.05; }
+  .mb-change { background: none; border: none; color: var(--azure); font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; padding: 4px; }
+  .mb-change:hover { text-decoration: underline; }
+  .mb-empty-note { font-family: var(--sans); font-size: 15px; line-height: 1.5; color: var(--text-secondary); background: var(--bg-surface); border: 1px solid var(--fog); border-radius: 14px; padding: 22px; }
+  .mb-date { font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin: 22px 0 10px; }
+  .mb-date:first-of-type { margin-top: 2px; }
+  .mb-item { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; background: var(--bg-surface); border: 1px solid var(--fog); border-radius: 14px; padding: 16px; margin-bottom: 10px; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+  .mb-item:hover { border-color: var(--azure); box-shadow: 0 6px 18px rgba(14,31,56,.08); }
+  .mb-ic { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(26,58,107,0.07); color: var(--azure); display: flex; align-items: center; justify-content: center; }
+  .mb-ic svg { width: 20px; height: 20px; }
+  .mb-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .mb-item-title { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--text-primary); line-height: 1.2; }
+  .mb-item-sub { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); }
+  .mb-who { flex: 0 0 auto; font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--azure); background: rgba(26,58,107,0.08); padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+  .mb-identify { text-align: center; padding: 40px 24px; }
+  .mb-identify-title { font-family: var(--serif); font-style: italic; font-size: 28px; color: var(--azure); margin-bottom: 8px; }
+  .mb-identify-sub { font-family: var(--sans); font-size: 15px; line-height: 1.5; color: var(--text-secondary); max-width: 36ch; margin: 0 auto 20px; }
   .cday-exc { display: flex; flex-direction: column; gap: 12px; }
   .cday-exc-empty { font-family: var(--sans); font-size: 14px; color: var(--text-tertiary); padding: 2px 0; }
   .cday-add-exc {
@@ -2355,6 +2381,7 @@
     <div class="trip-phase-toggle" id="trip-phase-toggle">
       <button class="trip-phase-btn active" data-phase="before-sail">Before We Sail</button>
       <button class="trip-phase-btn" data-phase="cruise">The Cruise</button>
+      <button class="trip-phase-btn" data-phase="bookings">My Bookings</button>
     </div>
     <div class="trip-subnav" id="subnav-cruise" style="display:none;">
       <button class="trip-subnav-tab active" data-target="itin-cruise-anchor">Days</button>
@@ -2453,6 +2480,11 @@
     </div>
   </div>
 
+  <!-- ============ MY BOOKINGS ============ -->
+  <div class="trip-phase" id="phase-bookings" style="display:none;">
+    <div id="mybookings-body"></div>
+  </div>
+
 </div>
 </div>
 
@@ -2461,11 +2493,13 @@
 <!-- Name prompt modal -->
 <div class="modal-overlay" id="name-modal">
   <div class="modal">
-    <div class="modal-title">Welcome to Dahyabhai Cruise Flights</div>
-    <div class="modal-sub">What's your name?</div>
-    <input class="modal-input" id="name-input" type="text" placeholder="e.g. Mom, Dad, Meera" maxlength="30" autocomplete="off">
-    <br>
-    <button class="modal-btn modal-btn-primary" id="name-submit">Let's go</button>
+    <div class="modal-title">Welcome aboard</div>
+    <div class="modal-sub">Which one are you?</div>
+    <div class="name-ta">
+      <input class="modal-input" id="name-input" type="text" placeholder="Start typing your name&hellip;" autocomplete="off">
+      <div class="name-results" id="name-results"></div>
+    </div>
+    <button class="modal-btn modal-btn-primary" id="name-submit" disabled>Let's go</button>
   </div>
 </div>
 
@@ -2607,25 +2641,70 @@
   function getUserName() {
     return localStorage.getItem('veniceair_user') || '';
   }
+  function setUserName(name) {
+    if (name) localStorage.setItem('veniceair_user', name);
+  }
+  function isRosterName(name) {
+    if (!name || typeof TRAVELERS === 'undefined') return false;
+    for (var i = 0; i < TRAVELERS.length; i++) { if (TRAVELERS[i] === name) return true; }
+    return false;
+  }
+  // One-time: resolve an old free-typed name to its canonical roster entry, or clear it so
+  // the user re-picks. Keeps returning users working without a forced re-login when unambiguous.
+  function migrateIdentity() {
+    var stored = getUserName();
+    if (!stored || typeof TRAVELERS === 'undefined' || isRosterName(stored)) return;
+    var low = stored.toLowerCase();
+    var exact = TRAVELERS.filter(function (n) { return n.toLowerCase() === low; });
+    if (exact.length === 1) { setUserName(exact[0]); return; }
+    // Can't resolve to exactly one roster person — clear so they re-pick (don't guess, don't rewrite)
+    localStorage.removeItem('veniceair_user');
+  }
 
-  function promptName() {
-    if (getUserName()) return;
+  // Roster type-ahead identity. force=true reopens it to change who you are.
+  // onDone(name) fires after a pick. Selection is constrained to the TRAVELERS roster
+  // (stable, typo-free, distinguishes e.g. two similar names). Stored in veniceair_user
+  // as the canonical roster string, so existing joins-by-name keep working.
+  function promptName(force, onDone) {
+    if (getUserName() && !force) { if (onDone) onDone(getUserName()); return; }
     var overlay = document.getElementById('name-modal');
     var input = document.getElementById('name-input');
+    var results = document.getElementById('name-results');
     var btn = document.getElementById('name-submit');
     overlay.classList.add('active');
-    input.focus();
+    input.value = '';
+    results.innerHTML = '';
+    btn.disabled = true;
+    setTimeout(function () { input.focus(); }, 50);
 
-    function submit() {
-      var name = input.value.trim();
-      if (!name) { input.focus(); return; }
-      localStorage.setItem('veniceair_user', name);
-      overlay.classList.remove('active');
+    function render(q) {
+      q = (q || '').trim().toLowerCase();
+      if (!q) { results.innerHTML = ''; btn.disabled = true; return; }
+      var matches = (typeof TRAVELERS !== 'undefined' ? TRAVELERS : []).filter(function (n) {
+        return n.toLowerCase().indexOf(q) !== -1;
+      }).slice(0, 8);
+      if (!matches.length) { results.innerHTML = '<div class="name-noresult">No match — check spelling</div>'; btn.disabled = true; return; }
+      results.innerHTML = matches.map(function (n) {
+        return '<button type="button" class="name-result" data-name="' + escHtml(n) + '">' + escHtml(n) + '</button>';
+      }).join('');
+      // Enter / "Let's go" only commit when the match is unambiguous; otherwise tap a specific name
+      btn.disabled = matches.length !== 1;
+      results.querySelectorAll('.name-result').forEach(function (b) {
+        b.addEventListener('click', function () { choose(b.getAttribute('data-name')); });
+      });
     }
-    btn.addEventListener('click', submit);
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') submit();
-    });
+    function commitIfSingle() {
+      var rs = results.querySelectorAll('.name-result');
+      if (rs.length === 1) rs[0].click();
+    }
+    function choose(name) {
+      setUserName(name);
+      overlay.classList.remove('active');
+      if (onDone) onDone(name);
+    }
+    input.oninput = function () { render(input.value); };
+    input.onkeydown = function (e) { if (e.key === 'Enter') commitIfSingle(); };
+    btn.onclick = commitIfSingle;
   }
 
   // ---- Helpers ----
@@ -2907,6 +2986,7 @@
         sheetRows = rows;
         renderFamilyPicks(rows);
         updateInterestLinks();
+        refreshMyBookingsIfActive();
       })
       .catch(function () {
         document.getElementById('family-cards').innerHTML =
@@ -5010,20 +5090,24 @@
 
   // ---- Our Trip phase toggle (Before We Sail | The Cruise) ----
   function getTripPhase() {
-    return localStorage.getItem('dcf_trip_phase') === 'cruise' ? 'cruise' : 'before-sail';
+    var p = localStorage.getItem('dcf_trip_phase');
+    return (p === 'cruise' || p === 'bookings') ? p : 'before-sail';
   }
   function applyTripPhase(phase) {
-    phase = (phase === 'cruise') ? 'cruise' : 'before-sail';
+    if (phase !== 'cruise' && phase !== 'bookings') phase = 'before-sail';
     localStorage.setItem('dcf_trip_phase', phase);
     var before = document.getElementById('phase-before-sail');
     var cruise = document.getElementById('phase-cruise');
+    var bookings = document.getElementById('phase-bookings');
     if (before) before.style.display = (phase === 'before-sail') ? '' : 'none';
     if (cruise) cruise.style.display = (phase === 'cruise') ? '' : 'none';
+    if (bookings) bookings.style.display = (phase === 'bookings') ? '' : 'none';
     var snCruise = document.getElementById('subnav-cruise');
     if (snCruise) snCruise.style.display = (phase === 'cruise') ? '' : 'none';
     document.querySelectorAll('.trip-phase-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.phase === phase);
     });
+    if (phase === 'bookings') renderMyBookings();
     updateTripSubnavActive();
   }
   // Highlight the section tab whose anchor is currently in view (scroll-spy)
@@ -5139,7 +5223,7 @@
       renderOnboard();
       renderPacking();
       renderExcursions();
-      Promise.all([loadExcursions(), fetchExcursionPicks()]).then(renderExcursions);
+      Promise.all([loadExcursions(), fetchExcursionPicks()]).then(function () { renderExcursions(); refreshMyBookingsIfActive(); });
       loadPortClimate().then(function () { renderCruiseSchedule(); renderPacking(); });
       applyTripPhase(getTripPhase());
     } else {
@@ -6198,6 +6282,164 @@
       count + ' hotels shown \u00b7 Prices in USD per night';
   }
 
+  // ---- My Bookings (personal journey timeline) ----
+  var MB_ICONS = {
+    plane: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>',
+    hotel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/><path d="M3 14h18"/><path d="M7 10V7a1 1 0 0 1 1-1h3v4"/></svg>',
+    excursion: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 10.5 10.5 8.5 15.5 13.5 13.5"/></svg>',
+    dining: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 0 0 4 0V3"/><path d="M8 10v11"/><path d="M17 3c-1.6 0-3 1.8-3 4.5s1.4 4.5 3 4.5v9"/></svg>'
+  };
+  function mbTimeVal(t) {
+    if (!t) return 0;
+    var m = String(t).match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+    if (!m) return 0;
+    var h = +m[1], min = m[2] ? +m[2] : 0, ap = (m[3] || '').toLowerCase();
+    if (ap === 'pm' && h < 12) h += 12;
+    if (ap === 'am' && h === 12) h = 0;
+    return h * 60 + min;
+  }
+  function mbDateLabel(iso) {
+    var d = new Date(iso + 'T12:00:00');
+    if (isNaN(d)) return iso;
+    var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    var mons = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return days[d.getDay()] + ' \u00b7 ' + mons[d.getMonth()] + ' ' + d.getDate();
+  }
+  function goToBeforeSail(anchorId, toggleId) {
+    applyTripPhase('before-sail');
+    var t = toggleId && document.getElementById(toggleId);
+    var body = toggleId && document.getElementById(toggleId.replace('-toggle', '-body'));
+    if (body && body.classList.contains('hidden')) { body.classList.remove('hidden'); if (t) t.classList.remove('collapsed'); }
+    var a = document.getElementById(anchorId);
+    if (a) requestAnimationFrame(function () { a.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  }
+  function goToCruiseDate(date) {
+    if (!date) { applyTripPhase('cruise'); return; }
+    cruiseDayOpen[date] = true;
+    applyTripPhase('cruise');
+    renderCruiseSchedule();
+    var card = document.querySelector('.cday[data-date="' + date + '"]');
+    if (card) requestAnimationFrame(function () { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  }
+
+  // Re-render My Bookings when async data lands, but only if it's the visible phase
+  function refreshMyBookingsIfActive() {
+    if (activeSection === 'itinerary' && getTripPhase() === 'bookings') renderMyBookings();
+  }
+  function renderMyBookings() {
+    var el = document.getElementById('mybookings-body');
+    if (!el) return;
+    var me = getUserName();
+    if (!me) {
+      el.innerHTML = '<div class="mb-identify"><div class="mb-identify-title">See your trip</div>' +
+        '<p class="mb-identify-sub">Tell us who you are and we\u2019ll gather your flights, hotel, excursions and dinners into one timeline.</p>' +
+        '<button class="modal-btn modal-btn-primary" id="mb-pick" type="button">Choose your name</button></div>';
+      var pick = el.querySelector('#mb-pick');
+      if (pick) pick.addEventListener('click', function () { promptName(true, function () { renderMyBookings(); }); });
+      return;
+    }
+    var meKey = me.toLowerCase();
+    var items = [];
+    function add(date, time, icon, title, sub, who, onTap) {
+      items.push({ date: date || '', time: time || '', icon: icon, title: title, sub: sub || '', who: who || '', onTap: onTap });
+    }
+    // Flights (confirmed, where I'm a traveler)
+    ['outbound', 'return'].forEach(function (dir) {
+      parseConfirmedFlights(dir).forEach(function (n) {
+        if (!n.traveler || n.traveler.toLowerCase() !== meKey) return;
+        var dep = (n.departure_airport || (dir === 'return' ? 'IST' : '')).toUpperCase();
+        var arr = (n.arrival_airport || (dir === 'outbound' ? 'VCE' : '')).toUpperCase();
+        var t = cfFmtTime(n.departure_time);
+        var sub = dep + ' \u2192 ' + arr + (t ? ' \u00b7 ' + t : '');
+        add(cfNormDate(n.departure_date), t, 'plane',
+          dir === 'outbound' ? 'Flight to Venice' : 'Flight home', sub, '',
+          function () { goToBeforeSail('itin-flights-anchor', 'flights-toggle'); });
+      });
+    });
+    // Hotels I'm on — from both the confirmed itinerary flow and the older picks, deduped
+    var hotelSeen = {};
+    function addHotel(name, date, sub) {
+      var k = (name || '').toLowerCase() + '|' + (date || '');
+      if (hotelSeen[k]) return;
+      hotelSeen[k] = 1;
+      add(date, '', 'hotel', name, sub, '', function () { goToBeforeSail('itin-hotels-anchor', 'hotels-toggle'); });
+    }
+    (confirmedHotels || []).forEach(function (h) {
+      if (!h || (h.traveler || '').toLowerCase() !== meKey) return;
+      var city = h.city ? (String(h.city).charAt(0).toUpperCase() + String(h.city).slice(1)) : '';
+      addHotel(h.hotel_name || 'Hotel', cfNormDate(h.check_in), city || 'Your hotel stay');
+    });
+    (sheetRows || []).forEach(function (r) {
+      if (!r || String(r.flight_id || '').indexOf('HOTEL:') !== 0) return;
+      if ((r.name || '').toLowerCase() !== meKey || r.action !== 'booked') return;
+      var hotel = r.airline || 'Hotel';
+      var hl = hotel.toLowerCase();
+      var date = cfNormDate(r.flight_date) ||
+        (/venice|ravenna|italy/.test(hl) ? '2026-07-02' : (/istanbul|turkey/.test(hl) ? '2026-07-13' : ''));
+      addHotel(hotel, date, 'Your hotel stay');
+    });
+    // Group excursions I joined
+    Object.keys(ADDED_EXCURSIONS || {}).forEach(function (date) {
+      (ADDED_EXCURSIONS[date] || []).forEach(function (rec) {
+        var joins = rec.joins || [];
+        if (!joins.some(function (j) { return String(j).toLowerCase() === meKey; })) return;
+        var d = rec.port_date || date;
+        add(d, rec.start_time, 'excursion', rec.title || 'Excursion',
+          (rec.port_label || '') + (joins.length > 1 ? ' \u00b7 ' + joins.length + ' going' : ''), '',
+          function () { goToCruiseDate(d); });
+      });
+    });
+    // NCL tours I marked Booked
+    (EXCURSION_PICKS || []).forEach(function (r) {
+      if (r.action !== 'booked' || (r.name || '').toLowerCase() !== meKey) return;
+      var exc = null;
+      for (var i = 0; i < EXCURSIONS.length; i++) { if (String(EXCURSIONS[i].code) === String(r.code)) { exc = EXCURSIONS[i]; break; } }
+      if (!exc) return;
+      var date = cruiseDateForPortKey(exc.port_key) || '';
+      add(date, '', 'excursion', exc.title || 'NCL excursion', (exc.port || '') + ' \u00b7 Booked through NCL', '',
+        function () { goToCruiseDate(date); });
+    });
+    // Group dinners (shared with everyone)
+    (typeof GROUP_EVENTS !== 'undefined' ? GROUP_EVENTS : []).forEach(function (ev) {
+      add(ev.date, ev.time, 'dining', ev.name, ev.desc || '', 'Everyone', function () { goToCruiseDate(ev.date); });
+    });
+
+    items.sort(function (a, b) {
+      var da = a.date || '9999', db = b.date || '9999';
+      if (da !== db) return da < db ? -1 : 1;
+      return mbTimeVal(a.time) - mbTimeVal(b.time);
+    });
+
+    var first = (me.split(/\s+/)[1] || me.split(/\s+/)[0] || me);
+    var html = '<div class="mb-head"><div><div class="mb-eyebrow">Your journey</div>' +
+      '<div class="mb-name">' + escHtml(first) + '</div></div>' +
+      '<button class="mb-change" id="mb-change" type="button">Not you?</button></div>';
+    if (!items.length) {
+      html += '<div class="mb-empty-note">Nothing under your name yet. As you pick flights and hotels, join excursions, or RSVP to dinners, they\u2019ll appear here in order.</div>';
+    } else {
+      var lastDate = '__';
+      items.forEach(function (it, idx) {
+        if (it.date !== lastDate) {
+          lastDate = it.date;
+          html += '<div class="mb-date">' + (it.date ? mbDateLabel(it.date) : 'To schedule') + '</div>';
+        }
+        html += '<button class="mb-item" data-idx="' + idx + '" type="button">' +
+          '<span class="mb-ic">' + (MB_ICONS[it.icon] || '') + '</span>' +
+          '<span class="mb-item-main"><span class="mb-item-title">' + escHtml(it.title) + '</span>' +
+          (it.sub ? '<span class="mb-item-sub">' + escHtml(it.sub) + '</span>' : '') + '</span>' +
+          (it.who ? '<span class="mb-who">' + escHtml(it.who) + '</span>' : '') +
+          '</button>';
+      });
+    }
+    el.innerHTML = html;
+    var chg = el.querySelector('#mb-change');
+    if (chg) chg.addEventListener('click', function () { promptName(true, function () { renderMyBookings(); }); });
+    el.querySelectorAll('.mb-item').forEach(function (b) {
+      var it = items[+b.getAttribute('data-idx')];
+      if (it && it.onTap) b.addEventListener('click', it.onTap);
+    });
+  }
+
   // ---- Cinematic Home (serene ambient video hero, Ritz/Aman mood) ----
   function initCineVideo() {
     var v = document.getElementById('cine-video');
@@ -6284,6 +6526,7 @@
   }
 
   async function init() {
+    migrateIdentity();
     setupLanding();
     setupTripPhase();
     setupOriginModal();
@@ -6602,6 +6845,7 @@
       ADDED_EXCURSIONS = grouped;
       persistAddedExcursions();
       document.querySelectorAll('.cday-exc').forEach(function (c) { renderAddedExcursions(c.id.replace('cdayexc-', '')); });
+      refreshMyBookingsIfActive();
     }).catch(function () {});
   }
 
@@ -7483,6 +7727,7 @@
         confirmedHotels = Array.isArray(rows) ? rows : [];
         confirmedHotelsLoaded = true;
         if (callback) callback();
+        refreshMyBookingsIfActive();
       })
       .catch(function () {
         confirmedHotels = [];
@@ -8041,6 +8286,7 @@
         console.log('[Confirmed] Return source:', (retData && retData.length > 0) ? 'Departing Istanbul tab' : 'main sheet');
         renderConfirmedTable('outbound');
         renderConfirmedTable('return');
+        refreshMyBookingsIfActive();
       }, minDelay);
     }
 
@@ -8214,6 +8460,64 @@
     return parts[1] + '/' + parts[2] + '/' + parts[0].slice(2);
   }
 
+  // Parse confirmed flights for a direction — handles confirmed tabs (objects) AND the
+  // main-sheet fallback (2D array), applies the confirmed + direction filtering. Shared by
+  // renderConfirmedTable and My Bookings so both always show the same flights.
+  function parseConfirmedFlights(dir) {
+    var rows = dir === 'outbound' ? confirmedOutbound : confirmedReturn;
+    var parsed = [];
+    if (Array.isArray(rows) && rows.length > 0) {
+      var isObjectArray = rows[0] && typeof rows[0] === 'object' && !Array.isArray(rows[0]);
+      if (isObjectArray) {
+        rows.forEach(function (obj) {
+          var norm = {};
+          Object.keys(obj).forEach(function (k) { norm[k.toLowerCase().replace(/[\s()]+/g, '_')] = obj[k]; });
+          norm.traveler = norm.traveler || norm.name || '';
+          if (!String(norm.traveler).trim()) return;
+          norm.traveler = String(norm.traveler).trim();
+          if (!norm.departure_airport) norm.departure_airport = norm.from_airport_ || '';
+          if (!norm.arrival_airport) norm.arrival_airport = norm.to_airport_ || '';
+          if (!norm.arrival_time) norm.arrival_time = norm.arrival_time_vce_ || '';
+          if (!norm.departure_date) norm.departure_date = norm.departure_date_ist_ || '';
+          if (!norm.departure_time) norm.departure_time = norm.departure_time_ist_ || '';
+          if (!norm.departure_time_raw) norm.departure_time_raw = norm.departure_time_ist_ || '';
+          parsed.push(norm);
+        });
+      } else if (rows.length > 1) {
+        var headers = rows[0];
+        var headerKeys = headers.map(function (h) { return String(h).toLowerCase().replace(/[\s()]+/g, '_'); });
+        var hasActionCol = headerKeys.indexOf('action') !== -1;
+        for (var i = 1; i < rows.length; i++) {
+          var obj = {};
+          for (var j = 0; j < rows[i].length; j++) { obj[headerKeys[j] || j] = rows[i][j]; }
+          obj.traveler = obj.traveler || obj.name || '';
+          if (!String(obj.traveler).trim()) continue;
+          obj.traveler = String(obj.traveler).trim();
+          if (hasActionCol) {
+            var isBooked = obj.action === 'booked';
+            var isConfirmed = obj.fare_type === 'Confirmed';
+            if (!isBooked && !isConfirmed) continue;
+          }
+          if (!obj.departure_date && obj.flight_date) obj.departure_date = obj.flight_date;
+          parsed.push(obj);
+        }
+      }
+    }
+    parsed.forEach(function (obj) {
+      if (dir === 'outbound' && !obj.arrival_airport) obj.arrival_airport = 'VCE';
+      if (dir === 'return' && !obj.departure_airport) obj.departure_airport = 'IST';
+    });
+    var RETURN_DATES = { '2026-07-13': 1, '2026-07-14': 1, '2026-07-15': 1 };
+    return parsed.filter(function (obj) {
+      var rowDep = (obj.departure_airport || '').toUpperCase();
+      var flightDate = cfNormDate(obj.departure_date || obj.flight_date || '');
+      var isReturn = (rowDep === 'IST') || RETURN_DATES[flightDate];
+      if (dir === 'outbound' && isReturn) return false;
+      if (dir === 'return' && !isReturn) return false;
+      return true;
+    });
+  }
+
   function renderConfirmedTable(dir) {
     var elId = dir === 'outbound' ? 'confirmed-outbound' : 'confirmed-return';
     var el = document.getElementById(elId);
@@ -8224,76 +8528,8 @@
       ? 'Sorted by arrival in Venice \u00b7 same flight grouped together'
       : 'Sorted by departure from Istanbul \u00b7 same flight grouped together';
 
-    // Parse data — handles both 2D array (main sheet) and array of objects (confirmed tabs)
-    var parsed = [];
-    if (Array.isArray(rows) && rows.length > 0) {
-      var isObjectArray = rows[0] && typeof rows[0] === 'object' && !Array.isArray(rows[0]);
-
-      if (isObjectArray) {
-        // Array of objects from get_confirmed_flights {flights: [...]}
-        rows.forEach(function (obj) {
-          // Normalize keys to lowercase with underscores
-          var norm = {};
-          Object.keys(obj).forEach(function (k) {
-            norm[k.toLowerCase().replace(/[\s()]+/g, '_')] = obj[k];
-          });
-          norm.traveler = norm.traveler || norm.name || '';
-          if (!String(norm.traveler).trim()) return;
-          norm.traveler = String(norm.traveler).trim();
-          // Map confirmed tab column names
-          if (!norm.departure_airport) norm.departure_airport = norm.from_airport_ || '';
-          if (!norm.arrival_airport) norm.arrival_airport = norm.to_airport_ || '';
-          if (!norm.arrival_time) norm.arrival_time = norm.arrival_time_vce_ || '';
-          if (!norm.departure_date) norm.departure_date = norm.departure_date_ist_ || '';
-          if (!norm.departure_time) norm.departure_time = norm.departure_time_ist_ || '';
-          if (!norm.departure_time_raw) norm.departure_time_raw = norm.departure_time_ist_ || '';
-          parsed.push(norm);
-        });
-      } else if (rows.length > 1) {
-        // 2D array from main sheet action=read
-        var headers = rows[0];
-        var headerKeys = headers.map(function (h) { return String(h).toLowerCase().replace(/[\s()]+/g, '_'); });
-        var hasActionCol = headerKeys.indexOf('action') !== -1;
-
-        for (var i = 1; i < rows.length; i++) {
-          var obj = {};
-          for (var j = 0; j < rows[i].length; j++) {
-            obj[headerKeys[j] || j] = rows[i][j];
-          }
-          obj.traveler = obj.traveler || obj.name || '';
-          if (!String(obj.traveler).trim()) continue;
-          obj.traveler = String(obj.traveler).trim();
-
-          if (hasActionCol) {
-            var isBooked = obj.action === 'booked';
-            var isConfirmed = obj.fare_type === 'Confirmed';
-            if (!isBooked && !isConfirmed) continue;
-          }
-
-          if (!obj.departure_date && obj.flight_date) obj.departure_date = obj.flight_date;
-          parsed.push(obj);
-        }
-      }
-    }
-
-    // Default terminal airports: outbound always arrives VCE, return always departs IST
-    parsed.forEach(function (obj) {
-      if (dir === 'outbound' && !obj.arrival_airport) obj.arrival_airport = 'VCE';
-      if (dir === 'return' && !obj.departure_airport) obj.departure_airport = 'IST';
-    });
-
-    // Direction filtering
-    var RETURN_DATES = {'2026-07-13':1,'2026-07-14':1,'2026-07-15':1};
-    parsed = parsed.filter(function (obj) {
-      var rowDep = (obj.departure_airport || '').toUpperCase();
-      var flightDate = cfNormDate(obj.departure_date || obj.flight_date || '');
-      var isReturn = (rowDep === 'IST') || RETURN_DATES[flightDate];
-      if (dir === 'outbound' && isReturn) return false;
-      if (dir === 'return' && !isReturn) return false;
-      return true;
-    });
-    console.log('[Render Table] ' + dir + ': ' + parsed.length + ' valid rows after filtering');
-    if (parsed.length > 0) console.log('[Render Table] Sample row:', JSON.stringify(parsed[0]));
+    // Parse + confirmed/direction filter (shared with My Bookings so they never drift)
+    var parsed = parseConfirmedFlights(dir);
 
     // Sort: outbound by arrival date/time in Venice, return by departure date/time from Istanbul
     parsed.forEach(function (r) {
