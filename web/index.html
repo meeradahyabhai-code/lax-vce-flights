@@ -1712,8 +1712,12 @@
 
   /* Cinematic port cards — the destination image IS the card (Ritz, not a baked-in thumbnail) */
   .cday-cine { background: #0e1f38; border: none; overflow: hidden; box-shadow: 0 8px 26px rgba(14,31,56,0.14); }
-  .cday-cine > .cday-head { display: block; padding: 0; position: relative; min-height: 176px;
-    background-size: cover; background-position: center; }
+  .cday-cine > .cday-head { display: block; padding: 0; position: relative; min-height: 176px; overflow: hidden; }
+  .cday-cine .cday-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(.92) contrast(.98) brightness(.97); transform: scale(1.03); will-change: transform; }
+  .cday-cine.open .cday-bg { animation: cdayKB 18s ease-out forwards; }
+  @keyframes cdayKB { from { transform: scale(1.04); } to { transform: scale(1.15) translate(-1.5%, -1%); } }
+  @media (prefers-reduced-motion: reduce) { .cday-cine.open .cday-bg { animation: none; } }
   .cday-cine .cday-scrim { position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(8,14,26,.5) 0%, rgba(8,14,26,.08) 34%, rgba(8,14,26,.42) 74%, rgba(8,14,26,.86) 100%); }
   .cday-cine .cday-head-inner { position: relative; min-height: 176px; display: flex; flex-direction: column; justify-content: space-between; padding: 16px 18px; }
@@ -1725,11 +1729,11 @@
   .cday-cine .cday-times { color: #fff; opacity: .95; font-size: 14px; margin-top: 5px; text-shadow: 0 1px 12px rgba(0,0,0,.5); font-feature-settings: var(--nums-tabular); }
   .cday-cine .cday-caret-w { flex: 0 0 auto; color: #fff; font-size: 16px; line-height: 1; opacity: .95; transition: transform .2s; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
   .cday-cine:not(.open) .cday-caret-w { transform: rotate(-90deg); }
-  .cday-cine .cday-body { background: var(--bg-surface); padding: 4px 18px 18px; }
-  .cday-cine .cday-events-strip { background: var(--bg-surface); padding: 14px 18px 2px; }
+  .cday-cine .cday-body { background: var(--bg-surface); padding: 18px 20px 22px; }
+  .cday-cine .cday-events-strip { background: var(--bg-surface); padding: 16px 20px 2px; }
   .cday-body { padding: 0 18px 18px; }
   .cday-body.hidden { display: none; }
-  .cday-sec-label { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-tertiary); margin: 4px 0 12px; }
+  .cday-sec-label { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-secondary); margin: 6px 0 14px; }
   .cday-exc { display: flex; flex-direction: column; gap: 12px; }
   .cday-exc-empty { font-family: var(--sans); font-size: 14px; color: var(--text-tertiary); padding: 2px 0; }
   .cday-add-exc {
@@ -6413,7 +6417,8 @@
       html += '<div class="cday' + (expandable ? ' cday-x' : '') + (hasImg ? ' cday-cine' : '') + (isOpen ? ' open' : '') + '" data-date="' + p.date + '">';
       if (hasImg) {
         // Cinematic destination card: the image sets the card's whole mood, text overlaid.
-        html += '<div class="cday-head" style="background-image:url(/media/' + portSlug + '.jpg)">';
+        html += '<div class="cday-head">';
+        html += '<img class="cday-bg" src="/media/' + portSlug + '.jpg" alt="' + escHtml(p.label) + '" loading="lazy">';
         html += '<div class="cday-scrim"></div>';
         html += '<div class="cday-head-inner">';
         html += '<div class="cday-htop"><span class="cday-eyebrow">' + dow + ' &middot; ' + mon + ' ' + day + '</span>' + wxHtml + '</div>';
