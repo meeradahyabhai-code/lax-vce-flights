@@ -110,7 +110,7 @@
   .landing-screen.hidden { display: none; }
 
   /* ── Cinematic Home carousel (Aritzia/Ritz editorial: full-bleed graded imagery) ── */
-  .cine { position: relative; flex: 1 1 auto; overflow: hidden; background: #0e1f38; }
+  .cine { position: relative; flex: 1 1 auto; overflow: hidden; background: #0e1f38 center/cover no-repeat; }
   .cine-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
     filter: saturate(.82) contrast(.97) brightness(.88); }
   .cine-scrim { position: absolute; inset: 0; background:
@@ -6471,6 +6471,10 @@
     var hr = new Date().getHours();
     var base = (hr < 6 || hr >= 19) ? 'sea-night' : 'sea-day';
     v.setAttribute('poster', '/media/' + base + '-poster.jpg');
+    // Also paint the poster as the container bg so the status-bar strip shows the sea
+    // (iOS sometimes won't render the <video> under the translucent status bar).
+    var cine = document.getElementById('cine');
+    if (cine) cine.style.backgroundImage = "url('/media/" + base + "-poster.jpg')";
     var conn = navigator.connection || {};
     // Poster-first: on data-saver / reduced-motion / offline, keep the still poster only (no video download).
     if (conn.saveData === true || navigator.onLine === false ||
