@@ -6317,6 +6317,24 @@
     if (ap === 'am' && h === 12) h = 0;
     return h * 60 + min;
   }
+  // minutes-since-midnight -> "h:mm AM/PM" (wraps past midnight defensively)
+  function mbFmtMin(min) {
+    min = ((Math.round(min) % 1440) + 1440) % 1440;
+    var h = Math.floor(min / 60), m = min % 60;
+    var ap = h >= 12 ? 'PM' : 'AM', h12 = h % 12; if (h12 === 0) h12 = 12;
+    return h12 + ':' + (m < 10 ? '0' + m : m) + ' ' + ap;
+  }
+  // "9:00 AM" + "4 hours" -> "9:00 AM – 1:00 PM"; "Flexible"/no-time -> as-is
+  function mbExcRange(start, duration) {
+    start = (start || '').trim();
+    if (!start) return '';
+    if (/flex/i.test(start)) return 'Flexible';
+    if (!/\d/.test(start)) return start;
+    var d = parseDuration(duration || ''), num = parseFloat(d.num);
+    if (isNaN(num) || num <= 0) return start;
+    var durMin = d.unit === 'minutes' ? num : num * 60;
+    return start + ' – ' + mbFmtMin(mbTimeVal(start) + durMin);
+  }
   function mbDateLabel(iso) {
     var d = new Date(iso + 'T12:00:00');
     if (isNaN(d)) return iso;
@@ -6368,10 +6386,15 @@
         if (!n.traveler || n.traveler.toLowerCase() !== meKey) return;
         var dep = (n.departure_airport || (dir === 'return' ? 'IST' : '')).toUpperCase();
         var arr = (n.arrival_airport || (dir === 'outbound' ? 'VCE' : '')).toUpperCase();
-        var t = cfFmtTime(n.departure_time);
-        var sub = dep + ' \u2192 ' + arr + (t ? ' \u00b7 ' + t : '');
-        add(cfNormDate(n.departure_date), t, 'plane',
-          dir === 'outbound' ? 'Flight to Venice' : 'Flight home', sub, '',
+        var depT = cfFmtTime(n.departure_time), arrT = cfFmtTime(n.arrival_time);
+        var airline = (n.airline || '').toString().trim();
+        var timeStr = (depT && arrT && depT !== arrT) ? (depT + ' \u2013 ' + arrT) : (depT || arrT || '');
+        var fparts = [];
+        if (airline) fparts.push(airline);
+        fparts.push(dep + ' \u2192 ' + arr);
+        if (timeStr) fparts.push(timeStr);
+        add(cfNormDate(n.departure_date), depT, 'plane',
+          dir === 'outbound' ? 'Flight to Venice' : 'Flight home', fparts.join(' \u00b7 '), '',
           function () { goToBeforeSail('itin-flights-anchor', 'flights-toggle'); });
       });
     });
@@ -6403,8 +6426,12 @@
         var joins = rec.joins || [];
         if (!joins.some(function (j) { return String(j).toLowerCase() === meKey; })) return;
         var d = rec.port_date || date;
-        add(d, rec.start_time, 'excursion', rec.title || 'Excursion',
-          (rec.port_label || '') + (joins.length > 1 ? ' \u00b7 ' + joins.length + ' going' : ''), '',
+        var range = mbExcRange(rec.start_time, rec.duration);
+        var xparts = [];
+        if (range) xparts.push(range);
+        if (rec.port_label) xparts.push(rec.port_label);
+        if (joins.length > 1) xparts.push(joins.length + ' going');
+        add(d, rec.start_time, 'excursion', rec.title || 'Excursion', xparts.join(' \u00b7 '), '',
           function () { goToCruiseDate(d); });
       });
     });
@@ -6420,7 +6447,10 @@
     });
     // Group dinners (shared with everyone)
     (typeof GROUP_EVENTS !== 'undefined' ? GROUP_EVENTS : []).forEach(function (ev) {
-      add(ev.date, ev.time, 'dining', ev.name, ev.desc || '', 'Everyone', function () { goToCruiseDate(ev.date); });
+      var dparts = [];
+      if (ev.time) dparts.push(ev.time);
+      if (ev.desc) dparts.push(ev.desc);
+      add(ev.date, ev.time, 'dining', ev.name, dparts.join(' · '), 'Everyone', function () { goToCruiseDate(ev.date); });
     });
 
     items.sort(function (a, b) {
