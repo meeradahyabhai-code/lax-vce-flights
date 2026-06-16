@@ -1849,6 +1849,8 @@
   .axm-method-ic svg { width: 20px; height: 20px; fill: none; stroke: var(--azure); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; display: block; }
   .axm-up-ic { width: 16px; height: 16px; fill: none; stroke: var(--azure); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; vertical-align: -3px; margin-right: 6px; }
   .axm-saveerr { font-family: var(--sans); font-size: 12px; color: #b3261e; margin-top: 8px; }
+  .axm-need { border-color: #b3261e !important; box-shadow: 0 0 0 2px rgba(179,38,30,0.18) !important; }
+  .axm-step { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--azure); background: rgba(26,58,107,0.07); border-left: 3px solid var(--azure); border-radius: 6px; padding: 9px 12px; margin: 2px 0 12px; line-height: 1.35; }
   .axm-method-pane { margin-bottom: 8px; }
   .axm-ncl { position: relative; margin-bottom: 8px; }
   .axm-ncl-input { width: 100%; }
@@ -6811,13 +6813,35 @@
   function sbHeaders(extra) {
     return Object.assign({ apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }, extra || {});
   }
-  function sbInsert(table, body) {
+  function genId() {
+    try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+  // upsert=true sends a merge-duplicates Prefer so re-sending the SAME client-generated id
+  // is a no-op instead of a duplicate row (makes retries safe).
+  function sbInsert(table, body, upsert) {
     return fetch(SUPABASE_URL + '/rest/v1/' + table, {
       method: 'POST',
-      headers: sbHeaders({ 'Content-Type': 'application/json', Prefer: 'return=representation' }),
+      headers: sbHeaders({ 'Content-Type': 'application/json', Prefer: 'return=representation' + (upsert ? ',resolution=merge-duplicates' : '') }),
       body: JSON.stringify(body)
-    }).then(function (r) { if (!r.ok) throw new Error('insert ' + r.status); return r.json(); })
+    }).then(function (r) { if (!r.ok) { var err = new Error('insert ' + r.status); err.status = r.status; throw err; } return r.json(); })
       .then(function (j) { return Array.isArray(body) ? j : j[0]; });
+  }
+  // Retry once on a TRANSIENT failure (network drop / 5xx) — spotty cruise/mobile wifi is the
+  // common cause of a failed save. Only safe for IDEMPOTENT inserts (caller passes a client id
+  // + upsert), so a retry after an ambiguous failure merges instead of duplicating. Don't retry
+  // 4xx (a real validation error).
+  function sbInsertRetry(table, body, tries, upsert) {
+    tries = tries || 2;
+    return sbInsert(table, body, upsert).catch(function (e) {
+      var transient = !e.status || e.status >= 500;
+      if (tries > 1 && transient) {
+        return new Promise(function (res) { setTimeout(res, 800); }).then(function () { return sbInsertRetry(table, body, tries - 1, upsert); });
+      }
+      throw e;
+    });
   }
   function sbDelete(table, query) {
     return fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + query, { method: 'DELETE', headers: sbHeaders() });
@@ -6866,19 +6890,27 @@
   // Screenshots are NOT stored (they're parsed for fields only) — booking
   // confirmations can contain names / confirmation numbers / payment info.
   function saveAddedExcursion(rec) {
-    return sbInsert('excursions', {
-      port_date: rec.port_date, port_label: rec.port_label, title: rec.title,
-      start_time: rec.start_time, duration: rec.duration, price: rec.price, currency: rec.currency,
+    // Client-generated id + upsert so a retry after an ambiguous network failure merges onto
+    // the same row instead of creating a duplicate excursion.
+    var newId = genId();
+    return sbInsertRetry('excursions', {
+      id: newId, port_date: rec.port_date, port_label: rec.port_label, title: rec.title,
+      start_time: rec.start_time || '', duration: rec.duration, price: rec.price, currency: rec.currency,
       operator: rec.operator || null, meeting_point: rec.meeting_point || null,
       link: rec.link || null, notes: rec.notes || null, added_by: rec.added_by || null
-    }).then(function (row) {
-      rec.id = row.id;
+    }, 2, true).then(function (row) {
+      rec.id = (row && row.id) || newId;
+      // The excursion row exists now — commit it to the local cache immediately so a
+      // failure on the (separate) joins request can't lose it or make a retry duplicate it.
+      (ADDED_EXCURSIONS[rec.port_date] = ADDED_EXCURSIONS[rec.port_date] || []).push(rec);
+      persistAddedExcursions();
       var joins = rec.joins || [];
-      var step = joins.length ? sbInsert('excursion_joins', joins.map(function (t) { return { excursion_id: row.id, traveler: t }; })) : Promise.resolve();
-      return step.then(function () {
-        (ADDED_EXCURSIONS[rec.port_date] = ADDED_EXCURSIONS[rec.port_date] || []).push(rec);
-        persistAddedExcursions();
-      });
+      if (!joins.length) return;
+      // Joins are best-effort and sent ONCE (no retry — a join row has no client id to merge
+      // on, so a retry could duplicate it). If it fails, the excursion is still saved and a
+      // server refresh / re-tap reconciles. Never fail the whole save over a join hiccup.
+      return sbInsert('excursion_joins', joins.map(function (t) { return { excursion_id: rec.id, traveler: t }; }))
+        .catch(function (e) { console.error('excursion saved, but adding people failed (reconciles on refresh):', e); });
     });
   }
   // Returns 'joined' | 'left' | null (null = excursion couldn't be resolved, nothing changed)
@@ -7032,6 +7064,7 @@
           '<button type="button" class="axm-method" data-method="manual"><span class="axm-method-ic"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span> Enter the details manually</button>' +
         '</div>' +
         '<div class="axm-form" id="axm-form" style="display:none;">' +
+          '<div class="axm-step" id="axm-step" style="display:none;"></div>' +
           '<div class="axm-method-pane" id="pane-list" style="display:none;">' +
             '<div class="axm-field-label">Search ' + escHtml(portFirst) + ' tours</div>' +
             '<div class="axm-ncl">' +
@@ -7048,6 +7081,7 @@
             '<div class="axm-upstatus" id="axm-upstatus"></div>' +
             '<div class="axm-loadbar" id="axm-loadbar" style="display:none;"><div class="axm-loadbar-fill"></div></div>' +
           '</div>' +
+          '<div id="axm-details" style="display:none;">' +
           '<input class="modal-input axm-in" id="axm-title" placeholder="Title *">' +
           '<div class="axm-field-label">Date *</div>' +
           '<input class="modal-input axm-in" id="axm-date" type="date" value="' + date + '">' +
@@ -7073,6 +7107,7 @@
           '<input class="modal-input axm-in" id="axm-notes" placeholder="Notes (optional)">' +
           '<div class="axm-going-label">Who’s going?</div>' +
           '<div class="rost-list">' + rosterChecklist(me ? [me] : []) + '</div>' +
+          '</div>' +
         '</div>' +
         '<div class="axm-saveerr" id="axm-saveerr"></div>' +
         '<div class="axm-foot"><button class="modal-btn" data-act="cancel" type="button">Cancel</button>' +
@@ -7081,23 +7116,44 @@
     document.body.appendChild(ov);
 
     var saveBtn = ov.querySelector('#axm-save');
-    function reqFilled() {
+    var saveErr = ov.querySelector('#axm-saveerr');
+    var REQ = [
+      { sel: '#axm-title', label: 'a title' },
+      { sel: '#axm-date',  label: 'a date' },
+      { sel: '#axm-dur',   label: 'a duration' },
+      { sel: '#axm-price', label: 'a price' }
+    ];
+    // What's still missing. A start time is optional, but if any time field is touched
+    // then hour AND AM/PM are both needed (a bare "9" is ambiguous).
+    function missingForSave() {
+      var miss = [];
+      REQ.forEach(function (f) { if (ov.querySelector(f.sel).value.trim() === '') miss.push(f); });
       var hr = ov.querySelector('#axm-hr').value, ampm = ov.querySelector('#axm-ampm').value, min = ov.querySelector('#axm-min').value;
-      var anyTime = hr !== '' || ampm !== '' || min !== '00';   // any time field touched
-      var timeOk = !anyTime || (hr !== '' && ampm !== '');       // then hour + AM/PM are both required
-      return ov.querySelector('#axm-title').value.trim() !== '' &&
-        ov.querySelector('#axm-date').value !== '' &&
-        ov.querySelector('#axm-dur').value !== '' &&
-        ov.querySelector('#axm-price').value !== '' &&
-        timeOk;
+      if ((hr !== '' || ampm !== '' || min !== '00') && !(hr !== '' && ampm !== '')) {
+        miss.push(hr === '' ? { sel: '#axm-hr', label: 'an hour' } : { sel: '#axm-ampm', label: 'AM or PM' });
+      }
+      return miss;
     }
-    function refresh() { saveBtn.disabled = !reqFilled(); }
+    // Tell the user IN RED what's still needed — never silently grey the button (the old
+    // behaviour made Save look broken when, e.g., an hour was picked without AM/PM).
+    function refresh() {
+      var miss = missingForSave();
+      if (saveErr) saveErr.textContent = miss.length ? ('To save, add ' + miss.map(function (f) { return f.label; }).join(', ') + '.') : '';
+    }
     ov.querySelectorAll('.axm-in').forEach(function (el2) {
-      el2.addEventListener('input', refresh);
-      el2.addEventListener('change', refresh);
+      el2.addEventListener('input', function () { el2.classList.remove('axm-need'); refresh(); });
+      el2.addEventListener('change', function () { el2.classList.remove('axm-need'); refresh(); });
     });
 
-    // Method choice: From list / Upload / Manual -> reveal the form + the chosen input
+    var stepEl = ov.querySelector('#axm-step');
+    var detailsEl = ov.querySelector('#axm-details');
+    function setStep(t) { if (stepEl) { stepEl.textContent = t || ''; stepEl.style.display = t ? '' : 'none'; } }
+    // Reveal the detail fields + activate Save. Called only when there's actually something
+    // to review/fill (a tour picked, a screenshot parsed, or manual entry chosen) — so the
+    // user sees ONE clear next step at a time instead of the whole form at once.
+    function showDetails(stepText) { if (detailsEl) detailsEl.style.display = ''; saveBtn.disabled = false; setStep(stepText); refresh(); }
+
+    // Method choice: From list / Upload / Manual -> reveal ONE clear next step
     ov.querySelectorAll('.axm-method').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var m = btn.getAttribute('data-method');
@@ -7105,8 +7161,17 @@
         ov.querySelector('#axm-form').style.display = '';
         ov.querySelector('#pane-list').style.display = (m === 'list') ? '' : 'none';
         ov.querySelector('#pane-upload').style.display = (m === 'upload') ? '' : 'none';
-        if (m === 'list') { var s = ov.querySelector('#axm-ncl-search'); if (s) setTimeout(function () { s.focus(); }, 50); }
-        refresh();
+        if (m === 'manual') {
+          showDetails('Fill in the details below, pick who’s going, then tap Save.');
+        } else {
+          // List/Upload: show only the one next action; the fields appear after it returns data.
+          if (detailsEl) detailsEl.style.display = 'none';
+          saveBtn.disabled = true;
+          setStep(m === 'list'
+            ? 'Next: search for your tour below and tap it — we’ll fill in the details for you.'
+            : 'Next: upload your booking screenshot — we’ll read the details for you.');
+          if (m === 'list') { var s = ov.querySelector('#axm-ncl-search'); if (s) setTimeout(function () { s.focus(); }, 50); }
+        }
       });
     });
 
@@ -7151,7 +7216,7 @@
         if (e.description) ov.querySelector('#axm-notes').value = e.description;
         searchEl.value = e.title || '';
         resEl.style.display = 'none';
-        refresh();
+        showDetails('Review the details below, pick who’s going, then tap Save.');
       });
       if (!excursionsLoaded && typeof loadExcursions === 'function') {
         loadExcursions().then(function () { if (ov.isConnected) renderNcl(searchEl.value); });
@@ -7189,18 +7254,19 @@
               if (p.notes) ov.querySelector('#axm-notes').value = p.notes;
               status.className = 'axm-upstatus ok';
               status.textContent = '✓ Filled from your screenshot. Review the details below.';
-              refresh();
+              showDetails('Review the details below, pick who’s going, then tap Save.');
               setTimeout(function () { status.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
             } else {
               status.className = 'axm-upstatus err';
               status.textContent = (d && d.error) ? d.error : 'Could not read it. Enter the details manually below.';
-              refresh();
+              showDetails('Enter the details manually below, then tap Save.');
             }
           })
           .catch(function () {
             if (loadbar) loadbar.style.display = 'none';
             status.className = 'axm-upstatus err';
             status.textContent = 'Could not read it. Enter the details manually below.';
+            showDetails('Enter the details manually below, then tap Save.');
           });
       };
       reader.readAsDataURL(f);
@@ -7210,7 +7276,16 @@
       var act = e.target.getAttribute && e.target.getAttribute('data-act');
       if (e.target === ov || act === 'cancel') { ov.remove(); return; }
       if (act === 'save') {
-        if (!reqFilled()) return;
+        var miss = missingForSave();
+        if (miss.length) {
+          // Make it obvious: red-outline every missing field + a red message, jump to the first.
+          ov.querySelectorAll('.axm-need').forEach(function (el2) { el2.classList.remove('axm-need'); });
+          miss.forEach(function (f) { var el2 = ov.querySelector(f.sel); if (el2) el2.classList.add('axm-need'); });
+          refresh();
+          var first = ov.querySelector(miss[0].sel);
+          if (first) { first.focus(); if (first.scrollIntoView) first.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+          return;
+        }
         var hr = ov.querySelector('#axm-hr').value;
         var min = ov.querySelector('#axm-min').value || '00';
         var ampm = ov.querySelector('#axm-ampm').value;
@@ -7232,7 +7307,8 @@
         saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
         saveAddedExcursion(rec)
           .then(function () { ov.remove(); renderAddedExcursions(rec.port_date); if (rec.port_date !== date) renderAddedExcursions(date); })
-          .catch(function () {
+          .catch(function (e) {
+            console.error('save excursion failed:', e);
             saveBtn.disabled = false; saveBtn.textContent = 'Save';
             ov.querySelector('#axm-saveerr').textContent = 'Could not save. Check your connection and try again.';
           });
