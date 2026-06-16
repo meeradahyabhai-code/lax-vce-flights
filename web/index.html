@@ -1813,6 +1813,10 @@
   .gx-join.joined { background: var(--lagoon); border-color: var(--lagoon); }
   .gx-roster { background: transparent; color: var(--azure); }
   .gx-roster:hover { background: rgba(26,58,107,0.08); }
+  /* Delete = creator only; pushed to the far right + ghost styling so it isn't fat-fingered */
+  .gx-del { margin-left: auto; font-family: var(--sans); font-size: 13px; font-weight: 500; padding: 7px 14px; border-radius: 9999px; cursor: pointer; background: transparent; border: 1px solid transparent; color: #b3261e; }
+  .gx-del:hover { background: rgba(179,38,30,0.08); border-color: rgba(179,38,30,0.35); }
+  .gx-added-by { font-family: var(--sans); font-size: 11px; color: var(--text-tertiary); margin-top: 6px; }
 
   /* Add-excursion / who's-going modal */
   .modal.axm { max-width: 460px; width: 92%; max-height: none; overflow: visible; margin: auto; }
@@ -6954,11 +6958,14 @@
       var joins = r.joins || [];
       html += '<div class="gx-going"><span class="gx-going-label">Going</span> ' +
         (joins.length ? joins.map(function (n) { return '<span class="gx-person">' + escHtml(n) + '</span>'; }).join('') : '<span class="gx-none">no one yet</span>') + '</div>';
+      if (r.added_by) html += '<div class="gx-added-by">Added by ' + escHtml(r.added_by) + '</div>';
       var iAmIn = me && joins.indexOf(me) >= 0;
+      var isOwner = me && r.added_by && r.added_by === me;   // only the person who added it can delete it
       html += '<div class="gx-actions">' +
         '<button class="gx-join' + (iAmIn ? ' joined' : '') + '" data-date="' + date + '" data-id="' + escHtml(r.id) + '">' +
         (iAmIn ? '✓ You’re going' : 'Join') + '</button>' +
         '<button class="gx-roster" data-date="' + date + '" data-id="' + escHtml(r.id) + '">Who’s going</button>' +
+        (isOwner ? '<button class="gx-del" data-date="' + date + '" data-id="' + escHtml(r.id) + '">Delete</button>' : '') +
         '</div></div></div>';
     });
     el.innerHTML = html;
@@ -6973,6 +6980,49 @@
     });
     el.querySelectorAll('.gx-roster').forEach(function (b) {
       b.addEventListener('click', function () { openJoinRosterModal(b.getAttribute('data-date'), b.getAttribute('data-id')); });
+    });
+    el.querySelectorAll('.gx-del').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var rec = findExc(b.getAttribute('data-date'), b.getAttribute('data-id'));
+        if (rec) confirmDeleteExcursion(rec, b.getAttribute('data-date'));
+      });
+    });
+  }
+
+  // Delete an excursion (creator only). The excursions row delete CASCADES to its joins.
+  function deleteAddedExcursion(rec, date) {
+    return sbDelete('excursions', 'id=eq.' + encodeURIComponent(rec.id)).then(function (r) {
+      if (!r.ok) throw new Error('delete ' + r.status);
+      ADDED_EXCURSIONS[date] = (ADDED_EXCURSIONS[date] || []).filter(function (x) { return x.id !== rec.id; });
+      persistAddedExcursions();
+      renderAddedExcursions(date);
+      refreshMyBookingsIfActive();
+    });
+  }
+  // Guarded confirm so a tap can't wipe an excursion for the whole group by accident.
+  function confirmDeleteExcursion(rec, date) {
+    var ov = document.createElement('div');
+    ov.className = 'modal-overlay active';
+    ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
+      '<div class="modal-title">Delete this excursion?</div>' +
+      '<div class="modal-sub">' + escHtml(rec.title) + '</div>' +
+      '<p style="font-family:var(--sans);font-size:13px;color:var(--text-secondary);margin:10px 0 2px;line-height:1.4;">This removes it for everyone — including anyone who joined. It can’t be undone.</p>' +
+      '<div class="axm-saveerr" id="gxdel-err"></div>' +
+      '<div class="axm-foot"><button class="modal-btn" data-act="cancel" type="button">Cancel</button>' +
+      '<button class="modal-btn gxdel-go" type="button" style="background:#b3261e;border-color:#b3261e;color:#fff;">Delete</button></div>' +
+      '</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function (e) {
+      var act = e.target.getAttribute && e.target.getAttribute('data-act');
+      if (e.target === ov || act === 'cancel') { ov.remove(); return; }
+      if (e.target.classList.contains('gxdel-go')) {
+        var btn = e.target; btn.disabled = true; btn.textContent = 'Deleting…';
+        deleteAddedExcursion(rec, date).then(function () { ov.remove(); }).catch(function (err) {
+          console.error('delete excursion failed:', err);
+          btn.disabled = false; btn.textContent = 'Delete';
+          ov.querySelector('#gxdel-err').textContent = 'Could not delete. Check your connection and try again.';
+        });
+      }
     });
   }
 
