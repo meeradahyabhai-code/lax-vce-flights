@@ -7085,9 +7085,9 @@
           '<input class="modal-input axm-in" id="axm-title" placeholder="Title *">' +
           '<div class="axm-field-label">Date *</div>' +
           '<input class="modal-input axm-in" id="axm-date" type="date" value="' + date + '">' +
-          '<div class="axm-field-label">Start time (optional)</div>' +
+          '<div class="axm-field-label">Start time *</div>' +
           '<div class="axm-row">' +
-            '<select class="modal-input axm-in" id="axm-hr"><option value="">Hr</option>' + hrOpts + '</select>' +
+            '<select class="modal-input axm-in" id="axm-hr"><option value="">Hr</option>' + hrOpts + '<option value="flexible">Flexible / no set time</option></select>' +
             '<select class="modal-input axm-in" id="axm-min">' + minOpts + '</select>' +
             '<select class="modal-input axm-in" id="axm-ampm"><option value="">AM/PM</option><option>AM</option><option>PM</option></select>' +
           '</div>' +
@@ -7124,13 +7124,18 @@
       { sel: '#axm-price', label: 'a price' }
     ];
     // What's still missing. A start time is optional, but if any time field is touched
-    // then hour AND AM/PM are both needed (a bare "9" is ambiguous).
+    // A start time is REQUIRED: either an hour + AM/PM, or the explicit "Flexible / no set
+    // time" option (so a genuinely time-less tour can still be saved on purpose).
     function missingForSave() {
       var miss = [];
       REQ.forEach(function (f) { if (ov.querySelector(f.sel).value.trim() === '') miss.push(f); });
-      var hr = ov.querySelector('#axm-hr').value, ampm = ov.querySelector('#axm-ampm').value, min = ov.querySelector('#axm-min').value;
-      if ((hr !== '' || ampm !== '' || min !== '00') && !(hr !== '' && ampm !== '')) {
-        miss.push(hr === '' ? { sel: '#axm-hr', label: 'an hour' } : { sel: '#axm-ampm', label: 'AM or PM' });
+      var hr = ov.querySelector('#axm-hr').value, ampm = ov.querySelector('#axm-ampm').value;
+      if (hr === 'flexible') {
+        // explicitly no set time — fine
+      } else if (hr === '') {
+        miss.push({ sel: '#axm-hr', label: 'a start time (or pick “Flexible”)' });
+      } else if (ampm === '') {
+        miss.push({ sel: '#axm-ampm', label: 'AM or PM' });
       }
       return miss;
     }
@@ -7143,6 +7148,13 @@
     ov.querySelectorAll('.axm-in').forEach(function (el2) {
       el2.addEventListener('input', function () { el2.classList.remove('axm-need'); refresh(); });
       el2.addEventListener('change', function () { el2.classList.remove('axm-need'); refresh(); });
+    });
+    // "Flexible / no set time" -> the minute + AM/PM pickers don't apply, so grey them out.
+    ov.querySelector('#axm-hr').addEventListener('change', function () {
+      var flex = this.value === 'flexible';
+      var minEl = ov.querySelector('#axm-min'), apEl = ov.querySelector('#axm-ampm');
+      minEl.disabled = flex; apEl.disabled = flex;
+      if (flex) apEl.classList.remove('axm-need');
     });
 
     var stepEl = ov.querySelector('#axm-step');
@@ -7289,7 +7301,7 @@
         var hr = ov.querySelector('#axm-hr').value;
         var min = ov.querySelector('#axm-min').value || '00';
         var ampm = ov.querySelector('#axm-ampm').value;
-        var startTime = (hr && ampm) ? (hr + ':' + min + ' ' + ampm) : '';
+        var startTime = (hr === 'flexible') ? 'Flexible' : (hr && ampm) ? (hr + ':' + min + ' ' + ampm) : 'Flexible';
         var rec = {
           port_date: ov.querySelector('#axm-date').value || date, port_label: port,
           title: ov.querySelector('#axm-title').value.trim(),
