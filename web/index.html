@@ -1782,6 +1782,11 @@
   .mb-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .mb-item-title { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--text-primary); line-height: 1.2; }
   .mb-item-sub { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); }
+  .mb-loc { font-family: var(--sans); font-size: 12px; font-weight: 700; color: var(--azure); letter-spacing: .01em; margin-bottom: 1px; }
+  .mb-item-sub .mb-time { color: var(--text-primary); font-weight: 600; }
+  .mb-item-sub .mb-route { color: var(--text-secondary); margin: 0 7px; }
+  .mb-item-sub .mb-people, .mb-item-sub .mb-desc { color: var(--text-tertiary); }
+  .mb-dot { color: var(--text-tertiary); margin: 0 4px; }
   .mb-who { flex: 0 0 auto; font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--azure); background: rgba(26,58,107,0.08); padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
   .mb-identify { text-align: center; padding: 40px 24px; }
   .mb-identify-title { font-family: var(--serif); font-style: italic; font-size: 28px; color: var(--azure); margin-bottom: 8px; }
@@ -6377,9 +6382,12 @@
     }
     var meKey = me.toLowerCase();
     var items = [];
-    function add(date, time, icon, title, sub, who, onTap) {
-      items.push({ date: date || '', time: time || '', icon: icon, title: title, sub: sub || '', who: who || '', onTap: onTap });
+    function add(o) {
+      items.push({ date: o.date || '', time: o.time || '', icon: o.icon, eyebrow: o.eyebrow || '',
+        title: o.title || '', subHtml: o.subHtml || '', who: o.who || '', onTap: o.onTap });
     }
+    function mbCity(label) { return (label || '').split(/[,(]/)[0].trim(); }
+    function metaJoin(parts) { return parts.filter(Boolean).join('<span class="mb-dot">·</span>'); }
     // Flights (confirmed, where I'm a traveler)
     ['outbound', 'return'].forEach(function (dir) {
       parseConfirmedFlights(dir).forEach(function (n) {
@@ -6387,15 +6395,14 @@
         var dep = (n.departure_airport || (dir === 'return' ? 'IST' : '')).toUpperCase();
         var arr = (n.arrival_airport || (dir === 'outbound' ? 'VCE' : '')).toUpperCase();
         var depT = cfFmtTime(n.departure_time), arrT = cfFmtTime(n.arrival_time);
-        var airline = (n.airline || '').toString().trim();
-        var timeStr = (depT && arrT && depT !== arrT) ? (depT + ' \u2013 ' + arrT) : (depT || arrT || '');
-        var fparts = [];
-        if (airline) fparts.push(airline);
-        fparts.push(dep + ' \u2192 ' + arr);
-        if (timeStr) fparts.push(timeStr);
-        add(cfNormDate(n.departure_date), depT, 'plane',
-          dir === 'outbound' ? 'Flight to Venice' : 'Flight home', fparts.join(' \u00b7 '), '',
-          function () { goToBeforeSail('itin-flights-anchor', 'flights-toggle'); });
+        var rightT = (arrT && arrT !== depT) ? arrT : '';
+        var fsub = (depT ? '<span class="mb-time">' + escHtml(depT) + '</span>' : '') +
+          '<span class="mb-route">' + escHtml(dep) + ' \u2192 ' + escHtml(arr) + '</span>' +
+          (rightT ? '<span class="mb-time">' + escHtml(rightT) + '</span>' : '');
+        add({ date: cfNormDate(n.departure_date), time: depT, icon: 'plane',
+          eyebrow: (n.airline || '').toString().trim(),
+          title: dir === 'outbound' ? 'Flight to Venice' : 'Flight home', subHtml: fsub,
+          onTap: function () { goToBeforeSail('itin-flights-anchor', 'flights-toggle'); } });
       });
     });
     // Hotels I'm on — from both the confirmed itinerary flow and the older picks, deduped
@@ -6404,7 +6411,8 @@
       var k = (name || '').toLowerCase() + '|' + (date || '');
       if (hotelSeen[k]) return;
       hotelSeen[k] = 1;
-      add(date, '', 'hotel', name, sub, '', function () { goToBeforeSail('itin-hotels-anchor', 'hotels-toggle'); });
+      add({ date: date, icon: 'hotel', title: name, subHtml: escHtml(sub || ''),
+        onTap: function () { goToBeforeSail('itin-hotels-anchor', 'hotels-toggle'); } });
     }
     (confirmedHotels || []).forEach(function (h) {
       if (!h || (h.traveler || '').toLowerCase() !== meKey) return;
@@ -6427,12 +6435,12 @@
         if (!joins.some(function (j) { return String(j).toLowerCase() === meKey; })) return;
         var d = rec.port_date || date;
         var range = mbExcRange(rec.start_time, rec.duration);
-        var xparts = [];
-        if (range) xparts.push(range);
-        if (rec.port_label) xparts.push(rec.port_label);
-        if (joins.length > 1) xparts.push(joins.length + ' going');
-        add(d, rec.start_time, 'excursion', rec.title || 'Excursion', xparts.join(' \u00b7 '), '',
-          function () { goToCruiseDate(d); });
+        var emeta = [];
+        if (range) emeta.push('<span class="mb-time">' + escHtml(range) + '</span>');
+        if (joins.length > 1) emeta.push('<span class="mb-people">' + joins.length + ' going</span>');
+        add({ date: d, time: rec.start_time, icon: 'excursion', eyebrow: mbCity(rec.port_label),
+          title: rec.title || 'Excursion', subHtml: metaJoin(emeta),
+          onTap: function () { goToCruiseDate(d); } });
       });
     });
     // NCL tours I marked Booked
@@ -6442,15 +6450,20 @@
       for (var i = 0; i < EXCURSIONS.length; i++) { if (String(EXCURSIONS[i].code) === String(r.code)) { exc = EXCURSIONS[i]; break; } }
       if (!exc) return;
       var date = cruiseDateForPortKey(exc.port_key) || '';
-      add(date, '', 'excursion', exc.title || 'NCL excursion', (exc.port || '') + ' \u00b7 Booked through NCL', '',
-        function () { goToCruiseDate(date); });
+      add({ date: date, icon: 'excursion', eyebrow: mbCity(exc.port), title: exc.title || 'NCL excursion',
+        subHtml: '<span class="mb-people">Booked through NCL</span>',
+        onTap: function () { goToCruiseDate(date); } });
     });
     // Group dinners (shared with everyone)
     (typeof GROUP_EVENTS !== 'undefined' ? GROUP_EVENTS : []).forEach(function (ev) {
-      var dparts = [];
-      if (ev.time) dparts.push(ev.time);
-      if (ev.desc) dparts.push(ev.desc);
-      add(ev.date, ev.time, 'dining', ev.name, dparts.join(' · '), 'Everyone', function () { goToCruiseDate(ev.date); });
+      // The "Everyone" tag already conveys the group, so drop any "Party of N" from the desc.
+      var descParts = (ev.desc || '').split('·').map(function (s) { return s.trim(); })
+        .filter(function (s) { return s && !/^party of \d+$/i.test(s); });
+      var dmeta = [];
+      if (ev.time) dmeta.push('<span class="mb-time">' + escHtml(ev.time) + '</span>');
+      if (descParts.length) dmeta.push('<span class="mb-desc">' + escHtml(descParts.join(' · ')) + '</span>');
+      add({ date: ev.date, time: ev.time, icon: 'dining', title: ev.name, subHtml: metaJoin(dmeta),
+        who: 'Everyone', onTap: function () { goToCruiseDate(ev.date); } });
     });
 
     items.sort(function (a, b) {
@@ -6474,8 +6487,11 @@
         }
         html += '<button class="mb-item" data-idx="' + idx + '" type="button">' +
           '<span class="mb-ic">' + (MB_ICONS[it.icon] || '') + '</span>' +
-          '<span class="mb-item-main"><span class="mb-item-title">' + escHtml(it.title) + '</span>' +
-          (it.sub ? '<span class="mb-item-sub">' + escHtml(it.sub) + '</span>' : '') + '</span>' +
+          '<span class="mb-item-main">' +
+          (it.eyebrow ? '<span class="mb-loc">' + escHtml(it.eyebrow) + '</span>' : '') +
+          '<span class="mb-item-title">' + escHtml(it.title) + '</span>' +
+          (it.subHtml ? '<span class="mb-item-sub">' + it.subHtml + '</span>' : '') +
+          '</span>' +
           (it.who ? '<span class="mb-who">' + escHtml(it.who) + '</span>' : '') +
           '</button>';
       });
