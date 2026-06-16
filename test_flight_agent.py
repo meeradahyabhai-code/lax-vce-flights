@@ -862,13 +862,17 @@ class TestFrontendSummaryIntegration(unittest.TestCase):
         self.assertIn("sheetReady.then(function () { fetchAISummary(); })", self.html)
 
     def test_briefing_text_font_style(self):
-        """AI briefing text should use DM Sans 15px sentence case navy."""
+        """AI briefing text should use DM Sans 15px sentence case navy.
+
+        Weight is 400: the hairline 300 weight was banned for legibility
+        (60s-70s audience) and swept to 400 across the app (June 2026).
+        """
         self.assertIn(".ai-briefing-text", self.html)
         start = self.html.index(".ai-briefing-text {")
         end = self.html.index("}", start) + 1
         css = self.html[start:end]
         self.assertIn("font-size: 15px", css)
-        self.assertIn("font-weight: 300", css)
+        self.assertIn("font-weight: 400", css)
         self.assertIn("color: #1a3a6b", css)
         self.assertNotIn("text-transform: uppercase", css)
 

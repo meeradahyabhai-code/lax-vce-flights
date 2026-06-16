@@ -2649,6 +2649,17 @@
     for (var i = 0; i < TRAVELERS.length; i++) { if (TRAVELERS[i] === name) return true; }
     return false;
   }
+  // Roster is stored "Surname(s) First M."; show it first-name-first for display only
+  // ("Dahyabhai Meera C." -> "Meera C. Dahyabhai"; "Paredes Aceves Susana D." -> "Susana D. Paredes Aceves")
+  function firstNameFirst(name) {
+    var t = String(name || '').trim().split(/\s+/);
+    if (t.length < 2) return name;
+    var initials = [];
+    while (t.length > 2 && /^[A-Za-z]\.?$/.test(t[t.length - 1])) initials.unshift(t.pop());
+    var first = t.pop();          // first name = token just before any trailing initials
+    var surname = t.join(' ');    // everything before = surname (may be multi-word)
+    return (first + (initials.length ? ' ' + initials.join(' ') : '') + ' ' + surname).trim();
+  }
   // One-time: resolve an old free-typed name to its canonical roster entry, or clear it so
   // the user re-picks. Keeps returning users working without a forced re-login when unambiguous.
   function migrateIdentity() {
@@ -2680,12 +2691,14 @@
     function render(q) {
       q = (q || '').trim().toLowerCase();
       if (!q) { results.innerHTML = ''; btn.disabled = true; return; }
+      var toks = q.split(/\s+/).filter(Boolean);
       var matches = (typeof TRAVELERS !== 'undefined' ? TRAVELERS : []).filter(function (n) {
-        return n.toLowerCase().indexOf(q) !== -1;
+        var low = n.toLowerCase();
+        return toks.every(function (t) { return low.indexOf(t) !== -1; }); // order-independent
       }).slice(0, 8);
       if (!matches.length) { results.innerHTML = '<div class="name-noresult">No match — check spelling</div>'; btn.disabled = true; return; }
       results.innerHTML = matches.map(function (n) {
-        return '<button type="button" class="name-result" data-name="' + escHtml(n) + '">' + escHtml(n) + '</button>';
+        return '<button type="button" class="name-result" data-name="' + escHtml(n) + '">' + escHtml(firstNameFirst(n)) + '</button>';
       }).join('');
       // Enter / "Let's go" only commit when the match is unambiguous; otherwise tap a specific name
       btn.disabled = matches.length !== 1;
