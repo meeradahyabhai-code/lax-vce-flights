@@ -6393,7 +6393,7 @@
     function metaJoin(parts) { return parts.filter(Boolean).join('<span class="mb-dot">·</span>'); }
     // Coherence facts gathered while building the timeline, checked against the fixed cruise
     // spine (embark Venice 7/3, disembark Istanbul 7/13) for the heads-up notes below.
-    var arriveVenice = '', returnDepart = '', venicePreCruiseHotel = '', hasAnyHotel = false;
+    var arriveVenice = '', arriveVeniceTime = '', returnDepart = '', venicePreCruiseHotel = '', hasAnyHotel = false;
     var EMBARK = '2026-07-03', DISEMBARK = '2026-07-13';
     // Flights (confirmed, where I'm a traveler)
     ['outbound', 'return'].forEach(function (dir) {
@@ -6402,18 +6402,29 @@
         var dep = (n.departure_airport || (dir === 'return' ? 'IST' : '')).toUpperCase();
         var arr = (n.arrival_airport || (dir === 'outbound' ? 'VCE' : '')).toUpperCase();
         var depT = cfFmtTime(n.departure_time), arrT = cfFmtTime(n.arrival_time);
-        var rightT = (arrT && arrT !== depT) ? arrT : '';
-        var fsub = (depT ? '<span class="mb-time">' + escHtml(depT) + '</span>' : '') +
-          '<span class="mb-route">' + escHtml(dep) + ' \u2192 ' + escHtml(arr) + '</span>' +
-          (rightT ? '<span class="mb-time">' + escHtml(rightT) + '</span>' : '');
-        // Outbound: file under the day you LAND in Venice (sorted by arrival time);
-        // return: under departure from Istanbul.
-        var fdate = (dir === 'outbound') ? cfNormDate(n.arrival_date || n.departure_date) : cfNormDate(n.departure_date);
-        if (dir === 'outbound' && fdate && (!arriveVenice || fdate < arriveVenice)) arriveVenice = fdate;
-        if (dir === 'return' && fdate && (!returnDepart || fdate < returnDepart)) returnDepart = fdate;
-        add({ date: fdate, time: (dir === 'outbound' ? (arrT || depT) : (depT || arrT)), icon: 'plane',
-          eyebrow: (n.airline || '').toString().trim(),
-          title: dir === 'outbound' ? 'Arrive in Venice' : 'Flight home', subHtml: fsub,
+        var fdate, fsortT, ftitle, fsub;
+        if (dir === 'outbound') {
+          // File under the day you LAND in Venice; lead with the landing time. Departure and
+          // arrival can share a clock time on different days, so show arrival explicitly.
+          fdate = cfNormDate(n.arrival_date || n.departure_date);
+          fsortT = arrT || depT;
+          ftitle = 'Arrive in Venice';
+          fsub = (arrT ? '<span class="mb-time">Lands ' + escHtml(arrT) + '</span>' : '') +
+            '<span class="mb-route">' + escHtml(dep) + ' \u2192 ' + escHtml(arr) + '</span>';
+          // Only the leg that actually lands in Venice counts; keep the EARLIEST such arrival.
+          if (arr === 'VCE' && fdate && (!arriveVenice || fdate < arriveVenice)) { arriveVenice = fdate; arriveVeniceTime = arrT || depT; }
+        } else {
+          fdate = cfNormDate(n.departure_date);
+          fsortT = depT || arrT;
+          ftitle = 'Flight home';
+          var rightT = (arrT && arrT !== depT) ? arrT : '';
+          fsub = (depT ? '<span class="mb-time">' + escHtml(depT) + '</span>' : '') +
+            '<span class="mb-route">' + escHtml(dep) + ' \u2192 ' + escHtml(arr) + '</span>' +
+            (rightT ? '<span class="mb-time">' + escHtml(rightT) + '</span>' : '');
+          if (fdate && (!returnDepart || fdate < returnDepart)) returnDepart = fdate;
+        }
+        add({ date: fdate, time: fsortT, icon: 'plane',
+          eyebrow: (n.airline || '').toString().trim(), title: ftitle, subHtml: fsub,
           onTap: function () { goToBeforeSail('itin-flights-anchor', 'flights-toggle'); } });
       });
     });
@@ -6424,11 +6435,18 @@
       if (hotelSeen[k]) return;
       hotelSeen[k] = 1;
       hasAnyHotel = true;
-      // Earliest Venice/Ravenna check-in = the pre-cruise stay (for the coherence check).
-      if (/venice|ravenna/i.test((name || '') + ' ' + (sub || '')) && date && (!venicePreCruiseHotel || date < venicePreCruiseHotel)) venicePreCruiseHotel = date;
-      // No stored check-in time; assume mid-afternoon so it sorts after a morning landing
-      // on the same day (you land, then check in).
-      add({ date: date, time: '3:00 PM', icon: 'hotel', title: name, subHtml: escHtml(sub || ''),
+      var isVen = /venice|ravenna/i.test((name || '') + ' ' + (sub || ''));
+      // Earliest Venice/Ravenna check-in (original reservation date) = pre-cruise stay, for the gap check.
+      if (isVen && date && (!venicePreCruiseHotel || date < venicePreCruiseHotel)) venicePreCruiseHotel = date;
+      // Intelligent start: you can't be in your Venice hotel before you land. If the joined
+      // reservation begins before your arrival, show YOUR stay starting the day you land.
+      var dispDate = date, sortTime = '3:00 PM', sh = escHtml(sub || '');
+      if (isVen && date && arriveVenice && arriveVenice > date) {
+        dispDate = arriveVenice;
+        sortTime = arriveVeniceTime || '3:00 PM';
+        sh = (sh ? sh + '<span class="mb-dot">·</span>' : '') + '<span class="mb-desc">Your stay starts when you land</span>';
+      }
+      add({ date: dispDate, time: sortTime, icon: 'hotel', title: name, subHtml: sh,
         onTap: function () { goToBeforeSail('itin-hotels-anchor', 'hotels-toggle'); } });
     }
     (confirmedHotels || []).forEach(function (h) {
@@ -6502,10 +6520,14 @@
       flags.push('Your flight home leaves on ' + mbDateLabel(returnDepart) + ', before the cruise ends in Istanbul (Jul 13) — double-check.');
     }
 
+    // Same day + time: order by type so you land before you check in (plane → hotel → …).
+    var TYPE_RANK = { plane: 1, hotel: 2, excursion: 3, dining: 4 };
     items.sort(function (a, b) {
       var da = a.date || '9999', db = b.date || '9999';
       if (da !== db) return da < db ? -1 : 1;
-      return mbTimeVal(a.time) - mbTimeVal(b.time);
+      var ta = mbTimeVal(a.time), tb = mbTimeVal(b.time);
+      if (ta !== tb) return ta - tb;
+      return (TYPE_RANK[a.icon] || 9) - (TYPE_RANK[b.icon] || 9);
     });
 
     var first = (me.split(/\s+/)[1] || me.split(/\s+/)[0] || me);
