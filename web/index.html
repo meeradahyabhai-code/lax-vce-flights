@@ -6404,15 +6404,24 @@
         var depT = cfFmtTime(n.departure_time), arrT = cfFmtTime(n.arrival_time);
         var fdate, fsortT, ftitle, fsub;
         if (dir === 'outbound') {
-          // File under the day you LAND in Venice; lead with the landing time. Departure and
-          // arrival can share a clock time on different days, so show arrival explicitly.
-          fdate = cfNormDate(n.arrival_date || n.departure_date);
-          fsortT = arrT || depT;
-          ftitle = 'Arrive in Venice';
-          fsub = (arrT ? '<span class="mb-time">Lands ' + escHtml(arrT) + '</span>' : '') +
-            '<span class="mb-route">' + escHtml(dep) + ' \u2192 ' + escHtml(arr) + '</span>';
-          // Only the leg that actually lands in Venice counts; keep the EARLIEST such arrival.
-          if (arr === 'VCE' && fdate && (!arriveVenice || fdate < arriveVenice)) { arriveVenice = fdate; arriveVeniceTime = arrT || depT; }
+          // The flight belongs on the day you DEPART (itinerary order). Component layout:
+          // "Departs <time>" left of the airports, and the landing on the right WITH its date
+          // (it's the next day): "Lands 6/30 6:00PM".
+          var depDate = cfNormDate(n.departure_date), arrDate = cfNormDate(n.arrival_date);
+          fdate = depDate || arrDate;
+          fsortT = depT || arrT;
+          ftitle = 'Flight to Venice';
+          var landBits = [];
+          if (arrDate && arrDate !== depDate) { var am = /^(\d{4})-(\d{2})-(\d{2})/.exec(arrDate); if (am) landBits.push((+am[2]) + '/' + (+am[3])); }
+          if (arrT) landBits.push(arrT);
+          var landsLabel = landBits.length ? ('Lands ' + landBits.join(' ')) : '';
+          fsub = (depT ? '<span class="mb-time">Departs ' + escHtml(depT) + '</span>' : '') +
+            '<span class="mb-route">' + escHtml(dep) + ' \u2192 ' + escHtml(arr) + '</span>' +
+            (landsLabel ? '<span class="mb-time">' + escHtml(landsLabel) + '</span>' : '');
+          // Venice arrival date (for the hotel clamp + coherence) = the VCE-landing leg, earliest.
+          // Fall back to departure date for legacy rows that lack arrival_date (don't break the clamp).
+          var venArr = arrDate || depDate;
+          if (arr === 'VCE' && venArr && (!arriveVenice || venArr < arriveVenice)) { arriveVenice = venArr; arriveVeniceTime = arrT || depT; }
         } else {
           fdate = cfNormDate(n.departure_date);
           fsortT = depT || arrT;
