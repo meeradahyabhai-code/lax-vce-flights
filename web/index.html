@@ -1787,6 +1787,9 @@
   .mb-item-sub .mb-route { color: var(--text-secondary); margin: 0 7px; }
   .mb-item-sub .mb-people, .mb-item-sub .mb-desc { color: var(--text-tertiary); }
   .mb-dot { color: var(--text-tertiary); margin: 0 4px; }
+  .mb-flags { display: flex; flex-direction: column; gap: 8px; margin: 2px 0 14px; }
+  .mb-flag { display: flex; gap: 10px; align-items: flex-start; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px; padding: 11px 13px; font-family: var(--sans); font-size: 13px; color: #7c2d12; line-height: 1.4; }
+  .mb-flag-ic { flex: none; width: 18px; height: 18px; margin-top: 1px; border-radius: 50%; background: #ea580c; color: #fff; font-weight: 700; font-size: 12px; line-height: 18px; text-align: center; }
   .mb-who { flex: 0 0 auto; font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--azure); background: rgba(26,58,107,0.08); padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
   .mb-identify { text-align: center; padding: 40px 24px; }
   .mb-identify-title { font-family: var(--serif); font-style: italic; font-size: 28px; color: var(--azure); margin-bottom: 8px; }
@@ -6388,6 +6391,10 @@
     }
     function mbCity(label) { return (label || '').split(/[,(]/)[0].trim(); }
     function metaJoin(parts) { return parts.filter(Boolean).join('<span class="mb-dot">·</span>'); }
+    // Coherence facts gathered while building the timeline, checked against the fixed cruise
+    // spine (embark Venice 7/3, disembark Istanbul 7/13) for the heads-up notes below.
+    var arriveVenice = '', returnDepart = '', venicePreCruiseHotel = '', hasAnyHotel = false;
+    var EMBARK = '2026-07-03', DISEMBARK = '2026-07-13';
     // Flights (confirmed, where I'm a traveler)
     ['outbound', 'return'].forEach(function (dir) {
       parseConfirmedFlights(dir).forEach(function (n) {
@@ -6399,9 +6406,14 @@
         var fsub = (depT ? '<span class="mb-time">' + escHtml(depT) + '</span>' : '') +
           '<span class="mb-route">' + escHtml(dep) + ' \u2192 ' + escHtml(arr) + '</span>' +
           (rightT ? '<span class="mb-time">' + escHtml(rightT) + '</span>' : '');
-        add({ date: cfNormDate(n.departure_date), time: depT, icon: 'plane',
+        // Outbound: file under the day you LAND in Venice (sorted by arrival time);
+        // return: under departure from Istanbul.
+        var fdate = (dir === 'outbound') ? cfNormDate(n.arrival_date || n.departure_date) : cfNormDate(n.departure_date);
+        if (dir === 'outbound' && fdate && (!arriveVenice || fdate < arriveVenice)) arriveVenice = fdate;
+        if (dir === 'return' && fdate && (!returnDepart || fdate < returnDepart)) returnDepart = fdate;
+        add({ date: fdate, time: (dir === 'outbound' ? (arrT || depT) : (depT || arrT)), icon: 'plane',
           eyebrow: (n.airline || '').toString().trim(),
-          title: dir === 'outbound' ? 'Flight to Venice' : 'Flight home', subHtml: fsub,
+          title: dir === 'outbound' ? 'Arrive in Venice' : 'Flight home', subHtml: fsub,
           onTap: function () { goToBeforeSail('itin-flights-anchor', 'flights-toggle'); } });
       });
     });
@@ -6411,7 +6423,12 @@
       var k = (name || '').toLowerCase() + '|' + (date || '');
       if (hotelSeen[k]) return;
       hotelSeen[k] = 1;
-      add({ date: date, icon: 'hotel', title: name, subHtml: escHtml(sub || ''),
+      hasAnyHotel = true;
+      // Earliest Venice/Ravenna check-in = the pre-cruise stay (for the coherence check).
+      if (/venice|ravenna/i.test((name || '') + ' ' + (sub || '')) && date && (!venicePreCruiseHotel || date < venicePreCruiseHotel)) venicePreCruiseHotel = date;
+      // No stored check-in time; assume mid-afternoon so it sorts after a morning landing
+      // on the same day (you land, then check in).
+      add({ date: date, time: '3:00 PM', icon: 'hotel', title: name, subHtml: escHtml(sub || ''),
         onTap: function () { goToBeforeSail('itin-hotels-anchor', 'hotels-toggle'); } });
     }
     (confirmedHotels || []).forEach(function (h) {
@@ -6466,6 +6483,25 @@
         who: 'Everyone', onTap: function () { goToCruiseDate(ev.date); } });
     });
 
+    // Heads-up coherence checks — gentle, only on clear contradictions (dates can be estimated).
+    var flags = [];
+    if (arriveVenice) {
+      if (arriveVenice > EMBARK) {
+        flags.push('Your flight lands in Venice on ' + mbDateLabel(arriveVenice) + ', but the cruise embarks Jul 3 — double-check your dates.');
+      } else if (arriveVenice < EMBARK) {
+        // Arrives BEFORE embarkation -> needs a place to stay until the ship sails.
+        // (Landing on embark day itself needs no pre-cruise hotel, so no warning.)
+        if (!venicePreCruiseHotel) {
+          flags.push('You land in Venice on ' + mbDateLabel(arriveVenice) + ', but we don’t see a hotel before the cruise (it embarks Jul 3). Where are you staying those nights?');
+        } else if (venicePreCruiseHotel > arriveVenice) {
+          flags.push('You land in Venice on ' + mbDateLabel(arriveVenice) + ', but your hotel doesn’t start until ' + mbDateLabel(venicePreCruiseHotel) + ' — you may be missing a night. Double-check the hotel date.');
+        }
+      }
+    }
+    if (returnDepart && returnDepart < DISEMBARK) {
+      flags.push('Your flight home leaves on ' + mbDateLabel(returnDepart) + ', before the cruise ends in Istanbul (Jul 13) — double-check.');
+    }
+
     items.sort(function (a, b) {
       var da = a.date || '9999', db = b.date || '9999';
       if (da !== db) return da < db ? -1 : 1;
@@ -6476,6 +6512,11 @@
     var html = '<div class="mb-head"><div><div class="mb-eyebrow">Your journey</div>' +
       '<div class="mb-name">' + escHtml(first) + '</div></div>' +
       '<button class="mb-change" id="mb-change" type="button">Not you?</button></div>';
+    if (flags.length) {
+      html += '<div class="mb-flags">' + flags.map(function (f) {
+        return '<div class="mb-flag"><span class="mb-flag-ic">!</span><span>' + escHtml(f) + '</span></div>';
+      }).join('') + '</div>';
+    }
     if (!items.length) {
       html += '<div class="mb-empty-note">Nothing under your name yet. As you pick flights and hotels, join excursions, or RSVP to dinners, they\u2019ll appear here in order.</div>';
     } else {
