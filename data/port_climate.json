@@ -1,10 +1,10 @@
 {
   "2026-07-03": {
-    "high": 83,
-    "low": 71,
-    "rain_chance": 40,
-    "icon": "cloud",
-    "source": "normal"
+    "high": 94,
+    "low": 70,
+    "rain_chance": 0,
+    "icon": "sun",
+    "source": "forecast"
   },
   "2026-07-04": {
     "high": 85,
