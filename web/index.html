@@ -773,10 +773,21 @@
   }
   .modal-overlay.active { display: flex; }
   .modal {
+    position: relative;
     background: #fff; border-radius: 16px; padding: 32px 28px;
     max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     text-align: center;
   }
+  /* Shared close affordance — consistent top-right X on every modal */
+  .modal-close {
+    position: absolute; top: 12px; right: 14px;
+    width: 32px; height: 32px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; font-size: 22px; line-height: 1;
+    color: #94a3b8; cursor: pointer; border-radius: 8px;
+    transition: color 0.15s, background 0.15s; z-index: 2;
+  }
+  .modal-close:hover { color: var(--ink); background: rgba(10,10,15,0.05); }
   .modal-title {
     font-family: var(--serif); font-size: 24px; font-weight: 400;
     color: var(--ink); margin-bottom: 6px;
@@ -2507,6 +2518,7 @@
 <!-- Name prompt modal -->
 <div class="modal-overlay" id="name-modal">
   <div class="modal">
+    <button class="modal-close" id="name-close" type="button" aria-label="Close">&times;</button>
     <div class="modal-title">Welcome aboard</div>
     <div class="modal-sub">What is your name?</div>
     <div class="name-ta">
@@ -2520,6 +2532,7 @@
 <!-- Book confirmation modal -->
 <div class="modal-overlay" id="book-modal">
   <div class="modal">
+    <button class="modal-close" id="bm-close" type="button" aria-label="Close">&times;</button>
     <div class="modal-title">Ready to book?</div>
     <div class="book-modal-summary" id="book-modal-summary"></div>
     <div class="book-modal-actions">
@@ -2532,6 +2545,7 @@
 <!-- Family interest modal -->
 <div class="modal-overlay" id="fi-modal">
   <div class="modal fi-modal" style="max-width:400px;border-radius:20px;">
+    <button class="modal-close" id="fi-close-x" type="button" aria-label="Close">&times;</button>
     <div class="modal-title">Family Interest</div>
     <div id="fi-modal-body"></div>
     <button class="fi-close-btn" id="fi-close">Close</button>
@@ -2732,6 +2746,9 @@
     input.oninput = function () { render(input.value); };
     input.onkeydown = function (e) { if (e.key === 'Enter') commitIfSingle(); };
     btn.onclick = commitIfSingle;
+    // Consistent close: top-right X + tap-outside (no name change on dismiss)
+    document.getElementById('name-close').onclick = function () { overlay.classList.remove('active'); };
+    overlay.onclick = function (e) { if (e.target === overlay) overlay.classList.remove('active'); };
   }
 
   // ---- Helpers ----
@@ -3126,9 +3143,33 @@
     document.getElementById('fi-modal').classList.add('active');
   }
 
+  // Escape closes the top-most open modal — consistent across every modal.
+  function setupModalEscape() {
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' && e.key !== 'Esc') return;
+      // Dedicated dynamic overlays first (hotel shares afm class, so check it first).
+      if (document.querySelector('.points-modal-overlay')) { closePointsModal(); return; }
+      if (document.querySelector('.ahm-overlay')) { closeAddHotelModal(); return; }
+      if (document.querySelector('.afm-overlay')) { closeAddFlightModal(); return; }
+      // Generic .modal-overlay (static name/book/fi + dynamic axm/reminder).
+      var ov = document.querySelector('.modal-overlay.active');
+      if (ov) {
+        if (ov.id === 'book-modal') pendingBookFlight = null;
+        if (ov.id) { ov.classList.remove('active'); } else { ov.remove(); }
+        return;
+      }
+      // Origin picker uses a .hidden toggle rather than .active.
+      var om = document.getElementById('origin-modal');
+      if (om && !om.classList.contains('hidden')) om.classList.add('hidden');
+    });
+  }
+
   function setupFamilyModal() {
     var overlay = document.getElementById('fi-modal');
     document.getElementById('fi-close').addEventListener('click', function () {
+      overlay.classList.remove('active');
+    });
+    document.getElementById('fi-close-x').addEventListener('click', function () {
       overlay.classList.remove('active');
     });
     overlay.addEventListener('click', function (e) {
@@ -3184,6 +3225,10 @@
       overlay.classList.remove('active');
       pendingBookFlight = null;
       setTimeout(fetchFamilyPicks, 2000);
+    });
+    document.getElementById('bm-close').addEventListener('click', function () {
+      overlay.classList.remove('active');
+      pendingBookFlight = null;
     });
     overlay.addEventListener('click', function (e) {
       if (e.target === overlay) {
@@ -6669,6 +6714,7 @@
     setupOriginModal();
     setupBookModal();
     setupFamilyModal();
+    setupModalEscape();
     setupDirectionNav();
     setupOriginNav();
     setupSectionNav();
@@ -7122,6 +7168,7 @@
     var ov = document.createElement('div');
     ov.className = 'modal-overlay active';
     ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
+      '<button class="modal-close" data-act="cancel" type="button" aria-label="Close">&times;</button>' +
       '<div class="modal-title">Delete this excursion?</div>' +
       '<div class="modal-sub">' + escHtml(rec.title) + '</div>' +
       '<p style="font-family:var(--sans);font-size:13px;color:var(--text-secondary);margin:10px 0 2px;line-height:1.4;">This removes it for everyone — including anyone who joined. It can’t be undone.</p>' +
@@ -7172,6 +7219,7 @@
     var ov = document.createElement('div');
     ov.className = 'modal-overlay active';
     ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
+      '<button class="modal-close" data-act="cancel" type="button" aria-label="Close">&times;</button>' +
       '<div class="modal-title">Who’s going?</div>' +
       '<div class="modal-sub">' + escHtml(rec.title) + '</div>' +
       '<div class="rost-list">' + rosterChecklist(rec.joins) + '</div>' +
@@ -7223,6 +7271,7 @@
     ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'].forEach(function (m) { minOpts += '<option value="' + m + '">:' + m + '</option>'; });
     ov.innerHTML =
       '<div class="modal axm" style="text-align:left;">' +
+      '<button class="modal-close" data-act="cancel" type="button" aria-label="Close">&times;</button>' +
         '<div class="modal-title">Add an excursion</div>' +
         '<div class="modal-sub">' + escHtml(port) + '</div>' +
         '<div class="axm-q">How do you want to add it?</div>' +
