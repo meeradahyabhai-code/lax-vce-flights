@@ -45,6 +45,17 @@ SYSTEM_PROMPT_HOTELS = (
 )
 
 
+SYSTEM_PROMPT_RESTAURANTS = (
+    "You are a warm, knowledgeable restaurant concierge for a family on a cruise. "
+    "Recommend ONLY from the JSON restaurant list provided in the user message — never invent. "
+    "Match the user's intent (cuisine, vibe, occasion, budget, vegetarian needs, near a landmark, "
+    "walkable, Michelin, best-rated). Prefer genuinely strong matches; it's fine to return few. "
+    "Reply with a JSON object: {\"answer\": string, \"picks\": [ref numbers from the \"ref\" field, best first, max 5]}. "
+    "The answer is <=55 words, warm and direct, no marketing language, names your top pick and why. "
+    "If nothing fits, say so in the answer and return an empty picks array."
+)
+
+
 def _check_rate_limit(ip: str) -> bool:
     now = time.time()
     log = _rate_log.setdefault(ip, deque())
@@ -69,6 +80,37 @@ def _check_daily_cap() -> bool:
 def build_messages(question: str, payload: dict) -> tuple:
     """Build (system_prompt, user_msg) for the OpenAI call. Pure function — testable."""
     context = payload.get("context", "flights")
+
+    if context == "restaurants":
+        restaurants = payload.get("restaurants", [])[:80]
+        where = payload.get("port_label", "") or payload.get("port", "")
+        compact = []
+        for i, r in enumerate(restaurants):
+            p = r.get("profile") or {}
+            compact.append({
+                "ref": i + 1,
+                "name": r.get("name"),
+                "port": r.get("port_key"),
+                "cuisine": r.get("cuisine"),
+                "price": r.get("price"),
+                "rating": r.get("rating"),
+                "reviews": r.get("reviews"),
+                "michelin": r.get("michelin_award") or r.get("michelin"),
+                "veg_options": r.get("veg_options"),
+                "fully_veg": r.get("fully_veg"),
+                "descriptor": p.get("descriptor"),
+                "formality": p.get("formality"),
+                "reservation": p.get("reservation"),
+                "best_dishes": p.get("best_dishes"),
+                "near": r.get("nearest_landmark"),
+                "mi": r.get("nearest_landmark_mi"),
+            })
+        user_msg = (
+            f"Where: {where or 'any port'}\n\n"
+            f"Request: {question}\n\n"
+            f"Restaurants JSON:\n{json.dumps(compact)}"
+        )
+        return SYSTEM_PROMPT_RESTAURANTS, user_msg
 
     if context == "hotels":
         hotels = payload.get("hotels", [])[:40]
@@ -154,6 +196,19 @@ class handler(BaseHTTPRequestHandler):
                 return self._respond(400, {"error": "Question too long (500 char max)"})
 
             system_prompt, user_msg = build_messages(question, payload)
+            is_restaurants = payload.get("context") == "restaurants"
+
+            body = {
+                "model": MODEL,
+                "max_tokens": 320 if is_restaurants else 180,
+                "temperature": 0.3,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_msg},
+                ],
+            }
+            if is_restaurants:
+                body["response_format"] = {"type": "json_object"}
 
             resp = requests.post(
                 "https://api.openai.com/v1/chat/completions",
@@ -161,21 +216,34 @@ class handler(BaseHTTPRequestHandler):
                     "Authorization": f"Bearer {OPENAI_API_KEY}",
                     "Content-Type": "application/json",
                 },
-                json={
-                    "model": MODEL,
-                    "max_tokens": 180,
-                    "temperature": 0.3,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_msg},
-                    ],
-                },
+                json=body,
                 timeout=15,
             )
             resp.raise_for_status()
-            answer = resp.json()["choices"][0]["message"]["content"].strip()
+            content = resp.json()["choices"][0]["message"]["content"].strip()
 
-            return self._respond(200, {"answer": answer})
+            if is_restaurants:
+                # Map the model's short refs (1-based) back to real restaurant ids.
+                slice_ = payload.get("restaurants", [])[:80]
+                ref_to_id = {i + 1: r.get("id") for i, r in enumerate(slice_)}
+                try:
+                    parsed = json.loads(content)
+                    picks = []
+                    for ref in (parsed.get("picks") or [])[:5]:
+                        try:
+                            rid = ref_to_id.get(int(ref))
+                        except (ValueError, TypeError):
+                            rid = None
+                        if rid and rid not in picks:
+                            picks.append(rid)
+                    return self._respond(200, {
+                        "answer": (parsed.get("answer") or "").strip(),
+                        "picks": picks,
+                    })
+                except (ValueError, TypeError):
+                    return self._respond(200, {"answer": content, "picks": []})
+
+            return self._respond(200, {"answer": content})
 
         except requests.HTTPError as exc:
             return self._respond(502, {
