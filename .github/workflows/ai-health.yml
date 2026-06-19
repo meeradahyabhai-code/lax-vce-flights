@@ -1,0 +1,26 @@
+name: Prod AI Health
+
+# Confirms the LIVE app's OpenAI features actually work. The prod OpenAI key
+# lives in Vercel (not in CI secrets), so we exercise a live endpoint instead.
+# /api/summary silently falls back to canned text on an OpenAI error, so the
+# check inspects the response CONTENT, not just the status code — catching a
+# rotated/dead prod key that would otherwise go unnoticed. A failed run turns
+# the workflow red and GitHub emails the owner.
+
+on:
+  schedule:
+    - cron: '0 14 * * *'   # 14:00 UTC daily (~7am PT)
+  workflow_dispatch:        # manual trigger
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install requests
+      - name: Check live prod AI endpoint
+        run: python scripts/check_live_ai.py
