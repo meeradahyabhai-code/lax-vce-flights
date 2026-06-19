@@ -11,3 +11,6 @@ data/ncl_shorex_files/
 
 # Local-only Google Cloud TTS key (never commit)
 .gcp_tts_key
+
+# Michelin source CSV (re-downloaded by add_michelin_restaurants.py; derived data lives in restaurants.json)
+data/michelin_my_maps.csv
