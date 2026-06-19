@@ -925,6 +925,55 @@
   .shop-choice-label { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--text-primary); }
   .shop-choice-sub { font-family: var(--sans); font-size: 14px; color: var(--text-secondary); }
 
+  /* ---- Restaurants finder ---- */
+  .rest-portbar { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 16px 0 14px; scrollbar-width: none; }
+  .rest-portbar::-webkit-scrollbar { display: none; }
+  .rest-port-pill { flex: 0 0 auto; font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--text-secondary); background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 999px; padding: 8px 16px; cursor: pointer; white-space: nowrap; transition: all .15s; }
+  .rest-port-pill.active { background: var(--azure); border-color: var(--azure); color: #fff; }
+  .rest-chat { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; }
+  .rest-chat-row { display: flex; gap: 8px; }
+  .rest-chat-input { flex: 1; min-width: 0; border: 1px solid var(--fog); border-radius: 10px; padding: 11px 14px; font-family: var(--sans); font-size: 15px; color: var(--ink); outline: none; }
+  .rest-chat-input:focus { border-color: var(--azure); }
+  .rest-chat-input::placeholder { color: #94a3b8; font-style: italic; }
+  .rest-chat-send { flex: 0 0 auto; background: var(--azure); color: #fff; border: none; border-radius: 10px; padding: 0 18px; font-family: var(--sans); font-size: 14px; font-weight: 600; cursor: pointer; }
+  .rest-chat-send:disabled { opacity: .55; cursor: default; }
+  .rest-chat-hint { font-family: var(--sans); font-size: 12px; color: var(--text-tertiary); margin-top: 8px; }
+  .rest-chat-answer { display: none; font-family: var(--sans); font-size: 14px; line-height: 1.5; color: var(--text-secondary); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--fog); }
+  .rest-chat-answer.active { display: block; }
+  .rest-sectlabel { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-tertiary); margin: 22px 0 12px; }
+  .rest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .rcard { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 16px; overflow: hidden; cursor: pointer; transition: box-shadow .15s, border-color .15s; display: flex; flex-direction: column; }
+  .rcard:hover { box-shadow: 0 8px 24px rgba(14,31,56,.10); border-color: var(--azure); }
+  .rcard.hero { grid-column: 1 / -1; }
+  .rcard.hero .rcard-photo { height: 220px; }
+  .rcard-photo { position: relative; height: 150px; background: #e8e3d8 center/cover no-repeat; }
+  .rcard-badges { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .rbadge { font-family: var(--sans); font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 999px; letter-spacing: .01em; backdrop-filter: blur(4px); }
+  .rbadge-best { background: var(--azure); color: #fff; }
+  .rbadge-mich { background: rgba(255,255,255,.92); color: var(--gold); border: 1px solid var(--gold); }
+  .rbadge-loved { background: rgba(255,255,255,.92); color: var(--text-primary); }
+  .rcard-body { padding: 13px 15px 14px; }
+  .rcard-name { font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1.2; }
+  .rcard-meta { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  .rcard-row { display: flex; align-items: center; gap: 12px; margin-top: 9px; font-family: var(--sans); font-size: 14px; }
+  .rcard-rating { font-weight: 600; color: var(--ink); font-feature-settings: var(--nums-tabular, "tnum"); }
+  .rcard-rating .star { color: #9aa3af; }
+  .rcard-price { color: var(--text-secondary); font-feature-settings: var(--nums-tabular, "tnum"); }
+  .rcard-veg { display: inline-flex; }
+  .rcard-veg svg { width: 16px; height: 16px; stroke: var(--lagoon); fill: none; stroke-width: 1.6; }
+  .rcard-veg.full svg { stroke: var(--gold); }
+  .rcard-expand { display: none; border-top: 1px solid var(--fog); padding: 13px 15px 15px; }
+  .rcard.open .rcard-expand { display: block; }
+  .rcard-vibe { font-family: var(--serif); font-style: italic; font-size: 15px; line-height: 1.45; color: var(--text-primary); }
+  .rcard-prof { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 10px; line-height: 1.5; }
+  .rcard-prof b { color: var(--text-primary); font-weight: 600; }
+  .rcard-dishes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .rcard-dish { font-family: var(--sans); font-size: 12px; background: rgba(26,58,107,.06); color: var(--azure); border-radius: 999px; padding: 4px 10px; }
+  .rcard-actions { display: flex; gap: 8px; margin-top: 13px; flex-wrap: wrap; }
+  .rcard-btn { font-family: var(--sans); font-size: 13px; font-weight: 600; border-radius: 10px; padding: 9px 14px; cursor: pointer; border: 1px solid var(--border-strong); background: var(--bg-surface); color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+  .rcard-btn.primary { background: var(--azure); border-color: var(--azure); color: #fff; }
+  .rcard-empty { font-family: var(--sans); font-size: 14px; color: var(--text-secondary); padding: 8px 0; }
+
   .shop-subnav {
     display: flex; justify-content: center; gap: 28px;
     padding: 4px 0 0; margin: 0 auto;
@@ -2302,6 +2351,7 @@
 <div class="shop-subnav" id="shop-subnav" style="display:none;">
   <button class="shop-subnav-btn active" data-sub="flights">Flights</button>
   <button class="shop-subnav-btn" data-sub="hotels">Hotels</button>
+  <button class="shop-subnav-btn" data-sub="restaurants">Restaurants</button>
 </div>
 
 <!-- Shop chooser: Flights or Hotels first -->
@@ -2318,6 +2368,11 @@
         <span class="shop-choice-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/><path d="M3 14h18"/><path d="M7 10V7a1 1 0 0 1 1-1h3v4"/><line x1="3" y1="18" x2="3" y2="20"/><line x1="21" y1="18" x2="21" y2="20"/></svg></span>
         <span class="shop-choice-label">Hotels</span>
         <span class="shop-choice-sub">Venice, Ravenna &amp; Istanbul stays</span>
+      </button>
+      <button class="shop-choice" type="button" data-choice="restaurants">
+        <span class="shop-choice-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 0 0 4 0V3"/><path d="M8 10v11"/><path d="M17 3c-1.6 0-3 1.8-3 4.5s1.4 4.5 3 4.5v9"/></svg></span>
+        <span class="shop-choice-label">Restaurants</span>
+        <span class="shop-choice-sub">The best table at every stop</span>
       </button>
     </div>
   </div>
@@ -2394,6 +2449,23 @@
   </div>
 
   <div class="footer" id="hotel-footer"></div>
+</div>
+</div>
+
+<!-- Restaurants section (hidden by default) -->
+<div id="restaurants-section" style="display:none;">
+<div style="max-width:1100px; margin:0 auto; padding:0 16px 56px;">
+  <div class="rest-portbar" id="rest-portbar"></div>
+  <div class="rest-chat">
+    <div class="rest-chat-row">
+      <input type="text" class="rest-chat-input" id="rest-chat-input"
+             placeholder="Tell me what you're craving&hellip; (e.g. romantic seafood, walkable, vegetarian)">
+      <button class="rest-chat-send" id="rest-chat-send" type="button">Ask</button>
+    </div>
+    <div class="rest-chat-hint">Ask in plain words &mdash; I&rsquo;ll pick from the best at this stop.</div>
+    <div class="rest-chat-answer" id="rest-chat-answer"></div>
+  </div>
+  <div id="rest-results"></div>
 </div>
 </div>
 
@@ -5157,7 +5229,8 @@
   }
 
   function isShopSection() {
-    return activeSection === 'shop' || activeSection === 'flights' || activeSection === 'hotels';
+    return activeSection === 'shop' || activeSection === 'flights' ||
+           activeSection === 'hotels' || activeSection === 'restaurants';
   }
 
   // ---- Our Trip phase toggle (Before We Sail | The Cruise) ----
@@ -5237,7 +5310,7 @@
     // Show/hide shop sub-nav (only inside Flights/Hotels, not the chooser)
     var subNav = document.getElementById('shop-subnav');
     if (subNav) {
-      subNav.style.display = (activeSection === 'flights' || activeSection === 'hotels') ? '' : 'none';
+      subNav.style.display = (activeSection === 'flights' || activeSection === 'hotels' || activeSection === 'restaurants') ? '' : 'none';
       document.querySelectorAll('.shop-subnav-btn').forEach(function (btn) {
         btn.classList.toggle('active', btn.dataset.sub === activeSection);
       });
@@ -5247,6 +5320,7 @@
   function renderSectionContent() {
     var flightsSection = document.getElementById('flights-section');
     var hotelsSection = document.getElementById('hotels-section');
+    var restaurantsSection = document.getElementById('restaurants-section');
     var itinerarySection = document.getElementById('itinerary-section');
     var dirNav = document.getElementById('direction-nav');
     var filtersEl = document.getElementById('filters');
@@ -5257,6 +5331,7 @@
     // Hide all sections
     flightsSection.style.display = 'none';
     hotelsSection.style.display = 'none';
+    if (restaurantsSection) restaurantsSection.style.display = 'none';
     itinerarySection.style.display = 'none';
     dirNav.style.display = 'none';
     originNav.style.display = 'none';
@@ -5272,6 +5347,15 @@
       if (shopChooser) shopChooser.style.display = '';
       if (heroEl) heroEl.style.display = 'none';
       document.getElementById('ask-ai').style.display = 'none';
+      return;
+    }
+
+    if (activeSection === 'restaurants') {
+      if (restaurantsSection) restaurantsSection.style.display = '';
+      if (heroEl) heroEl.style.display = 'none';
+      document.getElementById('ask-ai').style.display = 'none';
+      setupRestaurantsOnce();
+      loadRestaurants().then(renderRestaurants);
       return;
     }
 
@@ -6700,7 +6784,7 @@
       btn.addEventListener('click', function () {
         var c = btn.getAttribute('data-choice');
         if (c === 'flights') { enterDest('flights'); return; }
-        activeSection = 'hotels';
+        activeSection = (c === 'restaurants') ? 'restaurants' : 'hotels';
         var st = getStoredOrigin(); if (st && ORIGINS[st]) activeOrigin = st;
         if (!data) { startApp(); } else { renderSectionNav(); renderSectionContent(); }
       });
@@ -7741,6 +7825,195 @@
       if (key === 'istanbul' && lbl.indexOf('istanbul') >= 0) return p.date;
     }
     return null;
+  }
+
+  // ===== Restaurants finder =====
+  var RESTAURANTS = [], restaurantsLoaded = false, activeRestPort = 'venice';
+  var REST_PORTS = ['venice', 'ravenna', 'dubrovnik', 'bar', 'athens', 'kusadasi', 'rhodes', 'santorini', 'istanbul'];
+  var REST_LABEL = { venice: 'Venice', ravenna: 'Ravenna', dubrovnik: 'Dubrovnik', bar: 'Bar',
+    athens: 'Athens', kusadasi: 'Kuşadası', rhodes: 'Rhodes', santorini: 'Santorini', istanbul: 'Istanbul' };
+  var VEG_SVG = '<svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 4 13c0-3 2-6 7-9 5 3 7 6 7 9a7 7 0 0 1-7 7z"/><path d="M11 20V10"/></svg>';
+  var _restWired = false;
+
+  function loadRestaurants() {
+    if (restaurantsLoaded) return Promise.resolve();
+    return fetch('restaurants.json?v=' + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (j) { RESTAURANTS = (j && j.restaurants) || []; restaurantsLoaded = true; })
+      .catch(function () { RESTAURANTS = []; restaurantsLoaded = true; });
+  }
+
+  function restTier(r) { return r.michelin === 'star' ? 3 : r.michelin === 'bib' ? 2 : 0; }
+  function restKey(r) { return [restTier(r), (r.reviews >= 400 ? (r.rating || 0) : 0), (r.reviews || 0)]; }
+  function restSort(rows) {
+    return rows.slice().sort(function (a, b) {
+      var ka = restKey(a), kb = restKey(b);
+      return kb[0] - ka[0] || kb[1] - ka[1] || kb[2] - ka[2];
+    });
+  }
+  function restCrown(rows) {
+    var best = restSort(rows)[0];
+    var loved = rows.slice().sort(function (a, b) { return (b.reviews || 0) - (a.reviews || 0); })[0];
+    return { bestId: best && best.id, lovedId: loved && loved.id };
+  }
+
+  function restReserveBtn(r) {
+    var ch = r.booking_channel || '';
+    if (ch === 'phone' && r.phone) {
+      return '<a class="rcard-btn primary" href="tel:' + escHtml(r.phone.replace(/[^0-9+]/g, '')) +
+        '">Call to book</a>';
+    }
+    var safe = safeUrl(r.booking_url || r.reservation_link || r.website || r.maps_url || '');
+    if (!safe) return '';
+    var label = ch === 'instagram' ? 'Message on Instagram'
+      : (r.reservation_link || ch === 'website') ? 'Book a table' : 'Reserve';
+    return '<a class="rcard-btn primary" href="' + safe + '" target="_blank" rel="noopener">' +
+      label + ' &#8599;</a>';
+  }
+
+  function restVeg(r) {
+    if (r.fully_veg) return '<span class="rcard-veg full" title="Fully vegetarian">' + VEG_SVG + '</span>';
+    if (r.veg_options) return '<span class="rcard-veg" title="Vegetarian options">' + VEG_SVG + '</span>';
+    return '';
+  }
+
+  function restCardHtml(r, opts) {
+    opts = opts || {};
+    var crown = opts.crown || {};
+    var p = r.profile || {};
+    var badges = '';
+    if (opts.hero && crown.bestId === r.id)
+      badges += '<span class="rbadge rbadge-best">★ Best in ' + escHtml(REST_LABEL[r.port_key] || '') + '</span>';
+    if (r.michelin === 'star')
+      badges += '<span class="rbadge rbadge-mich">✦ ' + escHtml(r.michelin_award || 'Michelin') + '</span>';
+    else if (r.michelin === 'bib')
+      badges += '<span class="rbadge rbadge-mich">Bib Gourmand</span>';
+    if (!opts.hero && crown.lovedId === r.id && crown.bestId !== r.id)
+      badges += '<span class="rbadge rbadge-loved">Most loved</span>';
+
+    var meta = [];
+    if (r.nearest_landmark)
+      meta.push((r.nearest_landmark_mi != null ? r.nearest_landmark_mi + ' mi from ' : 'near ') + r.nearest_landmark);
+    if (r.cuisine && r.cuisine !== 'Restaurant') meta.push(r.cuisine);
+
+    var dishes = (p.best_dishes || []).map(function (d) {
+      return '<span class="rcard-dish">' + escHtml(d) + '</span>';
+    }).join('');
+    var prof = [];
+    if (p.formality) prof.push(p.formality);
+    if (p.reservation) prof.push(p.reservation);
+    if (p.popularity) prof.push(p.popularity);
+
+    var photoStyle = r.photo_local ? ' style="background-image:url(\'' + encodeURI(r.photo_local) + '\')"' : '';
+    var expand = '<div class="rcard-expand">' +
+      (r.vibe ? '<div class="rcard-vibe">' + escHtml(r.vibe) + '</div>' : '') +
+      (prof.length ? '<div class="rcard-prof">' + prof.map(escHtml).join(' &middot; ') + '</div>' : '') +
+      (p.veg_note ? '<div class="rcard-prof">' + escHtml(p.veg_note) + '</div>' : '') +
+      (dishes ? '<div class="rcard-dishes">' + dishes + '</div>' : '') +
+      '<div class="rcard-actions">' + restReserveBtn(r) +
+        (safeUrl(r.maps_url) ? '<a class="rcard-btn" href="' + safeUrl(r.maps_url) + '" target="_blank" rel="noopener">Map</a>' : '') +
+        (safeUrl(r.tiktok_search_url) ? '<a class="rcard-btn" href="' + safeUrl(r.tiktok_search_url) + '" target="_blank" rel="noopener">TikTok &#8599;</a>' : '') +
+      '</div></div>';
+
+    return '<div class="rcard' + (opts.hero ? ' hero' : '') + '" data-id="' + escHtml(r.id) + '">' +
+      '<div class="rcard-photo"' + photoStyle + '><div class="rcard-badges">' + badges + '</div></div>' +
+      '<div class="rcard-body"><div class="rcard-name">' + escHtml(r.name) + '</div>' +
+      (meta.length ? '<div class="rcard-meta">' + escHtml(meta.join(' · ')) + '</div>' : '') +
+      '<div class="rcard-row"><span class="rcard-rating"><span class="star">★</span> ' +
+        (r.rating || '—') + '</span>' +
+        (r.price ? '<span class="rcard-price">' + escHtml(r.price) + '</span>' : '') +
+        restVeg(r) + '</div></div>' + expand + '</div>';
+  }
+
+  function renderRestaurants() {
+    var bar = document.getElementById('rest-portbar');
+    var res = document.getElementById('rest-results');
+    if (!bar || !res) return;
+    if (!RESTAURANTS.length) { res.innerHTML = '<div class="rcard-empty">Loading restaurants&hellip;</div>'; return; }
+    bar.innerHTML = REST_PORTS.map(function (pk) {
+      return '<button class="rest-port-pill' + (pk === activeRestPort ? ' active' : '') +
+        '" data-rp="' + pk + '">' + escHtml(REST_LABEL[pk] || pk) + '</button>';
+    }).join('');
+    bar.querySelectorAll('.rest-port-pill').forEach(function (b) {
+      b.addEventListener('click', function () {
+        activeRestPort = b.dataset.rp;
+        var ans = document.getElementById('rest-chat-answer');  // stale answer would mislead across ports
+        if (ans) { ans.className = 'rest-chat-answer'; ans.innerHTML = ''; }
+        renderRestaurants();
+      });
+    });
+
+    var rows = RESTAURANTS.filter(function (r) { return r.port_key === activeRestPort; });
+    var crown = restCrown(rows);
+    var sorted = restSort(rows);
+    var best = sorted[0];
+    var rest = sorted.slice(1);
+    var label = escHtml(REST_LABEL[activeRestPort] || activeRestPort);
+    var html = '';
+    if (best) {
+      html += '<div class="rest-sectlabel">The best in ' + label + '</div>' +
+        restCardHtml(best, { hero: true, crown: crown });
+    }
+    if (rest.length) {
+      html += '<div class="rest-sectlabel">More great tables</div><div class="rest-grid">' +
+        rest.map(function (r) { return restCardHtml(r, { crown: crown }); }).join('') + '</div>';
+    }
+    res.innerHTML = html;
+  }
+
+  async function askRestaurant(q) {
+    q = (q || '').trim();
+    if (!q) return;
+    var ans = document.getElementById('rest-chat-answer');
+    var btn = document.getElementById('rest-chat-send');
+    ans.className = 'rest-chat-answer active';
+    ans.textContent = 'Thinking…';
+    btn.disabled = true;
+    try {
+      var rows = RESTAURANTS.filter(function (r) { return r.port_key === activeRestPort; });
+      var resp = await fetch('/api/ask', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ context: 'restaurants', restaurants: rows,
+          port_label: REST_LABEL[activeRestPort], question: q }),
+      });
+      var d = await resp.json();
+      if (!resp.ok) throw new Error(d.error || 'error');
+      var byid = {}; rows.forEach(function (r) { byid[r.id] = r; });
+      var picks = (d.picks || []).map(function (id) { return byid[id]; }).filter(Boolean);
+      var html = '<div>' + escHtml(d.answer || '') + '</div>';
+      if (picks.length) {
+        var crown = restCrown(rows);
+        html += '<div class="rest-grid" style="margin-top:14px;">' +
+          picks.map(function (r) { return restCardHtml(r, { crown: crown }); }).join('') + '</div>';
+      }
+      ans.innerHTML = html;
+    } catch (err) {
+      ans.className = 'rest-chat-answer active';
+      ans.textContent = 'Couldn’t get an answer just now. Try again in a moment.';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function setupRestaurantsOnce() {
+    if (_restWired) return;
+    _restWired = true;
+    var send = document.getElementById('rest-chat-send');
+    var input = document.getElementById('rest-chat-input');
+    if (send) send.addEventListener('click', function () { askRestaurant(input.value); });
+    if (input) input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); askRestaurant(input.value); }
+    });
+    // Expand-toggle delegation covers both the main grid and the chat-answer cards.
+    function toggleDelegate(e) {
+      if (e.target.closest('a') || e.target.closest('button')) return;
+      var card = e.target.closest('.rcard');
+      if (card) card.classList.toggle('open');
+    }
+    ['rest-results', 'rest-chat-answer'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('click', toggleDelegate);
+    });
   }
 
   function loadExcursions() {
