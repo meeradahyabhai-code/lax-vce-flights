@@ -937,21 +937,50 @@
   .rest-chat-input::placeholder { color: #94a3b8; font-style: italic; }
   .rest-chat-send { flex: 0 0 auto; background: var(--azure); color: #fff; border: none; border-radius: 10px; padding: 0 18px; font-family: var(--sans); font-size: 14px; font-weight: 600; cursor: pointer; }
   .rest-chat-send:disabled { opacity: .55; cursor: default; }
-  .rest-chat-hint { font-family: var(--sans); font-size: 12px; color: var(--text-tertiary); margin-top: 8px; }
+  .rest-chat-hint { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
   .rest-chat-answer { display: none; font-family: var(--sans); font-size: 14px; line-height: 1.5; color: var(--text-secondary); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--fog); }
   .rest-chat-answer.active { display: block; }
-  .rest-sectlabel { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-tertiary); margin: 22px 0 12px; }
+  .rest-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 18px; }
+  /* same pill component as the port pills (design system) */
+  .rfilter-chip { flex: 0 0 auto; font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--text-secondary); background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 999px; padding: 8px 16px; cursor: pointer; white-space: nowrap; transition: all .15s; }
+  .rfilter-chip:hover { border-color: var(--azure); }
+  .rfilter-chip.active { background: var(--azure); border-color: var(--azure); color: #fff; }
+  .rfilter-clear { color: var(--azure); }
+  .rest-viewtoggle { display: flex; gap: 8px; margin: 0 0 16px; }
+  #rest-map { height: 440px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border-strong); }
+  .rest-pin { display: inline-flex; align-items: center; gap: 3px; background: var(--bg-surface); border: 1px solid var(--border-strong); color: var(--ink); border-radius: 999px; padding: 3px 9px; font-family: var(--sans); font-size: 12px; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 6px rgba(10,10,15,0.22); }
+  .rest-pin .rest-pin-star { color: var(--gold); }
+  .rest-pin.mich { border-color: var(--gold); background: #fffdf7; }
+  .leaflet-tooltip.rest-tip { background: var(--ink); color: #fff; border: none; border-radius: 6px; padding: 3px 9px; font-family: var(--sans); font-size: 11px; font-weight: 600; box-shadow: 0 2px 8px rgba(10,10,15,0.28); white-space: nowrap; }
+  .leaflet-tooltip.rest-tip::before { display: none; }
+  .rest-pop-name { font-family: var(--serif); font-size: 17px; font-weight: 500; color: var(--ink); }
+  .rest-pop-meta { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+  .rest-pop-vibe { font-family: var(--sans); font-size: 12px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4; }
+  .rest-pop-go { margin-top: 10px; font-family: var(--sans); font-size: 12px; font-weight: 600; color: #fff; background: var(--azure); border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+  .rest-pop-go:hover { background: var(--lagoon); }
+  .rest-sectlabel { font-family: var(--sans); font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--azure); margin: 22px 0 12px; }
   .rest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
   .rcard { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 16px; overflow: hidden; cursor: pointer; transition: box-shadow .15s, border-color .15s; display: flex; flex-direction: column; }
   .rcard:hover { box-shadow: 0 8px 24px rgba(14,31,56,.10); border-color: var(--azure); }
-  .rcard.hero { grid-column: 1 / -1; }
-  .rcard.hero .rcard-photo { height: 220px; }
-  .rcard-photo { position: relative; height: 150px; background: #e8e3d8 center/cover no-repeat; }
+  .rcard.feature { grid-column: span 2; }
+  .rcard.feature .rcard-photo { height: 180px; }
+  @media (max-width: 560px) { .rcard.feature { grid-column: 1 / -1; } }
+  .rcard-why { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--azure); margin-top: 7px; line-height: 1.4; }
+  .rcard-photo { position: relative; height: 150px; background: #e8e3d8; overflow: hidden; }
+  .rcard-img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .rcard-badges { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
   .rbadge { font-family: var(--sans); font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 999px; letter-spacing: .01em; backdrop-filter: blur(4px); }
   .rbadge-best { background: var(--azure); color: #fff; }
-  .rbadge-mich { background: rgba(255,255,255,.92); color: var(--gold); border: 1px solid var(--gold); }
+  .rbadge-mich { background: #fff; color: #9a1b2f; border: 1px solid #c8102e; font-weight: 700; letter-spacing: .04em; }
+  .rbadge-mich .mich-star { color: #c8102e; letter-spacing: 0; margin-right: 3px; }
   .rbadge-loved { background: rgba(255,255,255,.92); color: var(--text-primary); }
+  .rbadge-rec { background: var(--lagoon); color: #fff; border: none; cursor: pointer; }
+  .rcard-save { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 999px; border: none; background: rgba(255,255,255,0.92); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 5px rgba(10,10,15,0.22); padding: 0; }
+  .rcard-save svg { width: 19px; height: 19px; fill: none; stroke: var(--ink); stroke-width: 1.7; }
+  .rcard-save.on svg { fill: var(--gold); stroke: var(--gold); }
+  .rcard-recs { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--fog); }
+  .rcard-rec-line { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); }
+  .rcard-rec-line + .rcard-rec-line { margin-top: 3px; }
   .rcard-body { padding: 13px 15px 14px; }
   .rcard-name { font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1.2; }
   .rcard-meta { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
@@ -960,8 +989,8 @@
   .rcard-rating .star { color: #9aa3af; }
   .rcard-price { color: var(--text-secondary); font-feature-settings: var(--nums-tabular, "tnum"); }
   .rcard-veg { display: inline-flex; }
-  .rcard-veg svg { width: 16px; height: 16px; stroke: var(--lagoon); fill: none; stroke-width: 1.6; }
-  .rcard-veg.full svg { stroke: var(--gold); }
+  .rcard-veg svg { width: 18px; height: 18px; color: #2e7d32; }
+  .rcard-veg.full svg { color: #1b5e20; }
   .rcard-expand { display: none; border-top: 1px solid var(--fog); padding: 13px 15px 15px; }
   .rcard.open .rcard-expand { display: block; }
   .rcard-vibe { font-family: var(--serif); font-style: italic; font-size: 15px; line-height: 1.45; color: var(--text-primary); }
@@ -973,6 +1002,16 @@
   .rcard-btn { font-family: var(--sans); font-size: 13px; font-weight: 600; border-radius: 10px; padding: 9px 14px; cursor: pointer; border: 1px solid var(--border-strong); background: var(--bg-surface); color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
   .rcard-btn.primary { background: var(--azure); border-color: var(--azure); color: #fff; }
   .rcard-empty { font-family: var(--sans); font-size: 14px; color: var(--text-secondary); padding: 8px 0; }
+  /* Your Day meal-timing block */
+  .yourday { background: linear-gradient(180deg, #fffdf7, var(--bg-surface)); border: 1px solid var(--border-strong); border-radius: 16px; padding: 16px 18px 8px; margin: 6px 0 18px; }
+  .yd-head { font-family: var(--serif); font-size: 19px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+  .yd-sub { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--azure); margin-bottom: 10px; }
+  .yd-row { display: flex; gap: 12px; align-items: flex-start; padding: 9px 0; border-top: 1px solid var(--fog); }
+  .yd-row:first-of-type { border-top: none; }
+  .yd-ic { flex: 0 0 auto; color: var(--gold); margin-top: 1px; line-height: 0; }
+  .yd-ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .yd-meal { font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); }
+  .yd-tip { font-family: var(--sans); font-size: 14.5px; color: var(--text-primary); line-height: 1.45; margin-top: 1px; }
 
   .shop-subnav {
     display: flex; justify-content: center; gap: 28px;
@@ -1824,7 +1863,8 @@
   .cday-cine .cday-events-strip { background: var(--bg-surface); padding: 16px 20px 2px; }
   .cday-body { padding: 0 18px 18px; }
   .cday-body.hidden { display: none; }
-  .cday-sec-label { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-secondary); margin: 6px 0 14px; }
+  .cday-sec-label { font-family: var(--serif); font-size: 20px; font-weight: 500; letter-spacing: 0; color: var(--ink); margin: 24px 0 12px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+  .cday-body > .cday-sec-label:first-of-type { border-top: none; padding-top: 0; margin-top: 6px; }
 
   /* My Bookings — personal journey timeline */
   .mb-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 4px 0 20px; }
@@ -1856,13 +1896,22 @@
   .mb-identify-sub { font-family: var(--sans); font-size: 15px; line-height: 1.5; color: var(--text-secondary); max-width: 36ch; margin: 0 auto 20px; }
   .cday-exc { display: flex; flex-direction: column; gap: 12px; }
   .cday-exc-empty { font-family: var(--sans); font-size: 14px; color: var(--text-tertiary); padding: 2px 0; }
-  .cday-add-exc {
+  .cday-add-exc, .cday-add-rest {
     margin-top: 12px; width: 100%; cursor: pointer;
     font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--azure);
     background: rgba(26,58,107,0.06); border: 1px dashed var(--azure); border-radius: 10px; padding: 12px;
     transition: background 0.15s;
   }
-  .cday-add-exc:hover { background: rgba(26,58,107,0.12); }
+  .cday-add-exc:hover, .cday-add-rest:hover { background: rgba(26,58,107,0.12); }
+  .cday-eat { display: flex; flex-direction: column; gap: 12px; margin-bottom: 4px; }
+  /* Browse = outline secondary button (solid border, not filled), design-system tokens */
+  .cday-browse-rest {
+    margin-top: 8px; width: 100%; cursor: pointer;
+    font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--azure);
+    background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 10px; padding: 12px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .cday-browse-rest:hover { border-color: var(--azure); background: rgba(26,58,107,0.04); }
 
   /* Group-added excursion cards (inside a day) */
   .gx-card { border: 1px solid var(--fog); border-radius: 10px; padding: 14px 16px; background: var(--bg-surface); }
@@ -1873,17 +1922,17 @@
   .gx-going-label { font-weight: 600; color: var(--text-primary); }
   .gx-none { font-style: italic; color: var(--text-tertiary); }
   .gx-actions { display: flex; gap: 8px; margin-top: 10px; }
-  .gx-join, .gx-roster {
+  .gx-join, .gx-roster, .gxr-join {
     font-family: var(--sans); font-size: 13px; font-weight: 500; padding: 7px 16px;
     border-radius: 9999px; cursor: pointer; border: 1px solid var(--azure);
     background: var(--azure); color: #fff; transition: background 0.15s, color 0.15s;
   }
-  .gx-join.joined { background: var(--lagoon); border-color: var(--lagoon); }
+  .gx-join.joined, .gxr-join.joined { background: var(--lagoon); border-color: var(--lagoon); }
   .gx-roster { background: transparent; color: var(--azure); }
   .gx-roster:hover { background: rgba(26,58,107,0.08); }
   /* Delete = creator only; pushed to the far right + ghost styling so it isn't fat-fingered */
-  .gx-del { margin-left: auto; font-family: var(--sans); font-size: 13px; font-weight: 500; padding: 7px 14px; border-radius: 9999px; cursor: pointer; background: transparent; border: 1px solid transparent; color: #b3261e; }
-  .gx-del:hover { background: rgba(179,38,30,0.08); border-color: rgba(179,38,30,0.35); }
+  .gx-del, .gxr-del { margin-left: auto; font-family: var(--sans); font-size: 13px; font-weight: 500; padding: 7px 14px; border-radius: 9999px; cursor: pointer; background: transparent; border: 1px solid transparent; color: #b3261e; }
+  .gx-del:hover, .gxr-del:hover { background: rgba(179,38,30,0.08); border-color: rgba(179,38,30,0.35); }
   .gx-added-by { font-family: var(--sans); font-size: 11px; color: var(--text-tertiary); margin-top: 6px; }
 
   /* Add-excursion / who's-going modal */
@@ -5355,7 +5404,15 @@
       if (heroEl) heroEl.style.display = 'none';
       document.getElementById('ask-ai').style.display = 'none';
       setupRestaurantsOnce();
-      loadRestaurants().then(renderRestaurants);
+      // Load restaurants + the day's excursions so the "Your Day" block can detect
+      // when a meal falls during your tour. Each loader is guarded; paint immediately.
+      var loaders = [loadRestaurants(), loadRestRecs()];
+      if (typeof loadExcursions === 'function') loaders.push(loadExcursions());
+      if (typeof fetchExcursionPicks === 'function') loaders.push(fetchExcursionPicks());
+      if (typeof loadAddedExcursions === 'function') loaders.push(loadAddedExcursions());
+      Promise.all(loaders.map(function (pr) { return Promise.resolve(pr).catch(function () {}); }))
+        .then(renderRestaurants);
+      renderRestaurants();
       return;
     }
 
@@ -6719,13 +6776,22 @@
     if (conn.saveData === true || navigator.onLine === false ||
         (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
     var want = '/media/' + base + '.mp4';
-    if (v.getAttribute('src') !== want) {
-      v.muted = true;
-      v.setAttribute('src', want);
-      v.load();
+    // Defer the ~3MB video off the critical path so the poster + first interactions
+    // settle first (helps load time + INP, esp. on cruise wifi). Poster shows immediately.
+    var startVideo = function () {
+      if (v.getAttribute('src') !== want) {
+        v.muted = true;
+        v.setAttribute('src', want);
+        v.load();
+      }
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {}); // autoplay blocked -> poster stays, no error
+    };
+    if (window.requestIdleCallback) {
+      requestIdleCallback(startVideo, { timeout: 2500 });
+    } else {
+      setTimeout(startVideo, 1200);
     }
-    var p = v.play();
-    if (p && p.catch) p.catch(function () {}); // autoplay blocked -> poster stays, no error
   }
   function pauseCineVideo() {
     var v = document.getElementById('cine-video');
@@ -7030,6 +7096,12 @@
         html += '<div class="cday-sec-label">Excursions / Tours</div>';
         html += '<div class="cday-exc" id="cdayexc-' + p.date + '"></div>';
         html += '<button class="cday-add-exc" data-date="' + p.date + '" data-port="' + escHtml(p.label) + '">+ Add an excursion</button>';
+        if (typeof REST_PORTS !== 'undefined' && REST_PORTS.indexOf(portSlug) !== -1) {
+          html += '<div class="cday-sec-label" style="margin-top:18px;">Where to eat</div>';
+          html += '<div class="cday-eat" id="cdayeat-' + p.date + '"></div>';
+          html += '<button class="cday-add-rest" data-date="' + p.date + '" data-port="' + escHtml(p.label) + '" data-portkey="' + portSlug + '">+ Add a restaurant</button>';
+          html += '<button class="cday-browse-rest" data-eatport="' + portSlug + '">Browse all ' + escHtml(REST_LABEL[portSlug] || portSlug) + ' restaurants &#8594;</button>';
+        }
         if (guide) html += referenceHtml(p.date, guide);
         html += '</div>';
       }
@@ -7052,6 +7124,21 @@
         ev.stopPropagation();
         openAddExcursionModal(btn.getAttribute('data-date'), btn.getAttribute('data-port'));
       });
+    });
+    el.querySelectorAll('.cday-add-rest').forEach(function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        openAddRestaurantModal(btn.getAttribute('data-date'), btn.getAttribute('data-port'), btn.getAttribute('data-portkey'));
+      });
+    });
+    el.querySelectorAll('.cday-browse-rest').forEach(function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        goToRestaurantsForPort(btn.getAttribute('data-eatport'));
+      });
+    });
+    el.querySelectorAll('.cday-eat').forEach(function (c) {
+      renderAddedRestaurants(c.id.replace('cdayeat-', ''));
     });
     wireReferencePills(el);
     el.querySelectorAll('.cday-exc').forEach(function (c) {
@@ -7115,6 +7202,8 @@
     // Instant paint from cache (also the offline source); then refresh from Supabase.
     try { ADDED_EXCURSIONS = JSON.parse(localStorage.getItem('dcf_added_excursions') || '{}') || {}; }
     catch (e) { ADDED_EXCURSIONS = {}; }
+    try { ADDED_RESTAURANTS = JSON.parse(localStorage.getItem('dcf_added_restaurants') || '{}') || {}; }
+    catch (e) { ADDED_RESTAURANTS = {}; }
     sbRefreshExcursions();
   }
   function sbRefreshExcursions() {
@@ -7126,16 +7215,310 @@
       if (!excs) return; // offline / failed: keep the cached copy
       var joinMap = {};
       (joins || []).forEach(function (j) { (joinMap[j.excursion_id] = joinMap[j.excursion_id] || []).push(j.traveler); });
-      var grouped = {};
+      var grouped = {}, groupedR = {};
       excs.forEach(function (e) {
         e.joins = joinMap[e.id] || [];
-        (grouped[e.port_date] = grouped[e.port_date] || []).push(e);
+        var store = (e.kind === 'restaurant') ? groupedR : grouped;  // restaurants vs tours, same table
+        (store[e.port_date] = store[e.port_date] || []).push(e);
       });
       ADDED_EXCURSIONS = grouped;
+      ADDED_RESTAURANTS = groupedR;
       persistAddedExcursions();
+      persistAddedRestaurants();
       document.querySelectorAll('.cday-exc').forEach(function (c) { renderAddedExcursions(c.id.replace('cdayexc-', '')); });
+      document.querySelectorAll('.cday-eat').forEach(function (c) { renderAddedRestaurants(c.id.replace('cdayeat-', '')); });
       refreshMyBookingsIfActive();
     }).catch(function () {});
+  }
+
+  // ===== Added RESTAURANTS — group plan on the port card (kind='restaurant', same table) =====
+  var ADDED_RESTAURANTS = {};
+  var REST_MEALS = ['Breakfast', 'Lunch', 'Dinner'];
+  function addedRestaurantsFor(date) { return ADDED_RESTAURANTS[date] || []; }
+  function persistAddedRestaurants() { try { localStorage.setItem('dcf_added_restaurants', JSON.stringify(ADDED_RESTAURANTS)); } catch (e) {} }
+  function findRest(date, id) { return (ADDED_RESTAURANTS[date] || []).filter(function (r) { return String(r.id) === String(id); })[0]; }
+
+  function saveAddedRestaurant(rec) {
+    var newId = genId();
+    return sbInsertRetry('excursions', {
+      id: newId, kind: 'restaurant', port_date: rec.port_date, port_label: rec.port_label,
+      title: rec.title, meal: rec.meal, start_time: rec.start_time || '',
+      // duration/price/currency are NOT NULL in the shared excursions table; restaurants don't
+      // use them, so send empty strings (not null) to satisfy the constraint.
+      duration: '', price: rec.price || '', currency: rec.currency || '',
+      link: rec.link || null, notes: rec.notes || null, added_by: rec.added_by || null
+    }, 2, true).then(function (row) {
+      rec.id = (row && row.id) || newId; rec.kind = 'restaurant';
+      (ADDED_RESTAURANTS[rec.port_date] = ADDED_RESTAURANTS[rec.port_date] || []).push(rec);
+      persistAddedRestaurants();
+      var joins = rec.joins || [];
+      if (!joins.length) return;
+      return sbInsert('excursion_joins', joins.map(function (t) { return { excursion_id: rec.id, traveler: t }; }))
+        .catch(function (e) { console.error('restaurant saved, adding people failed (reconciles on refresh):', e); });
+    });
+  }
+  function toggleJoinR(date, id, traveler) {
+    var rec = findRest(date, id); if (!rec) return null;
+    rec.joins = rec.joins || []; var i = rec.joins.indexOf(traveler); var result;
+    if (i >= 0) {
+      rec.joins.splice(i, 1);
+      sbDelete('excursion_joins', 'excursion_id=eq.' + id + '&traveler=eq.' + encodeURIComponent(traveler)).catch(function () {});
+      result = 'left';
+    } else {
+      rec.joins.push(traveler);
+      sbInsert('excursion_joins', { excursion_id: id, traveler: traveler }).catch(function () {});
+      result = 'joined';
+    }
+    persistAddedRestaurants(); return result;
+  }
+  function deleteAddedRestaurant(rec, date) {
+    return sbDelete('excursions', 'id=eq.' + encodeURIComponent(rec.id)).then(function (r) {
+      if (!r.ok) throw new Error('delete ' + r.status);
+      ADDED_RESTAURANTS[date] = (ADDED_RESTAURANTS[date] || []).filter(function (x) { return x.id !== rec.id; });
+      persistAddedRestaurants(); renderAddedRestaurants(date); refreshMyBookingsIfActive();
+    });
+  }
+  function confirmDeleteRestaurant(rec, date) {
+    var ov = document.createElement('div'); ov.className = 'modal-overlay active';
+    ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
+      '<button class="modal-close" data-act="cancel" type="button" aria-label="Close">&times;</button>' +
+      '<div class="modal-title">Remove this restaurant?</div>' +
+      '<div class="modal-sub">' + escHtml(rec.title) + '</div>' +
+      '<p style="font-family:var(--sans);font-size:13px;color:var(--text-secondary);margin:10px 0 2px;line-height:1.4;">This removes it for everyone, including anyone going. It can’t be undone.</p>' +
+      '<div class="axm-saveerr" id="rxdel-err"></div>' +
+      '<div class="axm-foot"><button class="modal-btn" data-act="cancel" type="button">Cancel</button>' +
+      '<button class="modal-btn" type="button" id="rxdel-go" style="background:#b3261e;border-color:#b3261e;color:#fff;">Remove</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function (e) {
+      var act = e.target.getAttribute && e.target.getAttribute('data-act');
+      if (e.target === ov || act === 'cancel') { ov.remove(); return; }
+    });
+    ov.querySelector('#rxdel-go').addEventListener('click', function () {
+      this.disabled = true;
+      deleteAddedRestaurant(rec, date).then(function () { ov.remove(); })
+        .catch(function () { ov.querySelector('#rxdel-err').textContent = 'Could not remove it. Try again.'; });
+    });
+  }
+  function renderAddedRestaurants(date) {
+    var el = document.getElementById('cdayeat-' + date); if (!el) return;
+    var list = addedRestaurantsFor(date);
+    if (!list.length) { el.innerHTML = '<div class="cday-exc-empty">No restaurants added yet.</div>'; return; }
+    var me = getUserName(); var html = '';
+    list.forEach(function (r) {
+      html += '<div class="gx-card"><div class="gx-body">';
+      html += '<div class="gx-title">' + escHtml(r.title) + '</div>';
+      var meta = [];
+      if (r.meal) meta.push(escHtml(r.meal.charAt(0).toUpperCase() + r.meal.slice(1)));
+      if (r.start_time && r.start_time !== 'Flexible') meta.push(escHtml(r.start_time));
+      if (r.price) meta.push(priceSymbol(r.currency) + escHtml(String(r.price)));
+      if (meta.length) html += '<div class="gx-meta">' + meta.join(' &middot; ') + '</div>';
+      if (r.notes) html += '<div class="gx-sub">' + escHtml(r.notes) + '</div>';
+      var safeLink = safeUrl(r.link);
+      if (safeLink) html += '<div class="gx-sub"><a href="' + escHtml(safeLink) + '" target="_blank" rel="noopener">Reservation link &#8599;</a></div>';
+      var joins = r.joins || [];
+      html += '<div class="gx-going"><span class="gx-going-label">Going</span> ' +
+        (joins.length ? joins.map(function (n) { return '<span class="gx-person">' + escHtml(n) + '</span>'; }).join('') : '<span class="gx-none">no one yet</span>') + '</div>';
+      if (r.added_by) html += '<div class="gx-added-by">Added by ' + escHtml(r.added_by) + '</div>';
+      var iAmIn = me && joins.indexOf(me) >= 0;
+      var isOwner = me && r.added_by && r.added_by === me;
+      html += '<div class="gx-actions">' +
+        '<button class="gxr-join' + (iAmIn ? ' joined' : '') + '" data-date="' + date + '" data-id="' + escHtml(r.id) + '">' +
+        (iAmIn ? '✓ You’re going' : 'Join') + '</button>' +
+        (isOwner ? '<button class="gxr-del" data-date="' + date + '" data-id="' + escHtml(r.id) + '">Delete</button>' : '') +
+        '</div></div></div>';
+    });
+    el.innerHTML = html;
+    el.querySelectorAll('.gxr-join').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var me2 = getUserName(); if (!me2) { promptName(); return; }
+        toggleJoinR(b.getAttribute('data-date'), b.getAttribute('data-id'), me2);
+        renderAddedRestaurants(b.getAttribute('data-date'));
+      });
+    });
+    el.querySelectorAll('.gxr-del').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var rec = findRest(b.getAttribute('data-date'), b.getAttribute('data-id'));
+        if (rec) confirmDeleteRestaurant(rec, b.getAttribute('data-date'));
+      });
+    });
+  }
+
+  function openAddRestaurantModal(date, port, portKey) {
+    var ov = document.createElement('div'); ov.className = 'modal-overlay active';
+    var me = getUserName();
+    var portFirst = (port || '').split(/[,(]/)[0].trim();
+    var pkey = portKey || portFirst.toLowerCase();
+    var hrOpts = ''; for (var h = 1; h <= 12; h++) hrOpts += '<option value="' + h + '">' + h + '</option>';
+    var minOpts = ''; ['00', '15', '30', '45'].forEach(function (m) { minOpts += '<option value="' + m + '">:' + m + '</option>'; });
+    var mealOpts = REST_MEALS.map(function (m) { return '<option value="' + m.toLowerCase() + '">' + m + '</option>'; }).join('');
+    ov.innerHTML =
+      '<div class="modal axm" style="text-align:left;">' +
+      '<button class="modal-close" data-act="cancel" type="button" aria-label="Close">&times;</button>' +
+      '<div class="modal-title">Add a restaurant</div>' +
+      '<div class="modal-sub">' + escHtml(port) + '</div>' +
+      '<div class="axm-q">How do you want to add it?</div>' +
+      '<div class="axm-methods">' +
+        '<button type="button" class="axm-method" data-method="list"><span class="axm-method-ic"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.6" cy="6" r="1.2"/><circle cx="3.6" cy="12" r="1.2"/><circle cx="3.6" cy="18" r="1.2"/></svg></span> From ' + escHtml(portFirst) + '’s restaurants</button>' +
+        '<button type="button" class="axm-method" data-method="upload"><span class="axm-method-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span> Upload a booking screenshot</button>' +
+        '<button type="button" class="axm-method" data-method="manual"><span class="axm-method-ic"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span> Enter the details manually</button>' +
+      '</div>' +
+      '<div class="axm-form" id="rxm-form" style="display:none;">' +
+        '<div class="axm-step" id="rxm-step" style="display:none;"></div>' +
+        '<div class="axm-method-pane" id="rxm-pane-list" style="display:none;">' +
+          '<div class="axm-field-label">Search ' + escHtml(portFirst) + ' restaurants</div>' +
+          '<div class="axm-ncl"><input class="modal-input axm-ncl-input" id="rxm-search" placeholder="Type a name…" autocomplete="off"><div class="axm-ncl-results" id="rxm-results" style="display:none;"></div></div>' +
+        '</div>' +
+        '<div class="axm-method-pane" id="rxm-pane-upload" style="display:none;">' +
+          '<label class="axm-upload" for="rxm-file"><svg class="axm-up-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><polyline points="7 9 12 4 17 9"/><path d="M5 16v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"/></svg><span class="axm-up-title">Tap to upload a screenshot</span><span class="axm-up-hint">A photo of your reservation confirmation — we’ll read the details</span><input type="file" accept="image/*" id="rxm-file" style="display:none;"></label>' +
+          '<div class="axm-hint">Used only to fill in the form below; the image isn’t saved.</div>' +
+          '<div class="axm-upstatus" id="rxm-upstatus"></div><div class="axm-loadbar" id="rxm-loadbar" style="display:none;"><div class="axm-loadbar-fill"></div></div>' +
+        '</div>' +
+        '<div id="rxm-details" style="display:none;">' +
+          '<input class="modal-input axm-in" id="rxm-title" placeholder="Restaurant name *">' +
+          '<div class="axm-field-label">Meal *</div>' +
+          '<select class="modal-input axm-in" id="rxm-meal"><option value="">Pick a meal</option>' + mealOpts + '</select>' +
+          '<div class="axm-field-label">Date *</div>' +
+          '<input class="modal-input axm-in" id="rxm-date" type="date" value="' + date + '">' +
+          '<div class="axm-field-label">Time *</div>' +
+          '<div class="axm-row"><select class="modal-input axm-in" id="rxm-hr"><option value="">Hr</option>' + hrOpts + '</select><select class="modal-input axm-in" id="rxm-min">' + minOpts + '</select><select class="modal-input axm-in" id="rxm-ampm"><option value="">AM/PM</option><option>AM</option><option>PM</option></select></div>' +
+          '<input class="modal-input axm-in" id="rxm-link" placeholder="Reservation link (optional)">' +
+          '<input class="modal-input axm-in" id="rxm-notes" placeholder="Notes (optional)">' +
+          '<div class="axm-going-label">Who’s going?</div><div class="rost-list">' + rosterChecklist(me ? [me] : []) + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="axm-saveerr" id="rxm-saveerr"></div>' +
+      '<div class="axm-foot"><button class="modal-btn" data-act="cancel" type="button">Cancel</button>' +
+      '<button class="modal-btn modal-btn-primary" id="rxm-save" data-act="save" type="button" disabled>Save</button></div>' +
+      '</div>';
+    document.body.appendChild(ov);
+
+    var saveBtn = ov.querySelector('#rxm-save'), saveErr = ov.querySelector('#rxm-saveerr');
+    var REQ = [{ sel: '#rxm-title', label: 'a name' }, { sel: '#rxm-meal', label: 'a meal' }, { sel: '#rxm-date', label: 'a date' }];
+    function missingForSave() {
+      var miss = REQ.filter(function (f) { return ov.querySelector(f.sel).value.trim() === ''; });
+      var hr = ov.querySelector('#rxm-hr').value, ampm = ov.querySelector('#rxm-ampm').value;
+      if (hr === '') miss.push({ sel: '#rxm-hr', label: 'a time' });
+      else if (ampm === '') miss.push({ sel: '#rxm-ampm', label: 'AM or PM' });
+      return miss;
+    }
+    function refresh() { var m = missingForSave(); if (saveErr) saveErr.textContent = m.length ? ('To save, add ' + m.map(function (f) { return f.label; }).join(', ') + '.') : ''; }
+    ov.querySelectorAll('.axm-in').forEach(function (el2) {
+      el2.addEventListener('input', function () { el2.classList.remove('axm-need'); refresh(); });
+      el2.addEventListener('change', function () { el2.classList.remove('axm-need'); refresh(); });
+    });
+    var stepEl = ov.querySelector('#rxm-step'), detailsEl = ov.querySelector('#rxm-details');
+    function setStep(t) { if (stepEl) { stepEl.textContent = t || ''; stepEl.style.display = t ? '' : 'none'; } }
+    function showDetails(t) { if (detailsEl) detailsEl.style.display = ''; saveBtn.disabled = false; setStep(t); refresh(); }
+
+    ov.querySelectorAll('.axm-method').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var m = btn.getAttribute('data-method');
+        ov.querySelectorAll('.axm-method').forEach(function (b) { b.classList.toggle('active', b === btn); });
+        ov.querySelector('#rxm-form').style.display = '';
+        ov.querySelector('#rxm-pane-list').style.display = (m === 'list') ? '' : 'none';
+        ov.querySelector('#rxm-pane-upload').style.display = (m === 'upload') ? '' : 'none';
+        if (m === 'manual') { showDetails('Fill in the details below, pick who’s going, then tap Save.'); }
+        else {
+          if (detailsEl) detailsEl.style.display = 'none'; saveBtn.disabled = true;
+          setStep(m === 'list' ? 'Next: search for the restaurant below and tap it.' : 'Next: upload your reservation screenshot.');
+          if (m === 'list') { var s = ov.querySelector('#rxm-search'); if (s) setTimeout(function () { s.focus(); }, 50); }
+        }
+      });
+    });
+
+    // Searchable picker over this port's curated restaurants
+    (function () {
+      var searchEl = ov.querySelector('#rxm-search'), resEl = ov.querySelector('#rxm-results');
+      function listFor() { return (typeof RESTAURANTS !== 'undefined' ? RESTAURANTS : []).filter(function (r) { return r.port_key === pkey; }); }
+      function render(q) {
+        var list = listFor();
+        if (!list.length) { resEl.innerHTML = '<div class="axm-ncl-empty">' + (restaurantsLoaded ? 'No restaurants listed for this port.' : 'Loading…') + '</div>'; return; }
+        q = (q || '').toLowerCase().trim();
+        var matches = (q ? list.filter(function (e) { return (e.name || '').toLowerCase().indexOf(q) >= 0; }) : list).slice(0, 8);
+        if (!matches.length) { resEl.innerHTML = '<div class="axm-ncl-empty">No match.</div>'; return; }
+        resEl.innerHTML = matches.map(function (e) {
+          var meta = [e.cuisine, e.price].filter(Boolean).join(' · ');
+          return '<button type="button" class="axm-ncl-item" data-id="' + escHtml(e.id) + '"><span class="axm-ncl-t">' + escHtml(e.name) + '</span>' + (meta ? '<span class="axm-ncl-m">' + escHtml(meta) + '</span>' : '') + '</button>';
+        }).join('');
+      }
+      function show() { resEl.style.display = ''; render(searchEl.value); }
+      searchEl.addEventListener('focus', show);
+      searchEl.addEventListener('input', show);
+      searchEl.addEventListener('blur', function () { setTimeout(function () { resEl.style.display = 'none'; }, 200); });
+      resEl.addEventListener('mousedown', function (ev) {
+        var btn = ev.target.closest ? ev.target.closest('.axm-ncl-item') : null; if (!btn) return;
+        ev.preventDefault();
+        var e = listFor().filter(function (x) { return String(x.id) === btn.getAttribute('data-id'); })[0]; if (!e) return;
+        ov.querySelector('#rxm-title').value = e.name || '';
+        if (e.booking_url || e.website) ov.querySelector('#rxm-link').value = e.booking_url || e.website;
+        if (e.cuisine && e.cuisine !== 'Restaurant') ov.querySelector('#rxm-notes').value = e.cuisine;
+        searchEl.value = e.name || ''; resEl.style.display = 'none';
+        showDetails('Pick a meal and who’s going, then tap Save.');
+      });
+      if (!restaurantsLoaded && typeof loadRestaurants === 'function') loadRestaurants().then(function () { if (ov.isConnected) render(searchEl.value); });
+    })();
+
+    ov.querySelector('#rxm-file').addEventListener('change', function (ev) {
+      var f = ev.target.files && ev.target.files[0]; if (!f) return;
+      var status = ov.querySelector('#rxm-upstatus'), loadbar = ov.querySelector('#rxm-loadbar');
+      status.className = 'axm-upstatus loading'; status.textContent = 'Reading your screenshot…'; if (loadbar) loadbar.style.display = '';
+      var reader = new FileReader();
+      reader.onload = function () {
+        fetch('/api/parse_excursion', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: reader.result, port_date: date }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (loadbar) loadbar.style.display = 'none';
+            if (d && d.parsed) {
+              var p = d.parsed;
+              if (p.title) ov.querySelector('#rxm-title').value = p.title;
+              if (p.date) ov.querySelector('#rxm-date').value = p.date;
+              var t = to12h(p.start_time);
+              if (t) { ov.querySelector('#rxm-hr').value = t.hr; ov.querySelector('#rxm-min').value = t.min; ov.querySelector('#rxm-ampm').value = t.ampm; }
+              if (p.link) ov.querySelector('#rxm-link').value = p.link;
+              if (p.notes) ov.querySelector('#rxm-notes').value = p.notes;
+              status.className = 'axm-upstatus ok'; status.textContent = '✓ Filled from your screenshot. Pick a meal, then Save.';
+              showDetails('Pick a meal and who’s going, then tap Save.');
+            } else {
+              status.className = 'axm-upstatus err'; status.textContent = (d && d.error) ? d.error : 'Could not read it. Enter the details below.';
+              showDetails('Enter the details below, then tap Save.');
+            }
+          })
+          .catch(function () { if (loadbar) loadbar.style.display = 'none'; status.className = 'axm-upstatus err'; status.textContent = 'Could not read it. Enter the details below.'; showDetails('Enter the details below, then tap Save.'); });
+      };
+      reader.readAsDataURL(f);
+    });
+
+    ov.addEventListener('click', function (e) {
+      var act = e.target.getAttribute && e.target.getAttribute('data-act');
+      if (e.target === ov || act === 'cancel') { ov.remove(); return; }
+      if (act === 'save') {
+        var miss = missingForSave();
+        if (miss.length) {
+          ov.querySelectorAll('.axm-need').forEach(function (el2) { el2.classList.remove('axm-need'); });
+          miss.forEach(function (f) { var el2 = ov.querySelector(f.sel); if (el2) el2.classList.add('axm-need'); });
+          refresh();
+          var first = ov.querySelector(miss[0].sel); if (first) { first.focus(); if (first.scrollIntoView) first.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+          return;
+        }
+        var hr = ov.querySelector('#rxm-hr').value, min = ov.querySelector('#rxm-min').value || '00', ampm = ov.querySelector('#rxm-ampm').value;
+        var startTime = (hr && ampm) ? (hr + ':' + min + ' ' + ampm) : '';
+        var checked = Array.prototype.slice.call(ov.querySelectorAll('.rost-list input[type="checkbox"]:checked')).map(function (c) { return c.value; });
+        var rec = {
+          port_date: ov.querySelector('#rxm-date').value || date, port_label: port,
+          title: ov.querySelector('#rxm-title').value.trim(), meal: ov.querySelector('#rxm-meal').value,
+          start_time: startTime, link: ov.querySelector('#rxm-link').value.trim(),
+          notes: ov.querySelector('#rxm-notes').value.trim(), added_by: me || null, joins: checked
+        };
+        saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+        saveAddedRestaurant(rec).then(function () {
+          ov.remove();  // close first so a render hiccup can't leave the modal stuck
+          try { renderAddedRestaurants(rec.port_date); refreshMyBookingsIfActive(); } catch (e) {}
+        }).catch(function () {
+          saveBtn.disabled = false; saveBtn.textContent = 'Save';
+          saveErr.textContent = 'Could not save just now. Please try again.';
+        });
+      }
+    });
   }
 
   // Insert excursion + joins into Supabase, then update the local cache.
@@ -7832,8 +8215,38 @@
   var REST_PORTS = ['venice', 'ravenna', 'dubrovnik', 'bar', 'athens', 'kusadasi', 'rhodes', 'santorini', 'istanbul'];
   var REST_LABEL = { venice: 'Venice', ravenna: 'Ravenna', dubrovnik: 'Dubrovnik', bar: 'Bar',
     athens: 'Athens', kusadasi: 'Kuşadası', rhodes: 'Rhodes', santorini: 'Santorini', istanbul: 'Istanbul' };
-  var VEG_SVG = '<svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 4 13c0-3 2-6 7-9 5 3 7 6 7 9a7 7 0 0 1-7 7z"/><path d="M11 20V10"/></svg>';
+  var VEG_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19.5C3.5 12 8 4.5 19.5 4 21 15 14.5 20.5 6.5 20c-0.6 0-1.2-0.2-1.5-0.5Z" fill="currentColor"/><path d="M8 17c2-4.5 5.5-7.5 9.5-9" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>';
+  var HEART_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5l-1.45-1.32C5.4 14.47 2 11.4 2 7.7 2 4.99 4.13 3 6.8 3c1.54 0 3.04.72 4 1.86C11.76 3.72 13.26 3 14.8 3 17.47 3 19.6 4.99 19.6 7.7c0 3.7-3.4 6.77-8.55 11.48L12 20.5z"/></svg>';
   var _restWired = false;
+
+  // ---- Save / favorite (personal, localStorage) ----
+  var restSaved = {};
+  try { restSaved = JSON.parse(localStorage.getItem('dcf_rest_saved') || '{}') || {}; } catch (e) { restSaved = {}; }
+  function isSaved(id) { return !!restSaved[id]; }
+  function toggleSaved(id) {
+    if (restSaved[id]) delete restSaved[id]; else restSaved[id] = true;
+    try { localStorage.setItem('dcf_rest_saved', JSON.stringify(restSaved)); } catch (e) {}
+    renderRestaurants();
+  }
+
+  // ---- Recommended (group, Supabase: restaurant_recs) ----
+  var REST_RECS = {};
+  function recsFor(id) { return REST_RECS[id] || []; }
+  function loadRestRecs() {
+    return fetch(SUPABASE_URL + '/rest/v1/restaurant_recs?select=*', { headers: sbHeaders() })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rows) {
+        if (!rows) return;
+        REST_RECS = {};
+        rows.forEach(function (x) { (REST_RECS[x.restaurant_id] = REST_RECS[x.restaurant_id] || []).push(x); });
+      }).catch(function () {});
+  }
+  function saveRec(id, by) {
+    var me = getUserName() || 'Someone';
+    var row = { id: genId(), restaurant_id: id, recommended_to: me, recommended_by: by };
+    (REST_RECS[id] = REST_RECS[id] || []).push(row);  // optimistic
+    return sbInsert('restaurant_recs', row);
+  }
 
   function loadRestaurants() {
     if (restaurantsLoaded) return Promise.resolve();
@@ -7857,6 +8270,15 @@
     return { bestId: best && best.id, lovedId: loved && loved.id };
   }
 
+  function bestReason(r) {
+    if (r.michelin === 'star') {
+      var m = (r.michelin_award || '').match(/\d/);
+      return 'Michelin ' + (m ? m[0] + '-star' : 'starred') + ', the top table here';
+    }
+    if (r.michelin === 'bib') return 'A Michelin Bib Gourmand pick';
+    return 'Highest rated here, ' + (r.rating ? Number(r.rating).toFixed(1) : '') + ' from ' + (r.reviews || 0).toLocaleString() + ' reviews';
+  }
+
   function restReserveBtn(r) {
     var ch = r.booking_channel || '';
     if (ch === 'phone' && r.phone) {
@@ -7871,6 +8293,17 @@
       label + ' &#8599;</a>';
   }
 
+  function michelinBadge(r) {
+    if (r.michelin === 'star') {
+      var m = (r.michelin_award || '').match(/(\d)/);
+      var stars = Array(m ? +m[1] : 1).fill('★').join('');
+      return '<span class="rbadge rbadge-mich"><span class="mich-star">' + stars + '</span>MICHELIN</span>';
+    }
+    if (r.michelin === 'bib')
+      return '<span class="rbadge rbadge-mich rbadge-bib">MICHELIN Bib Gourmand</span>';
+    return '';
+  }
+
   function restVeg(r) {
     if (r.fully_veg) return '<span class="rcard-veg full" title="Fully vegetarian">' + VEG_SVG + '</span>';
     if (r.veg_options) return '<span class="rcard-veg" title="Vegetarian options">' + VEG_SVG + '</span>';
@@ -7882,14 +8315,13 @@
     var crown = opts.crown || {};
     var p = r.profile || {};
     var badges = '';
-    if (opts.hero && crown.bestId === r.id)
+    if (opts.best)
       badges += '<span class="rbadge rbadge-best">★ Best in ' + escHtml(REST_LABEL[r.port_key] || '') + '</span>';
-    if (r.michelin === 'star')
-      badges += '<span class="rbadge rbadge-mich">✦ ' + escHtml(r.michelin_award || 'Michelin') + '</span>';
-    else if (r.michelin === 'bib')
-      badges += '<span class="rbadge rbadge-mich">Bib Gourmand</span>';
-    if (!opts.hero && crown.lovedId === r.id && crown.bestId !== r.id)
+    badges += michelinBadge(r);
+    if (!opts.best && crown.lovedId === r.id && crown.bestId !== r.id)
       badges += '<span class="rbadge rbadge-loved">Most loved</span>';
+    if (recsFor(r.id).length)
+      badges += '<button class="rbadge rbadge-rec" data-id="' + escHtml(r.id) + '">Recommended</button>';
 
     var meta = [];
     if (r.nearest_landmark)
@@ -7904,25 +8336,322 @@
     if (p.reservation) prof.push(p.reservation);
     if (p.popularity) prof.push(p.popularity);
 
-    var photoStyle = r.photo_local ? ' style="background-image:url(\'' + encodeURI(r.photo_local) + '\')"' : '';
+    var img = r.photo_local ? '<img class="rcard-img" src="' + encodeURI(r.photo_local) +
+      '" alt="" loading="' + (opts.feature ? 'eager' : 'lazy') + '" decoding="async">' : '';
     var expand = '<div class="rcard-expand">' +
       (r.vibe ? '<div class="rcard-vibe">' + escHtml(r.vibe) + '</div>' : '') +
       (prof.length ? '<div class="rcard-prof">' + prof.map(escHtml).join(' &middot; ') + '</div>' : '') +
       (p.veg_note ? '<div class="rcard-prof">' + escHtml(p.veg_note) + '</div>' : '') +
       (dishes ? '<div class="rcard-dishes">' + dishes + '</div>' : '') +
       '<div class="rcard-actions">' + restReserveBtn(r) +
-        (safeUrl(r.maps_url) ? '<a class="rcard-btn" href="' + safeUrl(r.maps_url) + '" target="_blank" rel="noopener">Map</a>' : '') +
-        (safeUrl(r.tiktok_search_url) ? '<a class="rcard-btn" href="' + safeUrl(r.tiktok_search_url) + '" target="_blank" rel="noopener">TikTok &#8599;</a>' : '') +
-      '</div></div>';
+        '<a class="rcard-btn" href="https://www.tiktok.com/search?q=' +
+          encodeURIComponent(r.name + ' ' + (REST_LABEL[r.port_key] || '')) +
+          '" target="_blank" rel="noopener">See it on TikTok &#8599;</a>' +
+        '<button class="rcard-btn rcard-recbtn" data-id="' + escHtml(r.id) + '">Recommended to you?</button>' +
+      '</div>' +
+      (recsFor(r.id).length ? '<div class="rcard-recs">' + recsFor(r.id).map(function (x) {
+        return '<div class="rcard-rec-line">' + escHtml(x.recommended_by || 'Someone') + ' recommended this to ' + escHtml(x.recommended_to || 'you') + '</div>';
+      }).join('') + '</div>' : '') +
+      '</div>';
 
-    return '<div class="rcard' + (opts.hero ? ' hero' : '') + '" data-id="' + escHtml(r.id) + '">' +
-      '<div class="rcard-photo"' + photoStyle + '><div class="rcard-badges">' + badges + '</div></div>' +
+    return '<div class="rcard' + (opts.feature ? ' feature' : '') + '" data-id="' + escHtml(r.id) + '">' +
+      '<div class="rcard-photo">' + img + '<div class="rcard-badges">' + badges + '</div>' +
+        '<button class="rcard-save' + (isSaved(r.id) ? ' on' : '') + '" data-id="' + escHtml(r.id) + '" aria-label="Save">' + HEART_SVG + '</button></div>' +
       '<div class="rcard-body"><div class="rcard-name">' + escHtml(r.name) + '</div>' +
       (meta.length ? '<div class="rcard-meta">' + escHtml(meta.join(' · ')) + '</div>' : '') +
+      (opts.reason ? '<div class="rcard-why">' + escHtml(opts.reason) + '</div>' : '') +
       '<div class="rcard-row"><span class="rcard-rating"><span class="star">★</span> ' +
-        (r.rating || '—') + '</span>' +
+        (r.rating ? Number(r.rating).toFixed(1) : '—') + '</span>' +
         (r.price ? '<span class="rcard-price">' + escHtml(r.price) + '</span>' : '') +
         restVeg(r) + '</div></div>' + expand + '</div>';
+  }
+
+  // ----- "Your Day" meal-timing block -----
+  var REST_DAY = {
+    venice: { date: '2026-07-02', pre: true }, ravenna: { date: '2026-07-03', embark: true },
+    dubrovnik: { date: '2026-07-04' }, bar: { date: '2026-07-05' }, athens: { date: '2026-07-07' },
+    kusadasi: { date: '2026-07-08' }, rhodes: { date: '2026-07-09' }, santorini: { date: '2026-07-10' },
+    istanbul: { date: '2026-07-12' },
+  };
+  var MEAL_IC = {
+    Breakfast: '<svg viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>',
+    Lunch: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="5.6" y1="5.6" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="18.4" y2="18.4"/><line x1="5.6" y1="18.4" x2="6.8" y2="17.2"/><line x1="17.2" y1="6.8" x2="18.4" y2="5.6"/></svg>',
+    Dinner: '<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>',
+  };
+  function parseClock(s) {
+    if (!s) return null;
+    if (/overnight/i.test(s)) return 1439;
+    var m = String(s).match(/(\d{1,2}):(\d{2})\s*([AaPp][Mm])?/);
+    if (!m) return null;
+    var h = +m[1], mn = +m[2], ap = (m[3] || '').toLowerCase();
+    if (ap === 'pm' && h < 12) h += 12;
+    if (ap === 'am' && h === 12) h = 0;
+    return h * 60 + mn;
+  }
+  function parseDur(s) {
+    if (!s) return 0;
+    var m = String(s).match(/([\d.]+)\s*h/i);
+    if (m) return Math.round(parseFloat(m[1]) * 60);
+    var mm = String(s).match(/([\d.]+)\s*m/i);
+    if (mm) return Math.round(parseFloat(mm[1]));
+    return 0;
+  }
+  function cruisePortByDate(date) {
+    if (typeof CRUISE_PORTS === 'undefined') return null;
+    for (var i = 0; i < CRUISE_PORTS.length; i++) if (CRUISE_PORTS[i].date === date) return CRUISE_PORTS[i];
+    return null;
+  }
+  function userExcursionsForDate(date) {
+    var me = (getUserName() || '').toLowerCase();
+    var out = [];
+    Object.keys(ADDED_EXCURSIONS || {}).forEach(function (d) {
+      (ADDED_EXCURSIONS[d] || []).forEach(function (rec) {
+        if ((rec.port_date || d) !== date) return;
+        var joins = (rec.joins || []).map(function (j) { return String(j).toLowerCase(); });
+        var addedBy = (rec.added_by || '').toLowerCase();
+        // Only count it as "your" tour if you added it or joined it — not someone else's.
+        if (!me || (addedBy !== me && joins.indexOf(me) === -1)) return;
+        var st = parseClock(rec.start_time);
+        if (st == null) return;
+        out.push({ title: rec.title || 'your tour', start: st, end: st + (parseDur(rec.duration) || 120) });
+      });
+    });
+    (typeof EXCURSION_PICKS !== 'undefined' ? EXCURSION_PICKS : []).forEach(function (r) {
+      if (r.action !== 'booked' || (r.name || '').toLowerCase() !== me) return;
+      var exc = null;
+      for (var i = 0; i < (EXCURSIONS || []).length; i++) {
+        if (String(EXCURSIONS[i].code) === String(r.code)) { exc = EXCURSIONS[i]; break; }
+      }
+      if (exc && cruiseDateForPortKey(exc.port_key) === date)
+        out.push({ title: exc.title || 'your NCL tour', start: null, end: null });
+    });
+    return out;
+  }
+  function tourLabel(t) {
+    t = (t || 'tour').trim();
+    return /tour|cruise|excursion|walk|experience|tasting|safari|class|dinner|lunch/i.test(t) ? t : t + ' tour';
+  }
+  function foodDayPlan(portKey) {
+    var info = REST_DAY[portKey];
+    if (!info) return null;
+    var cp = cruisePortByDate(info.date);
+    var city = REST_LABEL[portKey] || portKey;
+    var arriveStr = cp && cp.arrive ? cp.arrive : '';
+    var departStr = cp && cp.depart ? cp.depart : '';
+    var overnight = /overnight/i.test(departStr);
+    var arrive = info.embark ? 0 : (cp && cp.arrive ? (parseClock(cp.arrive) || 0) : 0);
+    var depart = cp && cp.depart ? parseClock(cp.depart) : 1439;
+    if (depart == null) depart = 1439;
+    var timed = userExcursionsForDate(info.date).filter(function (e) { return e.start != null; });
+    var bookings = userRestaurantsForDate(info.date);
+    var meals = [{ k: 'Breakfast', s: 420, e: 540 }, { k: 'Lunch', s: 720, e: 840 }, { k: 'Dinner', s: 1110, e: 1260 }];
+    var ctx = { city: city, arrive: arriveStr, depart: departStr, overnight: overnight, embark: info.embark };
+    var rows = meals.map(function (m) {
+      var status, tour = null, tourStart = null;
+      var booking = bookings.filter(function (x) { return (x.meal || '').toLowerCase() === m.k.toLowerCase(); })[0] || null;
+      if (booking) status = 'booked';
+      else if (info.pre) status = 'pre';
+      else if (m.e <= arrive || m.s >= depart) status = 'aboard';
+      else {
+        var hit = timed.filter(function (e) { return m.s < e.end && m.e > e.start; })[0];
+        if (hit) { status = 'tour'; tour = hit.title; tourStart = minToClock(hit.start); } else status = 'free';
+      }
+      ctx.tour = tour;
+      return { meal: m.k, status: status, tour: tour, tourStart: tourStart, restaurant: booking, tip: dayTip(m.k, status, ctx, booking) };
+    });
+    var win = info.pre ? 'Before the cruise'
+      : info.embark ? ('Embarkation day. The ship leaves ' + city + ' at ' + departStr + '.')
+      : overnight ? ('Docked in ' + city + ' from ' + arriveStr + ', overnight.')
+      : (arriveStr && departStr) ? ('In port ' + arriveStr + ' to ' + departStr + '.')
+      : '';
+    return { city: city, window: win, rows: rows };
+  }
+  function dayTip(meal, status, c, booking) {
+    if (status === 'booked' && booking)
+      return 'You have ' + meal.toLowerCase() + ' booked at ' + booking.name + (booking.time ? ' at ' + booking.time : '') + '.';
+    if (status === 'tour')
+      return meal + ' falls during your ' + tourLabel(c.tour) + '. Your guide will know the local tables.';
+    if (status === 'pre')
+      return "You're in " + c.city + ' before the cruise. ' + meal + ' wherever you like.';
+    if (meal === 'Breakfast') {
+      if (c.embark) return 'Have breakfast in ' + c.city + ' before you board; the ship leaves at ' + c.depart + '.';
+      if (status === 'aboard') return "You're still arriving. Breakfast on the ship.";
+      return 'You dock in ' + c.city + ' at ' + c.arrive + '. Have breakfast on the ship, or an early one in ' + c.city + '.';
+    }
+    if (meal === 'Lunch') {
+      if (status === 'aboard') return 'The ship has left ' + c.city + '. Lunch on board.';
+      return "You're in " + c.city + ' until ' + c.depart + '. Good time for lunch ashore.';
+    }
+    if (status === 'aboard') return 'The ship leaves ' + c.city + ' at ' + c.depart + ". Dinner's on board.";
+    if (c.overnight) return "You're docked in " + c.city + ' overnight. Dinner ashore in ' + c.city + '.';
+    return "You're in " + c.city + ' until ' + c.depart + '. Dinner ashore, or back on the ship.';
+  }
+  function minToClock(m) {
+    if (m == null) return null;
+    var h = Math.floor(m / 60), mm = m % 60, ap = h >= 12 ? 'PM' : 'AM', hh = h % 12; if (hh === 0) hh = 12;
+    return hh + ':' + (mm < 10 ? '0' + mm : mm) + ' ' + ap;
+  }
+  function userRestaurantsForDate(date) {
+    var me = (getUserName() || '').toLowerCase(); var out = [];
+    (ADDED_RESTAURANTS[date] || []).forEach(function (r) {
+      var joins = (r.joins || []).map(function (j) { return String(j).toLowerCase(); });
+      var addedBy = (r.added_by || '').toLowerCase();
+      if (!me || (addedBy !== me && joins.indexOf(me) === -1)) return;
+      out.push({ name: r.title, meal: r.meal, time: (r.start_time && r.start_time !== 'Flexible') ? r.start_time : '' });
+    });
+    return out;
+  }
+  function buildDayFacts(portKey) {
+    var info = REST_DAY[portKey]; if (!info) return null;
+    var cp = cruisePortByDate(info.date); var city = REST_LABEL[portKey] || portKey;
+    var schedule = info.pre ? ('pre-cruise in ' + city + ', no ship that day')
+      : info.embark ? ('embarkation day, ashore in ' + city + ', ship departs ' + ((cp && cp.depart) || ''))
+      : (cp && cp.arrive && cp.depart) ? ('ship docks at ' + cp.arrive + ', departs ' + cp.depart + (/overnight/i.test(cp.depart) ? ' (docked overnight)' : '')) : '';
+    var plan = foodDayPlan(portKey);
+    var meals = (plan ? plan.rows : []).map(function (p) {
+      return { meal: p.meal, situation: p.status, tour: p.tour, tour_starts: p.tourStart,
+        restaurant: p.restaurant ? (p.restaurant.name + (p.restaurant.time ? ' at ' + p.restaurant.time : '')) : null };
+    });
+    return { port: city, date: info.date, schedule: schedule, meals: meals };
+  }
+  var dayAICache = {};
+  function dayCacheKey(portKey) {
+    var info = REST_DAY[portKey]; var date = info && info.date;
+    var t = userExcursionsForDate(date).map(function (e) { return e.title + e.start; }).join(',');
+    var m = userRestaurantsForDate(date).map(function (x) { return x.name + x.meal + x.time; }).join(',');
+    return portKey + '|' + (getUserName() || '') + '|' + t + '|' + m;
+  }
+  function fetchDaySummary(portKey, key) {
+    if (dayAICache[key] === 'pending') return;
+    dayAICache[key] = 'pending';
+    var facts = buildDayFacts(portKey); if (!facts) { dayAICache[key] = null; return; }
+    fetch('/api/ask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ context: 'day_summary', day: facts }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var s = d && d.summary;
+        if (s && (s.breakfast || s.lunch || s.dinner)) {
+          dayAICache[key] = s;
+          if (activeSection === 'restaurants' && activeRestPort === portKey) renderRestaurants();
+        } else dayAICache[key] = null;
+      }).catch(function () { dayAICache[key] = null; });
+  }
+
+  function renderDayBlock(portKey) {
+    var plan = foodDayPlan(portKey);
+    if (!plan) return '';
+    var info = REST_DAY[portKey];
+    var dlabel = '';
+    try { dlabel = new Date(info.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); } catch (e) {}
+    var key = dayCacheKey(portKey);
+    var ai = (dayAICache[key] && dayAICache[key] !== 'pending') ? dayAICache[key] : null;
+    if (!ai && dayAICache[key] !== 'pending') fetchDaySummary(portKey, key);  // upgrade to AI in the background
+    var rows = plan.rows.map(function (p) {
+      var tip = (ai && ai[p.meal.toLowerCase()]) ? ai[p.meal.toLowerCase()] : p.tip;
+      return '<div class="yd-row"><span class="yd-ic">' + (MEAL_IC[p.meal] || '') + '</span>' +
+        '<div><div class="yd-meal">' + p.meal + '</div><div class="yd-tip">' + escHtml(tip) + '</div></div></div>';
+    }).join('');
+    return '<div class="yourday"><div class="yd-head">' + escHtml(plan.city) + ' · ' + escHtml(dlabel) + '</div>' +
+      (plan.window ? '<div class="yd-sub">' + escHtml(plan.window) + '</div>' : '') + rows + '</div>';
+  }
+
+  var restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false };
+  var restView = 'list';
+  var restMapInstance = null;
+  function destroyRestMap() { if (restMapInstance) { try { restMapInstance.remove(); } catch (e) {} restMapInstance = null; } }
+  function initRestMap(rows) {
+    var pts = rows.filter(function (r) { return r.lat && r.lng; });
+    var mapEl = document.getElementById('rest-map');
+    if (!mapEl) return;
+    if (!pts.length) { mapEl.innerHTML = '<div class="rcard-empty" style="padding:16px;">No map locations for these.</div>'; return; }
+    destroyRestMap();
+    restMapInstance = L.map('rest-map', { scrollWheelZoom: false, touchZoom: true, tap: true });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+      { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>', maxZoom: 19, subdomains: 'abcd' }).addTo(restMapInstance);
+    restMapInstance.on('click', function () { restMapInstance.scrollWheelZoom.enable(); });
+    mapEl.addEventListener('mouseleave', function () { if (restMapInstance) restMapInstance.scrollWheelZoom.disable(); });
+    var bounds = [], markers = [];
+    pts.forEach(function (r) {
+      var icon = L.divIcon({ className: '', iconSize: [44, 24], iconAnchor: [22, 24], popupAnchor: [0, -22],
+        html: '<div class="rest-pin' + (r.michelin ? ' mich' : '') + '"><span class="rest-pin-star">★</span>' +
+          (r.rating ? Number(r.rating).toFixed(1) : '') + '</div>' });
+      var cuisine = (r.cuisine && r.cuisine !== 'Restaurant') ? ' · ' + escHtml(r.cuisine) : '';
+      var price = r.price ? ' · ' + escHtml(r.price) : '';
+      var mich = r.michelin ? ' · ' + escHtml(r.michelin_award || 'Michelin') : '';
+      var m = L.marker([r.lat, r.lng], { icon: icon }).addTo(restMapInstance);
+      m.bindTooltip(escHtml(r.name), { permanent: true, direction: 'top', className: 'rest-tip', offset: [0, -22] });
+      m.bindPopup('<div class="rest-pop"><div class="rest-pop-name">' + escHtml(r.name) + '</div>' +
+        '<div class="rest-pop-meta">★ ' + (r.rating ? Number(r.rating).toFixed(1) : '') + cuisine + price + mich + '</div>' +
+        (r.vibe ? '<div class="rest-pop-vibe">' + escHtml(r.vibe) + '</div>' : '') +
+        '<button class="rest-pop-go" data-id="' + escHtml(r.id) + '">See details &amp; book &#8594;</button></div>');
+      markers.push(m);
+      bounds.push([r.lat, r.lng]);
+    });
+    restMapInstance.on('popupopen', function (e) {
+      var el = e.popup.getElement();
+      var btn = el && el.querySelector('.rest-pop-go');
+      if (btn) btn.onclick = function () { goToRestCardInList(btn.getAttribute('data-id')); };
+    });
+    // Names declutter at distance, then reveal as you zoom in (≥15).
+    function syncNames() {
+      var z = restMapInstance.getZoom();
+      markers.forEach(function (m) { if (z >= 15) m.openTooltip(); else m.closeTooltip(); });
+    }
+    restMapInstance.on('zoomend', syncNames);
+    if (bounds.length > 1) restMapInstance.fitBounds(bounds, { padding: [34, 34], maxZoom: 16 });
+    else restMapInstance.setView(bounds[0], 16);
+    syncNames();
+    setTimeout(function () { if (restMapInstance) restMapInstance.invalidateSize(); syncNames(); }, 60);
+  }
+  // From a map pin popup → jump to that restaurant's card in the list, expanded.
+  function goToRestCardInList(id) {
+    restView = 'list';
+    renderRestaurants();
+    setTimeout(function () {
+      var sel = (window.CSS && CSS.escape) ? CSS.escape(id) : id;
+      var card = document.querySelector('#rest-results .rcard[data-id="' + sel + '"]');
+      if (card) { card.classList.add('open'); card.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    }, 80);
+  }
+  function applyRestFilters(rows) {
+    return rows.filter(function (r) {
+      if (restFilters.cuisine && (r.cuisine || '') !== restFilters.cuisine) return false;
+      if (restFilters.price && r.price !== restFilters.price) return false;
+      if (restFilters.veg && !(r.veg_options || r.fully_veg)) return false;
+      if (restFilters.michelin && !r.michelin) return false;
+      if (restFilters.saved && !isSaved(r.id)) return false;
+      return true;
+    });
+  }
+  function renderFilterBar(rows) {
+    var seen = {}, cuisines = [];
+    rows.forEach(function (r) {
+      var c = (r.cuisine || '').trim();
+      if (c && c !== 'Restaurant' && !seen[c]) { seen[c] = 1; cuisines.push(c); }
+    });
+    cuisines.sort();
+    var prices = ['€', '€€', '€€€', '€€€€'].filter(function (p) {
+      return rows.some(function (r) { return r.price === p; });
+    });
+    var chips = '';
+    cuisines.forEach(function (c) {
+      chips += '<button class="rfilter-chip' + (restFilters.cuisine === c ? ' active' : '') +
+        '" data-f="cuisine" data-v="' + escHtml(c) + '">' + escHtml(c) + '</button>';
+    });
+    prices.forEach(function (p) {
+      chips += '<button class="rfilter-chip' + (restFilters.price === p ? ' active' : '') +
+        '" data-f="price" data-v="' + p + '">' + p + '</button>';
+    });
+    chips += '<button class="rfilter-chip' + (restFilters.veg ? ' active' : '') +
+      '" data-f="veg" data-v="1">Vegetarian</button>';
+    if (rows.some(function (r) { return r.michelin; }))
+      chips += '<button class="rfilter-chip' + (restFilters.michelin ? ' active' : '') +
+        '" data-f="michelin" data-v="1">Michelin</button>';
+    if (rows.some(function (r) { return isSaved(r.id); }) || restFilters.saved)
+      chips += '<button class="rfilter-chip' + (restFilters.saved ? ' active' : '') +
+        '" data-f="saved" data-v="1">Saved</button>';
+    if (restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin || restFilters.saved)
+      chips += '<button class="rfilter-chip rfilter-clear" data-f="clear" data-v="1">Clear</button>';
+    return '<div class="rest-filters">' + chips + '</div>';
   }
 
   function renderRestaurants() {
@@ -7937,22 +8666,43 @@
     bar.querySelectorAll('.rest-port-pill').forEach(function (b) {
       b.addEventListener('click', function () {
         activeRestPort = b.dataset.rp;
-        var ans = document.getElementById('rest-chat-answer');  // stale answer would mislead across ports
+        restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false };  // filters are per-port
+        // a Venice search must not bleed into Athens — clear both the answer and the typed query
+        var ans = document.getElementById('rest-chat-answer');
         if (ans) { ans.className = 'rest-chat-answer'; ans.innerHTML = ''; }
+        var inp = document.getElementById('rest-chat-input');
+        if (inp) inp.value = '';
         renderRestaurants();
       });
     });
 
-    var rows = RESTAURANTS.filter(function (r) { return r.port_key === activeRestPort; });
+    destroyRestMap();
+    var allRows = RESTAURANTS.filter(function (r) { return r.port_key === activeRestPort; });
+    var label = escHtml(REST_LABEL[activeRestPort] || activeRestPort);
+    var html = renderDayBlock(activeRestPort) + renderFilterBar(allRows);
+    html += '<div class="rest-viewtoggle"><button class="rfilter-chip' + (restView === 'list' ? ' active' : '') +
+      '" data-view="list">List</button><button class="rfilter-chip' + (restView === 'map' ? ' active' : '') +
+      '" data-view="map">Map</button></div>';
+
+    var rows = applyRestFilters(allRows);
+    if (!rows.length) {
+      res.innerHTML = html + '<div class="rcard-empty">Nothing matches those filters. Tap Clear to start over.</div>';
+      return;
+    }
+    if (restView === 'map') {
+      res.innerHTML = html + '<div id="rest-map"></div>';
+      initRestMap(rows);
+      return;
+    }
     var crown = restCrown(rows);
     var sorted = restSort(rows);
     var best = sorted[0];
     var rest = sorted.slice(1);
-    var label = escHtml(REST_LABEL[activeRestPort] || activeRestPort);
-    var html = '';
+    var anyFilter = restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin;
     if (best) {
-      html += '<div class="rest-sectlabel">The best in ' + label + '</div>' +
-        restCardHtml(best, { hero: true, crown: crown });
+      html += '<div class="rest-sectlabel">' + (anyFilter ? 'Top match in ' : 'The best in ') + label +
+        '</div><div class="rest-grid">' +
+        restCardHtml(best, { crown: crown, best: !anyFilter, feature: true, reason: bestReason(best) }) + '</div>';
     }
     if (rest.length) {
       html += '<div class="rest-sectlabel">More great tables</div><div class="rest-grid">' +
@@ -7995,6 +8745,47 @@
     }
   }
 
+  // Deep-link from an Our Trip port-day card into Shop -> Restaurants for that port.
+  function goToRestaurantsForPort(portKey) {
+    if (portKey && REST_PORTS.indexOf(portKey) !== -1) activeRestPort = portKey;
+    restFilters = { cuisine: '', price: '', veg: false, michelin: false };
+    activeSection = 'restaurants';
+    renderSectionNav();
+    renderSectionContent();
+    try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) { window.scrollTo(0, 0); }
+  }
+
+  function openRecommendModal(id) {
+    var me = getUserName();
+    if (!me) { promptName(true, function () { openRecommendModal(id); }); return; }
+    var r = RESTAURANTS.filter(function (x) { return String(x.id) === String(id); })[0] || { name: 'this place' };
+    var ov = document.createElement('div'); ov.className = 'modal-overlay active';
+    ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
+      '<button class="modal-close" data-act="cancel" type="button" aria-label="Close">&times;</button>' +
+      '<div class="modal-title">Recommended to you?</div>' +
+      '<div class="modal-sub">' + escHtml(r.name) + '</div>' +
+      '<div class="axm-field-label">Who recommended it to you?</div>' +
+      '<input class="modal-input axm-in" id="rec-by" placeholder="e.g. Ramesh, or our travel agent" autocomplete="off">' +
+      '<div class="axm-saveerr" id="rec-err"></div>' +
+      '<div class="axm-foot"><button class="modal-btn" data-act="cancel" type="button">Cancel</button>' +
+      '<button class="modal-btn modal-btn-primary" id="rec-save" type="button">Save</button></div></div>';
+    document.body.appendChild(ov);
+    setTimeout(function () { var i = ov.querySelector('#rec-by'); if (i) i.focus(); }, 50);
+    ov.addEventListener('click', function (e) {
+      var act = e.target.getAttribute && e.target.getAttribute('data-act');
+      if (e.target === ov || act === 'cancel') ov.remove();
+    });
+    function go() {
+      var by = ov.querySelector('#rec-by').value.trim();
+      if (!by) { ov.querySelector('#rec-err').textContent = 'Add who recommended it.'; return; }
+      var btn = ov.querySelector('#rec-save'); btn.disabled = true; btn.textContent = 'Saving…';
+      saveRec(id, by).then(function () { ov.remove(); renderRestaurants(); })
+        .catch(function () { ov.remove(); renderRestaurants(); });  // optimistic local already applied
+    }
+    ov.querySelector('#rec-save').addEventListener('click', go);
+    ov.querySelector('#rec-by').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+  }
+
   function setupRestaurantsOnce() {
     if (_restWired) return;
     _restWired = true;
@@ -8006,6 +8797,25 @@
     });
     // Expand-toggle delegation covers both the main grid and the chat-answer cards.
     function toggleDelegate(e) {
+      var vbtn = e.target.closest('[data-view]');
+      if (vbtn) { restView = vbtn.getAttribute('data-view'); renderRestaurants(); return; }
+      var save = e.target.closest('.rcard-save');
+      if (save) { e.stopPropagation(); toggleSaved(save.getAttribute('data-id')); return; }
+      var recbtn = e.target.closest('.rcard-recbtn');
+      if (recbtn) { openRecommendModal(recbtn.getAttribute('data-id')); return; }
+      var recbadge = e.target.closest('.rbadge-rec');
+      if (recbadge) { var rc = e.target.closest('.rcard'); if (rc) rc.classList.add('open'); return; }
+      var chip = e.target.closest('.rfilter-chip[data-f]');
+      if (chip) {
+        var f = chip.getAttribute('data-f'), v = chip.getAttribute('data-v');
+        if (f === 'clear') restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false };
+        else if (f === 'veg') restFilters.veg = !restFilters.veg;
+        else if (f === 'michelin') restFilters.michelin = !restFilters.michelin;
+        else if (f === 'saved') restFilters.saved = !restFilters.saved;
+        else restFilters[f] = (restFilters[f] === v) ? '' : v;
+        renderRestaurants();
+        return;
+      }
       if (e.target.closest('a') || e.target.closest('button')) return;
       var card = e.target.closest('.rcard');
       if (card) card.classList.toggle('open');
