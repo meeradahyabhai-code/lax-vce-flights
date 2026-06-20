@@ -6,7 +6,7 @@
 <title>DFC2026</title>
 <!-- PWA: installable to home screen -->
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#faf8f3">
+<meta name="theme-color" content="#fcfcfa">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -25,7 +25,7 @@
     --gold: #b8953a;
     --gold-light: #d4af6a;
     --fog: #eeeef4;
-    --paper: #faf8f3;
+    --paper: #fcfcfa;   /* warm near-white (B lowest = warm, not cool) — image-forward, Ritz/Aritzia crispness */
 
     /* Type family */
     --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
@@ -211,7 +211,7 @@
   /* ── Hero ── */
   .hero {
     background:
-      linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)),
+      linear-gradient(rgba(252,252,250,0.85), rgba(252,252,250,0.85)),
       url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600') center/cover no-repeat;
     text-align: center; padding: 100px 24px;
     position: relative;
@@ -329,7 +329,7 @@
   /* AI Briefing */
   .ai-briefing {
     max-width: 640px; margin: 28px auto 0; padding: 24px 28px;
-    background: rgba(250, 248, 243, 0.72);
+    background: rgba(252, 252, 250, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(26, 58, 107, 0.12);
@@ -539,7 +539,7 @@
   .points-modal-box {
     width: 380px; max-width: 100%;
     padding: 24px 28px;
-    background: rgba(250, 248, 243, 0.95);
+    background: rgba(252, 252, 250, 0.95);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(26, 58, 107, 0.15);
@@ -913,17 +913,22 @@
 
   /* Shop sub-nav (Flights / Hotels toggle) */
   /* Shop chooser (Flights or Hotels first) */
-  #shop-chooser { padding: 52px 20px 90px; }
-  .shop-chooser-inner { max-width: 460px; margin: 0 auto; text-align: center; }
-  .shop-chooser-title { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(26px, 6vw, 34px); color: var(--azure); margin-bottom: 28px; }
-  .shop-chooser-cards { display: flex; flex-direction: column; gap: 16px; }
-  .shop-choice { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 100%; padding: 28px 20px; background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .1s; }
-  .shop-choice:hover { border-color: var(--azure); box-shadow: 0 8px 24px rgba(14,31,56,.10); }
-  .shop-choice:active { transform: scale(.99); }
-  .shop-choice-ic { color: var(--azure); line-height: 0; }
-  .shop-choice-ic svg { width: 40px; height: 40px; }
-  .shop-choice-label { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--text-primary); }
+  #shop-chooser { padding: 56px 22px 96px; }
+  .shop-chooser-inner { max-width: 520px; margin: 0 auto; }
+  .shop-chooser-eyebrow { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 10px; }
+  .shop-chooser-title { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(28px, 7vw, 38px); color: var(--azure); text-align: center; margin-bottom: 36px; }
+  .shop-chooser-list { display: flex; flex-direction: column; }
+  .shop-choice { display: flex; align-items: center; gap: 18px; width: 100%; text-align: left; padding: 24px 6px; background: none; border: none; border-top: 1px solid var(--border-subtle); cursor: pointer; transition: padding-left .28s cubic-bezier(.22,1,.36,1); }
+  .shop-choice:last-child { border-bottom: 1px solid var(--border-subtle); }
+  .shop-choice:hover { padding-left: 14px; }
+  .shop-choice-ic { color: var(--azure); line-height: 0; flex: 0 0 auto; }
+  .shop-choice-ic svg { width: 30px; height: 30px; }
+  .shop-choice-text { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+  .shop-choice-label { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--ink); }
   .shop-choice-sub { font-family: var(--sans); font-size: 14px; color: var(--text-secondary); }
+  .shop-choice-go { flex: 0 0 auto; color: var(--azure); opacity: .45; font-size: 20px; line-height: 1; transition: opacity .25s, transform .25s; }
+  .shop-choice-go::before { content: '\2192'; }
+  .shop-choice:hover .shop-choice-go { opacity: 1; transform: translateX(4px); }
 
   /* ---- Restaurants finder ---- */
   .rest-portbar { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 16px 0 14px; scrollbar-width: none; }
@@ -940,8 +945,21 @@
   .rest-chat-hint { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
   .rest-chat-answer { display: none; font-family: var(--sans); font-size: 14px; line-height: 1.5; color: var(--text-secondary); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--fog); }
   .rest-chat-answer.active { display: block; }
-  .rest-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 18px; }
-  /* same pill component as the port pills (design system) */
+  /* Filters: a calm bar with an animated "+" that smoothly reveals grouped options (Ritz-Yacht feel) */
+  .rest-filterwrap { margin: 2px 0 18px; }
+  .rfilter-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 12px; padding: 13px 16px; cursor: pointer; transition: border-color .15s; }
+  .rfilter-bar:hover { border-color: var(--azure); }
+  .rfilter-bar-label { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--ink); }
+  .rfilter-plus { position: relative; width: 18px; height: 18px; flex: 0 0 auto; transition: transform .4s cubic-bezier(.22,1,.36,1); }
+  .rfilter-plus::before, .rfilter-plus::after { content: ''; position: absolute; background: var(--azure); border-radius: 2px; }
+  .rfilter-plus::before { left: 1px; right: 1px; top: 8px; height: 2px; }
+  .rfilter-plus::after { top: 1px; bottom: 1px; left: 8px; width: 2px; }
+  .rfilter-plus.open { transform: rotate(135deg); }
+  .rfilter-panel { max-height: 0; overflow: hidden; opacity: 0; transition: max-height .42s cubic-bezier(.22,1,.36,1), opacity .3s ease, margin-top .3s ease; }
+  .rfilter-panel.open { max-height: 820px; opacity: 1; margin-top: 12px; }
+  .rfilter-group { margin-bottom: 16px; }
+  .rfilter-glabel { font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 9px; }
+  .rfilter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .rfilter-chip { flex: 0 0 auto; font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--text-secondary); background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 999px; padding: 8px 16px; cursor: pointer; white-space: nowrap; transition: all .15s; }
   .rfilter-chip:hover { border-color: var(--azure); }
   .rfilter-chip.active { background: var(--azure); border-color: var(--azure); color: #fff; }
@@ -1861,8 +1879,15 @@
   .cday-cine .cday-body { background: var(--bg-surface); padding: 18px 20px 22px; }
   .cday-events-strip { padding: 4px 18px 14px; }
   .cday-cine .cday-events-strip { background: var(--bg-surface); padding: 16px 20px 2px; }
-  .cday-body { padding: 0 18px 18px; }
-  .cday-body.hidden { display: none; }
+  .cday-body { padding: 0 18px 18px; overflow: hidden; max-height: 0; opacity: 0; transition: max-height .45s cubic-bezier(.22,1,.36,1), opacity .32s ease; }
+  .cday.open .cday-body { max-height: 4000px; opacity: 1; }
+  /* Ritz-style "+" that rotates to a close and opens the day smoothly */
+  .cday-plus { position: relative; width: 18px; height: 18px; flex: 0 0 auto; align-self: center; transition: transform .42s cubic-bezier(.22,1,.36,1); }
+  .cday-plus::before, .cday-plus::after { content: ''; position: absolute; background: var(--azure); border-radius: 2px; }
+  .cday-plus::before { left: 1px; right: 1px; top: 8px; height: 2px; }
+  .cday-plus::after { top: 1px; bottom: 1px; left: 8px; width: 2px; }
+  .cday.open .cday-plus { transform: rotate(135deg); }
+  .cday-plus-light::before, .cday-plus-light::after { background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.4); }
   .cday-sec-label { font-family: var(--serif); font-size: 20px; font-weight: 500; letter-spacing: 0; color: var(--ink); margin: 24px 0 12px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
   .cday-body > .cday-sec-label:first-of-type { border-top: none; padding-top: 0; margin-top: 6px; }
 
@@ -2406,22 +2431,23 @@
 <!-- Shop chooser: Flights or Hotels first -->
 <div id="shop-chooser" style="display:none;">
   <div class="shop-chooser-inner">
+    <div class="shop-chooser-eyebrow">Plan the trip</div>
     <h2 class="shop-chooser-title">What are you shopping for?</h2>
-    <div class="shop-chooser-cards">
+    <div class="shop-chooser-list">
       <button class="shop-choice" type="button" data-choice="flights">
         <span class="shop-choice-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></span>
-        <span class="shop-choice-label">Flights</span>
-        <span class="shop-choice-sub">Compare fares from each city</span>
+        <span class="shop-choice-text"><span class="shop-choice-label">Flights</span><span class="shop-choice-sub">Compare fares from each city</span></span>
+        <span class="shop-choice-go" aria-hidden="true"></span>
       </button>
       <button class="shop-choice" type="button" data-choice="hotels">
         <span class="shop-choice-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/><path d="M3 14h18"/><path d="M7 10V7a1 1 0 0 1 1-1h3v4"/><line x1="3" y1="18" x2="3" y2="20"/><line x1="21" y1="18" x2="21" y2="20"/></svg></span>
-        <span class="shop-choice-label">Hotels</span>
-        <span class="shop-choice-sub">Venice, Ravenna &amp; Istanbul stays</span>
+        <span class="shop-choice-text"><span class="shop-choice-label">Hotels</span><span class="shop-choice-sub">Venice, Ravenna &amp; Istanbul stays</span></span>
+        <span class="shop-choice-go" aria-hidden="true"></span>
       </button>
       <button class="shop-choice" type="button" data-choice="restaurants">
         <span class="shop-choice-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 0 0 4 0V3"/><path d="M8 10v11"/><path d="M17 3c-1.6 0-3 1.8-3 4.5s1.4 4.5 3 4.5v9"/></svg></span>
-        <span class="shop-choice-label">Restaurants</span>
-        <span class="shop-choice-sub">The best table at every stop</span>
+        <span class="shop-choice-text"><span class="shop-choice-label">Restaurants</span><span class="shop-choice-sub">The best table at every stop</span></span>
+        <span class="shop-choice-go" aria-hidden="true"></span>
       </button>
     </div>
   </div>
@@ -3774,7 +3800,7 @@
     document.getElementById('ask-ai').style.display = '';
     document.querySelector('.hero-rule').style.display = '';
     hero.style.backgroundImage =
-      'linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)), ' +
+      'linear-gradient(rgba(252,252,250,0.85), rgba(252,252,250,0.85)), ' +
       "url('" + cfg.image + "')";
     hero.style.backgroundPosition = 'center';
     hero.style.backgroundSize = 'cover';
@@ -5476,7 +5502,7 @@
     document.querySelector('.hero-rule').style.display = '';
     document.getElementById('ai-briefing').style.display = '';
     hero.style.backgroundImage =
-      'linear-gradient(rgba(250,248,243,0.85), rgba(250,248,243,0.85)), ' +
+      'linear-gradient(rgba(252,252,250,0.85), rgba(252,252,250,0.85)), ' +
       "url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600')";
     hero.style.backgroundPosition = 'center';
     hero.style.backgroundSize = 'cover';
@@ -7074,7 +7100,7 @@
         html += '<div class="cday-htop"><span class="cday-eyebrow">' + dow + ' &middot; ' + mon + ' ' + day + '</span>' + wxHtml + '</div>';
         html += '<div class="cday-hbot"><div><div class="cday-port">' + p.label + '</div>' +
           (times ? '<div class="cday-times">' + times + '</div>' : '') + '</div>' +
-          '<span class="cday-caret-w">&#9662;</span></div>';
+          '<span class="cday-plus cday-plus-light"></span></div>';
         html += '</div></div>'; // head-inner, head
         // Group events stay visible even when the card is collapsed (schedule highlights)
         if (eventsHtml) html += '<div class="cday-events-strip">' + eventsHtml + '</div>';
@@ -7085,14 +7111,14 @@
         if (p.type === 'sea') html += '<div class="cday-port cday-sea">At Sea</div>';
         else { html += '<div class="cday-toprow"><div class="cday-port">' + p.label + '</div>' + wxHtml + '</div>'; if (times) html += '<div class="cday-times">' + times + '</div>'; }
         html += '</div>'; // cday-main
-        if (expandable) html += '<div class="cday-caret transport-toggle-caret">&#9662;</div>';
+        if (expandable) html += '<span class="cday-plus"></span>';
         html += '</div>'; // cday-head
         // Group events full-width below the head (matches the July 3 / port-card treatment)
         if (eventsHtml) html += '<div class="cday-events-strip">' + eventsHtml + '</div>';
       }
 
       if (expandable) {
-        html += '<div class="cday-body' + (isOpen ? '' : ' hidden') + '">';
+        html += '<div class="cday-body">';
         html += '<div class="cday-sec-label">Excursions / Tours</div>';
         html += '<div class="cday-exc" id="cdayexc-' + p.date + '"></div>';
         html += '<button class="cday-add-exc" data-date="' + p.date + '" data-port="' + escHtml(p.label) + '">+ Add an excursion</button>';
@@ -7114,8 +7140,6 @@
       head.addEventListener('click', function () {
         var card = head.parentNode;
         var open = card.classList.toggle('open');
-        var body = card.querySelector('.cday-body');
-        if (body) body.classList.toggle('hidden', !open);
         cruiseDayOpen[card.getAttribute('data-date')] = open;
       });
     });
@@ -8622,6 +8646,10 @@
       return true;
     });
   }
+  var restFiltersOpen = false;
+  function rChip(f, v, label, active) {
+    return '<button class="rfilter-chip' + (active ? ' active' : '') + '" data-f="' + f + '" data-v="' + escHtml(v) + '">' + escHtml(label) + '</button>';
+  }
   function renderFilterBar(rows) {
     var seen = {}, cuisines = [];
     rows.forEach(function (r) {
@@ -8629,29 +8657,20 @@
       if (c && c !== 'Restaurant' && !seen[c]) { seen[c] = 1; cuisines.push(c); }
     });
     cuisines.sort();
-    var prices = ['€', '€€', '€€€', '€€€€'].filter(function (p) {
-      return rows.some(function (r) { return r.price === p; });
-    });
-    var chips = '';
-    cuisines.forEach(function (c) {
-      chips += '<button class="rfilter-chip' + (restFilters.cuisine === c ? ' active' : '') +
-        '" data-f="cuisine" data-v="' + escHtml(c) + '">' + escHtml(c) + '</button>';
-    });
-    prices.forEach(function (p) {
-      chips += '<button class="rfilter-chip' + (restFilters.price === p ? ' active' : '') +
-        '" data-f="price" data-v="' + p + '">' + p + '</button>';
-    });
-    chips += '<button class="rfilter-chip' + (restFilters.veg ? ' active' : '') +
-      '" data-f="veg" data-v="1">Vegetarian</button>';
-    if (rows.some(function (r) { return r.michelin; }))
-      chips += '<button class="rfilter-chip' + (restFilters.michelin ? ' active' : '') +
-        '" data-f="michelin" data-v="1">Michelin</button>';
-    if (rows.some(function (r) { return isSaved(r.id); }) || restFilters.saved)
-      chips += '<button class="rfilter-chip' + (restFilters.saved ? ' active' : '') +
-        '" data-f="saved" data-v="1">Saved</button>';
-    if (restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin || restFilters.saved)
-      chips += '<button class="rfilter-chip rfilter-clear" data-f="clear" data-v="1">Clear</button>';
-    return '<div class="rest-filters">' + chips + '</div>';
+    var prices = ['€', '€€', '€€€', '€€€€'].filter(function (p) { return rows.some(function (r) { return r.price === p; }); });
+    var activeCount = (restFilters.cuisine ? 1 : 0) + (restFilters.price ? 1 : 0) + (restFilters.veg ? 1 : 0) + (restFilters.michelin ? 1 : 0) + (restFilters.saved ? 1 : 0);
+    function group(label, inner) { return inner ? '<div class="rfilter-group"><div class="rfilter-glabel">' + label + '</div><div class="rfilter-chips">' + inner + '</div></div>' : ''; }
+    var cuisineChips = cuisines.map(function (c) { return rChip('cuisine', c, c, restFilters.cuisine === c); }).join('');
+    var priceChips = prices.map(function (p) { return rChip('price', p, p, restFilters.price === p); }).join('');
+    var more = rChip('veg', '1', 'Vegetarian', restFilters.veg) +
+      (rows.some(function (r) { return r.michelin; }) ? rChip('michelin', '1', 'Michelin', restFilters.michelin) : '') +
+      ((rows.some(function (r) { return isSaved(r.id); }) || restFilters.saved) ? rChip('saved', '1', 'Saved', restFilters.saved) : '');
+    var panel = group('Cuisine', cuisineChips) + group('Price', priceChips) + group('Dietary & more', more) +
+      (activeCount ? '<button class="rfilter-chip rfilter-clear" data-f="clear" data-v="1">Clear all</button>' : '');
+    return '<div class="rest-filterwrap">' +
+      '<button class="rfilter-bar" type="button" data-fil-toggle="1"><span class="rfilter-bar-label">Filters' +
+        (activeCount ? ' · ' + activeCount : '') + '</span><span class="rfilter-plus' + (restFiltersOpen ? ' open' : '') + '"></span></button>' +
+      '<div class="rfilter-panel' + (restFiltersOpen ? ' open' : '') + '">' + panel + '</div></div>';
   }
 
   function renderRestaurants() {
@@ -8667,6 +8686,7 @@
       b.addEventListener('click', function () {
         activeRestPort = b.dataset.rp;
         restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false };  // filters are per-port
+        restFiltersOpen = false;
         // a Venice search must not bleed into Athens — clear both the answer and the typed query
         var ans = document.getElementById('rest-chat-answer');
         if (ans) { ans.className = 'rest-chat-answer'; ans.innerHTML = ''; }
@@ -8797,6 +8817,17 @@
     });
     // Expand-toggle delegation covers both the main grid and the chat-answer cards.
     function toggleDelegate(e) {
+      var filToggle = e.target.closest('[data-fil-toggle]');
+      if (filToggle) {
+        // Toggle the class on the live element so the CSS transition plays (no re-render).
+        restFiltersOpen = !restFiltersOpen;
+        var wrap = filToggle.closest('.rest-filterwrap');
+        if (wrap) {
+          var panel = wrap.querySelector('.rfilter-panel'); if (panel) panel.classList.toggle('open', restFiltersOpen);
+          var plus = filToggle.querySelector('.rfilter-plus'); if (plus) plus.classList.toggle('open', restFiltersOpen);
+        }
+        return;
+      }
       var vbtn = e.target.closest('[data-view]');
       if (vbtn) { restView = vbtn.getAttribute('data-view'); renderRestaurants(); return; }
       var save = e.target.closest('.rcard-save');

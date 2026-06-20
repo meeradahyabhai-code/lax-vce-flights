@@ -46,8 +46,11 @@ classes) — never invent ad-hoc styles. When reporting "ready," always list "St
 - [x] Map pin popup → "See details & book" jumps to that card in the List view, expanded
 
 ## STILL TO BUILD (added from latest feedback)
-- [ ] **Filters UX redesign** — current chip row is poor UX; do a refined, restrained "Ritz-style" filter
-      (e.g. a Filter button → grouped panel/sheet), not a cluttered chip row
+- [x] **Filters UX redesign** — DONE. Calm "Filters" bar + animated "+" that smoothly reveals a grouped
+      panel (Cuisine / Price / Dietary & more), active count, design-system pills. Ritz "+" feel.
+- [x] **Shop chooser rework** — DONE. Editorial Aman/Belmond treatment (gold eyebrow, serif italic title,
+      hairline-divided rows, monoline icons, sliding arrow) instead of boxy centered cards.
+- [ ] (LATER) Upgrade Flights + Hotels tabs (and their internal screens) to match this vibe
 - [ ] AI day summary must give OPTIONS when a meal is ambiguous, e.g. "Your Ancient Lindos tour starts at
       8:15am. Grab a light breakfast on the ship, then ask the guide for recommendations if still hungry."
 - [ ] (LATER) Upgrade Flights + Hotels tabs to match the restaurants quality
