@@ -56,6 +56,21 @@ SYSTEM_PROMPT_RESTAURANTS = (
 )
 
 
+SYSTEM_PROMPT_DAY = (
+    "You are a warm, intelligent cruise concierge. For each meal you are given the SITUATION already worked "
+    "out for the traveler. Write ONE short, natural, helpful sentence per meal that fits that exact situation. "
+    "Do NOT change or re-derive the situation. The situations:\n"
+    "- 'booked': they have a restaurant booked for that meal — say they're set, naming it and the time.\n"
+    "- 'tour': a tour overlaps this meal. Give a practical option using the tour's start time (e.g. the tour "
+    "starts at 8:15am, so have a light breakfast on the ship first, then grab something on the tour if hungry).\n"
+    "- 'free': they are ashore in the port and free — they can eat in the port itself or back on the ship.\n"
+    "- 'aboard': the ship hasn't docked yet or has already sailed — that meal is on the ship.\n"
+    "- 'pre': pre-cruise; they're in the city and can eat anywhere.\n"
+    "Use the real times from the schedule. Natural and human, never robotic, no emojis or exclamation marks. "
+    'Return JSON: {"breakfast": string, "lunch": string, "dinner": string}.'
+)
+
+
 def _check_rate_limit(ip: str) -> bool:
     now = time.time()
     log = _rate_log.setdefault(ip, deque())
@@ -80,6 +95,17 @@ def _check_daily_cap() -> bool:
 def build_messages(question: str, payload: dict) -> tuple:
     """Build (system_prompt, user_msg) for the OpenAI call. Pure function — testable."""
     context = payload.get("context", "flights")
+
+    if context == "day_summary":
+        d = payload.get("day", {})
+        user_msg = (
+            f"Port: {d.get('port', '?')}\nDate: {d.get('date', '?')}\n"
+            f"Ship schedule: {d.get('schedule', '?')}\n"
+            "Per-meal situation (already determined — phrase it, do not change it):\n"
+            f"{json.dumps(d.get('meals', []))}\n"
+            "Write the JSON now."
+        )
+        return SYSTEM_PROMPT_DAY, user_msg
 
     if context == "restaurants":
         restaurants = payload.get("restaurants", [])[:80]
@@ -189,25 +215,29 @@ class handler(BaseHTTPRequestHandler):
             body = self.rfile.read(content_length)
             payload = json.loads(body)
 
+            context = payload.get("context", "flights")
+            is_restaurants = context == "restaurants"
+            is_day = context == "day_summary"
+
             question = (payload.get("question") or "").strip()
-            if not question:
-                return self._respond(400, {"error": "Missing question"})
-            if len(question) > 500:
-                return self._respond(400, {"error": "Question too long (500 char max)"})
+            if not is_day:  # day_summary is fact-driven, no free-text question
+                if not question:
+                    return self._respond(400, {"error": "Missing question"})
+                if len(question) > 500:
+                    return self._respond(400, {"error": "Question too long (500 char max)"})
 
             system_prompt, user_msg = build_messages(question, payload)
-            is_restaurants = payload.get("context") == "restaurants"
 
             body = {
                 "model": MODEL,
-                "max_tokens": 320 if is_restaurants else 180,
-                "temperature": 0.3,
+                "max_tokens": 320 if (is_restaurants or is_day) else 180,
+                "temperature": 0.4 if is_day else 0.3,
                 "messages": [
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_msg},
                 ],
             }
-            if is_restaurants:
+            if is_restaurants or is_day:
                 body["response_format"] = {"type": "json_object"}
 
             resp = requests.post(
@@ -221,6 +251,17 @@ class handler(BaseHTTPRequestHandler):
             )
             resp.raise_for_status()
             content = resp.json()["choices"][0]["message"]["content"].strip()
+
+            if is_day:
+                try:
+                    parsed = json.loads(content)
+                    return self._respond(200, {"summary": {
+                        "breakfast": (parsed.get("breakfast") or "").strip(),
+                        "lunch": (parsed.get("lunch") or "").strip(),
+                        "dinner": (parsed.get("dinner") or "").strip(),
+                    }})
+                except (ValueError, TypeError):
+                    return self._respond(200, {"summary": {}})
 
             if is_restaurants:
                 # Map the model's short refs (1-based) back to real restaurant ids.
