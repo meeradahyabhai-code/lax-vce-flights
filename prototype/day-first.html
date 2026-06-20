@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dahyabhai Vacation · Day-First Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#faf8f3;          /* warm cream canvas */
+    --surface:#ffffff;        /* cards lift off cream */
+    --ink:17,24,33;           /* near-black, used as rgb for opacity greys */
+    --azure:#1a3a6b;
+    --azure-soft:#eef2f8;
+    --gold:#b8953a;
+    --gold-soft:#f6efdd;
+    --lagoon:#2a7f8f;
+    --line:rgba(17,24,33,.10);
+    --line-soft:rgba(17,24,33,.06);
+    --t1:rgba(17,24,33,.96);  /* primary text */
+    --t2:rgba(17,24,33,.80);  /* secondary, AAA on cream */
+    --t3:rgba(17,24,33,.62);  /* tertiary, decorative only */
+    --shadow:0 1px 2px rgba(17,24,33,.05), 0 8px 24px rgba(17,24,33,.07);
+    --shadow-lift:0 12px 40px rgba(17,24,33,.16);
+    --r:18px;
+    --r-sm:12px;
+    --tab-h:64px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:'DM Sans',system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--t1);
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    font-feature-settings:"tnum" 0;
+  }
+  .serif{font-family:'Cormorant Garamond',Georgia,serif;}
+  button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+  .tnum{font-variant-numeric:tabular-nums;}
+
+  /* ---------- App shell ---------- */
+  .shell{max-width:1040px; margin:0 auto; min-height:100vh; padding-bottom:calc(var(--tab-h) + env(safe-area-inset-bottom));}
+
+  .appbar{
+    position:sticky; top:0; z-index:30;
+    background:rgba(250,248,243,.86); backdrop-filter:saturate(160%) blur(12px);
+    border-bottom:1px solid var(--line-soft);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px;
+  }
+  .brand{display:flex; flex-direction:column; line-height:1.1;}
+  .brand-name{font-family:'Cormorant Garamond',serif; font-weight:600; font-size:22px; color:var(--azure); letter-spacing:.2px;}
+  .brand-sub{font-size:12px; color:var(--t3); letter-spacing:.04em; text-transform:uppercase;}
+  .countdown{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--t2); background:var(--surface); border:1px solid var(--line); padding:7px 12px; border-radius:999px; box-shadow:var(--shadow);}
+  .countdown b{color:var(--azure); font-weight:600;}
+
+  /* desktop segmented nav lives in the appbar */
+  .topnav{display:none; gap:4px; background:var(--azure-soft); padding:4px; border-radius:999px;}
+  .topnav button{padding:8px 18px; border-radius:999px; font-size:14px; font-weight:500; color:var(--t2);}
+  .topnav button.active{background:var(--surface); color:var(--azure); box-shadow:var(--shadow);}
+
+  main{padding:18px 16px 8px;}
+  .view{display:none;}
+  .view.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  /* ---------- Date strip ---------- */
+  .strip-wrap{margin:2px -16px 18px; padding:2px 16px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
+  .strip-wrap::-webkit-scrollbar{display:none;}
+  .strip{display:flex; gap:8px; width:max-content;}
+  .pill{
+    flex:0 0 auto; width:56px; padding:9px 0; border-radius:14px;
+    background:var(--surface); border:1px solid var(--line);
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .pill:active{transform:scale(.95);}
+  .pill .dow{font-size:11px; color:var(--t3); text-transform:uppercase; letter-spacing:.05em;}
+  .pill .dnum{font-size:18px; font-weight:600; color:var(--t1);}
+  .pill .wx{font-size:12px;}
+  .pill.sel{background:var(--azure); border-color:var(--azure); box-shadow:0 6px 18px rgba(26,58,107,.28);}
+  .pill.sel .dow,.pill.sel .dnum{color:#fff;}
+  .pill.sel .dow{color:rgba(255,255,255,.7);}
+  .pill .today-dot{width:5px; height:5px; border-radius:50%; background:var(--gold);}
+  .pill.sel .today-dot{background:#fff;}
+
+  /* ---------- Day card ---------- */
+  .daycard{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+    box-shadow:var(--shadow); overflow:hidden; max-width:520px; margin:0 auto;
+  }
+  .day-head{padding:20px 20px 16px;}
+  .day-kicker{font-size:13px; color:var(--gold); font-weight:600; letter-spacing:.08em; text-transform:uppercase;}
+  .day-city{font-family:'Cormorant Garamond',serif; font-weight:600; font-size:30px; line-height:1.08; color:var(--azure); margin:3px 0 8px;}
+  .day-meta{display:flex; flex-wrap:wrap; gap:8px 14px; font-size:14px; color:var(--t2);}
+  .day-meta .mi{display:inline-flex; align-items:center; gap:6px;}
+  .lang-tag{font-size:12px; color:var(--lagoon); background:rgba(42,127,143,.10); padding:3px 9px; border-radius:999px; font-weight:500;}
+
+  /* always-visible event banner */
+  .event{
+    display:flex; align-items:center; gap:12px; margin:16px 20px 4px; padding:13px 15px;
+    border-radius:var(--r-sm); background:var(--gold-soft); border:1px solid rgba(184,149,58,.28);
+  }
+  .event.party{background:linear-gradient(120deg,#f4f0fb,#f7eedf);}
+  .event-star{font-size:18px; color:var(--gold); flex:0 0 auto;}
+  .event-body{min-width:0;}
+  .event-name{font-size:15px; font-weight:600; color:var(--t1);}
+  .event-sub{font-size:13px; color:var(--t2);}
+  .event-time{margin-left:auto; font-size:13px; font-weight:600; color:var(--gold); white-space:nowrap;}
+
+  /* tappable rows -> sheets */
+  .rows{padding:8px 12px 14px;}
+  .row{
+    display:flex; align-items:center; gap:14px; width:100%; text-align:left;
+    padding:15px 8px; border-radius:12px; transition:background .12s ease;
+  }
+  .row:active{background:var(--azure-soft);}
+  .row + .row{border-top:1px solid var(--line-soft);}
+  .row-ico{flex:0 0 38px; height:38px; border-radius:11px; background:var(--azure-soft); color:var(--azure); display:grid; place-items:center; font-size:18px;}
+  .row-main{flex:1; min-width:0;}
+  .row-title{font-size:16px; font-weight:500; color:var(--t1);}
+  .row-desc{font-size:13px; color:var(--t3); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .row-count{font-size:13px; color:var(--lagoon); font-weight:600;}
+  .row-caret{color:var(--t3); font-size:20px; flex:0 0 auto;}
+
+  .sea-note{padding:4px 20px 18px; font-size:14px; color:var(--t2);}
+
+  /* ---------- Trip overview (list of compact cards) ---------- */
+  .trip-grid{display:grid; gap:12px; max-width:760px; margin:0 auto;}
+  @media(min-width:680px){.trip-grid{grid-template-columns:1fr 1fr;}}
+  .mini{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm);
+    box-shadow:var(--shadow); padding:14px 16px; text-align:left; width:100%;
+    display:flex; flex-direction:column; gap:7px; transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .mini:active{transform:scale(.99);}
+  .mini.istoday{border-color:var(--azure); box-shadow:0 6px 20px rgba(26,58,107,.16);}
+  .mini-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
+  .mini-date{font-size:12px; color:var(--t3); text-transform:uppercase; letter-spacing:.06em; font-weight:600;}
+  .mini-wx{font-size:13px; color:var(--t2);}
+  .mini-city{font-family:'Cormorant Garamond',serif; font-weight:600; font-size:22px; color:var(--azure); line-height:1;}
+  .mini-event{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--t1); background:var(--gold-soft); border-radius:8px; padding:6px 9px;}
+  .mini-event .s{color:var(--gold);}
+  .mini-event .tm{margin-left:auto; color:var(--gold); font-weight:600;}
+  .today-flag{font-size:11px; font-weight:700; color:var(--azure); letter-spacing:.05em;}
+
+  /* ---------- Get Set ---------- */
+  .prep{max-width:520px; margin:0 auto; display:flex; flex-direction:column; gap:12px;}
+  .prep-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); box-shadow:var(--shadow); padding:16px 18px;}
+  .prep-card h3{margin:0; font-size:16px; font-weight:600;}
+  .prep-card p{margin:4px 0 0; font-size:14px; color:var(--t2);}
+  .check{display:flex; align-items:center; gap:11px; padding:9px 0; font-size:15px;}
+  .check input{width:20px; height:20px; accent-color:var(--azure);}
+  .check.done span{color:var(--t3); text-decoration:line-through;}
+  .prep-rule{height:1px; background:var(--line-soft); margin:8px 0;}
+
+  /* ---------- Bottom tab bar (mobile) ---------- */
+  .tabbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:40;
+    height:calc(var(--tab-h) + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom);
+    background:rgba(255,255,255,.92); backdrop-filter:saturate(160%) blur(14px);
+    border-top:1px solid var(--line); display:flex;
+  }
+  .tabbar button{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:var(--t3); font-size:11px; font-weight:600; letter-spacing:.02em;}
+  .tabbar button .ti{font-size:21px; line-height:1;}
+  .tabbar button.active{color:var(--azure);}
+
+  /* ---------- Sheet / modal ---------- */
+  .scrim{position:fixed; inset:0; z-index:50; background:rgba(17,24,33,.42); opacity:0; pointer-events:none; transition:opacity .25s ease;}
+  .scrim.open{opacity:1; pointer-events:auto;}
+  .sheet{
+    position:fixed; left:0; right:0; bottom:0; z-index:51;
+    background:var(--surface); border-radius:22px 22px 0 0;
+    max-height:88vh; transform:translateY(102%); transition:transform .32s cubic-bezier(.32,.72,0,1);
+    display:flex; flex-direction:column; box-shadow:var(--shadow-lift);
+  }
+  .sheet.open{transform:translateY(0);}
+  .grab{width:40px; height:5px; border-radius:3px; background:rgba(17,24,33,.18); margin:10px auto 2px;}
+  .sheet-head{padding:8px 22px 12px; border-bottom:1px solid var(--line-soft);}
+  .sheet-eyebrow{font-size:12px; color:var(--gold); font-weight:600; text-transform:uppercase; letter-spacing:.08em;}
+  .sheet-title{font-family:'Cormorant Garamond',serif; font-weight:600; font-size:26px; color:var(--azure); line-height:1.1;}
+  .sheet-body{padding:16px 22px 30px; overflow-y:auto;}
+  .sheet-close{position:absolute; top:14px; right:16px; width:34px; height:34px; border-radius:50%; background:rgba(17,24,33,.06); color:var(--t2); font-size:18px; display:grid; place-items:center;}
+
+  /* phrases */
+  .phrase{display:flex; align-items:center; gap:14px; padding:14px 4px; border-bottom:1px solid var(--line-soft);}
+  .phrase:last-child{border-bottom:none;}
+  .phrase-main{flex:1; min-width:0;}
+  .phrase-native{font-size:18px; font-weight:600; color:var(--t1);}
+  .phrase-phon{font-size:14px; color:var(--lagoon); font-style:italic;}
+  .phrase-en{font-size:14px; color:var(--t2);}
+  .say{flex:0 0 auto; width:46px; height:46px; border-radius:50%; background:var(--azure); color:#fff; display:grid; place-items:center; font-size:20px; box-shadow:0 4px 12px rgba(26,58,107,.3);}
+  .say:active{transform:scale(.9);}
+  .say.pulse{animation:pulse .6s ease;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(26,58,107,.45);}100%{box-shadow:0 0 0 16px rgba(26,58,107,0);}}
+
+  /* culture */
+  .culture p{font-size:16px; line-height:1.6; color:var(--t1); margin:0 0 14px;}
+  .culture p:last-child{margin-bottom:0;}
+  .culture .lead{font-family:'Cormorant Garamond',serif; font-size:21px; color:var(--azure); line-height:1.35;}
+
+  /* food */
+  .dish{display:flex; align-items:flex-start; gap:12px; padding:13px 2px; border-bottom:1px solid var(--line-soft);}
+  .dish:last-child{border-bottom:none;}
+  .dish-bullet{flex:0 0 auto; margin-top:7px; width:7px; height:7px; border-radius:50%; background:var(--gold);}
+  .dish.veg .dish-bullet{background:var(--lagoon);}
+  .dish-name{font-size:16px; font-weight:600; color:var(--t1);}
+  .dish-name .veg-star{color:var(--lagoon); font-weight:700;}
+  .dish-desc{font-size:14px; color:var(--t2);}
+  .veg-key{margin-top:14px; font-size:13px; color:var(--lagoon); display:flex; align-items:center; gap:7px;}
+
+  /* excursions board */
+  .exc{border:1px solid var(--line); border-radius:14px; padding:15px 16px; margin-bottom:12px; background:var(--surface);}
+  .exc-top{display:flex; justify-content:space-between; gap:10px; align-items:flex-start;}
+  .exc-name{font-size:16px; font-weight:600; color:var(--t1); line-height:1.25;}
+  .exc-badge{flex:0 0 auto; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; letter-spacing:.03em;}
+  .exc-badge.booked{background:#e8f3ec; color:#1c7c43;}
+  .exc-badge.interest{background:var(--azure-soft); color:var(--azure);}
+  .exc-meta{font-size:13px; color:var(--t3); margin-top:3px;}
+  .exc-people{display:flex; flex-wrap:wrap; gap:6px; margin-top:11px;}
+  .avtar{font-size:13px; background:var(--gold-soft); color:#6f5a1e; padding:4px 10px; border-radius:999px; font-weight:500;}
+  .avtar.me{background:var(--azure); color:#fff;}
+  .exc-actions{display:flex; gap:9px; margin-top:13px; align-items:center;}
+  .btn{padding:10px 16px; border-radius:11px; font-size:14px; font-weight:600;}
+  .btn-join{background:var(--azure); color:#fff;}
+  .btn-join.joined{background:#e8f3ec; color:#1c7c43;}
+  .btn-ghost{background:var(--azure-soft); color:var(--azure);}
+  .joined-note{font-size:12px; color:var(--t3);}
+  .disclaimer{display:flex; gap:9px; font-size:13px; color:var(--t2); background:var(--azure-soft); border-radius:12px; padding:12px 14px; margin-top:6px; line-height:1.45;}
+  .disclaimer .i{color:var(--azure); font-weight:700;}
+
+  .add-exc-btn{width:100%; padding:14px; border-radius:13px; border:1.5px dashed rgba(26,58,107,.4); color:var(--azure); font-weight:600; font-size:15px; background:var(--azure-soft); margin:4px 0 16px;}
+  .form label{display:block; font-size:13px; font-weight:600; color:var(--t2); margin:12px 0 5px;}
+  .form input[type=text]{width:100%; padding:12px 13px; border-radius:11px; border:1px solid var(--line); font-size:15px; font-family:inherit; background:var(--paper); color:var(--t1);}
+  .form input:focus{outline:none; border-color:var(--azure);}
+  .seg{display:flex; gap:8px; margin-top:6px;}
+  .seg button{flex:1; padding:11px; border-radius:11px; border:1px solid var(--line); font-size:14px; font-weight:600; color:var(--t2); background:var(--paper);}
+  .seg button.on{background:var(--azure); color:#fff; border-color:var(--azure);}
+  .shot{display:flex; align-items:center; gap:10px; margin-top:6px; padding:13px; border-radius:11px; border:1px dashed var(--line); color:var(--t2); font-size:14px; background:var(--paper);}
+  .form-actions{display:flex; gap:10px; margin-top:18px;}
+  .form-actions .btn{flex:1; text-align:center;}
+  .btn-primary{background:var(--azure); color:#fff;}
+  .btn-cancel{background:rgba(17,24,33,.06); color:var(--t2);}
+
+  .proto-tag{position:fixed; top:50%; right:0; transform:rotate(90deg) translateY(-50%); transform-origin:right; z-index:5; font-size:10px; letter-spacing:.1em; color:var(--t3); text-transform:uppercase; pointer-events:none;}
+
+  /* ---------- Desktop ---------- */
+  @media(min-width:860px){
+    .tabbar{display:none;}
+    .topnav{display:flex;}
+    .shell{padding-bottom:40px;}
+    main{padding:26px 24px;}
+    .strip-wrap{margin:0 0 22px;}
+    .strip{width:auto; flex-wrap:wrap;}
+    /* sheet becomes a centered modal */
+    .sheet{
+      left:50%; right:auto; bottom:auto; top:50%; width:540px; max-width:92vw;
+      border-radius:22px; transform:translate(-50%,-46%) scale(.96); opacity:0;
+      transition:transform .26s cubic-bezier(.32,.72,0,1), opacity .2s ease; max-height:84vh;
+    }
+    .sheet.open{transform:translate(-50%,-50%) scale(1); opacity:1;}
+    .grab{display:none;}
+    /* Today view: day card beside the day rail */
+    .today-layout{display:grid; grid-template-columns:118px 1fr; gap:26px; align-items:start;}
+    .today-layout .strip-wrap{order:0;}
+    .today-layout .strip{flex-direction:column; flex-wrap:nowrap;}
+    .today-layout .pill{width:100%; flex-direction:row; justify-content:space-between; padding:11px 13px;}
+    .today-layout .pill .today-dot{order:3;}
+    .daycard{margin:0;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="appbar">
+    <div class="brand">
+      <span class="brand-name">Dahyabhai Vacation</span>
+      <span class="brand-sub">Venice · Cruise · Istanbul</span>
+    </div>
+    <div class="topnav" id="topnav">
+      <button data-tab="today" class="active">Today</button>
+      <button data-tab="trip">Trip</button>
+      <button data-tab="getset">Get Set</button>
+    </div>
+    <div class="countdown">🕓 <span><b id="cd">21</b> days to go</span></div>
+  </div>
+
+  <main>
+    <!-- TODAY -->
+    <section class="view active" id="view-today">
+      <div class="today-layout">
+        <div class="strip-wrap"><div class="strip" id="strip"></div></div>
+        <div id="day-mount"></div>
+      </div>
+    </section>
+
+    <!-- TRIP -->
+    <section class="view" id="view-trip">
+      <div class="trip-grid" id="trip-grid"></div>
+    </section>
+
+    <!-- GET SET -->
+    <section class="view" id="view-getset">
+      <div class="prep">
+        <div class="prep-card">
+          <h3>🧳 Packing</h3>
+          <p>Hot Mediterranean summer. Light layers, strong sun cover, modest dress for churches and mosques.</p>
+          <div class="prep-rule"></div>
+          <label class="check"><input type="checkbox"><span>Passport (6+ months validity)</span></label>
+          <label class="check"><input type="checkbox" checked><span>EU plug adapter (Type C/F)</span></label>
+          <label class="check"><input type="checkbox"><span>Walking shoes for cobblestones</span></label>
+          <label class="check"><input type="checkbox"><span>Black & white outfit (Jul 6)</span></label>
+          <label class="check"><input type="checkbox"><span>Modest cover for shoulders/knees</span></label>
+        </div>
+        <div class="prep-card">
+          <h3>✈️ Flights</h3>
+          <p>Your confirmed flights live here. Not the cruise timeline, a different job, kept separate on purpose.</p>
+        </div>
+        <div class="prep-card">
+          <h3>🏨 Hotels</h3>
+          <p>Venice pre-cruise and Istanbul post-cruise stays.</p>
+        </div>
+        <div class="prep-card">
+          <h3>🚐 Getting to the ship</h3>
+          <p>Venice airport → Ravenna port. Pay Rocky $30/person at the apartment hotel, 10:30 AM Jul 3.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- bottom tab bar (mobile) -->
+<nav class="tabbar" id="tabbar">
+  <button data-tab="today" class="active"><span class="ti">📍</span>Today</button>
+  <button data-tab="trip"><span class="ti">🗓️</span>Trip</button>
+  <button data-tab="getset"><span class="ti">🧳</span>Get Set</button>
+</nav>
+
+<!-- sheet -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <button class="sheet-close" id="sheet-close">✕</button>
+  <div class="sheet-head">
+    <div class="sheet-eyebrow" id="sheet-eyebrow"></div>
+    <div class="sheet-title" id="sheet-title"></div>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+</div>
+
+<div class="proto-tag">Prototype · sample data</div>
+
+<script>
+/* =================== DATA (real trip data) =================== */
+var TODAY_INDEX = 1; // pretend "today" is Jul 4 Dubrovnik so the day view is rich
+
+var WX = {
+  '2026-07-03':{h:83,l:71,r:40,i:'⛅'},'2026-07-04':{h:85,l:70,r:20,i:'⛅'},
+  '2026-07-05':{h:87,l:75,r:10,i:'☀️'},'2026-07-07':{h:93,l:74,r:10,i:'☀️'},
+  '2026-07-08':{h:94,l:76,r:0,i:'☀️'},'2026-07-09':{h:91,l:77,r:0,i:'☀️'},
+  '2026-07-10':{h:82,l:72,r:0,i:'☀️'},'2026-07-12':{h:83,l:69,r:10,i:'☀️'},
+  '2026-07-13':{h:84,l:68,r:10,i:'☀️'}
+};
+
+var DAYS = [
+  {date:'2026-07-03', dow:'Thu', d:3, city:'Venice (Ravenna), Italy', short:'Venice / Ravenna', content:'italian', lang:'Italian', code:'it-IT', kind:'embark', arrive:null, depart:'5:00 PM', tag:'Embark',
+    event:{name:'Welcome dinner · Los Lobos', sub:"Alayna's birthday", time:'5:00 PM', kind:'dinner'}},
+  {date:'2026-07-04', dow:'Fri', d:4, city:'Dubrovnik, Croatia', short:'Dubrovnik', content:'croatian', lang:'Croatian', code:'hr-HR', kind:'port', arrive:'10:00 AM', depart:'11:59 PM'},
+  {date:'2026-07-05', dow:'Sat', d:5, city:'Bar, Montenegro', short:'Bar', content:'montenegrin', lang:'Montenegrin', code:'hr-HR', kind:'port', arrive:'7:00 AM', depart:'6:00 PM'},
+  {date:'2026-07-06', dow:'Sun', d:6, city:'At Sea', short:'At Sea', content:'sea', kind:'sea',
+    event:{name:'Naresh · Milestone birthday', sub:'Black & White dress code · photos + cake', time:'3–6 PM', kind:'party'}},
+  {date:'2026-07-07', dow:'Mon', d:7, city:'Athens (Piraeus), Greece', short:'Athens', content:'greek', lang:'Greek', code:'el-GR', kind:'port', arrive:'5:30 AM', depart:'5:00 PM'},
+  {date:'2026-07-08', dow:'Tue', d:8, city:'Kuşadası, Turkey', short:'Kuşadası', content:'turkish', lang:'Turkish', code:'tr-TR', kind:'port', arrive:'7:00 AM', depart:'4:00 PM'},
+  {date:'2026-07-09', dow:'Wed', d:9, city:'Rhodes, Greece', short:'Rhodes', content:'greek', lang:'Greek', code:'el-GR', kind:'port', arrive:'7:00 AM', depart:'5:00 PM'},
+  {date:'2026-07-10', dow:'Thu', d:10, city:'Santorini, Greece', short:'Santorini', content:'greek', lang:'Greek', code:'el-GR', kind:'port', arrive:'7:00 AM', depart:'10:00 PM'},
+  {date:'2026-07-11', dow:'Fri', d:11, city:'At Sea', short:'At Sea', content:'sea', kind:'sea',
+    event:{name:'Group dinner · Los Lobos', time:'5:00 PM', kind:'dinner'}},
+  {date:'2026-07-12', dow:'Sat', d:12, city:'Istanbul, Turkey', short:'Istanbul', content:'turkish', lang:'Turkish', code:'tr-TR', kind:'port', arrive:'7:00 AM', depart:'Overnight'},
+  {date:'2026-07-13', dow:'Sun', d:13, city:'Istanbul, Turkey', short:'Istanbul', content:'turkish', lang:'Turkish', code:'tr-TR', kind:'disembark', arrive:'8:00 AM', tag:'Disembark'}
+];
+
+var PHRASES = {
+  italian:[
+    {n:'Buongiorno',p:'bwon-JOR-noh',e:'Good morning / hello'},
+    {n:'Grazie',p:'GRAH-tsyeh',e:'Thank you'},
+    {n:'Per favore',p:'pair fah-VOH-reh',e:'Please'},
+    {n:'Quanto costa?',p:'KWAN-toh KOH-stah',e:'How much is it?'},
+    {n:'Salute!',p:'sah-LOO-teh',e:'Cheers!'},
+    {n:'Arrivederci',p:'ah-ree-veh-DAIR-chee',e:'Goodbye'}
+  ],
+  croatian:[
+    {n:'Dobar dan',p:'DOH-bar dahn',e:'Good day / hello'},
+    {n:'Hvala',p:'HVAH-lah',e:'Thank you'},
+    {n:'Molim',p:'MOH-leem',e:"Please / you're welcome"},
+    {n:'Koliko košta?',p:'KOH-lee-koh KOH-shtah',e:'How much is it?'},
+    {n:'Živjeli!',p:'ZHEEV-yeh-lee',e:'Cheers!'},
+    {n:'Doviđenja',p:'doh-vee-JEH-nyah',e:'Goodbye'}
+  ],
+  montenegrin:[
+    {n:'Dobar dan',p:'DOH-bar dahn',e:'Good day / hello'},
+    {n:'Hvala',p:'HVAH-lah',e:'Thank you'},
+    {n:'Molim',p:'MOH-leem',e:"Please / you're welcome"},
+    {n:'Koliko košta?',p:'KOH-lee-koh KOH-shtah',e:'How much is it?'},
+    {n:'Živjeli!',p:'ZHEEV-yeh-lee',e:'Cheers!'},
+    {n:'Doviđenja',p:'doh-vee-JEH-nyah',e:'Goodbye'}
+  ],
+  greek:[
+    {n:'Γειά σας',p:'YAH sahs',e:'Hello (polite)'},
+    {n:'Ευχαριστώ',p:'ef-hah-ree-STOH',e:'Thank you'},
+    {n:'Παρακαλώ',p:'pah-rah-kah-LOH',e:"Please / you're welcome"},
+    {n:'Πόσο κάνει;',p:'POH-soh KAH-nee',e:'How much is it?'},
+    {n:'Γειά μας',p:'YAH mahs',e:'Cheers!'},
+    {n:'Αντίο',p:'ah-DEE-oh',e:'Goodbye'}
+  ],
+  turkish:[
+    {n:'Merhaba',p:'MER-hah-bah',e:'Hello'},
+    {n:'Teşekkürler',p:'teh-shek-koor-LEHR',e:'Thank you'},
+    {n:'Lütfen',p:'LOOT-fen',e:'Please'},
+    {n:'Ne kadar?',p:'neh kah-DAR',e:'How much is it?'},
+    {n:'Şerefe!',p:'SHEH-reh-feh',e:'Cheers!'},
+    {n:'Güle güle',p:'goo-LEH goo-LEH',e:'Goodbye'}
+  ]
+};
+
+var CULTURE = {
+  italian:["Coffee is quick and standing at the bar. A cappuccino after 11am quietly marks you as a tourist, after a meal Italians take an espresso.","Cover shoulders and knees to enter churches, including St. Mark's. Tipping is light: rounding up or a couple of euros is plenty.","Emilia-Romagna around Ravenna is the food heartland of Italy. Eat slowly and locally."],
+  croatian:["Croatia uses the euro (since 2023), so no need for kuna anymore.","Dubrovnik's Old Town is walled, pedestrian, and paved in polished limestone. Wear real shoes, not slick soles. Modest dress for churches.","A simple 'dobar dan' and 'hvala' goes a long way, locals warm up fast to a little effort."],
+  montenegrin:["Montenegro uses the euro even though it isn't in the EU. Carry some cash for smaller spots.","Bar is relaxed and far less touristy than Dubrovnik, an easy, authentic stop. The language is mutually understood with Croatian and Serbian.","Coffee culture is strong and unhurried, sitting for a long coffee is the norm, not rushed."],
+  greek:["'Yia sas' is polite or plural, 'yia sou' is casual to one person. Both work warmly.","Meals run late: lunch around 2–3pm, dinner often after 9pm. Don't tip a strict percentage, just round up the bill.","On the islands stick to bottled water, in Athens the tap is fine. Cover up to enter churches and monasteries."],
+  turkish:["The currency is the Turkish lira, carry cash, especially in bazaars and small cafes.","To enter a mosque, remove shoes and cover shoulders, women cover their hair. Avoid visiting at prayer times.","Tea (çay) is offered everywhere, accepting it is the friendly thing to do. In the Grand Bazaar, polite haggling is expected."],
+  sea:["A full day on the Norwegian Viva. Pools, the Galaxy Pavilion, the Stadium, spa, and the shows are all open.","Specialty dining books up, reserve early. The Indulge Food Hall and Surfside Cafe are the easy go-tos.","Today is also a group day, see the celebration above. Dress for it."]
+};
+
+var FOOD = {
+  italian:[
+    {n:'Piadina',veg:true,d:'Warm Romagna flatbread, often with squacquerone cheese and greens'},
+    {n:'Cappelletti in brodo',veg:false,d:'Little filled pasta in broth, a Ravenna classic'},
+    {n:'Risotto al nero di seppia',veg:false,d:'Squid-ink risotto'},
+    {n:'Gelato',veg:true,d:'Get it from a gelateria, not a tourist cart'}
+  ],
+  croatian:[
+    {n:'Crni rižot',veg:false,d:'Black cuttlefish-ink risotto'},
+    {n:'Peka',veg:false,d:'Meat or octopus slow-roasted under an iron bell'},
+    {n:'Ston oysters',veg:false,d:'Famous from the bay just up the coast'},
+    {n:'Fritule',veg:true,d:'Little rum-and-citrus fritters'}
+  ],
+  montenegrin:[
+    {n:'Njeguški pršut',veg:false,d:'Smoke-cured mountain ham'},
+    {n:'Crni rižot',veg:false,d:'Adriatic black risotto'},
+    {n:'Grilled Adriatic fish',veg:false,d:'Sea bass or bream, simply grilled'},
+    {n:'Priganice',veg:true,d:'Fried dough puffs with honey and cheese'}
+  ],
+  greek:[
+    {n:'Moussaka',veg:false,d:'Layered eggplant, potato and spiced meat'},
+    {n:'Souvlaki',veg:false,d:'Grilled skewers in pita with tzatziki'},
+    {n:'Horiatiki',veg:true,d:'Real Greek salad, tomato, cucumber, feta, no lettuce'},
+    {n:'Fava',veg:true,d:'Santorini yellow split-pea purée'},
+    {n:'Loukoumades',veg:true,d:'Honey-soaked doughnuts'}
+  ],
+  turkish:[
+    {n:'Meze spread',veg:true,d:'Many small plates, lots are veg: hummus, dolma, ezme'},
+    {n:'Kebab',veg:false,d:'Adana, şiş, döner, regional and everywhere'},
+    {n:'Simit',veg:true,d:'Sesame bread ring, the street breakfast staple'},
+    {n:'Baklava',veg:true,d:'Layered pastry, pistachio or walnut'},
+    {n:'Lokum',veg:true,d:'Turkish delight, great for gifts home'}
+  ]
+};
+
+// seeded shared excursion board (real NCL tour names) — persisted to localStorage
+var SEED_EXC = {
+  '2026-07-04':[
+    {id:'dbv1', name:"Game of Thrones – Walk Through King's Landing", meta:'4 hrs · DBVN69', booked:['Naresh','Alayna'], interested:['Sejal']},
+    {id:'dbv2', name:'Croatian Riviera & Dubrovnik Old Town', meta:'5½ hrs · DBVN56', booked:[], interested:['Priya','Raj']}
+  ],
+  '2026-07-07':[
+    {id:'ath1', name:'The Acropolis & Leisure', meta:'6 hrs · PIRN53', booked:['Naresh','Alayna','Sejal','Dev'], interested:[]}
+  ],
+  '2026-07-10':[
+    {id:'san1', name:"Santorini's Musical Heritage", meta:'4¾ hrs · JTRN67', booked:[], interested:['Priya']}
+  ]
+};
+
+/* =================== STATE =================== */
+var ME = 'You';
+var selIdx = TODAY_INDEX;
+var exStore = loadExc();
+
+function loadExc(){
+  try{
+    var s = JSON.parse(localStorage.getItem('proto_exc'));
+    if(s) return s;
+  }catch(e){}
+  return JSON.parse(JSON.stringify(SEED_EXC));
+}
+function saveExc(){ try{ localStorage.setItem('proto_exc', JSON.stringify(exStore)); }catch(e){} }
+
+/* =================== RENDER =================== */
+var ROW_ICON = {culture:'💡', phrases:'💬', food:'🍽️', exc:'⛵'};
+
+function wxStr(date){ var w=WX[date]; return w ? (w.i+' '+w.h+'°/'+w.l+'°') : ''; }
+
+function renderStrip(){
+  var el = document.getElementById('strip'); var h='';
+  DAYS.forEach(function(day,i){
+    var w = WX[day.date];
+    h += '<button class="pill'+(i===selIdx?' sel':'')+'" data-i="'+i+'">'
+       + '<span class="dow">'+day.dow+'</span>'
+       + '<span class="dnum">'+day.d+'</span>'
+       + '<span class="wx">'+(w?w.i:'⚓')+'</span>'
+       + (i===TODAY_INDEX?'<span class="today-dot"></span>':'')
+       + '</button>';
+  });
+  el.innerHTML = h;
+  el.querySelectorAll('.pill').forEach(function(b){
+    b.onclick = function(){ selIdx = +b.dataset.i; renderStrip(); renderDay(); };
+  });
+}
+
+function eventBanner(ev){
+  if(!ev) return '';
+  return '<div class="event'+(ev.kind==='party'?' party':'')+'">'
+    + '<span class="event-star">★</span>'
+    + '<div class="event-body"><div class="event-name">'+ev.name+'</div>'
+    + (ev.sub?'<div class="event-sub">'+ev.sub+'</div>':'')+'</div>'
+    + '<span class="event-time">'+ev.time+'</span></div>';
+}
+
+function renderDay(){
+  var day = DAYS[selIdx];
+  var w = WX[day.date];
+  var meta = [];
+  if(w) meta.push('<span class="mi">'+w.i+' '+w.h+'° / '+w.l+'°'+(w.r>5?' · '+w.r+'% rain':'')+'</span>');
+  if(day.arrive) meta.push('<span class="mi">Arrive '+day.arrive+'</span>');
+  if(day.depart) meta.push('<span class="mi">Depart '+day.depart+'</span>');
+
+  var h = '<div class="daycard">';
+  h += '<div class="day-head">';
+  h += '<div class="day-kicker">'+day.dow+' · Jul '+day.d+(day.tag?' · '+day.tag:'')+'</div>';
+  h += '<div class="day-city">'+day.short+'</div>';
+  h += '<div class="day-meta">'+meta.join('')+(day.lang?' <span class="lang-tag">'+day.lang+'</span>':'')+'</div>';
+  h += '</div>';
+
+  h += eventBanner(day.event);
+
+  if(day.kind==='sea'){
+    h += '<div class="sea-note">A sea day on the Norwegian Viva. Tap below for what\'s on board and the day\'s plan.</div>';
+    h += '<div class="rows">';
+    h += rowHtml('culture','Good to know','On-board highlights');
+    h += rowHtml('exc','Plans','people going');
+    h += '</div>';
+  } else {
+    var exCount = countGoing(day.date);
+    h += '<div class="rows">';
+    h += rowHtml('culture','Good to know', cultureTeaser(day.content));
+    h += rowHtml('phrases','Say a few words', day.lang+' · tap to hear');
+    h += rowHtml('food','Eat this', foodTeaser(day.content));
+    h += rowHtml('exc','Excursions', exCount? (exCount+' going'):'add or join');
+    h += '</div>';
+  }
+  h += '</div>';
+  document.getElementById('day-mount').innerHTML = h;
+
+  document.querySelectorAll('#day-mount .row').forEach(function(r){
+    r.onclick = function(){ openSheet(r.dataset.kind, DAYS[selIdx]); };
+  });
+}
+
+function rowHtml(kind,title,desc){
+  var count = '';
+  if(kind==='exc'){
+    var n = countGoing(DAYS[selIdx].date);
+    count = n? '<span class="row-count">'+n+' going</span>' : '';
+  }
+  return '<button class="row" data-kind="'+kind+'">'
+    + '<span class="row-ico">'+ROW_ICON[kind]+'</span>'
+    + '<span class="row-main"><span class="row-title">'+title+'</span>'
+    + (desc?'<span class="row-desc">'+desc+'</span>':'')+'</span>'
+    + count
+    + '<span class="row-caret">›</span></button>';
+}
+
+function cultureTeaser(c){ var a=CULTURE[c]; return a? a[0].split('.')[0]+'.' : ''; }
+function foodTeaser(c){ var a=FOOD[c]; return a? a.slice(0,3).map(function(x){return x.n;}).join(' · ') : ''; }
+function countGoing(date){
+  var list = exStore[date]||[]; var s={};
+  list.forEach(function(e){ e.booked.concat(e.interested).forEach(function(p){s[p]=1;}); });
+  return Object.keys(s).length;
+}
+
+/* ---------- Trip overview ---------- */
+function renderTrip(){
+  var el = document.getElementById('trip-grid'); var h='';
+  DAYS.forEach(function(day,i){
+    h += '<button class="mini'+(i===TODAY_INDEX?' istoday':'')+'" data-i="'+i+'">';
+    h += '<div class="mini-top"><span class="mini-date">'+day.dow+' · Jul '+day.d+(i===TODAY_INDEX?' <span class="today-flag">· TODAY</span>':'')+'</span>'
+       + '<span class="mini-wx">'+(WX[day.date]?wxStr(day.date):'⚓ At sea')+'</span></div>';
+    h += '<div class="mini-city">'+day.short+'</div>';
+    if(day.event){
+      h += '<div class="mini-event"><span class="s">★</span><span>'+day.event.name.replace(/ ·.*/,'')+'</span><span class="tm">'+day.event.time+'</span></div>';
+    }
+    h += '</button>';
+  });
+  el.innerHTML = h;
+  el.querySelectorAll('.mini').forEach(function(b){
+    b.onclick = function(){ selIdx=+b.dataset.i; renderStrip(); renderDay(); switchTab('today'); window.scrollTo({top:0,behavior:'smooth'}); };
+  });
+}
+
+/* =================== SHEETS =================== */
+var scrim=document.getElementById('scrim'), sheet=document.getElementById('sheet');
+var sEye=document.getElementById('sheet-eyebrow'), sTitle=document.getElementById('sheet-title'), sBody=document.getElementById('sheet-body');
+
+function openSheet(kind, day){
+  sEye.textContent = day.short + ' · Jul ' + day.d;
+  if(kind==='culture'){ sTitle.textContent='Good to know'; sBody.innerHTML=cultureHtml(day.content); }
+  else if(kind==='phrases'){ sTitle.textContent='Say a few words'; sBody.innerHTML=phraseHtml(day.content); wireSay(day.code); }
+  else if(kind==='food'){ sTitle.textContent='Eat this'; sBody.innerHTML=foodHtml(day.content); }
+  else if(kind==='exc'){ sTitle.textContent='Excursions'; renderExc(day); }
+  scrim.classList.add('open'); sheet.classList.add('open');
+  sBody.scrollTop=0;
+}
+function closeSheet(){ scrim.classList.remove('open'); sheet.classList.remove('open'); }
+scrim.onclick=closeSheet; document.getElementById('sheet-close').onclick=closeSheet;
+
+function cultureHtml(c){
+  var a=CULTURE[c]||[]; var h='<div class="culture">';
+  a.forEach(function(p,i){ h+='<p'+(i===0?' class="lead"':'')+'>'+p+'</p>'; });
+  return h+'</div>';
+}
+function phraseHtml(c){
+  var a=PHRASES[c]||[]; var h='';
+  a.forEach(function(p,i){
+    h+='<div class="phrase"><div class="phrase-main">'
+      +'<div class="phrase-native">'+p.n+'</div>'
+      +'<div class="phrase-phon">'+p.p+'</div>'
+      +'<div class="phrase-en">'+p.e+'</div></div>'
+      +'<button class="say" data-say="'+encodeURIComponent(p.n)+'">🔊</button></div>';
+  });
+  if(!('speechSynthesis' in window)) h+='<p style="font-size:13px;color:var(--t3);margin-top:14px;">Audio uses your device voice. If a language voice isn\'t installed, the button stays quiet.</p>';
+  return h;
+}
+function wireSay(code){
+  sBody.querySelectorAll('.say').forEach(function(b){
+    b.onclick=function(){
+      var t=decodeURIComponent(b.dataset.say);
+      b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse');
+      if('speechSynthesis' in window){
+        var u=new SpeechSynthesisUtterance(t); u.lang=code; u.rate=.82;
+        speechSynthesis.cancel(); speechSynthesis.speak(u);
+      }
+    };
+  });
+}
+function foodHtml(c){
+  var a=FOOD[c]||[]; var h='';
+  a.forEach(function(x){
+    h+='<div class="dish'+(x.veg?' veg':'')+'"><span class="dish-bullet"></span>'
+      +'<div><div class="dish-name">'+x.n+(x.veg?' <span class="veg-star">✦</span>':'')+'</div>'
+      +'<div class="dish-desc">'+x.d+'</div></div></div>';
+  });
+  h+='<div class="veg-key">✦ vegetarian</div>';
+  return h;
+}
+
+/* ---------- Excursion board ---------- */
+function renderExc(day){
+  var list = exStore[day.date]||[]; var h='';
+  if(!list.length) h+='<p style="color:var(--t2);font-size:15px;">No excursions added for this day yet. Be the first.</p>';
+  list.forEach(function(e){
+    var iAmBooked = e.booked.indexOf(ME)>=0, iAmInt = e.interested.indexOf(ME)>=0;
+    var joined = iAmBooked||iAmInt;
+    h+='<div class="exc">';
+    h+='<div class="exc-top"><div class="exc-name">'+e.name+'</div>';
+    h+= e.booked.length? '<span class="exc-badge booked">'+e.booked.length+' booked</span>'
+        : '<span class="exc-badge interest">interested</span>';
+    h+='</div>';
+    h+='<div class="exc-meta">'+e.meta+'</div>';
+    var ppl = e.booked.map(function(p){return tag(p,true);}).concat(e.interested.map(function(p){return tag(p,false);}));
+    if(ppl.length) h+='<div class="exc-people">'+ppl.join('')+'</div>';
+    h+='<div class="exc-actions">';
+    if(!joined){
+      h+='<button class="btn btn-join" data-join="'+e.id+'">Join</button>';
+      h+='<span class="joined-note">marks interest, not a booking</span>';
+    } else {
+      h+='<button class="btn btn-join joined" data-leave="'+e.id+'">✓ You\'re in</button>';
+      if(iAmInt) h+='<button class="btn btn-ghost" data-book="'+e.id+'">I booked it</button>';
+      else h+='<span class="joined-note">booked ✓</span>';
+    }
+    h+='</div></div>';
+  });
+  h+='<button class="add-exc-btn" id="add-exc">+ Add an excursion</button>';
+  h+='<div class="disclaimer"><span class="i">ⓘ</span><span><b>Joining shows interest. It does not book you.</b> Book directly with NCL or the tour operator yourself, then tap “I booked it”.</span></div>';
+  sBody.innerHTML=h;
+  wireExc(day);
+}
+function tag(name,booked){ return '<span class="avtar'+(name===ME?' me':'')+'">'+(name===ME?'You':name)+(booked?' ✓':'')+'</span>'; }
+
+function wireExc(day){
+  sBody.querySelectorAll('[data-join]').forEach(function(b){ b.onclick=function(){ getEx(day.date,b.dataset.join).interested.push(ME); saveExc(); renderExc(day); refreshCounts(); }; });
+  sBody.querySelectorAll('[data-leave]').forEach(function(b){ b.onclick=function(){ var e=getEx(day.date,b.dataset.leave); e.interested=e.interested.filter(x=>x!==ME); e.booked=e.booked.filter(x=>x!==ME); saveExc(); renderExc(day); refreshCounts(); }; });
+  sBody.querySelectorAll('[data-book]').forEach(function(b){ b.onclick=function(){ var e=getEx(day.date,b.dataset.book); e.interested=e.interested.filter(x=>x!==ME); if(e.booked.indexOf(ME)<0)e.booked.push(ME); saveExc(); renderExc(day); refreshCounts(); }; });
+  var add=document.getElementById('add-exc'); if(add) add.onclick=function(){ showAddForm(day); };
+}
+function getEx(date,id){ return (exStore[date]||[]).filter(function(e){return e.id===id;})[0]; }
+function refreshCounts(){ renderDay(); }
+
+function showAddForm(day){
+  var status='interested';
+  var h='<div class="form">';
+  h+='<label>Excursion name</label><input type="text" id="f-name" placeholder="e.g. Old Town walking tour">';
+  h+='<label>Who\'s organizing? (optional)</label><input type="text" id="f-org" placeholder="Your name">';
+  h+='<label>Your status</label><div class="seg" id="f-seg">'
+    +'<button data-s="interested" class="on">Interested</button>'
+    +'<button data-s="booked">I\'ve booked it</button></div>';
+  h+='<label>Screenshot (optional)</label><div class="shot">📎 Attach booking screenshot <span style="color:var(--t3);">— used to fill details</span></div>';
+  h+='<div class="form-actions"><button class="btn btn-cancel" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Add to Jul '+day.d+'</button></div>';
+  h+='</div>';
+  sBody.innerHTML=h;
+  sBody.querySelectorAll('#f-seg button').forEach(function(b){ b.onclick=function(){ sBody.querySelectorAll('#f-seg button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); status=b.dataset.s; }; });
+  document.getElementById('f-cancel').onclick=function(){ renderExc(day); };
+  document.getElementById('f-save').onclick=function(){
+    var name=document.getElementById('f-name').value.trim(); if(!name){ document.getElementById('f-name').focus(); return; }
+    if(!exStore[day.date]) exStore[day.date]=[];
+    exStore[day.date].push({ id:'u'+Date.now(), name:name, meta:'Added by '+(document.getElementById('f-org').value.trim()||'You'),
+      booked: status==='booked'?[ME]:[], interested: status==='interested'?[ME]:[] });
+    saveExc(); renderExc(day); refreshCounts();
+  };
+}
+
+/* =================== TABS =================== */
+function switchTab(tab){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+tab).classList.add('active');
+  document.querySelectorAll('#tabbar button, #topnav button').forEach(function(b){ b.classList.toggle('active', b.dataset.tab===tab); });
+  if(tab==='trip') renderTrip();
+}
+document.querySelectorAll('#tabbar button, #topnav button').forEach(function(b){ b.onclick=function(){ switchTab(b.dataset.tab); }; });
+
+/* countdown (sample: days to Jul 3 from Jun 12) */
+document.getElementById('cd').textContent='21';
+
+renderStrip(); renderDay();
+</script>
+</body>
+</html>

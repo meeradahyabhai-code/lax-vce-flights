@@ -31,8 +31,15 @@ classes) — never invent ad-hoc styles. When reporting "ready," always list "St
       per-meal SITUATION (booked/tour/free/aboard/pre) + ship schedule, AI phrases it naturally with options
       (e.g. "tour starts 8:15am, light breakfast on the ship first"). Reads restaurant bookings as meals
       (Barolo = dinner). Instant deterministic fallback, upgrades to AI in background, cached per port+bookings.
-- [ ] **Tests & evals** — rating freshness vs Google, correct place match, cuisine validity,
-      day-summary facts, chat picks resolve
+- [x] **Tests & evals** — DONE.
+      - `test_restaurants_data.py` (12 tests, in the normal suite, offline): catalog size, no dup ids,
+        required fields, ratings in range, known ports, cuisine-is-not-a-level, boolean veg flags, valid
+        michelin tiers, profile/vibe present, photos exist on disk, every port ≥8, Indian ≥5.
+        (Caught + fixed 2 "Fine Dining"-as-cuisine entries on first run.)
+      - `evals/restaurants_eval.py` (on-demand, network): rating freshness vs live Google Places by
+        place_id; AI day-summary respects each per-meal SITUATION; chat picks resolve to real ids in the
+        asked port + honor hard constraints (Indian/veg/Michelin). Run: `python3 evals/restaurants_eval.py
+        --url http://localhost:8099/api/ask`. Last run: freshness 15/15 within ±0.3, day_summary + chat all PASS.
 - [ ] Improve the ~83 generic "Restaurant" cuisines (second pass)
 
 ## DONE since last update

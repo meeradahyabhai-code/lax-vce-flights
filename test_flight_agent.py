@@ -890,7 +890,7 @@ class TestFrontendSummaryIntegration(unittest.TestCase):
         start = self.html.index(".ai-briefing {")
         end = self.html.index("}", start) + 1
         css = self.html[start:end]
-        self.assertIn("rgba(250, 248, 243, 0.72)", css)
+        self.assertIn("rgba(252, 252, 250, 0.72)", css)  # warm-white canvas
         self.assertIn("backdrop-filter", css)
         self.assertIn("blur(20px)", css)
         self.assertNotIn("linear-gradient", css)
@@ -1957,7 +1957,7 @@ class TestPointsAIFrontend(unittest.TestCase):
         css = self.html[start:end]
         self.assertIn("backdrop-filter", css)
         self.assertIn("blur(20px)", css)
-        self.assertIn("rgba(250, 248, 243, 0.95)", css)
+        self.assertIn("rgba(252, 252, 250, 0.95)", css)  # warm-white canvas
 
     def test_gradient_label(self):
         """Points AI label should use purple-cyan gradient."""

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dahyabhai Vacation · Snapshot Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#faf8f3; --surface:#ffffff;
+    --azure:#1a3a6b; --azure-soft:#eef2f8;
+    --gold:#b8953a; --gold-soft:#f7efdb; --lagoon:#2a7f8f;
+    --line:rgba(17,24,33,.12); --line-soft:rgba(17,24,33,.07);
+    --t1:rgba(17,24,33,.96); --t2:rgba(17,24,33,.78); --t3:rgba(17,24,33,.6);
+    --shadow:0 1px 2px rgba(17,24,33,.05), 0 6px 18px rgba(17,24,33,.06);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:'DM Sans',system-ui,sans-serif; background:var(--paper); color:var(--t1); font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;}
+  .serif{font-family:'Cormorant Garamond',Georgia,serif;}
+  button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+  .tnum{font-variant-numeric:tabular-nums;}
+  a{color:inherit;}
+
+  /* ---------- sticky header: brand + whole-trip snapshot rail ---------- */
+  .top{position:sticky; top:0; z-index:20; background:rgba(250,248,243,.94); backdrop-filter:saturate(160%) blur(10px); border-bottom:1px solid var(--line-soft);}
+  .top-row{display:flex; align-items:center; justify-content:space-between; padding:11px 18px 8px; max-width:1100px; margin:0 auto;}
+  .brand{font-family:'Cormorant Garamond',serif; font-weight:700; font-size:21px; color:var(--azure); letter-spacing:.2px;}
+  .brand small{display:block; font-family:'DM Sans'; font-weight:500; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--t3);}
+  .cd{font-size:13px; color:var(--t2);} .cd b{color:var(--gold); font-weight:600;}
+
+  .rail-wrap{overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;}
+  .rail-wrap::-webkit-scrollbar{display:none;}
+  .rail{display:flex; gap:0; padding:2px 12px 9px; max-width:1100px; margin:0 auto; width:max-content;}
+  .rstop{flex:0 0 auto; min-width:64px; padding:5px 9px; border-radius:9px; text-align:center; position:relative;}
+  .rstop:not(:last-child)::after{content:''; position:absolute; right:-1px; top:24px; width:2px; height:2px; border-radius:50%; background:var(--line);}
+  .rstop .rd{font-size:11px; color:var(--t3); font-weight:600; letter-spacing:.03em;}
+  .rstop .rc{font-size:12.5px; font-weight:600; color:var(--t1); margin-top:1px; white-space:nowrap;}
+  .rstop .rw{font-size:11px; color:var(--t3);}
+  .rstop.today{background:var(--azure);} .rstop.today .rd{color:rgba(255,255,255,.72);} .rstop.today .rc,.rstop.today .rw{color:#fff;}
+  .rstop .ev{display:inline-block; width:5px; height:5px; border-radius:50%; background:var(--gold); margin-top:3px;}
+
+  main{max-width:1100px; margin:0 auto; padding:16px 16px 64px;}
+
+  /* ---------- one dense block per day ---------- */
+  .day{background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); margin-bottom:14px; overflow:hidden; scroll-margin-top:120px;}
+  .day.today{border-color:var(--azure); box-shadow:0 0 0 1px var(--azure), var(--shadow);}
+  .day-hd{display:flex; align-items:baseline; gap:12px; padding:13px 18px 9px; flex-wrap:wrap;}
+  .d-date{font-size:12px; font-weight:700; letter-spacing:.06em; color:var(--gold); text-transform:uppercase; flex:0 0 auto; width:74px;}
+  .d-city{font-family:'Cormorant Garamond',serif; font-weight:600; font-size:25px; line-height:1; color:var(--azure);}
+  .d-spacer{flex:1;}
+  .d-facts{font-size:13px; color:var(--t2); display:flex; gap:6px 12px; flex-wrap:wrap; align-items:center;}
+  .d-facts .wx{font-weight:600; color:var(--t1);}
+  .lang{font-size:11.5px; color:var(--lagoon); background:rgba(42,127,143,.1); padding:2px 8px; border-radius:999px; font-weight:600;}
+  .today-pin{font-size:10px; font-weight:800; letter-spacing:.08em; color:#fff; background:var(--azure); padding:2px 7px; border-radius:5px;}
+
+  /* event strip, always visible */
+  .ev-strip{display:flex; align-items:center; gap:10px; margin:2px 18px 0; padding:9px 13px; border-radius:10px; background:var(--gold-soft); border:1px solid rgba(184,149,58,.3);}
+  .ev-strip.party{background:linear-gradient(110deg,#f1edf9,#f7eede);}
+  .ev-strip .st{color:var(--gold);}
+  .ev-strip b{font-weight:600;} .ev-strip .sub{color:var(--t2);}
+  .ev-strip .tm{margin-left:auto; font-weight:600; color:var(--gold); white-space:nowrap;}
+
+  /* the dossier grid: label column + visible content */
+  .grid{padding:8px 18px 15px; display:grid; grid-template-columns:64px 1fr; gap:2px 14px; align-items:start;}
+  .lbl{font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--t3); padding-top:9px;}
+  .cell{padding:7px 0; border-top:1px solid var(--line-soft); font-size:14.5px;}
+  .grid .lbl:first-of-type, .grid .cell:first-of-type{border-top:none;}
+  .grid .lbl + .cell{} /* keep */
+
+  /* phrases inline, all visible */
+  .phr{display:inline-flex; align-items:center; gap:6px; margin:2px 12px 2px 0; white-space:nowrap;}
+  .phr b{font-weight:600; color:var(--t1);} .phr i{font-style:normal; color:var(--t3); font-size:13px;}
+  .say{width:24px; height:24px; border-radius:50%; background:var(--azure-soft); color:var(--azure); font-size:12px; display:inline-grid; place-items:center; flex:0 0 auto;}
+  .say:active{transform:scale(.88);} .say.pulse{animation:p .6s ease;}
+  @keyframes p{0%{box-shadow:0 0 0 0 rgba(26,58,107,.4);}100%{box-shadow:0 0 0 10px rgba(26,58,107,0);}}
+
+  .know{color:var(--t1); line-height:1.5;}
+  .eat .veg{color:var(--lagoon); font-weight:700;}
+  .eat .dish{color:var(--t1);}
+
+  /* tours inline */
+  .tour{display:block; padding:3px 0;}
+  .tour .nm{font-weight:600; color:var(--t1);}
+  .tour .who{color:var(--t2); font-size:13.5px;}
+  .tour .bk{font-size:11px; font-weight:700; color:#1c7c43;}
+  .tour .in{font-size:11px; font-weight:700; color:var(--azure);}
+  .tour-actions{margin-top:5px; display:flex; gap:8px; flex-wrap:wrap;}
+  .mini-btn{font-size:12.5px; font-weight:600; padding:5px 11px; border-radius:8px; background:var(--azure-soft); color:var(--azure);}
+  .mini-btn.j{background:var(--azure); color:#fff;}
+  .mini-btn.done{background:#e8f3ec; color:#1c7c43;}
+  .note{font-size:12px; color:var(--t3); margin-top:4px;}
+
+  .sea .cell{color:var(--t2);}
+
+  /* add form (only modal in the whole thing) */
+  .scrim{position:fixed; inset:0; background:rgba(17,24,33,.42); z-index:40; opacity:0; pointer-events:none; transition:.2s;}
+  .scrim.open{opacity:1; pointer-events:auto;}
+  .modal{position:fixed; z-index:41; left:50%; bottom:0; transform:translateX(-50%) translateY(102%); width:100%; max-width:440px; background:var(--surface); border-radius:18px 18px 0 0; padding:20px 20px 26px; transition:transform .3s cubic-bezier(.32,.72,0,1); box-shadow:0 -8px 40px rgba(17,24,33,.18);}
+  .modal.open{transform:translateX(-50%) translateY(0);}
+  @media(min-width:560px){.modal{bottom:auto; top:50%; border-radius:18px; transform:translate(-50%,-46%) scale(.96); opacity:0;} .modal.open{transform:translate(-50%,-50%); opacity:1;}}
+  .modal h3{margin:0 0 4px; font-family:'Cormorant Garamond',serif; font-weight:600; font-size:22px; color:var(--azure);}
+  .modal .sub{font-size:13px; color:var(--t3); margin-bottom:10px;}
+  .modal label{display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--t3); margin:12px 0 5px;}
+  .modal input{width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:10px; font-size:15px; font-family:inherit; background:var(--paper);}
+  .modal input:focus{outline:none; border-color:var(--azure);}
+  .seg{display:flex; gap:8px;} .seg button{flex:1; padding:10px; border:1px solid var(--line); border-radius:10px; font-size:13.5px; font-weight:600; color:var(--t2); background:var(--paper);}
+  .seg button.on{background:var(--azure); color:#fff; border-color:var(--azure);}
+  .shot{margin-top:6px; padding:11px; border:1px dashed var(--line); border-radius:10px; font-size:13px; color:var(--t3); background:var(--paper);}
+  .m-actions{display:flex; gap:10px; margin-top:18px;} .m-actions button{flex:1; padding:12px; border-radius:11px; font-weight:600;}
+  .m-save{background:var(--azure); color:#fff;} .m-cancel{background:rgba(17,24,33,.06); color:var(--t2);}
+
+  @media(min-width:760px){
+    .grid{grid-template-columns:78px 1fr;}
+    .d-city{font-size:28px;}
+    main{padding:22px 22px 80px;}
+  }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="top-row">
+    <div class="brand">Dahyabhai Vacation<small>Venice · Cruise · Istanbul</small></div>
+    <div class="cd">🕓 <b>21</b> days to go</div>
+  </div>
+  <div class="rail-wrap"><div class="rail" id="rail"></div></div>
+</div>
+
+<main id="main"></main>
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="modal"></div>
+
+<script>
+/* ===== data (real trip data + written content) ===== */
+var TODAY='2026-07-04';
+var WX={'2026-07-03':{h:83,l:71,r:40,i:'⛅'},'2026-07-04':{h:85,l:70,r:20,i:'⛅'},'2026-07-05':{h:87,l:75,r:10,i:'☀️'},'2026-07-07':{h:93,l:74,r:10,i:'☀️'},'2026-07-08':{h:94,l:76,r:0,i:'☀️'},'2026-07-09':{h:91,l:77,r:0,i:'☀️'},'2026-07-10':{h:82,l:72,r:0,i:'☀️'},'2026-07-12':{h:83,l:69,r:10,i:'☀️'},'2026-07-13':{h:84,l:68,r:10,i:'☀️'}};
+
+var DAYS=[
+ {date:'2026-07-03',dow:'Thu',d:3,city:'Venice / Ravenna',content:'italian',lang:'Italian',code:'it-IT',arrive:null,depart:'5:00 PM',tag:'Embark',event:{name:'Welcome dinner · Los Lobos',sub:"Alayna's birthday",time:'5:00 PM'}},
+ {date:'2026-07-04',dow:'Fri',d:4,city:'Dubrovnik',content:'croatian',lang:'Croatian',code:'hr-HR',arrive:'10:00 AM',depart:'11:59 PM'},
+ {date:'2026-07-05',dow:'Sat',d:5,city:'Bar, Montenegro',content:'montenegrin',lang:'Montenegrin',code:'hr-HR',arrive:'7:00 AM',depart:'6:00 PM'},
+ {date:'2026-07-06',dow:'Sun',d:6,city:'At Sea',content:'sea',sea:true,event:{name:'Naresh · Milestone birthday',sub:'Black & White · photos + cake',time:'3–6 PM',party:true}},
+ {date:'2026-07-07',dow:'Mon',d:7,city:'Athens',content:'greek',lang:'Greek',code:'el-GR',arrive:'5:30 AM',depart:'5:00 PM'},
+ {date:'2026-07-08',dow:'Tue',d:8,city:'Kuşadası',content:'turkish',lang:'Turkish',code:'tr-TR',arrive:'7:00 AM',depart:'4:00 PM'},
+ {date:'2026-07-09',dow:'Wed',d:9,city:'Rhodes',content:'greek',lang:'Greek',code:'el-GR',arrive:'7:00 AM',depart:'5:00 PM'},
+ {date:'2026-07-10',dow:'Thu',d:10,city:'Santorini',content:'greek',lang:'Greek',code:'el-GR',arrive:'7:00 AM',depart:'10:00 PM'},
+ {date:'2026-07-11',dow:'Fri',d:11,city:'At Sea',content:'sea',sea:true,event:{name:'Group dinner · Los Lobos',time:'5:00 PM'}},
+ {date:'2026-07-12',dow:'Sat',d:12,city:'Istanbul',content:'turkish',lang:'Turkish',code:'tr-TR',arrive:'7:00 AM',depart:'Overnight'},
+ {date:'2026-07-13',dow:'Sun',d:13,city:'Istanbul',content:'turkish',lang:'Turkish',code:'tr-TR',arrive:'8:00 AM',tag:'Disembark'}
+];
+
+var PHRASES={
+ italian:[['Buongiorno','bwon-JOR-noh','hello'],['Grazie','GRAH-tsyeh','thank you'],['Per favore','pair fah-VOH-reh','please'],['Quanto costa?','KWAN-toh KOH-stah','how much?'],['Salute!','sah-LOO-teh','cheers'],['Arrivederci','ah-ree-veh-DAIR-chee','goodbye']],
+ croatian:[['Dobar dan','DOH-bar dahn','hello'],['Hvala','HVAH-lah','thank you'],['Molim','MOH-leem','please'],['Koliko košta?','KOH-lee-koh KOH-shtah','how much?'],['Živjeli!','ZHEEV-yeh-lee','cheers'],['Doviđenja','doh-vee-JEH-nyah','goodbye']],
+ montenegrin:[['Dobar dan','DOH-bar dahn','hello'],['Hvala','HVAH-lah','thank you'],['Molim','MOH-leem','please'],['Koliko košta?','KOH-lee-koh KOH-shtah','how much?'],['Živjeli!','ZHEEV-yeh-lee','cheers'],['Doviđenja','doh-vee-JEH-nyah','goodbye']],
+ greek:[['Γειά σας','YAH sahs','hello'],['Ευχαριστώ','ef-hah-ree-STOH','thank you'],['Παρακαλώ','pah-rah-kah-LOH','please'],['Πόσο κάνει;','POH-soh KAH-nee','how much?'],['Γειά μας','YAH mahs','cheers'],['Αντίο','ah-DEE-oh','goodbye']],
+ turkish:[['Merhaba','MER-hah-bah','hello'],['Teşekkürler','teh-shek-koor-LEHR','thank you'],['Lütfen','LOOT-fen','please'],['Ne kadar?','neh kah-DAR','how much?'],['Şerefe!','SHEH-reh-feh','cheers'],['Güle güle','goo-LEH goo-LEH','goodbye']]
+};
+var KNOW={
+ italian:'Coffee is quick at the bar; a cappuccino after 11am marks you a tourist. Cover shoulders & knees for churches. Tipping is light, just round up.',
+ croatian:'Croatia uses the euro now. The walled Old Town is pedestrian and paved in slick limestone, so wear real shoes. Cover up for churches.',
+ montenegrin:'Uses the euro though it isn\'t in the EU, carry cash. Bar is relaxed and far less touristy than Dubrovnik. Croatian/Serbian is understood here.',
+ greek:'"Yia sas" is polite, "yia sou" casual. Meals run late (lunch 2–3, dinner after 9). Round up rather than tip a percent. Bottled water on the islands.',
+ turkish:'Currency is the lira, carry cash. For mosques: shoes off, shoulders covered, women cover hair. Accept the offered tea. Haggling is normal in the bazaar.',
+ sea:'Sea day on the Norwegian Viva. Pools, Galaxy Pavilion, the Stadium, spa and shows all open. Reserve specialty dining early.'
+};
+var FOOD={
+ italian:[['Piadina',1],['Cappelletti in brodo',0],['Squid-ink risotto',0],['Gelato',1]],
+ croatian:[['Black risotto',0],['Peka',0],['Ston oysters',0],['Fritule',1]],
+ montenegrin:[['Njeguški pršut',0],['Black risotto',0],['Grilled Adriatic fish',0],['Priganice',1]],
+ greek:[['Moussaka',0],['Souvlaki',0],['Horiatiki salad',1],['Fava',1],['Loukoumades',1]],
+ turkish:[['Meze spread',1],['Kebab',0],['Simit',1],['Baklava',1],['Lokum',1]]
+};
+var SEA_DO={'2026-07-06':'Galaxy Pavilion · pool deck · spa · evening show. Black & White party 3–6 PM.','2026-07-11':'Pool day · trivia · sunset from the Observation Lounge · group dinner 5 PM.'};
+
+var SEED={
+ '2026-07-04':[{id:'dbv1',name:"Game of Thrones – King's Landing Walk",meta:'4 hrs',booked:['Naresh','Alayna'],interested:['Sejal']},{id:'dbv2',name:'Croatian Riviera & Old Town',meta:'5½ hrs',booked:[],interested:['Priya','Raj']}],
+ '2026-07-07':[{id:'ath1',name:'The Acropolis & Leisure',meta:'6 hrs',booked:['Naresh','Alayna','Sejal','Dev'],interested:[]}],
+ '2026-07-10':[{id:'san1',name:"Santorini's Musical Heritage",meta:'4¾ hrs',booked:[],interested:['Priya']}]
+};
+var ME='You';
+var exStore=load();
+function load(){try{var s=JSON.parse(localStorage.getItem('proto2_exc'));if(s)return s;}catch(e){}return JSON.parse(JSON.stringify(SEED));}
+function save(){try{localStorage.setItem('proto2_exc',JSON.stringify(exStore));}catch(e){}}
+
+/* ===== render rail (whole-trip snapshot) ===== */
+function renderRail(){
+ var h='';
+ DAYS.forEach(function(p){
+   var w=WX[p.date];
+   h+='<a class="rstop'+(p.date===TODAY?' today':'')+'" href="#d'+p.d+'">'
+     +'<div class="rd">'+p.dow.toUpperCase()+' '+p.d+'</div>'
+     +'<div class="rc">'+p.city.split(/[ /,]/)[0]+'</div>'
+     +'<div class="rw">'+(w?w.i+' '+w.h+'°':'⚓ sea')+'</div>'
+     +(p.event?'<span class="ev"></span>':'')
+     +'</a>';
+ });
+ document.getElementById('rail').innerHTML=h;
+}
+
+/* ===== render days (everything visible) ===== */
+function renderDays(){
+ var h='';
+ DAYS.forEach(function(p){ h+=dayHtml(p); });
+ document.getElementById('main').innerHTML=h;
+ wire();
+}
+function dayHtml(p){
+ var w=WX[p.date];
+ var facts=[];
+ if(w) facts.push('<span class="wx">'+w.i+' '+w.h+'°/'+w.l+'°</span>'+(w.r>5?' '+w.r+'% rain':''));
+ if(p.arrive) facts.push('Arr '+p.arrive);
+ if(p.depart) facts.push('Dep '+p.depart);
+ var h='<section class="day'+(p.date===TODAY?' today':'')+(p.sea?' sea':'')+'" id="d'+p.d+'">';
+ h+='<div class="day-hd"><span class="d-date">'+p.dow+' Jul '+p.d+'</span>'
+   +'<span class="d-city">'+p.city+'</span>'
+   +(p.date===TODAY?' <span class="today-pin">TODAY</span>':'')
+   +'<span class="d-spacer"></span>'
+   +'<span class="d-facts">'+facts.join(' · ')+(p.lang?' <span class="lang">'+p.lang+'</span>':'')+(p.tag?' <span class="lang" style="color:var(--gold);background:var(--gold-soft);">'+p.tag+'</span>':'')+'</span></div>';
+
+ if(p.event) h+='<div class="ev-strip'+(p.event.party?' party':'')+'"><span class="st">★</span><span><b>'+p.event.name+'</b>'+(p.event.sub?' <span class="sub">— '+p.event.sub+'</span>':'')+'</span><span class="tm">'+p.event.time+'</span></div>';
+
+ h+='<div class="grid">';
+ if(p.sea){
+   h+=cellLbl('Aboard','<span class="know">'+(SEA_DO[p.date]||KNOW.sea)+'</span>');
+   h+=tourCell(p);
+ } else {
+   // phrases — all visible inline
+   var pl=PHRASES[p.content].map(function(x,i){
+     return '<span class="phr"><b>'+x[0]+'</b> <i>'+x[2]+'</i> <button class="say" data-t="'+encodeURIComponent(x[0])+'" data-c="'+p.code+'">🔊</button></span>';
+   }).join('');
+   h+=cellLbl('Say', pl);
+   h+=cellLbl('Know','<span class="know">'+KNOW[p.content]+'</span>');
+   var fl=FOOD[p.content].map(function(f){return '<span class="dish">'+f[0]+(f[1]?'<span class="veg"> ✦</span>':'')+'</span>';}).join(' · ');
+   h+=cellLbl('Eat','<span class="eat">'+fl+'  <span style="color:var(--lagoon);font-size:12px;">✦ veg</span></span>');
+   h+=tourCell(p);
+ }
+ h+='</div></section>';
+ return h;
+}
+function cellLbl(lbl,inner){ return '<div class="lbl">'+lbl+'</div><div class="cell">'+inner+'</div>'; }
+
+function tourCell(p){
+ var list=exStore[p.date]||[];
+ var inner='';
+ list.forEach(function(e){
+   var booked=e.booked.length, mineB=e.booked.indexOf(ME)>=0, mineI=e.interested.indexOf(ME)>=0, joined=mineB||mineI;
+   var who=e.booked.map(function(n){return n===ME?'You':n;}).concat(e.interested.map(function(n){return (n===ME?'You':n)+' (interested)';})).join(', ');
+   inner+='<div class="tour"><span class="nm">'+e.name+'</span> <span style="color:var(--t3);font-size:12px;">'+e.meta+'</span>'
+     +(booked?' <span class="bk">'+booked+' booked</span>':' <span class="in">interest only</span>')
+     +(who?'<div class="who">'+who+'</div>':'')
+     +'<div class="tour-actions">'
+     +(joined? '<button class="mini-btn done" data-leave="'+e.id+'@'+p.date+'">✓ You\'re in</button>'+(mineI?'<button class="mini-btn" data-book="'+e.id+'@'+p.date+'">I booked it</button>':'')
+            : '<button class="mini-btn j" data-join="'+e.id+'@'+p.date+'">Join</button>')
+     +'</div></div>';
+ });
+ inner+='<button class="mini-btn" data-add="'+p.date+'" style="margin-top:6px;">+ Add excursion</button>';
+ inner+='<div class="note">Join = interested, not booked. Book with NCL yourself, then mark “I booked it”.</div>';
+ return cellLbl(list.length?'Tours':'Tours', inner);
+}
+
+function wire(){
+ document.querySelectorAll('.say').forEach(function(b){ b.onclick=function(){ var t=decodeURIComponent(b.dataset.t); b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse'); if('speechSynthesis' in window){var u=new SpeechSynthesisUtterance(t); u.lang=b.dataset.c; u.rate=.82; speechSynthesis.cancel(); speechSynthesis.speak(u);} }; });
+ document.querySelectorAll('[data-join]').forEach(function(b){ b.onclick=function(){ var x=split(b.dataset.join); getEx(x).interested.push(ME); save(); renderDays(); }; });
+ document.querySelectorAll('[data-leave]').forEach(function(b){ b.onclick=function(){ var x=split(b.dataset.leave); var e=getEx(x); e.interested=e.interested.filter(n=>n!==ME); e.booked=e.booked.filter(n=>n!==ME); save(); renderDays(); }; });
+ document.querySelectorAll('[data-book]').forEach(function(b){ b.onclick=function(){ var x=split(b.dataset.book); var e=getEx(x); e.interested=e.interested.filter(n=>n!==ME); if(e.booked.indexOf(ME)<0)e.booked.push(ME); save(); renderDays(); }; });
+ document.querySelectorAll('[data-add]').forEach(function(b){ b.onclick=function(){ addForm(b.dataset.add); }; });
+}
+function split(s){var a=s.split('@');return {id:a[0],date:a[1]};}
+function getEx(x){return (exStore[x.date]||[]).filter(function(e){return e.id===x.id;})[0];}
+
+/* add form */
+var scrim=document.getElementById('scrim'),modal=document.getElementById('modal');
+function closeM(){scrim.classList.remove('open');modal.classList.remove('open');}
+scrim.onclick=closeM;
+function addForm(date){
+ var day=DAYS.filter(function(p){return p.date===date;})[0]; var status='interested';
+ modal.innerHTML='<h3>Add an excursion</h3><div class="sub">'+day.city+' · Jul '+day.d+'</div>'
+  +'<label>Excursion</label><input id="fn" placeholder="e.g. Old Town walking tour">'
+  +'<label>Your status</label><div class="seg" id="fs"><button class="on" data-s="interested">Interested</button><button data-s="booked">I booked it</button></div>'
+  +'<label>Screenshot (optional)</label><div class="shot">📎 Attach booking screenshot — used to fill in details</div>'
+  +'<div class="m-actions"><button class="m-cancel" id="fc">Cancel</button><button class="m-save" id="fv">Add</button></div>';
+ scrim.classList.add('open');modal.classList.add('open');
+ modal.querySelectorAll('#fs button').forEach(function(b){b.onclick=function(){modal.querySelectorAll('#fs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');status=b.dataset.s;};});
+ document.getElementById('fc').onclick=closeM;
+ document.getElementById('fv').onclick=function(){ var n=document.getElementById('fn').value.trim(); if(!n){document.getElementById('fn').focus();return;} if(!exStore[date])exStore[date]=[]; exStore[date].push({id:'u'+Date.now(),name:n,meta:'',booked:status==='booked'?[ME]:[],interested:status==='interested'?[ME]:[]}); save(); closeM(); renderDays(); };
+}
+
+renderRail(); renderDays();
+</script>
+</body>
+</html>
