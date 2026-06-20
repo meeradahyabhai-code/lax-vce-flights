@@ -40,7 +40,9 @@ classes) — never invent ad-hoc styles. When reporting "ready," always list "St
         place_id; AI day-summary respects each per-meal SITUATION; chat picks resolve to real ids in the
         asked port + honor hard constraints (Indian/veg/Michelin). Run: `python3 evals/restaurants_eval.py
         --url http://localhost:8099/api/ask`. Last run: freshness 15/15 within ±0.3, day_summary + chat all PASS.
-- [ ] Improve the ~83 generic "Restaurant" cuisines (second pass)
+- [x] **Generic "Restaurant" cuisines** — DONE. `scripts/refine_generic_cuisine.py` re-derived all 83
+      from review material first, local cuisine as fallback (taverna in Athens = Greek, osteria in Venice =
+      Venetian). 0 generic remaining; 35 distinct cuisines. Test `test_cuisine_is_not_a_level` guards it.
 
 ## DONE since last update
 - [x] **MAP VIEW** — List/Map toggle; pins + names-on-zoom + popups (Leaflet); refined pin/label design
