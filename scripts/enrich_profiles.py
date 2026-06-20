@@ -41,6 +41,9 @@ SYS = (
     '  "best_dishes": array of up to 3 specific dishes reviewers praise (lowercase), [] if none named\n'
     '  "veg_note": short phrase on vegetarian options (e.g. "good vegetarian options", '
     '"limited for vegetarians", "fully vegetarian"); "" if unknown\n'
+    '  "cuisine": the primary CUISINE in 1-2 words (e.g. "Greek", "Seafood", "Italian", '
+    '"Turkish", "Indian", "Mediterranean", "Steakhouse", "Cafe"). NEVER a price or formality '
+    'level like "fine dining" or "casual" — that is the formality field, not cuisine.\n'
     '  "vibe": one warm, quiet, concierge-voice sentence (max 22 words, no emoji/exclamation)\n'
     "Ground every field in the material."
 )
@@ -74,6 +77,9 @@ def enrich(r: dict, key: str, keep_vibe: bool) -> bool:
     except Exception as e:  # noqa: BLE001
         print(f"  ! {r['name'][:30]}: {e}", file=sys.stderr)
         return False
+    ai_cuisine = (data.get("cuisine") or "").strip()
+    if ai_cuisine:
+        r["cuisine"] = ai_cuisine  # real cuisine, replacing Google's messy type/level
     r["profile"] = {
         "descriptor": (data.get("descriptor") or "").strip(),
         "formality": data.get("formality") or "",

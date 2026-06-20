@@ -37,8 +37,20 @@ OUT_PATHS = [ROOT / "data" / "restaurants.json",
              ROOT / "public" / "restaurants.json",
              ROOT / "web" / "restaurants.json"]
 
-MAX_PER_PORT = 12
+MAX_PER_PORT = 45        # generous, not a hard "best 12" — cities have many
+MIN_RATING = 4.0         # rating >= 4.0 ...
+MIN_REVIEWS = 100        # ... AND established (guards against thin/fake 5.0s)
 REQ_TIMEOUT = 20
+
+# Several angles per port so we get real variety (cuisine + price + area), since one
+# Text Search caps at 20. Results are merged + deduped + floor-filtered + ranked.
+QUERY_TEMPLATES = [
+    "best restaurants in {area}",
+    "popular traditional restaurants in {area}",
+    "best seafood restaurants in {area}",
+    "casual local restaurants in {area}",
+    "fine dining in {area}",
+]
 
 # Restaurant field mask (Places API New). Includes the real veg/booking/price
 # signals the card uses.
@@ -287,18 +299,25 @@ def main() -> int:
         print(f"  landmarks: {[lm['name'] for lm in landmarks]}")
         if not landmarks:
             print("  ! no landmarks geocoded — distances will be null", file=sys.stderr)
-        places = _post_search(port["query"], SEARCH_FIELDS)
-        # rank by a simple quality score: rating weighted by log(review count)
-        places.sort(key=lambda p: (p.get("rating", 0) or 0) *
-                    math.log10((p.get("userRatingCount", 0) or 0) + 10), reverse=True)
+        area = port["query"].split(" in ", 1)[1] if " in " in port["query"] else port["label"]
+        # Merge several search angles, dedup by place id.
+        by_id = {}
+        for tmpl in QUERY_TEMPLATES:
+            for p in _post_search(tmpl.format(area=area), SEARCH_FIELDS):
+                if p.get("id") and p["id"] not in by_id:
+                    by_id[p["id"]] = p
+        # Floor: rating >= 4.0 AND >= 100 reviews (established + good).
+        kept = [p for p in by_id.values()
+                if (p.get("rating", 0) or 0) >= MIN_RATING
+                and (p.get("userRatingCount", 0) or 0) >= MIN_REVIEWS]
+        kept.sort(key=lambda p: (p.get("rating", 0) or 0) *
+                  math.log10((p.get("userRatingCount", 0) or 0) + 10), reverse=True)
         rows = []
-        for p in places:
+        for p in kept[:MAX_PER_PORT]:
             r = build_restaurant(p, port, landmarks)
             if r:
                 rows.append(r)
-            if len(rows) >= MAX_PER_PORT:
-                break
-        print(f"  restaurants: {len(rows)}")
+        print(f"  found {len(by_id)} unique, {len(kept)} above the bar -> kept {len(rows)}")
         all_rows.extend(rows)
 
     if not args.no_vibe:
