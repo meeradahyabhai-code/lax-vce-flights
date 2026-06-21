@@ -965,11 +965,14 @@
   .rfilter-chip.active { background: var(--azure); border-color: var(--azure); color: #fff; }
   .rfilter-clear { color: var(--azure); }
   .rest-viewtoggle { display: flex; gap: 8px; margin: 0 0 16px; align-items: center; flex-wrap: wrap; }
-  .rest-sortsep { width: 1px; height: 20px; background: var(--border-strong); margin: 0 4px; }
-  .rest-radiuswrap { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 14px; padding: 14px 16px; margin: 0 0 18px; }
-  .rest-radius-label { font-family: var(--sans); font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--azure); margin-bottom: 10px; }
-  .rest-radius-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-  .rest-radius-note { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 10px; line-height: 1.45; }
+  .rest-discoverbar { margin: 4px 0 14px; }
+  .rest-discover-rows { display: flex; gap: 10px; flex-wrap: wrap; }
+  .rseg { display: inline-flex; background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 999px; padding: 3px; }
+  .rseg-btn { font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--text-secondary); background: none; border: none; border-radius: 999px; padding: 7px 15px; cursor: pointer; white-space: nowrap; transition: color .15s, background .15s; }
+  .rseg-btn:hover { color: var(--azure); }
+  .rseg-btn.active { background: var(--azure); color: #fff; }
+  .rest-discover-note { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 10px; line-height: 1.45; }
+  .rest-anchornote { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: .03em; text-transform: uppercase; color: var(--text-tertiary); margin: 2px 0 10px; }
   .rbadge-nearby { background: rgba(255,255,255,.92); color: var(--lagoon); border: 1px solid var(--lagoon); font-weight: 600; }
   #rest-map { height: 440px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border-strong); }
   .rest-pin { display: inline-flex; align-items: center; gap: 3px; background: var(--bg-surface); border: 1px solid var(--border-strong); color: var(--ink); border-radius: 999px; padding: 3px 9px; font-family: var(--sans); font-size: 12px; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 6px rgba(10,10,15,0.22); }
@@ -8245,6 +8248,32 @@
   var REST_PORTS = ['venice', 'ravenna', 'dubrovnik', 'bar', 'athens', 'kusadasi', 'rhodes', 'santorini', 'istanbul'];
   var REST_LABEL = { venice: 'Venice', ravenna: 'Ravenna', dubrovnik: 'Dubrovnik', bar: 'Bar',
     athens: 'Athens', kusadasi: 'Kuşadası', rhodes: 'Rhodes', santorini: 'Santorini', istanbul: 'Istanbul' };
+  // ONE fixed reference point per port so every card's distance is comparable
+  // (no more per-card "nearest landmark" — 3 mi means the same thing for every spot).
+  var REST_ANCHOR = {
+    venice: { lat: 45.43428, lng: 12.33811, label: 'Piazza San Marco' },
+    ravenna: { lat: 44.41776, lng: 12.19932, label: 'Piazza del Popolo' },
+    dubrovnik: { lat: 42.64171, lng: 18.10720, label: 'Pile Gate' },
+    bar: { lat: 42.09222, lng: 19.08444, label: 'the Port of Bar' },
+    athens: { lat: 37.97153, lng: 23.72575, label: 'the Acropolis' },
+    kusadasi: { lat: 37.86306, lng: 27.25576, label: 'the cruise port' },
+    rhodes: { lat: 36.44470, lng: 28.22751, label: 'Rhodes Old Town' },
+    santorini: { lat: 36.41827, lng: 25.43232, label: 'Fira' },
+    istanbul: { lat: 41.00858, lng: 28.98018, label: 'Hagia Sophia' },
+  };
+  function restHaversineMi(la1, lo1, la2, lo2) {
+    var R = 3958.8, t = Math.PI / 180;
+    var dLa = (la2 - la1) * t, dLo = (lo2 - lo1) * t;
+    var a = Math.sin(dLa / 2) * Math.sin(dLa / 2) +
+      Math.cos(la1 * t) * Math.cos(la2 * t) * Math.sin(dLo / 2) * Math.sin(dLo / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+  // Distance from THE port's single anchor, for any card (curated or live).
+  function restDist(r) {
+    var a = REST_ANCHOR[r.port_key];
+    if (!a || r.lat == null || r.lng == null) return null;
+    return restHaversineMi(a.lat, a.lng, r.lat, r.lng);
+  }
   var VEG_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19.5C3.5 12 8 4.5 19.5 4 21 15 14.5 20.5 6.5 20c-0.6 0-1.2-0.2-1.5-0.5Z" fill="currentColor"/><path d="M8 17c2-4.5 5.5-7.5 9.5-9" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>';
   var HEART_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5l-1.45-1.32C5.4 14.47 2 11.4 2 7.7 2 4.99 4.13 3 6.8 3c1.54 0 3.04.72 4 1.86C11.76 3.72 13.26 3 14.8 3 17.47 3 19.6 4.99 19.6 7.7c0 3.7-3.4 6.77-8.55 11.48L12 20.5z"/></svg>';
   var _restWired = false;
@@ -8295,7 +8324,7 @@
   var restDyn = {};           // 'port:radius' -> rows
   var restDynAnchor = {};     // port_key -> anchor name
   var restDynLoading = false;
-  var restSortMode = 'best';  // 'best' | 'near'
+  var restSortMode = 'rated';  // 'rated' | 'closest'
   function dynKey(pk, rad) { return pk + ':' + rad; }
   function fetchDynamic(pk, rad) {
     var k = dynKey(pk, rad);
@@ -8404,8 +8433,8 @@
       badges += '<span class="rbadge rbadge-nearby">Wider area</span>';
 
     var meta = [];
-    if (r.nearest_landmark)
-      meta.push((r.nearest_landmark_mi != null ? r.nearest_landmark_mi + ' mi from ' : 'near ') + r.nearest_landmark);
+    var _d = restDist(r);
+    if (_d != null) meta.push((_d < 0.1 ? '<0.1' : _d.toFixed(_d < 10 ? 1 : 0)) + ' mi');
     if (r.cuisine && r.cuisine !== 'Restaurant') meta.push(r.cuisine);
 
     var dishes = (p.best_dishes || []).map(function (d) {
@@ -8658,10 +8687,12 @@
       var cuisine = (r.cuisine && r.cuisine !== 'Restaurant') ? ' · ' + escHtml(r.cuisine) : '';
       var price = r.price ? ' · ' + escHtml(r.price) : '';
       var mich = r.michelin ? ' · ' + escHtml(r.michelin_award || 'Michelin') : '';
+      var _md = restDist(r);
+      var distTxt = _md != null ? ' · ' + (_md < 0.1 ? '<0.1' : _md.toFixed(_md < 10 ? 1 : 0)) + ' mi' : '';
       var m = L.marker([r.lat, r.lng], { icon: icon }).addTo(restMapInstance);
       m.bindTooltip(escHtml(r.name), { permanent: true, direction: 'top', className: 'rest-tip', offset: [0, -22] });
       m.bindPopup('<div class="rest-pop"><div class="rest-pop-name">' + escHtml(r.name) + '</div>' +
-        '<div class="rest-pop-meta">★ ' + (r.rating ? Number(r.rating).toFixed(1) : '') + cuisine + price + mich + '</div>' +
+        '<div class="rest-pop-meta">★ ' + (r.rating ? Number(r.rating).toFixed(1) : '') + cuisine + price + mich + distTxt + '</div>' +
         (r.vibe ? '<div class="rest-pop-vibe">' + escHtml(r.vibe) + '</div>' : '') +
         '<button class="rest-pop-go" data-id="' + escHtml(r.id) + '">See details &amp; book &#8594;</button></div>');
       markers.push(m);
@@ -8756,44 +8787,41 @@
     destroyRestMap();
     var allRows = currentRestRows();
     var label = escHtml(REST_LABEL[activeRestPort] || activeRestPort);
+    var anchorLabel = (REST_ANCHOR[activeRestPort] || {}).label || ('central ' + label);
     var html = renderDayBlock(activeRestPort) + renderFilterBar(allRows);
-    html += '<div class="rest-viewtoggle"><button class="rfilter-chip' + (restView === 'list' ? ' active' : '') +
-      '" data-view="list">List</button><button class="rfilter-chip' + (restView === 'map' ? ' active' : '') +
-      '" data-view="map">Map</button>' +
-      '<span class="rest-sortsep"></span>' +
-      '<button class="rfilter-chip' + (restSortMode === 'best' ? ' active' : '') + '" data-sort="best">Best</button>' +
-      '<button class="rfilter-chip' + (restSortMode === 'near' ? ' active' : '') + '" data-sort="near">Nearest</button>' +
-      '</div>';
-    html += renderRadiusBar();
+    html += renderDiscoverBar();
 
     var rows = applyRestFilters(allRows);
+    // Distances all measured from the SAME anchor, so "Closest" and the per-card
+    // mileage are comparable. State the anchor once, here.
+    html += '<div class="rest-anchornote">Distances from ' + escHtml(anchorLabel) + '</div>';
     if (!rows.length) {
       res.innerHTML = html + '<div class="rcard-empty">Nothing matches those filters. Tap Clear to start over.</div>';
       return;
     }
+
+    // One sorted set, used by BOTH the list and the map so they always agree.
+    var byClosest = function (a, b) {
+      var da = restDist(a), db = restDist(b);
+      da = da == null ? 1e9 : da; db = db == null ? 1e9 : db;
+      return da - db || (b.reviews || 0) - (a.reviews || 0);
+    };
+    var rowsSorted = (restSortMode === 'closest') ? rows.slice().sort(byClosest) : restSort(rows);
+
     if (restView === 'map') {
       res.innerHTML = html + '<div id="rest-map"></div>';
-      initRestMap(rows);
+      initRestMap(rowsSorted);
       return;
     }
     var crown = restCrown(rows);
-    var byNear = function (a, b) {
-      var da = a.nearest_landmark_mi == null ? 9999 : a.nearest_landmark_mi;
-      var db = b.nearest_landmark_mi == null ? 9999 : b.nearest_landmark_mi;
-      return da - db || (b.reviews || 0) - (a.reviews || 0);
-    };
     var anyFilter = restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin;
-    if (restSortMode === 'near') {
-      // Flat distance-sorted list — the whole point is "what's closest", no crown.
-      var near = rows.slice().sort(byNear);
-      html += '<div class="rest-sectlabel">Nearest first</div><div class="rest-grid">' +
-        near.map(function (r) { return restCardHtml(r, { crown: crown }); }).join('') + '</div>';
+    if (restSortMode === 'closest') {
+      html += '<div class="rest-sectlabel">Closest first</div><div class="rest-grid">' +
+        rowsSorted.map(function (r) { return restCardHtml(r, { crown: crown }); }).join('') + '</div>';
       res.innerHTML = html;
       return;
     }
-    var sorted = restSort(rows);
-    var best = sorted[0];
-    var rest = sorted.slice(1);
+    var best = rowsSorted[0], rest = rowsSorted.slice(1);
     if (best) {
       html += '<div class="rest-sectlabel">' + (anyFilter ? 'Top match in ' : 'The best in ') + label +
         '</div><div class="rest-grid">' +
@@ -8806,27 +8834,28 @@
     res.innerHTML = html;
   }
 
-  // "Search a wider area" control — curated by default, radius pills load live spots.
-  function renderRadiusBar() {
+  // Clean discovery controls: what to show (our picks vs everything nearby),
+  // how to sort, and list vs map — all of which keep list + map in sync.
+  function renderDiscoverBar() {
     var pk = activeRestPort;
-    var rad = restRadius[pk] || 0;
-    var extra = 0;
-    if (rad) {
-      var dyn = restDyn[dynKey(pk, rad)] || [];
-      var have = {}; RESTAURANTS.forEach(function (r) { if (r.port_key === pk) have[r.id] = 1; });
-      extra = dyn.filter(function (r) { return !have[r.id]; }).length;
-    }
-    var pills = '<button class="rfilter-chip' + (!rad ? ' active' : '') + '" data-rad="0">Curated</button>' +
-      REST_RADII.map(function (m) {
-        return '<button class="rfilter-chip' + (rad === m ? ' active' : '') + '" data-rad="' + m + '">' + m + ' mi</button>';
-      }).join('');
-    var note = restDynLoading ? 'Searching the wider area…'
-      : (rad ? ('+' + extra + ' more within ' + rad + ' mi' + (restDynAnchor[pk] ? ' of ' + escHtml(restDynAnchor[pk]) : '')
-               + ' · Indian always included')
-             : 'Showing our curated picks. Widen to pull every spot nearby — including all Indian.');
-    return '<div class="rest-radiuswrap"><div class="rest-radius-label">Search a wider area</div>' +
-      '<div class="rest-radius-pills">' + pills + '</div>' +
-      '<div class="rest-radius-note">' + note + '</div></div>';
+    var exploring = !!(restRadius[pk] || 0);
+    var seg = function (active, attr, val, txt) {
+      return '<button class="rseg-btn' + (active ? ' active' : '') + '" ' + attr + '="' + val + '">' + txt + '</button>';
+    };
+    var showRow = '<div class="rseg" role="group">' +
+      seg(!exploring, 'data-explore', '0', 'Our picks') +
+      seg(exploring, 'data-explore', '1', 'Everything nearby') + '</div>';
+    var sortRow = '<div class="rseg" role="group">' +
+      seg(restSortMode !== 'closest', 'data-sort', 'rated', 'Top rated') +
+      seg(restSortMode === 'closest', 'data-sort', 'closest', 'Closest') + '</div>';
+    var viewRow = '<div class="rseg" role="group">' +
+      seg(restView === 'list', 'data-view', 'list', 'List') +
+      seg(restView === 'map', 'data-view', 'map', 'Map') + '</div>';
+    var note = restDynLoading
+      ? '<div class="rest-discover-note">Finding every spot nearby, Indian included…</div>'
+      : (exploring ? '<div class="rest-discover-note">Showing our picks plus every well-rated spot nearby, Indian always included.</div>' : '');
+    return '<div class="rest-discoverbar"><div class="rest-discover-rows">' +
+      showRow + sortRow + viewRow + '</div>' + note + '</div>';
   }
 
   async function askRestaurant(q) {
@@ -8930,8 +8959,8 @@
       if (vbtn) { restView = vbtn.getAttribute('data-view'); renderRestaurants(); return; }
       var sbtn = e.target.closest('[data-sort]');
       if (sbtn) { restSortMode = sbtn.getAttribute('data-sort'); renderRestaurants(); return; }
-      var radbtn = e.target.closest('[data-rad]');
-      if (radbtn) { setRestRadius(parseInt(radbtn.getAttribute('data-rad'), 10) || 0); return; }
+      var ebtn = e.target.closest('[data-explore]');
+      if (ebtn) { setRestRadius(ebtn.getAttribute('data-explore') === '1' ? 10 : 0); return; }
       var save = e.target.closest('.rcard-save');
       if (save) { e.stopPropagation(); toggleSaved(save.getAttribute('data-id')); return; }
       var recbtn = e.target.closest('.rcard-recbtn');
