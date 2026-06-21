@@ -8330,7 +8330,7 @@
   }
   function restPhotoSrc(r) {
     if (r.photo_local) return encodeURI(r.photo_local);
-    if (r.dynamic && r.photo_ref) return '/api/place_photo?ref=' + encodeURIComponent(r.photo_ref) + '&w=520';
+    if (r.dynamic && r.photo_ref) return '/api/restaurants?photo=' + encodeURIComponent(r.photo_ref) + '&w=520';
     return '';
   }
 
@@ -9545,7 +9545,7 @@
     dropdown.innerHTML = '<div style="padding:12px;font-size:13px;color:#94a3b8;font-family:var(--sans);">Searching...</div>';
     dropdown.style.display = '';
 
-    fetch('/api/hotel_search?q=' + encodeURIComponent(query))
+    fetch('/api/hotels?suggest=' + encodeURIComponent(query))
       .then(function (r) { return r.json(); })
       .then(function (results) {
         if (!results.length) {

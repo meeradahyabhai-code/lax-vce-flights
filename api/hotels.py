@@ -151,11 +151,58 @@ def _fresh_search(city_key: str, city_query: str, check_in: str, check_out: str)
     }
 
 
+AUTOCOMPLETE_URL = "https://places.googleapis.com/v1/places:autocomplete"
+
+
+def _hotel_suggest(query: str) -> list:
+    """Places Autocomplete typeahead for hotel names (folded in from hotel_search
+    to stay under the Hobby 12-function cap). Returns [] on any issue."""
+    key = os.environ.get("GOOGLE_PLACES_API_KEY", "").strip()
+    if not query or len(query) < 2 or not key:
+        return []
+    try:
+        import requests
+        resp = requests.post(
+            AUTOCOMPLETE_URL,
+            headers={"Content-Type": "application/json", "X-Goog-Api-Key": key},
+            json={"input": query, "includedPrimaryTypes": ["lodging"]},
+            timeout=8,
+        )
+        resp.raise_for_status()
+        out = []
+        for s in resp.json().get("suggestions", []):
+            pred = s.get("placePrediction", {})
+            if not pred:
+                continue
+            main = pred.get("structuredFormat", {}).get("mainText", {}).get("text", "")
+            sec = pred.get("structuredFormat", {}).get("secondaryText", {}).get("text", "")
+            sl = sec.lower()
+            city = ("venice" if ("venice" in sl or "venezia" in sl)
+                    else "ravenna" if "ravenna" in sl
+                    else "istanbul" if "istanbul" in sl else "")
+            out.append({"name": main, "address": sec, "city": city,
+                        "place_id": pred.get("placeId", "")})
+        return out
+    except Exception:  # noqa: BLE001
+        return []
+
+
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             parsed = urlparse(self.path)
             params = parse_qs(parsed.query)
+
+            # Typeahead mode: /api/hotels?suggest=<query> (was /api/hotel_search?q=)
+            suggest = params.get("suggest", params.get("q", [""]))[0].strip()
+            if "suggest" in params or "q" in params:
+                out = json.dumps(_hotel_suggest(suggest)).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(out)
+                return
 
             city_key = params.get("city", ["venice"])[0].lower()
             defaults = CITY_DEFAULTS.get(city_key, CITY_DEFAULTS["venice"])

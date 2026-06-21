@@ -17,9 +17,6 @@
     "api/restaurants.py": {
       "maxDuration": 30
     },
-    "api/place_photo.py": {
-      "maxDuration": 10
-    },
     "api/points.py": {
       "maxDuration": 20
     },

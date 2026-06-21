@@ -97,9 +97,30 @@ class H(BaseHTTPRequestHandler):
         from urllib.parse import parse_qs, urlparse
         path = self.path.split("?")[0]
 
-        # --- dynamic restaurant search (mirrors api/restaurants.py) ---
+        # --- dynamic restaurant search + photo proxy (mirrors api/restaurants.py) ---
         if path == "/api/restaurants":
             q = parse_qs(urlparse(self.path).query)
+            ref = (q.get("photo", [""])[0]).strip()
+            if ref:  # photo proxy mode: /api/restaurants?photo=places/.../photos/...
+                try:
+                    w = max(80, min(1200, int(q.get("w", ["520"])[0])))
+                except (ValueError, TypeError):
+                    w = 520
+                if not ref.startswith("places/") or "/photos/" not in ref:
+                    self._send(400, {"error": "bad ref"}); return
+                try:
+                    r = requests.get(f"https://places.googleapis.com/v1/{ref}/media",
+                                     params={"maxWidthPx": w, "key": os.environ.get("GOOGLE_PLACES_API_KEY")
+                                             or os.environ.get("GOOGLE_MAPS_API_KEY")}, timeout=15)
+                    self.send_response(r.status_code if r.status_code != 200 else 200)
+                    self.send_header("Content-Type", r.headers.get("Content-Type", "image/jpeg"))
+                    self.send_header("Content-Length", str(len(r.content)))
+                    self.send_header("Cache-Control", "public, max-age=31536000, immutable")
+                    self.end_headers()
+                    self.wfile.write(r.content)
+                except Exception as e:  # noqa: BLE001
+                    self._send(502, {"error": str(e)[:120]})
+                return
             port = q.get("port", ["venice"])[0].lower()
             try:
                 radius = int(float(q.get("radius_mi", ["10"])[0]))
@@ -109,30 +130,6 @@ class H(BaseHTTPRequestHandler):
             if ckey not in _REST_CACHE:
                 _REST_CACHE[ckey] = rfinder.search_area(port, radius_mi=radius, sleep=time.sleep)
             self._send(200, _REST_CACHE[ckey])
-            return
-
-        # --- Places photo proxy (mirrors api/place_photo.py) ---
-        if path == "/api/place_photo":
-            q = parse_qs(urlparse(self.path).query)
-            ref = (q.get("ref", [""])[0]).strip()
-            try:
-                w = max(80, min(1200, int(q.get("w", ["480"])[0])))
-            except (ValueError, TypeError):
-                w = 480
-            if not ref.startswith("places/") or "/photos/" not in ref:
-                self._send(400, {"error": "bad ref"}); return
-            try:
-                r = requests.get(f"https://places.googleapis.com/v1/{ref}/media",
-                                 params={"maxWidthPx": w, "key": os.environ.get("GOOGLE_PLACES_API_KEY")
-                                         or os.environ.get("GOOGLE_MAPS_API_KEY")}, timeout=15)
-                self.send_response(r.status_code if r.status_code != 200 else 200)
-                self.send_header("Content-Type", r.headers.get("Content-Type", "image/jpeg"))
-                self.send_header("Content-Length", str(len(r.content)))
-                self.send_header("Cache-Control", "public, max-age=31536000, immutable")
-                self.end_headers()
-                self.wfile.write(r.content)
-            except Exception as e:  # noqa: BLE001
-                self._send(502, {"error": str(e)[:120]})
             return
 
         rel = path.lstrip("/") or "index.html"
