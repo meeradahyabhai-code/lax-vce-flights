@@ -34,7 +34,7 @@ ANCHORS = {
     "venice":    ("Venice (Ravenna), Italy", "Piazza San Marco, Venice, Italy"),
     "ravenna":   ("Ravenna, Italy",          "Piazza del Popolo, Ravenna, Italy"),
     "dubrovnik": ("Dubrovnik, Croatia",      "Pile Gate, Dubrovnik, Croatia"),
-    "bar":       ("Bar, Montenegro",         "Port of Bar, Montenegro"),
+    "kotor":     ("Kotor, Montenegro",       "Kotor Old Town, Montenegro"),
     "athens":    ("Athens (Piraeus), Greece","Acropolis, Athens, Greece"),
     "kusadasi":  ("Kusadasi, Turkey",        "Kusadasi Cruise Port, Turkey"),
     "rhodes":    ("Rhodes, Greece",          "Rhodes Old Town, Greece"),

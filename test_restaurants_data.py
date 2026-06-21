@@ -18,7 +18,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 # (Florida/California), wrong island, etc.
 PORT_ANCHOR = {
     "venice": (45.43428, 12.33811), "ravenna": (44.41776, 12.19932),
-    "dubrovnik": (42.64171, 18.10720), "bar": (42.09222, 19.08444),
+    "dubrovnik": (42.64171, 18.10720), "kotor": (42.42466, 18.77123),
     "athens": (37.97153, 23.72575), "kusadasi": (37.86306, 27.25576),
     "rhodes": (36.44470, 28.22751), "santorini": (36.41827, 25.43232),
     "istanbul": (41.00858, 28.98018),
@@ -34,7 +34,7 @@ def _haversine_mi(a, b, c, d):
 CATALOG = os.path.join(ROOT, "data", "restaurants.json")
 PHOTO_DIR = os.path.join(ROOT, "public", "media", "restaurants")
 
-PORTS = {"venice", "ravenna", "dubrovnik", "bar", "athens", "kusadasi", "rhodes", "santorini", "istanbul"}
+PORTS = {"venice", "ravenna", "dubrovnik", "kotor", "athens", "kusadasi", "rhodes", "santorini", "istanbul"}
 # A cuisine must be a cuisine, never a price/formality level.
 LEVEL_WORDS = {"fine dining", "casual", "smart casual", "fine dining restaurant", "upscale"}
 

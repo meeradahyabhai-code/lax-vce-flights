@@ -5002,7 +5002,7 @@
   var CRUISE_PORTS = [
     { date: '2026-07-03', label: 'Venice (Ravenna), Italy', type: 'embark', depart: '5:00 PM' },
     { date: '2026-07-04', label: 'Dubrovnik, Croatia',      type: 'port',   arrive: '10:00 AM', depart: '11:59 PM' },
-    { date: '2026-07-05', label: 'Bar, Montenegro',         type: 'port',   arrive: '7:00 AM',  depart: '6:00 PM' },
+    { date: '2026-07-05', label: 'Kotor, Montenegro',       type: 'port',   arrive: '7:00 AM',  depart: '6:00 PM' },
     { date: '2026-07-06', label: 'At Sea',                  type: 'sea' },
     { date: '2026-07-07', label: 'Athens (Piraeus), Greece', type: 'port',   arrive: '5:30 AM',  depart: '5:00 PM' },
     { date: '2026-07-08', label: 'Kusadasi, Turkey',        type: 'port',   arrive: '7:00 AM',  depart: '4:00 PM' },
@@ -5094,7 +5094,7 @@
         'It’s illegal to walk through the Old Town in swimwear, so cover up away from the beach.',
       ],
     },
-    bar: {
+    kotor: {
       phrases: SOUTH_SLAVIC_PHRASES,
       food: [
         { name: 'Black risotto', note: 'squid-ink seafood rice' },
@@ -5108,8 +5108,8 @@
         'Montenegro uses the euro despite not being in the EU, so no exchange is needed.',
         'Tipping isn’t mandatory, but 10 to 20% is appreciated for good service.',
         'Dress modestly at churches and monasteries (cover shoulders and knees; women may need a head covering).',
-        'Carry some cash, as smaller tavernas and shops in Stari Bar may not accept cards.',
-        'Locals are warm, and a relaxed, unhurried pace at meals is the norm.',
+        'Carry some cash, as smaller tavernas and shops in Kotor’s Old Town may not accept cards.',
+        'Kotor’s Old Town is walkable from the cruise berth; the bay views are the highlight, so allow time to wander.',
       ],
     },
     athens: {
@@ -7084,7 +7084,7 @@
   }
 
   // Ports that have a filmic destination photo in /media (shown atop the open day card)
-  var PORT_IMAGES = { venice: 1, dubrovnik: 1, bar: 1, athens: 1, kusadasi: 1, rhodes: 1, santorini: 1, istanbul: 1 };
+  var PORT_IMAGES = { venice: 1, dubrovnik: 1, kotor: 1, athens: 1, kusadasi: 1, rhodes: 1, santorini: 1, istanbul: 1 };
   function renderCruiseSchedule() {
     var el = document.getElementById('cruise-schedule');
     if (!el) return;
@@ -8265,8 +8265,8 @@
 
   // ===== Restaurants finder =====
   var RESTAURANTS = [], restaurantsLoaded = false, activeRestPort = 'venice';
-  var REST_PORTS = ['venice', 'ravenna', 'dubrovnik', 'bar', 'athens', 'kusadasi', 'rhodes', 'santorini', 'istanbul'];
-  var REST_LABEL = { venice: 'Venice', ravenna: 'Ravenna', dubrovnik: 'Dubrovnik', bar: 'Bar',
+  var REST_PORTS = ['venice', 'ravenna', 'dubrovnik', 'kotor', 'athens', 'kusadasi', 'rhodes', 'santorini', 'istanbul'];
+  var REST_LABEL = { venice: 'Venice', ravenna: 'Ravenna', dubrovnik: 'Dubrovnik', kotor: 'Kotor',
     athens: 'Athens', kusadasi: 'Kuşadası', rhodes: 'Rhodes', santorini: 'Santorini', istanbul: 'Istanbul' };
   // ONE fixed reference point per port so every card's distance is comparable
   // (no more per-card "nearest landmark" — 3 mi means the same thing for every spot).
@@ -8274,7 +8274,7 @@
     venice: { lat: 45.43428, lng: 12.33811, label: 'Piazza San Marco' },
     ravenna: { lat: 44.41776, lng: 12.19932, label: 'Piazza del Popolo' },
     dubrovnik: { lat: 42.64171, lng: 18.10720, label: 'Pile Gate' },
-    bar: { lat: 42.09222, lng: 19.08444, label: 'the Port of Bar' },
+    kotor: { lat: 42.42466, lng: 18.77123, label: 'Kotor Old Town' },
     athens: { lat: 37.97153, lng: 23.72575, label: 'the Acropolis' },
     kusadasi: { lat: 37.86306, lng: 27.25576, label: 'the cruise port' },
     rhodes: { lat: 36.44470, lng: 28.22751, label: 'Rhodes Old Town' },
@@ -8519,7 +8519,7 @@
   // ----- "Your Day" meal-timing block -----
   var REST_DAY = {
     venice: { date: '2026-07-02', pre: true }, ravenna: { date: '2026-07-03', embark: true },
-    dubrovnik: { date: '2026-07-04' }, bar: { date: '2026-07-05' }, athens: { date: '2026-07-07' },
+    dubrovnik: { date: '2026-07-04' }, kotor: { date: '2026-07-05' }, athens: { date: '2026-07-07' },
     kusadasi: { date: '2026-07-08' }, rhodes: { date: '2026-07-09' }, santorini: { date: '2026-07-10' },
     istanbul: { date: '2026-07-12' },
   };
