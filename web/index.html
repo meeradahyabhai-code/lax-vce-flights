@@ -1884,11 +1884,14 @@
   .cday-cine .cday-times { color: #fff; opacity: .95; font-size: 14px; margin-top: 5px; text-shadow: 0 1px 12px rgba(0,0,0,.5); font-feature-settings: var(--nums-tabular); }
   .cday-cine .cday-caret-w { flex: 0 0 auto; color: #fff; font-size: 16px; line-height: 1; opacity: .95; transition: transform .2s; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
   .cday-cine:not(.open) .cday-caret-w { transform: rotate(-90deg); }
-  .cday-cine .cday-body { background: var(--bg-surface); padding: 18px 20px 22px; }
   .cday-events-strip { padding: 4px 18px 14px; }
   .cday-cine .cday-events-strip { background: var(--bg-surface); padding: 16px 20px 2px; }
-  .cday-body { padding: 0 18px 18px; overflow: hidden; max-height: 0; opacity: 0; transition: max-height .45s cubic-bezier(.22,1,.36,1), opacity .32s ease; }
-  .cday.open .cday-body { max-height: 4000px; opacity: 1; }
+  /* Collapsed body must be truly 0-height: keep horizontal padding, drop vertical
+     (otherwise the top/bottom padding renders an empty strip exposing the card bg). */
+  .cday-body { padding: 0 18px; overflow: hidden; max-height: 0; opacity: 0; transition: max-height .45s cubic-bezier(.22,1,.36,1), opacity .32s ease, padding .3s ease; }
+  .cday.open .cday-body { max-height: 4000px; opacity: 1; padding-bottom: 18px; }
+  .cday-cine .cday-body { background: var(--bg-surface); padding-left: 20px; padding-right: 20px; }
+  .cday-cine.open .cday-body { padding-top: 18px; padding-bottom: 22px; }
   /* Ritz-style "+" that rotates to a close and opens the day smoothly */
   .cday-plus { position: relative; width: 18px; height: 18px; flex: 0 0 auto; align-self: center; transition: transform .42s cubic-bezier(.22,1,.36,1); }
   .cday-plus::before, .cday-plus::after { content: ''; position: absolute; background: var(--azure); border-radius: 2px; }
@@ -6704,6 +6707,24 @@
         if (joins.length > 1) emeta.push('<span class="mb-people">' + joins.length + ' going</span>');
         add({ date: d, time: rec.start_time, icon: 'excursion', eyebrow: mbCity(rec.port_label),
           title: rec.title || 'Excursion', subHtml: metaJoin(emeta),
+          onTap: function () { goToCruiseDate(d); } });
+      });
+    });
+    // Restaurants I added or joined (Our Trip "Where to eat")
+    Object.keys(ADDED_RESTAURANTS || {}).forEach(function (date) {
+      (ADDED_RESTAURANTS[date] || []).forEach(function (rec) {
+        var joins = rec.joins || [];
+        var mine = joins.some(function (j) { return String(j).toLowerCase() === meKey; }) ||
+          (rec.added_by || '').toLowerCase() === meKey;
+        if (!mine) return;
+        var d = rec.port_date || date;
+        var rmeta = [];
+        if (rec.start_time) rmeta.push('<span class="mb-time">' + escHtml(rec.start_time) + '</span>');
+        var meal = rec.meal ? (String(rec.meal).charAt(0).toUpperCase() + String(rec.meal).slice(1)) : '';
+        if (meal) rmeta.push('<span class="mb-desc">' + escHtml(meal) + '</span>');
+        if (joins.length > 1) rmeta.push('<span class="mb-people">' + joins.length + ' going</span>');
+        add({ date: d, time: rec.start_time, icon: 'dining', eyebrow: mbCity(rec.port_label),
+          title: rec.title || 'Restaurant', subHtml: metaJoin(rmeta),
           onTap: function () { goToCruiseDate(d); } });
       });
     });
