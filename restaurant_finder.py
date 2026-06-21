@@ -12,6 +12,8 @@ keep the >=4.0 rating AND >=100 reviews bar. Everything is hard-capped to the ra
 """
 from __future__ import annotations
 
+import concurrent.futures
+import json
 import urllib.parse
 
 from hotel_agent import _places_key, _haversine, PLACES_SEARCH_URL
@@ -189,6 +191,92 @@ def normalize(p: dict, port_key: str, port_label: str, center: dict) -> dict | N
         "source_tags": ["google", "dynamic"],
         "dynamic": True,
     }
+
+
+# ---------------------------------------------------------------- enrichment ----
+# Give the live "wider area" results the same concierge writeup the curated catalog
+# has (vibe sentence + profile), grounded in the real Google review material we
+# already pulled. Batched + parallel so it stays fast; the endpoint caches 30 days.
+OPENAI_URL = "https://api.openai.com/v1/chat/completions"
+ENRICH_MODEL = "gpt-4o-mini"
+ENRICH_SYS = (
+    "You profile restaurants for a refined family travel app, using ONLY the provided "
+    "reviews/summary for each. Never invent. You are given a JSON array under 'items'; "
+    "for EACH item return an object with the SAME integer 'ref', plus:\n"
+    '  "descriptor": 2-4 word vibe tag (e.g. "canalside trattoria", "lively meze spot")\n'
+    '  "formality": one of "Casual","Smart casual","Fine dining"\n'
+    '  "reservation": one of "Walk-in friendly","Reservation recommended","Reservation required"\n'
+    '  "best_dishes": up to 3 specific dishes reviewers praise (lowercase), [] if none named\n'
+    '  "veg_note": short phrase on vegetarian options; "" if unknown\n'
+    '  "vibe": one warm, quiet, concierge-voice sentence (max 22 words, no emoji/exclamation)\n'
+    "Voice: specific and grounded, never marketing. Avoid empty praise words like "
+    "'delicious', 'amazing', 'fantastic', 'must-visit' — describe what the place actually "
+    "is (setting, dish, who it suits). If the material is thin, stay plain and factual.\n"
+    'Return JSON: {"results": [ ... ]}. Ground every field in the material; keep it honest if thin.'
+)
+
+
+def _popularity(rating, reviews) -> str:
+    reviews = reviews or 0
+    if reviews >= 3000:
+        return "Iconic"
+    if reviews >= 1000:
+        return "Very popular"
+    if reviews >= 300:
+        return "Well-loved"
+    return "Under the radar" if (rating or 0) >= 4.4 else "Quieter spot"
+
+
+def _enrich_batch(batch: list[dict], openai_key: str) -> None:
+    items = [{"ref": i, "name": r["name"], "cuisine": r.get("cuisine"),
+              "price": r.get("price") or "", "rating": r.get("rating"), "reviews": r.get("reviews"),
+              "material": ((r.get("editorial", "") + "\n" + "\n".join(r.get("quotes", []))).strip() or "(none)")[:1500]}
+             for i, r in enumerate(batch)]
+    try:
+        resp = requests.post(
+            OPENAI_URL,
+            headers={"Authorization": f"Bearer {openai_key}", "Content-Type": "application/json"},
+            json={"model": ENRICH_MODEL, "temperature": 0.5, "max_tokens": 1500,
+                  "response_format": {"type": "json_object"},
+                  "messages": [{"role": "system", "content": ENRICH_SYS},
+                               {"role": "user", "content": json.dumps({"items": items})}]},
+            timeout=30)
+        resp.raise_for_status()
+        data = json.loads(resp.json()["choices"][0]["message"]["content"])
+    except Exception:  # noqa: BLE001
+        return  # leave these rows un-enriched rather than fail the whole search
+    by_ref = {}
+    for x in (data.get("results") or []):
+        try:
+            by_ref[int(x.get("ref"))] = x
+        except (ValueError, TypeError):
+            pass
+    for i, r in enumerate(batch):
+        d = by_ref.get(i)
+        if not d:
+            continue
+        r["profile"] = {
+            "descriptor": (d.get("descriptor") or "").strip(),
+            "formality": d.get("formality") or "",
+            "reservation": d.get("reservation") or "",
+            "best_dishes": [s for s in (d.get("best_dishes") or []) if s][:3],
+            "veg_note": (d.get("veg_note") or "").strip(),
+            "popularity": _popularity(r.get("rating"), r.get("reviews")),
+        }
+        v = (d.get("vibe") or "").strip().strip('"')
+        if v:
+            r["vibe"] = v
+
+
+def enrich_rows(rows: list[dict], openai_key: str | None, batch_size: int = 12,
+                max_workers: int = 8) -> list[dict]:
+    """Fill profile + vibe on dynamic rows via batched, parallel OpenAI calls."""
+    if not openai_key or not rows:
+        return rows
+    batches = [rows[i:i + batch_size] for i in range(0, len(rows), batch_size)]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as ex:
+        list(ex.map(lambda b: _enrich_batch(b, openai_key), batches))
+    return rows
 
 
 def search_area(port_key: str, radius_mi: float = 10.0, key: str | None = None,

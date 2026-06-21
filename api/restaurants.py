@@ -20,7 +20,7 @@ import requests
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from restaurant_finder import search_area, ANCHORS
+from restaurant_finder import search_area, enrich_rows, ANCHORS
 from hotel_agent import _places_key
 
 # /tmp on Vercel (read-only fs), data/ locally — same pattern as api/hotels.py
@@ -113,6 +113,10 @@ class handler(BaseHTTPRequestHandler):
                 return self._send(200, cached, cache=True)
 
             result = search_area(port, radius_mi=radius_mi, sleep=time.sleep)
+            # Give the live results the same vibe/profile writeup as the curated picks
+            # (grounded in the Google review material). Cached 30 days, so one-time cost.
+            result["restaurants"] = enrich_rows(result.get("restaurants", []),
+                                                os.environ.get("OPENAI_API_KEY"))
             result["_cached_at"] = time.time()
             _write_cache(cache_file, result)
             return self._send(200, result, cache=True)

@@ -128,7 +128,10 @@ class H(BaseHTTPRequestHandler):
                 radius = 10
             ckey = f"{port}:{radius}"
             if ckey not in _REST_CACHE:
-                _REST_CACHE[ckey] = rfinder.search_area(port, radius_mi=radius, sleep=time.sleep)
+                res = rfinder.search_area(port, radius_mi=radius, sleep=time.sleep)
+                res["restaurants"] = rfinder.enrich_rows(res.get("restaurants", []),
+                                                         os.environ.get("OPENAI_API_KEY"))
+                _REST_CACHE[ckey] = res
             self._send(200, _REST_CACHE[ckey])
             return
 

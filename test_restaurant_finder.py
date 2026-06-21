@@ -92,6 +92,14 @@ def test_dedupe_by_id_and_sorted_by_distance(monkeypatch):
     assert out[0]["distance_mi"] <= out[-1]["distance_mi"]
 
 
+def test_enrich_rows_noop_without_key():
+    # No OpenAI key -> rows pass through untouched (no network, safe in CI).
+    rows = [{"name": "X", "rating": 4.5, "reviews": 200, "vibe": "", "profile": None}]
+    out = rf.enrich_rows(rows, openai_key=None)
+    assert out is rows
+    assert out[0]["profile"] is None and out[0]["vibe"] == ""
+
+
 def test_normalize_shape(monkeypatch):
     general = [_place("g1", "Test Bacaro", 45.44, 12.33, 4.5, 1200)]
     _patch(monkeypatch, [], general)

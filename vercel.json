@@ -15,7 +15,7 @@
       "maxDuration": 30
     },
     "api/restaurants.py": {
-      "maxDuration": 30
+      "maxDuration": 60
     },
     "api/points.py": {
       "maxDuration": 20
