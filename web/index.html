@@ -8364,7 +8364,8 @@
     restRadius[pk] = rad;
     if (restDyn[dynKey(pk, rad)]) { renderRestaurants(); return; }
     restDynLoading = true; renderRestaurants();
-    fetchDynamic(pk, rad).then(function () { restDynLoading = false; renderRestaurants(); });
+    startRestLoadWatch();
+    fetchDynamic(pk, rad).then(function () { restDynLoading = false; stopRestLoadWatch(); renderRestaurants(); });
   }
   // Curated rows for the active port, merged with the loaded dynamic set if a radius is on.
   function currentRestRows() {
@@ -8381,6 +8382,41 @@
     if (r.photo_local) return encodeURI(r.photo_local);
     if (r.dynamic && r.photo_ref) return '/api/restaurants?photo=' + encodeURIComponent(r.photo_ref) + '&w=520';
     return '';
+  }
+
+  // Loading indicator — same progress-bar + rotating-phrase component the flights and
+  // hotels searches use. Rule: only show it if the load runs longer than 2 seconds
+  // (so a warm/cached load that returns instantly never flashes a spinner).
+  var restLoadTimer = null, restPhraseTimer = null;
+  var REST_PHRASES = [
+    'Searching every spot nearby…', 'Finding the best-rated tables…',
+    'Pulling in Indian and local favorites…', 'Writing up each place…', 'Almost ready…',
+  ];
+  function startRestLoadWatch() {
+    clearTimeout(restLoadTimer);
+    restLoadTimer = setTimeout(function () { if (restDynLoading) showRestLoader(); }, 2000);
+  }
+  function stopRestLoadWatch() {
+    clearTimeout(restLoadTimer); restLoadTimer = null;
+    if (restPhraseTimer) { clearInterval(restPhraseTimer); restPhraseTimer = null; }
+    var l = document.getElementById('rest-loader'); if (l) l.remove();
+  }
+  function showRestLoader() {
+    var res = document.getElementById('rest-results');
+    if (!res || document.getElementById('rest-loader')) return;
+    var div = document.createElement('div');
+    div.id = 'rest-loader'; div.className = 'hotel-loading';
+    div.innerHTML = '<div class="mc-progress-bar"><div class="mc-progress-fill"></div></div>' +
+      '<div class="mc-loading-phrase" id="rest-phrase">' + REST_PHRASES[0] + '</div>';
+    var list = res.querySelector('.rest-list') || res.querySelector('#rest-map');
+    if (list) res.insertBefore(div, list); else res.appendChild(div);
+    var i = 0, el = document.getElementById('rest-phrase');
+    restPhraseTimer = setInterval(function () {
+      if (!restDynLoading || !document.getElementById('rest-phrase')) { clearInterval(restPhraseTimer); restPhraseTimer = null; return; }
+      i = (i + 1) % REST_PHRASES.length;
+      el.style.opacity = '0';
+      setTimeout(function () { if (el) { el.textContent = REST_PHRASES[i]; el.style.opacity = '1'; } }, 300);
+    }, 2000);
   }
 
   function restTier(r) { return r.michelin === 'star' ? 3 : r.michelin === 'bib' ? 2 : 0; }
@@ -8835,7 +8871,8 @@
       restRadius[pk] = 10;
       if (!restDyn[dynKey(pk, 10)]) {
         restDynLoading = true;
-        fetchDynamic(pk, 10).then(function () { restDynLoading = false; renderRestaurants(); });
+        startRestLoadWatch();  // shows the flights/hotels-style loader only if it takes >2s
+        fetchDynamic(pk, 10).then(function () { restDynLoading = false; stopRestLoadWatch(); renderRestaurants(); });
       }
     }
 
