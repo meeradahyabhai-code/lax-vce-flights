@@ -972,7 +972,9 @@
   .rseg-btn:hover { color: var(--azure); }
   .rseg-btn.active { background: var(--azure); color: #fff; }
   .rest-discover-note { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 10px; line-height: 1.45; }
-  .rest-anchornote { font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: .03em; text-transform: uppercase; color: var(--text-tertiary); margin: 2px 0 10px; }
+  .rest-areahead { margin: 6px 0 4px; }
+  .rest-areatitle { font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.2; }
+  .rest-anchornote { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--text-secondary); margin: 3px 0 12px; }
   .rbadge-nearby { background: rgba(255,255,255,.92); color: var(--lagoon); border: 1px solid var(--lagoon); font-weight: 600; }
   #rest-map { height: 440px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border-strong); }
   .rest-pin { display: inline-flex; align-items: center; gap: 3px; background: var(--bg-surface); border: 1px solid var(--border-strong); color: var(--ink); border-radius: 999px; padding: 3px 9px; font-family: var(--sans); font-size: 12px; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 6px rgba(10,10,15,0.22); }
@@ -986,40 +988,37 @@
   .rest-pop-go { margin-top: 10px; font-family: var(--sans); font-size: 12px; font-weight: 600; color: #fff; background: var(--azure); border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
   .rest-pop-go:hover { background: var(--lagoon); }
   .rest-sectlabel { font-family: var(--sans); font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--azure); margin: 22px 0 12px; }
-  .rest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-  .rcard { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 16px; overflow: hidden; cursor: pointer; transition: box-shadow .15s, border-color .15s; display: flex; flex-direction: column; }
-  .rcard:hover { box-shadow: 0 8px 24px rgba(14,31,56,.10); border-color: var(--azure); }
-  .rcard.feature { grid-column: span 2; }
-  .rcard.feature .rcard-photo { height: 180px; }
-  @media (max-width: 560px) { .rcard.feature { grid-column: 1 / -1; } }
-  .rcard-why { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--azure); margin-top: 7px; line-height: 1.4; }
-  .rcard-photo { position: relative; height: 150px; background: #e8e3d8; overflow: hidden; }
-  .rcard-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .rcard-badges { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
-  .rbadge { font-family: var(--sans); font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 999px; letter-spacing: .01em; backdrop-filter: blur(4px); }
-  .rbadge-best { background: var(--azure); color: #fff; }
-  .rbadge-mich { background: #fff; color: #9a1b2f; border: 1px solid #c8102e; font-weight: 700; letter-spacing: .04em; }
-  .rbadge-mich .mich-star { color: #c8102e; letter-spacing: 0; margin-right: 3px; }
-  .rbadge-loved { background: rgba(255,255,255,.92); color: var(--text-primary); }
-  .rbadge-rec { background: var(--lagoon); color: #fff; border: none; cursor: pointer; }
-  .rcard-save { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 999px; border: none; background: rgba(255,255,255,0.92); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 5px rgba(10,10,15,0.22); padding: 0; }
-  .rcard-save svg { width: 19px; height: 19px; fill: none; stroke: var(--ink); stroke-width: 1.7; }
+  .rest-list { display: flex; flex-direction: column; gap: 10px; }
+  .rest-grid { display: flex; flex-direction: column; gap: 10px; }  /* chat answers reuse this */
+  .rcard { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 14px; overflow: hidden; transition: box-shadow .15s, border-color .15s; }
+  .rcard:hover { box-shadow: 0 6px 18px rgba(14,31,56,.08); border-color: var(--azure); }
+  .rcard-main { display: flex; gap: 13px; padding: 12px; cursor: pointer; align-items: flex-start; }
+  .rcard-thumb { width: 88px; height: 88px; flex: 0 0 auto; border-radius: 10px; object-fit: cover; background: #e8e3d8; display: block; }
+  .rcard-thumb-empty { background: linear-gradient(135deg, #ece7dc, #e0dccf); }
+  .rcard-info { flex: 1 1 auto; min-width: 0; }
+  .rcard-toprow { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .rcard-name { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--ink); line-height: 1.22; }
+  .rcard-save { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 999px; border: none; background: transparent; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; margin: -2px -4px 0 0; }
+  .rcard-save svg { width: 20px; height: 20px; fill: none; stroke: var(--text-tertiary); stroke-width: 1.7; }
   .rcard-save.on svg { fill: var(--gold); stroke: var(--gold); }
+  .rcard-meta { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 3px; font-feature-settings: var(--nums-tabular, "tnum"); }
+  .rcard-rating { font-family: var(--sans); font-size: 13.5px; font-weight: 600; color: var(--ink); margin-top: 4px; font-feature-settings: var(--nums-tabular, "tnum"); }
+  .rcard-rating .star { color: var(--gold); }
+  .rcard-rcount { color: var(--text-tertiary); font-weight: 500; }
+  .rcard-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .rtag { font-family: var(--sans); font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; line-height: 1.3; }
+  .rtag-mich { background: #fff; color: #9a1b2f; border: 1px solid #c8102e; letter-spacing: .03em; }
+  .rtag-veg { background: rgba(46,125,50,.10); color: #2e7d32; }
+  .rtag-veg svg { width: 13px; height: 13px; color: #2e7d32; }
+  .rtag-top { background: var(--azure); color: #fff; }
+  .rtag-nearby { background: rgba(13,110,138,.10); color: var(--lagoon); }
+  .rtag.rbadge-rec { background: var(--lagoon); color: #fff; border: none; cursor: pointer; }
+  .rcard-why { font-family: var(--sans); font-size: 12.5px; font-weight: 600; color: var(--azure); margin-top: 7px; line-height: 1.4; }
   .rcard-recs { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--fog); }
   .rcard-rec-line { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); }
   .rcard-rec-line + .rcard-rec-line { margin-top: 3px; }
-  .rcard-body { padding: 13px 15px 14px; }
-  .rcard-name { font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1.2; }
-  .rcard-meta { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
-  .rcard-row { display: flex; align-items: center; gap: 12px; margin-top: 9px; font-family: var(--sans); font-size: 14px; }
-  .rcard-rating { font-weight: 600; color: var(--ink); font-feature-settings: var(--nums-tabular, "tnum"); }
-  .rcard-rating .star { color: #9aa3af; }
-  .rcard-price { color: var(--text-secondary); font-feature-settings: var(--nums-tabular, "tnum"); }
-  .rcard-veg { display: inline-flex; }
-  .rcard-veg svg { width: 18px; height: 18px; color: #2e7d32; }
-  .rcard-veg.full svg { color: #1b5e20; }
-  .rcard-expand { display: none; border-top: 1px solid var(--fog); padding: 13px 15px 15px; }
-  .rcard.open .rcard-expand { display: block; }
+  .rcard-expand { max-height: 0; overflow: hidden; opacity: 0; padding: 0 14px; transition: max-height .35s cubic-bezier(.22,1,.36,1), opacity .25s, padding .35s; }
+  .rcard.open .rcard-expand { max-height: 1400px; opacity: 1; padding: 6px 14px 15px; border-top: 1px solid var(--fog); }
   .rcard-vibe { font-family: var(--serif); font-style: italic; font-size: 15px; line-height: 1.45; color: var(--text-primary); }
   .rcard-prof { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 10px; line-height: 1.5; }
   .rcard-prof b { color: var(--text-primary); font-weight: 600; }
@@ -8371,6 +8370,16 @@
       return kb[0] - ka[0] || kb[1] - ka[1] || kb[2] - ka[2];
     });
   }
+  // Relevance ranking, Google-style: a blend of rating, review volume, Michelin
+  // standing, and proximity to the city anchor — not any single one of them.
+  function restRelevance(r) {
+    var tier = r.michelin === 'star' ? 2 : r.michelin === 'bib' ? 1 : 0;
+    var rating = (r.reviews >= 200 ? (r.rating || 0) : Math.min(r.rating || 0, 4.2));  // gate thin counts
+    var rev = Math.log((r.reviews || 0) + 1) / Math.LN10;  // log10(reviews+1)
+    var d = restDist(r);
+    var prox = d == null ? 0 : Math.max(0, 1 - d / 12);  // 1 at the anchor → 0 by ~12 mi
+    return tier * 2 + (rating - 4) * 2 + rev * 0.6 + prox * 0.8;
+  }
   function restCrown(rows) {
     var best = restSort(rows)[0];
     var loved = rows.slice().sort(function (a, b) { return (b.reviews || 0) - (a.reviews || 0); })[0];
@@ -8419,23 +8428,36 @@
 
   function restCardHtml(r, opts) {
     opts = opts || {};
-    var crown = opts.crown || {};
     var p = r.profile || {};
-    var badges = '';
-    if (opts.best)
-      badges += '<span class="rbadge rbadge-best">★ Best in ' + escHtml(REST_LABEL[r.port_key] || '') + '</span>';
-    badges += michelinBadge(r);
-    if (!opts.best && crown.lovedId === r.id && crown.bestId !== r.id)
-      badges += '<span class="rbadge rbadge-loved">Most loved</span>';
-    if (recsFor(r.id).length)
-      badges += '<button class="rbadge rbadge-rec" data-id="' + escHtml(r.id) + '">Recommended</button>';
-    if (r.dynamic)
-      badges += '<span class="rbadge rbadge-nearby">Wider area</span>';
 
-    var meta = [];
+    // meta line: distance (from the single anchor) · cuisine · price
+    var metaBits = [];
     var _d = restDist(r);
-    if (_d != null) meta.push((_d < 0.1 ? '<0.1' : _d.toFixed(_d < 10 ? 1 : 0)) + ' mi');
-    if (r.cuisine && r.cuisine !== 'Restaurant') meta.push(r.cuisine);
+    if (_d != null) metaBits.push((_d < 0.1 ? '&lt;0.1' : _d.toFixed(_d < 10 ? 1 : 0)) + ' mi');
+    if (r.cuisine && r.cuisine !== 'Restaurant') metaBits.push(escHtml(r.cuisine));
+    if (r.price) metaBits.push(escHtml(r.price));
+
+    // inline tags
+    var tags = '';
+    if (r.michelin === 'star') {
+      var m = (r.michelin_award || '').match(/(\d)/);
+      tags += '<span class="rtag rtag-mich">' + Array((m ? +m[1] : 1) + 1).join('★') + ' MICHELIN</span>';
+    } else if (r.michelin === 'bib') {
+      tags += '<span class="rtag rtag-mich">MICHELIN Bib</span>';
+    }
+    if (r.fully_veg) tags += '<span class="rtag rtag-veg">' + VEG_SVG + 'Vegetarian</span>';
+    else if (r.veg_options) tags += '<span class="rtag rtag-veg">' + VEG_SVG + 'Veg options</span>';
+    if (opts.best) tags += '<span class="rtag rtag-top">Top pick</span>';
+    if (r.dynamic) tags += '<span class="rtag rtag-nearby">Wider area</span>';
+    if (recsFor(r.id).length) tags += '<button class="rtag rbadge-rec" data-id="' + escHtml(r.id) + '">Recommended</button>';
+
+    var _src = restPhotoSrc(r);
+    var thumb = _src
+      ? '<img class="rcard-thumb" src="' + _src + '" alt="" loading="lazy" decoding="async">'
+      : '<div class="rcard-thumb rcard-thumb-empty" aria-hidden="true"></div>';
+
+    var ratingTxt = (r.rating ? Number(r.rating).toFixed(1) : '—') +
+      (r.reviews ? ' <span class="rcard-rcount">(' + Number(r.reviews).toLocaleString() + ')</span>' : '');
 
     var dishes = (p.best_dishes || []).map(function (d) {
       return '<span class="rcard-dish">' + escHtml(d) + '</span>';
@@ -8445,9 +8467,6 @@
     if (p.reservation) prof.push(p.reservation);
     if (p.popularity) prof.push(p.popularity);
 
-    var _src = restPhotoSrc(r);
-    var img = _src ? '<img class="rcard-img" src="' + _src +
-      '" alt="" loading="' + (opts.feature ? 'eager' : 'lazy') + '" decoding="async">' : '';
     var expand = '<div class="rcard-expand">' +
       (r.vibe ? '<div class="rcard-vibe">' + escHtml(r.vibe) + '</div>' : '') +
       (prof.length ? '<div class="rcard-prof">' + prof.map(escHtml).join(' &middot; ') + '</div>' : '') +
@@ -8464,16 +8483,16 @@
       }).join('') + '</div>' : '') +
       '</div>';
 
-    return '<div class="rcard' + (opts.feature ? ' feature' : '') + '" data-id="' + escHtml(r.id) + '">' +
-      '<div class="rcard-photo">' + img + '<div class="rcard-badges">' + badges + '</div>' +
-        '<button class="rcard-save' + (isSaved(r.id) ? ' on' : '') + '" data-id="' + escHtml(r.id) + '" aria-label="Save">' + HEART_SVG + '</button></div>' +
-      '<div class="rcard-body"><div class="rcard-name">' + escHtml(r.name) + '</div>' +
-      (meta.length ? '<div class="rcard-meta">' + escHtml(meta.join(' · ')) + '</div>' : '') +
-      (opts.reason ? '<div class="rcard-why">' + escHtml(opts.reason) + '</div>' : '') +
-      '<div class="rcard-row"><span class="rcard-rating"><span class="star">★</span> ' +
-        (r.rating ? Number(r.rating).toFixed(1) : '—') + '</span>' +
-        (r.price ? '<span class="rcard-price">' + escHtml(r.price) + '</span>' : '') +
-        restVeg(r) + '</div></div>' + expand + '</div>';
+    return '<div class="rcard" data-id="' + escHtml(r.id) + '">' +
+      '<div class="rcard-main">' + thumb +
+        '<div class="rcard-info">' +
+          '<div class="rcard-toprow"><div class="rcard-name">' + escHtml(r.name) + '</div>' +
+            '<button class="rcard-save' + (isSaved(r.id) ? ' on' : '') + '" data-id="' + escHtml(r.id) + '" aria-label="Save">' + HEART_SVG + '</button></div>' +
+          (metaBits.length ? '<div class="rcard-meta">' + metaBits.join(' · ') + '</div>' : '') +
+          '<div class="rcard-rating"><span class="star">★</span> ' + ratingTxt + '</div>' +
+          (tags ? '<div class="rcard-tags">' + tags + '</div>' : '') +
+          (opts.reason ? '<div class="rcard-why">' + escHtml(opts.reason) + '</div>' : '') +
+        '</div></div>' + expand + '</div>';
   }
 
   // ----- "Your Day" meal-timing block -----
@@ -8785,77 +8804,62 @@
     });
 
     destroyRestMap();
+    var pk = activeRestPort;
+    var label = escHtml(REST_LABEL[pk] || pk);
+
+    // Default behaviour (Google-style): show everything within 10 mi of the city
+    // anchor, one relevance-ranked list. Curated shows instantly; the live nearby
+    // set merges in when it arrives, then it's cached.
+    if (restRadius[pk] === undefined) {
+      restRadius[pk] = 10;
+      if (!restDyn[dynKey(pk, 10)]) {
+        restDynLoading = true;
+        fetchDynamic(pk, 10).then(function () { restDynLoading = false; renderRestaurants(); });
+      }
+    }
+
     var allRows = currentRestRows();
-    var label = escHtml(REST_LABEL[activeRestPort] || activeRestPort);
-    var anchorLabel = (REST_ANCHOR[activeRestPort] || {}).label || ('central ' + label);
-    var html = renderDayBlock(activeRestPort) + renderFilterBar(allRows);
+    var rows = applyRestFilters(allRows);
+    var anyFilter = restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin || restFilters.saved;
+
+    var html = renderDayBlock(pk) + renderFilterBar(allRows);
+    html += '<div class="rest-areahead"><div class="rest-areatitle">Restaurants near ' + label + '</div>' +
+      '<div class="rest-anchornote">Within 10 mi of central ' + label + ' · ' +
+        rows.length + ' place' + (rows.length === 1 ? '' : 's') +
+        (restDynLoading ? ' · finding more nearby…' : '') + '</div></div>';
     html += renderDiscoverBar();
 
-    var rows = applyRestFilters(allRows);
-    // Distances all measured from the SAME anchor, so "Closest" and the per-card
-    // mileage are comparable. State the anchor once, here.
-    html += '<div class="rest-anchornote">Distances from ' + escHtml(anchorLabel) + '</div>';
     if (!rows.length) {
-      res.innerHTML = html + '<div class="rcard-empty">Nothing matches those filters. Tap Clear to start over.</div>';
+      res.innerHTML = html + '<div class="rcard-empty">' +
+        (restDynLoading ? 'Finding places nearby…' : 'Nothing matches those filters. Tap Clear to start over.') + '</div>';
       return;
     }
 
-    // One sorted set, used by BOTH the list and the map so they always agree.
-    var byClosest = function (a, b) {
-      var da = restDist(a), db = restDist(b);
-      da = da == null ? 1e9 : da; db = db == null ? 1e9 : db;
-      return da - db || (b.reviews || 0) - (a.reviews || 0);
-    };
-    var rowsSorted = (restSortMode === 'closest') ? rows.slice().sort(byClosest) : restSort(rows);
+    // One relevance-ranked set (rating + reviews + Michelin + proximity), used by
+    // BOTH list and map so they always agree.
+    var rowsSorted = rows.slice().sort(function (a, b) { return restRelevance(b) - restRelevance(a); });
 
     if (restView === 'map') {
       res.innerHTML = html + '<div id="rest-map"></div>';
       initRestMap(rowsSorted);
       return;
     }
-    var crown = restCrown(rows);
-    var anyFilter = restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin;
-    if (restSortMode === 'closest') {
-      html += '<div class="rest-sectlabel">Closest first</div><div class="rest-grid">' +
-        rowsSorted.map(function (r) { return restCardHtml(r, { crown: crown }); }).join('') + '</div>';
-      res.innerHTML = html;
-      return;
-    }
-    var best = rowsSorted[0], rest = rowsSorted.slice(1);
-    if (best) {
-      html += '<div class="rest-sectlabel">' + (anyFilter ? 'Top match in ' : 'The best in ') + label +
-        '</div><div class="rest-grid">' +
-        restCardHtml(best, { crown: crown, best: !anyFilter, feature: true, reason: bestReason(best) }) + '</div>';
-    }
-    if (rest.length) {
-      html += '<div class="rest-sectlabel">More great tables</div><div class="rest-grid">' +
-        rest.map(function (r) { return restCardHtml(r, { crown: crown }); }).join('') + '</div>';
-    }
-    res.innerHTML = html;
+    var listHtml = '<div class="rest-list">';
+    rowsSorted.forEach(function (r, i) {
+      var top = (i === 0 && !anyFilter);  // flag the single best, like before
+      listHtml += restCardHtml(r, { best: top, reason: top ? bestReason(r) : '' });
+    });
+    res.innerHTML = html + listHtml + '</div>';
   }
 
-  // Clean discovery controls: what to show (our picks vs everything nearby),
-  // how to sort, and list vs map — all of which keep list + map in sync.
+  // Just the List/Map switch now — it keeps both views on the same ranked set.
   function renderDiscoverBar() {
-    var pk = activeRestPort;
-    var exploring = !!(restRadius[pk] || 0);
     var seg = function (active, attr, val, txt) {
       return '<button class="rseg-btn' + (active ? ' active' : '') + '" ' + attr + '="' + val + '">' + txt + '</button>';
     };
-    var showRow = '<div class="rseg" role="group">' +
-      seg(!exploring, 'data-explore', '0', 'Our picks') +
-      seg(exploring, 'data-explore', '1', 'Everything nearby') + '</div>';
-    var sortRow = '<div class="rseg" role="group">' +
-      seg(restSortMode !== 'closest', 'data-sort', 'rated', 'Top rated') +
-      seg(restSortMode === 'closest', 'data-sort', 'closest', 'Closest') + '</div>';
-    var viewRow = '<div class="rseg" role="group">' +
+    return '<div class="rest-discoverbar"><div class="rseg" role="group">' +
       seg(restView === 'list', 'data-view', 'list', 'List') +
-      seg(restView === 'map', 'data-view', 'map', 'Map') + '</div>';
-    var note = restDynLoading
-      ? '<div class="rest-discover-note">Finding every spot nearby, Indian included…</div>'
-      : (exploring ? '<div class="rest-discover-note">Showing our picks plus every well-rated spot nearby, Indian always included.</div>' : '');
-    return '<div class="rest-discoverbar"><div class="rest-discover-rows">' +
-      showRow + sortRow + viewRow + '</div>' + note + '</div>';
+      seg(restView === 'map', 'data-view', 'map', 'Map') + '</div></div>';
   }
 
   async function askRestaurant(q) {
