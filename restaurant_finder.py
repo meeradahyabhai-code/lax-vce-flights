@@ -268,8 +268,8 @@ def _enrich_batch(batch: list[dict], openai_key: str) -> None:
             r["vibe"] = v
 
 
-def enrich_rows(rows: list[dict], openai_key: str | None, batch_size: int = 12,
-                max_workers: int = 8) -> list[dict]:
+def enrich_rows(rows: list[dict], openai_key: str | None, batch_size: int = 6,
+                max_workers: int = 16) -> list[dict]:
     """Fill profile + vibe on dynamic rows via batched, parallel OpenAI calls."""
     if not openai_key or not rows:
         return rows

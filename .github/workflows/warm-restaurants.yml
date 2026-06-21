@@ -1,0 +1,23 @@
+name: Warm Restaurant Search
+
+# The /api/restaurants wider-area search runs a live Places sweep + AI write-ups on
+# a cold cache (~20-30s). This hits every port once so the result is CDN-cached and
+# users get instant, complete results (all Indian included). The CDN cache is purged
+# on each new deploy, so this runs daily AND can be triggered manually after a deploy.
+
+on:
+  schedule:
+    - cron: '30 13 * * *'   # daily, just after the weather refresh
+  workflow_dispatch:
+
+jobs:
+  warm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Warm each port's wider-area search
+        run: |
+          BASE="https://dfc-2026.vercel.app"
+          for port in venice ravenna dubrovnik kotor athens kusadasi rhodes santorini istanbul; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" -m 90 "$BASE/api/restaurants?port=$port&radius_mi=10")
+            echo "warmed $port -> $code"
+          done
