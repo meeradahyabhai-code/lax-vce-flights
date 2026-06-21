@@ -6,11 +6,31 @@ missing photos, etc.). Network-based quality checks (rating freshness vs Google,
 AI day-summary facts, chat picks) live in evals/restaurants_eval.py.
 """
 import json
+import math
 import os
 
 import pytest
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+
+# City-center anchor per port (matches the client). A restaurant must sit within a
+# sane radius of its port — guards against curation pulling the wrong "Venice"
+# (Florida/California), wrong island, etc.
+PORT_ANCHOR = {
+    "venice": (45.43428, 12.33811), "ravenna": (44.41776, 12.19932),
+    "dubrovnik": (42.64171, 18.10720), "bar": (42.09222, 19.08444),
+    "athens": (37.97153, 23.72575), "kusadasi": (37.86306, 27.25576),
+    "rhodes": (36.44470, 28.22751), "santorini": (36.41827, 25.43232),
+    "istanbul": (41.00858, 28.98018),
+}
+MAX_MILES_FROM_PORT = 60  # generous (covers a real port-day trip); catches wrong-country/island
+
+
+def _haversine_mi(a, b, c, d):
+    R = 3958.8
+    h = (math.sin(math.radians(c - a) / 2) ** 2 +
+         math.cos(math.radians(a)) * math.cos(math.radians(c)) * math.sin(math.radians(d - b) / 2) ** 2)
+    return R * 2 * math.asin(math.sqrt(h))
 CATALOG = os.path.join(ROOT, "data", "restaurants.json")
 PHOTO_DIR = os.path.join(ROOT, "public", "media", "restaurants")
 
@@ -90,6 +110,19 @@ def test_every_port_has_options(restaurants):
     by_port = Counter(r["port_key"] for r in restaurants)
     thin = {p: by_port.get(p, 0) for p in PORTS if by_port.get(p, 0) < 8}
     assert not thin, f"ports with too few restaurants: {thin}"
+
+
+def test_restaurants_are_near_their_port(restaurants):
+    # No spot should be wildly far from its port (e.g. a US "Venice").
+    far = []
+    for r in restaurants:
+        a = PORT_ANCHOR.get(r["port_key"])
+        if not a:
+            continue
+        d = _haversine_mi(a[0], a[1], float(r["lat"]), float(r["lng"]))
+        if d > MAX_MILES_FROM_PORT:
+            far.append((r["name"], r["port_key"], round(d), r.get("address", "")[:40]))
+    assert not far, f"restaurants too far from their port: {far[:8]}"
 
 
 def test_indian_present_at_some_ports(restaurants):
