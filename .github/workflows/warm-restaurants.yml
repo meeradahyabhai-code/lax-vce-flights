@@ -18,6 +18,6 @@ jobs:
         run: |
           BASE="https://dfc-2026.vercel.app"
           for port in venice ravenna dubrovnik kotor athens kusadasi rhodes santorini istanbul; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" -m 90 "$BASE/api/restaurants?port=$port&radius_mi=10")
+            code=$(curl -s -o /dev/null -w "%{http_code}" -m 90 "$BASE/api/restaurants?port=$port&radius_mi=5")
             echo "warmed $port -> $code"
           done

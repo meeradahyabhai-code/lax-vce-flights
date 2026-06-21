@@ -965,8 +965,16 @@
   .rfilter-chip.active { background: var(--azure); border-color: var(--azure); color: #fff; }
   .rfilter-clear { color: var(--azure); }
   .rest-viewtoggle { display: flex; gap: 8px; margin: 0 0 16px; align-items: center; flex-wrap: wrap; }
-  .rest-discoverbar { margin: 4px 0 14px; }
+  .rest-discoverbar { margin: 4px 0 14px; display: flex; flex-direction: column; gap: 12px; }
   .rest-discover-rows { display: flex; gap: 10px; flex-wrap: wrap; }
+  .rest-radius { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 14px; padding: 12px 16px 8px; }
+  .rest-radius-top { display: flex; align-items: baseline; justify-content: space-between; }
+  .rest-radius-cap { font-family: var(--sans); font-size: 12.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-secondary); }
+  .rest-radius-val { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--azure); font-feature-settings: var(--nums-tabular, "tnum"); }
+  .rest-radius-input { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 999px; background: var(--border-strong); outline: none; margin: 12px 0 6px; accent-color: var(--azure); }
+  .rest-radius-input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--azure); border: 3px solid #fff; box-shadow: 0 1px 5px rgba(10,10,15,.28); cursor: pointer; }
+  .rest-radius-input::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--azure); border: 3px solid #fff; box-shadow: 0 1px 5px rgba(10,10,15,.28); cursor: pointer; }
+  .rest-radius-ticks { display: flex; justify-content: space-between; font-family: var(--sans); font-size: 11px; color: var(--text-tertiary); font-feature-settings: var(--nums-tabular, "tnum"); }
   .rseg { display: inline-flex; background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 999px; padding: 3px; }
   .rseg-btn { font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--text-secondary); background: none; border: none; border-radius: 999px; padding: 7px 15px; cursor: pointer; white-space: nowrap; transition: color .15s, background .15s; }
   .rseg-btn:hover { color: var(--azure); }
@@ -8340,6 +8348,7 @@
   // a radius of the port anchor (distance-aware, like the hotels flow). Dedup is exact
   // because a restaurant's id IS its Google place id in both sets.
   var REST_RADII = [3, 5, 10, 15, 25];
+  var REST_RADIUS_DEFAULT = 5;
   var restRadius = {};        // port_key -> selected radius (undefined/0 = curated only)
   var restDyn = {};           // 'port:radius' -> rows
   var restDynAnchor = {};     // port_key -> anchor name
@@ -8868,13 +8877,14 @@
     // anchor, one relevance-ranked list. Curated shows instantly; the live nearby
     // set merges in when it arrives, then it's cached.
     if (restRadius[pk] === undefined) {
-      restRadius[pk] = 10;
-      if (!restDyn[dynKey(pk, 10)]) {
+      restRadius[pk] = REST_RADIUS_DEFAULT;  // default 5 mi
+      if (!restDyn[dynKey(pk, restRadius[pk])]) {
         restDynLoading = true;
         startRestLoadWatch();  // shows the flights/hotels-style loader only if it takes >2s
-        fetchDynamic(pk, 10).then(function () { restDynLoading = false; stopRestLoadWatch(); renderRestaurants(); });
+        fetchDynamic(pk, restRadius[pk]).then(function () { restDynLoading = false; stopRestLoadWatch(); renderRestaurants(); });
       }
     }
+    var rad = restRadius[pk] || REST_RADIUS_DEFAULT;
 
     var allRows = currentRestRows();
     var rows = applyRestFilters(allRows);
@@ -8882,7 +8892,7 @@
 
     var html = renderDayBlock(pk) + renderFilterBar(allRows);
     html += '<div class="rest-areahead"><div class="rest-areatitle">Restaurants near ' + label + '</div>' +
-      '<div class="rest-anchornote">Within 10 mi of central ' + label + ' · ' +
+      '<div class="rest-anchornote">Within ' + rad + ' mi of central ' + label + ' · ' +
         rows.length + ' place' + (rows.length === 1 ? '' : 's') +
         (restDynLoading ? ' · finding more nearby…' : '') + '</div></div>';
     html += renderDiscoverBar();
@@ -8910,14 +8920,25 @@
     res.innerHTML = html + listHtml + '</div>';
   }
 
-  // Just the List/Map switch now — it keeps both views on the same ranked set.
+  // Distance slider (snaps to cached radii, 3 mi and up) + the List/Map switch.
   function renderDiscoverBar() {
+    var pk = activeRestPort;
+    var rad = restRadius[pk] || REST_RADIUS_DEFAULT;
+    var idx = REST_RADII.indexOf(rad); if (idx < 0) idx = REST_RADII.indexOf(REST_RADIUS_DEFAULT);
+    var slider = '<div class="rest-radius">' +
+      '<div class="rest-radius-top"><span class="rest-radius-cap">Distance</span>' +
+        '<span class="rest-radius-val" id="rest-radius-val">' + rad + ' mi</span></div>' +
+      '<input type="range" class="rest-radius-input" id="rest-radius-input" min="0" max="' +
+        (REST_RADII.length - 1) + '" step="1" value="' + idx + '" aria-label="Search distance">' +
+      '<div class="rest-radius-ticks">' +
+        REST_RADII.map(function (m) { return '<span>' + m + '</span>'; }).join('') + '</div></div>';
     var seg = function (active, attr, val, txt) {
       return '<button class="rseg-btn' + (active ? ' active' : '') + '" ' + attr + '="' + val + '">' + txt + '</button>';
     };
-    return '<div class="rest-discoverbar"><div class="rseg" role="group">' +
+    var view = '<div class="rseg" role="group">' +
       seg(restView === 'list', 'data-view', 'list', 'List') +
-      seg(restView === 'map', 'data-view', 'map', 'Map') + '</div></div>';
+      seg(restView === 'map', 'data-view', 'map', 'Map') + '</div>';
+    return '<div class="rest-discoverbar">' + slider + view + '</div>';
   }
 
   async function askRestaurant(q) {
@@ -9048,6 +9069,20 @@
       var el = document.getElementById(id);
       if (el) el.addEventListener('click', toggleDelegate);
     });
+    // Distance slider: update the label live while dragging, re-search on release.
+    var results = document.getElementById('rest-results');
+    if (results) {
+      results.addEventListener('input', function (e) {
+        var s = e.target.closest('#rest-radius-input');
+        if (!s) return;
+        var v = document.getElementById('rest-radius-val');
+        if (v) v.textContent = REST_RADII[+s.value] + ' mi';
+      });
+      results.addEventListener('change', function (e) {
+        var s = e.target.closest('#rest-radius-input');
+        if (s) setRestRadius(REST_RADII[+s.value]);
+      });
+    }
   }
 
   function loadExcursions() {
