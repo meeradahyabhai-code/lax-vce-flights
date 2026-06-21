@@ -14,10 +14,10 @@
     "source": "forecast"
   },
   "2026-07-05": {
-    "high": 94,
+    "high": 91,
     "low": 81,
-    "rain_chance": 16,
-    "icon": "sun",
+    "rain_chance": 30,
+    "icon": "cloud",
     "source": "forecast"
   },
   "2026-07-07": {
