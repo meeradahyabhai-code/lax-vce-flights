@@ -54,6 +54,21 @@ classes) — never invent ad-hoc styles. When reporting "ready," always list "St
 - [x] Restaurant Join/Delete buttons styled to match excursions (no raw browser buttons)
 - [x] Map pin popup → "See details & book" jumps to that card in the List view, expanded
 
+## HYBRID DYNAMIC SEARCH (distance-aware, like hotels)
+- [x] **Curated base + live wider-area search.** Curated catalog stays the instant, hand-enriched
+      base ("best in port" with vibe/why/Michelin). On top, a radius control (Curated / 3 / 5 / 10 / 15 /
+      25 mi) pulls live Google Places within a circle of the port anchor, merged in (dedup by Google
+      place id — exact, since id == place id). Indian pulled exhaustively (no rating floor, ≥20-review
+      sanity); general keeps ≥4.0/≥100; everything hard-capped to the radius. Distance shown per card,
+      Best/Nearest sort toggle. Fixes the Bombay Spice / mainland gap permanently.
+- [x] `restaurant_finder.py` (pure logic), `api/restaurants.py` (Places-only, NO SerpAPI; /tmp cache on
+      Vercel + 30-day TTL since restaurants are static), `api/place_photo.py` (proxies Places photos so
+      nothing is downloaded — kills the photo-pack/git problem). Wired into dev_server.py.
+- [x] Tests: `test_restaurant_finder.py` (Indian-always, noise dropped, general floor, radius cap, dedup,
+      normalize). Headless Playwright verified: 52 curated + 134 wider-area merge, Bombay Spice with a
+      proxied photo (520×390), nearest-sort, zero JS errors.
+- Cost: Places free tier + cached 30 days; first search per port ~18s then instant. $0 in practice.
+
 ## STILL TO BUILD (added from latest feedback)
 - [x] **Filters UX redesign** — DONE. Calm "Filters" bar + animated "+" that smoothly reveals a grouped
       panel (Cuisine / Price / Dietary & more), active count, design-system pills. Ritz "+" feel.

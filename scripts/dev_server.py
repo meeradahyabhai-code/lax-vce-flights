@@ -11,6 +11,7 @@ local OPENAI_API_KEY — run scripts/check_keys.py first), mirroring prod.
 import json
 import os
 import sys
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -21,10 +22,12 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "api"))
 import hotel_agent  # noqa: F401,E402  load_dotenv
 import ask  # noqa: E402
+import restaurant_finder as rfinder  # noqa: E402
 
 PUBLIC = ROOT / "public"
 PORT = 8099
 KEY = os.environ.get("OPENAI_API_KEY", "").strip()
+_REST_CACHE: dict = {}  # in-memory dynamic-search cache so local hits don't re-call Places
 
 
 def _ask(payload: dict) -> dict:
@@ -91,7 +94,47 @@ class H(BaseHTTPRequestHandler):
         self._send(404, {"error": "not found"})
 
     def do_GET(self):
+        from urllib.parse import parse_qs, urlparse
         path = self.path.split("?")[0]
+
+        # --- dynamic restaurant search (mirrors api/restaurants.py) ---
+        if path == "/api/restaurants":
+            q = parse_qs(urlparse(self.path).query)
+            port = q.get("port", ["venice"])[0].lower()
+            try:
+                radius = int(float(q.get("radius_mi", ["10"])[0]))
+            except (ValueError, TypeError):
+                radius = 10
+            ckey = f"{port}:{radius}"
+            if ckey not in _REST_CACHE:
+                _REST_CACHE[ckey] = rfinder.search_area(port, radius_mi=radius, sleep=time.sleep)
+            self._send(200, _REST_CACHE[ckey])
+            return
+
+        # --- Places photo proxy (mirrors api/place_photo.py) ---
+        if path == "/api/place_photo":
+            q = parse_qs(urlparse(self.path).query)
+            ref = (q.get("ref", [""])[0]).strip()
+            try:
+                w = max(80, min(1200, int(q.get("w", ["480"])[0])))
+            except (ValueError, TypeError):
+                w = 480
+            if not ref.startswith("places/") or "/photos/" not in ref:
+                self._send(400, {"error": "bad ref"}); return
+            try:
+                r = requests.get(f"https://places.googleapis.com/v1/{ref}/media",
+                                 params={"maxWidthPx": w, "key": os.environ.get("GOOGLE_PLACES_API_KEY")
+                                         or os.environ.get("GOOGLE_MAPS_API_KEY")}, timeout=15)
+                self.send_response(r.status_code if r.status_code != 200 else 200)
+                self.send_header("Content-Type", r.headers.get("Content-Type", "image/jpeg"))
+                self.send_header("Content-Length", str(len(r.content)))
+                self.send_header("Cache-Control", "public, max-age=31536000, immutable")
+                self.end_headers()
+                self.wfile.write(r.content)
+            except Exception as e:  # noqa: BLE001
+                self._send(502, {"error": str(e)[:120]})
+            return
+
         rel = path.lstrip("/") or "index.html"
         f = PUBLIC / rel
         if f.is_dir():

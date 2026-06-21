@@ -964,7 +964,13 @@
   .rfilter-chip:hover { border-color: var(--azure); }
   .rfilter-chip.active { background: var(--azure); border-color: var(--azure); color: #fff; }
   .rfilter-clear { color: var(--azure); }
-  .rest-viewtoggle { display: flex; gap: 8px; margin: 0 0 16px; }
+  .rest-viewtoggle { display: flex; gap: 8px; margin: 0 0 16px; align-items: center; flex-wrap: wrap; }
+  .rest-sortsep { width: 1px; height: 20px; background: var(--border-strong); margin: 0 4px; }
+  .rest-radiuswrap { background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: 14px; padding: 14px 16px; margin: 0 0 18px; }
+  .rest-radius-label { font-family: var(--sans); font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--azure); margin-bottom: 10px; }
+  .rest-radius-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rest-radius-note { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); margin-top: 10px; line-height: 1.45; }
+  .rbadge-nearby { background: rgba(255,255,255,.92); color: var(--lagoon); border: 1px solid var(--lagoon); font-weight: 600; }
   #rest-map { height: 440px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border-strong); }
   .rest-pin { display: inline-flex; align-items: center; gap: 3px; background: var(--bg-surface); border: 1px solid var(--border-strong); color: var(--ink); border-radius: 999px; padding: 3px 9px; font-family: var(--sans); font-size: 12px; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 6px rgba(10,10,15,0.22); }
   .rest-pin .rest-pin-star { color: var(--gold); }
@@ -8280,6 +8286,54 @@
       .catch(function () { RESTAURANTS = []; restaurantsLoaded = true; });
   }
 
+  // ---- Hybrid: curated base + live "wider area" search (api/restaurants) ----
+  // Curated stays the instant, hand-enriched base; this layers in more spots within
+  // a radius of the port anchor (distance-aware, like the hotels flow). Dedup is exact
+  // because a restaurant's id IS its Google place id in both sets.
+  var REST_RADII = [3, 5, 10, 15, 25];
+  var restRadius = {};        // port_key -> selected radius (undefined/0 = curated only)
+  var restDyn = {};           // 'port:radius' -> rows
+  var restDynAnchor = {};     // port_key -> anchor name
+  var restDynLoading = false;
+  var restSortMode = 'best';  // 'best' | 'near'
+  function dynKey(pk, rad) { return pk + ':' + rad; }
+  function fetchDynamic(pk, rad) {
+    var k = dynKey(pk, rad);
+    if (restDyn[k]) return Promise.resolve(restDyn[k]);
+    return fetch('/api/restaurants?port=' + encodeURIComponent(pk) + '&radius_mi=' + rad)
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        restDyn[k] = (j && j.restaurants) || [];
+        if (j && j.anchor) restDynAnchor[pk] = j.anchor;
+        return restDyn[k];
+      })
+      .catch(function () { restDyn[k] = []; return []; });
+  }
+  function setRestRadius(rad) {
+    var pk = activeRestPort;
+    if (!rad) { restRadius[pk] = 0; renderRestaurants(); return; }
+    restRadius[pk] = rad;
+    if (restDyn[dynKey(pk, rad)]) { renderRestaurants(); return; }
+    restDynLoading = true; renderRestaurants();
+    fetchDynamic(pk, rad).then(function () { restDynLoading = false; renderRestaurants(); });
+  }
+  // Curated rows for the active port, merged with the loaded dynamic set if a radius is on.
+  function currentRestRows() {
+    var rows = RESTAURANTS.filter(function (r) { return r.port_key === activeRestPort; });
+    var rad = restRadius[activeRestPort] || 0;
+    if (rad) {
+      var dyn = restDyn[dynKey(activeRestPort, rad)] || [];
+      var have = {}; rows.forEach(function (r) { have[r.id] = 1; });
+      rows = rows.concat(dyn.filter(function (r) { return !have[r.id]; }));
+    }
+    return rows;
+  }
+  function restPhotoSrc(r) {
+    if (r.photo_local) return encodeURI(r.photo_local);
+    if (r.dynamic && r.photo_ref) return '/api/place_photo?ref=' + encodeURIComponent(r.photo_ref) + '&w=520';
+    return '';
+  }
+
   function restTier(r) { return r.michelin === 'star' ? 3 : r.michelin === 'bib' ? 2 : 0; }
   function restKey(r) { return [restTier(r), (r.reviews >= 400 ? (r.rating || 0) : 0), (r.reviews || 0)]; }
   function restSort(rows) {
@@ -8346,6 +8400,8 @@
       badges += '<span class="rbadge rbadge-loved">Most loved</span>';
     if (recsFor(r.id).length)
       badges += '<button class="rbadge rbadge-rec" data-id="' + escHtml(r.id) + '">Recommended</button>';
+    if (r.dynamic)
+      badges += '<span class="rbadge rbadge-nearby">Wider area</span>';
 
     var meta = [];
     if (r.nearest_landmark)
@@ -8360,7 +8416,8 @@
     if (p.reservation) prof.push(p.reservation);
     if (p.popularity) prof.push(p.popularity);
 
-    var img = r.photo_local ? '<img class="rcard-img" src="' + encodeURI(r.photo_local) +
+    var _src = restPhotoSrc(r);
+    var img = _src ? '<img class="rcard-img" src="' + _src +
       '" alt="" loading="' + (opts.feature ? 'eager' : 'lazy') + '" decoding="async">' : '';
     var expand = '<div class="rcard-expand">' +
       (r.vibe ? '<div class="rcard-vibe">' + escHtml(r.vibe) + '</div>' : '') +
@@ -8697,12 +8754,17 @@
     });
 
     destroyRestMap();
-    var allRows = RESTAURANTS.filter(function (r) { return r.port_key === activeRestPort; });
+    var allRows = currentRestRows();
     var label = escHtml(REST_LABEL[activeRestPort] || activeRestPort);
     var html = renderDayBlock(activeRestPort) + renderFilterBar(allRows);
     html += '<div class="rest-viewtoggle"><button class="rfilter-chip' + (restView === 'list' ? ' active' : '') +
       '" data-view="list">List</button><button class="rfilter-chip' + (restView === 'map' ? ' active' : '') +
-      '" data-view="map">Map</button></div>';
+      '" data-view="map">Map</button>' +
+      '<span class="rest-sortsep"></span>' +
+      '<button class="rfilter-chip' + (restSortMode === 'best' ? ' active' : '') + '" data-sort="best">Best</button>' +
+      '<button class="rfilter-chip' + (restSortMode === 'near' ? ' active' : '') + '" data-sort="near">Nearest</button>' +
+      '</div>';
+    html += renderRadiusBar();
 
     var rows = applyRestFilters(allRows);
     if (!rows.length) {
@@ -8715,10 +8777,23 @@
       return;
     }
     var crown = restCrown(rows);
+    var byNear = function (a, b) {
+      var da = a.nearest_landmark_mi == null ? 9999 : a.nearest_landmark_mi;
+      var db = b.nearest_landmark_mi == null ? 9999 : b.nearest_landmark_mi;
+      return da - db || (b.reviews || 0) - (a.reviews || 0);
+    };
+    var anyFilter = restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin;
+    if (restSortMode === 'near') {
+      // Flat distance-sorted list — the whole point is "what's closest", no crown.
+      var near = rows.slice().sort(byNear);
+      html += '<div class="rest-sectlabel">Nearest first</div><div class="rest-grid">' +
+        near.map(function (r) { return restCardHtml(r, { crown: crown }); }).join('') + '</div>';
+      res.innerHTML = html;
+      return;
+    }
     var sorted = restSort(rows);
     var best = sorted[0];
     var rest = sorted.slice(1);
-    var anyFilter = restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin;
     if (best) {
       html += '<div class="rest-sectlabel">' + (anyFilter ? 'Top match in ' : 'The best in ') + label +
         '</div><div class="rest-grid">' +
@@ -8731,6 +8806,29 @@
     res.innerHTML = html;
   }
 
+  // "Search a wider area" control — curated by default, radius pills load live spots.
+  function renderRadiusBar() {
+    var pk = activeRestPort;
+    var rad = restRadius[pk] || 0;
+    var extra = 0;
+    if (rad) {
+      var dyn = restDyn[dynKey(pk, rad)] || [];
+      var have = {}; RESTAURANTS.forEach(function (r) { if (r.port_key === pk) have[r.id] = 1; });
+      extra = dyn.filter(function (r) { return !have[r.id]; }).length;
+    }
+    var pills = '<button class="rfilter-chip' + (!rad ? ' active' : '') + '" data-rad="0">Curated</button>' +
+      REST_RADII.map(function (m) {
+        return '<button class="rfilter-chip' + (rad === m ? ' active' : '') + '" data-rad="' + m + '">' + m + ' mi</button>';
+      }).join('');
+    var note = restDynLoading ? 'Searching the wider area…'
+      : (rad ? ('+' + extra + ' more within ' + rad + ' mi' + (restDynAnchor[pk] ? ' of ' + escHtml(restDynAnchor[pk]) : '')
+               + ' · Indian always included')
+             : 'Showing our curated picks. Widen to pull every spot nearby — including all Indian.');
+    return '<div class="rest-radiuswrap"><div class="rest-radius-label">Search a wider area</div>' +
+      '<div class="rest-radius-pills">' + pills + '</div>' +
+      '<div class="rest-radius-note">' + note + '</div></div>';
+  }
+
   async function askRestaurant(q) {
     q = (q || '').trim();
     if (!q) return;
@@ -8740,7 +8838,7 @@
     ans.textContent = 'Thinking…';
     btn.disabled = true;
     try {
-      var rows = RESTAURANTS.filter(function (r) { return r.port_key === activeRestPort; });
+      var rows = currentRestRows();
       var resp = await fetch('/api/ask', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ context: 'restaurants', restaurants: rows,
@@ -8830,6 +8928,10 @@
       }
       var vbtn = e.target.closest('[data-view]');
       if (vbtn) { restView = vbtn.getAttribute('data-view'); renderRestaurants(); return; }
+      var sbtn = e.target.closest('[data-sort]');
+      if (sbtn) { restSortMode = sbtn.getAttribute('data-sort'); renderRestaurants(); return; }
+      var radbtn = e.target.closest('[data-rad]');
+      if (radbtn) { setRestRadius(parseInt(radbtn.getAttribute('data-rad'), 10) || 0); return; }
       var save = e.target.closest('.rcard-save');
       if (save) { e.stopPropagation(); toggleSaved(save.getAttribute('data-id')); return; }
       var recbtn = e.target.closest('.rcard-recbtn');
