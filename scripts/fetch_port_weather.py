@@ -39,7 +39,10 @@ OUT_PATHS = [
 # (iso_date, lat, lon) for each port-day in the 2026 itinerary that has a coord.
 # "At sea" days are skipped — no port to query.
 PORTS = [
-    ("2026-07-03", 44.4926, 12.2502),  # Ravenna
+    ("2026-06-30", 45.4341, 12.3388),  # Venice (pre-cruise)
+    ("2026-07-01", 45.4341, 12.3388),  # Venice (pre-cruise)
+    ("2026-07-02", 45.4341, 12.3388),  # Venice (pre-cruise)
+    ("2026-07-03", 44.4926, 12.2502),  # Ravenna (embark)
     ("2026-07-04", 42.6507, 18.0944),  # Dubrovnik
     ("2026-07-05", 42.4247, 18.7712),  # Kotor
     ("2026-07-07", 37.9420, 23.6464),  # Athens (Piraeus)

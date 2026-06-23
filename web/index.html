@@ -5008,7 +5008,10 @@
 
   // ---- Cruise port schedule ----
   var CRUISE_PORTS = [
-    { date: '2026-07-03', label: 'Venice (Ravenna), Italy', type: 'embark', depart: '5:00 PM' },
+    { date: '2026-06-30', label: 'Venice, Italy', type: 'pre' },
+    { date: '2026-07-01', label: 'Venice, Italy', type: 'pre' },
+    { date: '2026-07-02', label: 'Venice, Italy', type: 'pre' },
+    { date: '2026-07-03', label: 'Ravenna, Italy', type: 'embark', depart: '5:00 PM' },
     { date: '2026-07-04', label: 'Dubrovnik, Croatia',      type: 'port',   arrive: '10:00 AM', depart: '11:59 PM' },
     { date: '2026-07-05', label: 'Kotor, Montenegro',       type: 'port',   arrive: '7:00 AM',  depart: '6:00 PM' },
     { date: '2026-07-06', label: 'At Sea',                  type: 'sea' },
@@ -5257,6 +5260,8 @@
       { id: 'hl-meds', text: 'Daily medications + small first-aid kit' },
       { id: 'hl-toiletries', text: 'Toiletries (travel size)' },
       { id: 'hl-lipbalm', text: 'Lip balm with SPF' },
+      { id: 'hl-hydration', text: 'Hydration packets (Liquid I.V. or similar)' },
+      { id: 'hl-mosquito', text: 'Mosquito repellent or repellent bands' },
     ] },
     { title: 'Clothes', note: '10 cruise days + days before & after', items: [
       { id: 'cl-tops', text: 'Light, breathable tops' },
@@ -5276,6 +5281,7 @@
       { id: 'bg-drybag', text: 'Dry bag / ziplocks for wet gear' },
       { id: 'bg-snacks', text: 'Snacks for long port days' },
       { id: 'bg-umbrella', text: 'Compact umbrella (rain + shade)' },
+      { id: 'bg-fan', text: 'Portable / handheld fan' },
     ] },
     { title: 'Smart extras', items: [
       { id: 'ex-laundry', text: 'Laundry bag + detergent sheets' },
@@ -7123,6 +7129,7 @@
       var times = '';
       if (p.type === 'embark') times = 'Embark &middot; Depart ' + p.depart;
       else if (p.type === 'disembark') times = 'Arrive ' + p.arrive + ' &middot; Disembark';
+      else if (p.type === 'pre') times = 'Before the cruise &middot; in Venice';
       else if (p.arrive && p.depart) times = 'Arrive ' + p.arrive + ' &middot; Depart ' + p.depart;
       var eventsHtml = '';
       GROUP_EVENTS.forEach(function (ev) { if (ev.date === p.date) eventsHtml += cruiseEventHtml(ev); });
@@ -7155,10 +7162,12 @@
       }
 
       if (expandable) {
+        var isPre = (p.type === 'pre');
         html += '<div class="cday-body">';
-        html += '<div class="cday-sec-label">Excursions / Tours</div>';
+        html += '<div class="cday-sec-label">' + (isPre ? 'Tours &amp; plans' : 'Excursions / Tours') + '</div>';
         html += '<div class="cday-exc" id="cdayexc-' + p.date + '"></div>';
-        html += '<button class="cday-add-exc" data-date="' + p.date + '" data-port="' + escHtml(p.label) + '">+ Add an excursion</button>';
+        html += '<button class="cday-add-exc" data-date="' + p.date + '" data-port="' + escHtml(p.label) + '"' +
+          (isPre ? ' data-nolist="1"' : '') + '>+ Add a ' + (isPre ? 'tour' : 'n excursion') + '</button>';
         if (typeof REST_PORTS !== 'undefined' && REST_PORTS.indexOf(portSlug) !== -1) {
           html += '<div class="cday-sec-label" style="margin-top:18px;">Where to eat</div>';
           html += '<div class="cday-eat" id="cdayeat-' + p.date + '"></div>';
@@ -7183,7 +7192,8 @@
     el.querySelectorAll('.cday-add-exc').forEach(function (btn) {
       btn.addEventListener('click', function (ev) {
         ev.stopPropagation();
-        openAddExcursionModal(btn.getAttribute('data-date'), btn.getAttribute('data-port'));
+        openAddExcursionModal(btn.getAttribute('data-date'), btn.getAttribute('data-port'),
+          { noList: btn.getAttribute('data-nolist') === '1' });
       });
     });
     el.querySelectorAll('.cday-add-rest').forEach(function (btn) {
@@ -7787,7 +7797,9 @@
     return { num: dec ? dec[0] : '', unit: unit };
   }
 
-  function openAddExcursionModal(date, port) {
+  function openAddExcursionModal(date, port, opts) {
+    opts = opts || {};
+    var noList = !!opts.noList;  // pre-cruise (Venice) tours: screenshot or manual only, no cruise-line list
     var ov = document.createElement('div');
     ov.className = 'modal-overlay active';
     var me = getUserName();
@@ -7804,7 +7816,7 @@
         '<div class="modal-sub">' + escHtml(port) + '</div>' +
         '<div class="axm-q">How do you want to add it?</div>' +
         '<div class="axm-methods">' +
-          '<button type="button" class="axm-method" data-method="list"><span class="axm-method-ic"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.6" cy="6" r="1.2"/><circle cx="3.6" cy="12" r="1.2"/><circle cx="3.6" cy="18" r="1.2"/></svg></span> From the cruise-line list</button>' +
+          (noList ? '' : '<button type="button" class="axm-method" data-method="list"><span class="axm-method-ic"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.6" cy="6" r="1.2"/><circle cx="3.6" cy="12" r="1.2"/><circle cx="3.6" cy="18" r="1.2"/></svg></span> From the cruise-line list</button>') +
           '<button type="button" class="axm-method" data-method="upload"><span class="axm-method-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span> Upload a booking screenshot</button>' +
           '<button type="button" class="axm-method" data-method="manual"><span class="axm-method-ic"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span> Enter the details manually</button>' +
         '</div>' +
