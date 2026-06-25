@@ -7125,7 +7125,7 @@
     var last = new Date(pres[pres.length - 1].date + 'T12:00:00');
     var range = MON_SHORT[first.getMonth()] + ' ' + first.getDate() + ' – ' +
       (first.getMonth() === last.getMonth() ? '' : MON_SHORT[last.getMonth()] + ' ') + last.getDate();
-    var isOpen = cruiseDayOpen['venice-pre'] !== false; // first thing in the tab — open by default
+    var isOpen = cruiseDayOpen['venice-pre'] === true; // collapsed by default, like the port-day cards
     var guide = PORT_GUIDE['venice'] || null;
 
     var h = '<div class="cday cday-x cday-cine cpre-chapter' + (isOpen ? ' open' : '') + '" data-date="venice-pre">';
