@@ -1910,6 +1910,15 @@
   .cday-sec-label { font-family: var(--serif); font-size: 20px; font-weight: 500; letter-spacing: 0; color: var(--ink); margin: 24px 0 12px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
   .cday-body > .cday-sec-label:first-of-type { border-top: none; padding-top: 0; margin-top: 6px; }
 
+  /* Pre-cruise Venice chapter — one card, days as quiet dated sections */
+  .cpre-intro { font-family: var(--sans); font-size: 14px; line-height: 1.5; color: var(--text-secondary); margin: 4px 0 2px; }
+  .cpre-day { border-top: 1px solid var(--border-subtle); padding-top: 20px; margin-top: 20px; }
+  .cpre-day:first-of-type { border-top: none; padding-top: 14px; margin-top: 10px; }
+  .cpre-day-hd { font-family: var(--serif); font-size: 23px; font-weight: 500; color: var(--ink); line-height: 1.15; }
+  .cpre-day-hd .cpre-dow { color: var(--gold); }
+  .cpre-sub { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-secondary); margin: 16px 0 8px; }
+  .cpre-foot { border-top: 1px solid var(--border-subtle); padding-top: 16px; margin-top: 22px; }
+
   /* My Bookings — personal journey timeline */
   .mb-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 4px 0 20px; }
   .mb-eyebrow { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-secondary); }
@@ -6597,10 +6606,14 @@
   }
   function goToCruiseDate(date) {
     if (!date) { applyTripPhase('cruise'); return; }
-    cruiseDayOpen[date] = true;
+    // Pre-cruise Venice days share one "before the cruise" chapter card (data-date="venice-pre"),
+    // so map any pre-day to that key for the open/scroll target.
+    var port = cruisePortByDate(date);
+    var key = (port && port.type === 'pre') ? 'venice-pre' : date;
+    cruiseDayOpen[key] = true;
     applyTripPhase('cruise');
     renderCruiseSchedule();
-    var card = document.querySelector('.cday[data-date="' + date + '"]');
+    var card = document.querySelector('.cday[data-date="' + key + '"]');
     if (card) requestAnimationFrame(function () { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
   }
 
@@ -7099,6 +7112,54 @@
 
   // Ports that have a filmic destination photo in /media (shown atop the open day card)
   var PORT_IMAGES = { venice: 1, ravenna: 1, dubrovnik: 1, kotor: 1, athens: 1, kusadasi: 1, rhodes: 1, santorini: 1, istanbul: 1 };
+
+  // The loose pre-cruise Venice days (all type:'pre') render as ONE "before the cruise" chapter
+  // instead of three near-identical cards. Each day stays a dated section so excursions/restaurants
+  // keep their per-date ids and still flow to My Bookings. City-wide bits (browse, reference) show once.
+  function veniceChapterHtml(pres) {
+    if (!pres.length) return '';
+    var DOW_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    var MON_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var MON_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var first = new Date(pres[0].date + 'T12:00:00');
+    var last = new Date(pres[pres.length - 1].date + 'T12:00:00');
+    var range = MON_SHORT[first.getMonth()] + ' ' + first.getDate() + ' – ' +
+      (first.getMonth() === last.getMonth() ? '' : MON_SHORT[last.getMonth()] + ' ') + last.getDate();
+    var isOpen = cruiseDayOpen['venice-pre'] !== false; // first thing in the tab — open by default
+    var guide = PORT_GUIDE['venice'] || null;
+
+    var h = '<div class="cday cday-x cday-cine cpre-chapter' + (isOpen ? ' open' : '') + '" data-date="venice-pre">';
+    h += '<div class="cday-head">';
+    h += '<img class="cday-bg" src="/media/venice.jpg" alt="Venice, Italy" loading="lazy">';
+    h += '<div class="cday-scrim"></div>';
+    h += '<div class="cday-head-inner">';
+    h += '<div class="cday-htop"><span class="cday-eyebrow">Before the cruise</span></div>';
+    h += '<div class="cday-hbot"><div><div class="cday-port">Venice, Italy</div>' +
+      '<div class="cday-times">' + range + ' &middot; ' + pres.length + ' days</div></div>' +
+      '<span class="cday-plus cday-plus-light"></span></div>';
+    h += '</div></div>'; // head-inner, head
+
+    h += '<div class="cday-body">';
+    h += '<div class="cpre-intro">Open days in Venice before we sail. Most of us land June 30 &mdash; add tours and dinners to whichever day you like.</div>';
+    pres.forEach(function (p) {
+      var d = new Date(p.date + 'T12:00:00');
+      h += '<div class="cpre-day">';
+      h += '<div class="cpre-day-hd"><span class="cpre-dow">' + DOW_FULL[d.getDay()] + '</span> ' + MON_FULL[d.getMonth()] + ' ' + d.getDate() + '</div>';
+      h += '<div class="cpre-sub">Tours &amp; plans</div>';
+      h += '<div class="cday-exc" id="cdayexc-' + p.date + '"></div>';
+      h += '<button class="cday-add-exc" data-date="' + p.date + '" data-port="Venice, Italy" data-nolist="1">+ Add a tour</button>';
+      h += '<div class="cpre-sub">Where to eat</div>';
+      h += '<div class="cday-eat" id="cdayeat-' + p.date + '"></div>';
+      h += '<button class="cday-add-rest" data-date="' + p.date + '" data-port="Venice, Italy" data-portkey="venice">+ Add a restaurant</button>';
+      h += '</div>'; // cpre-day
+    });
+    h += '<div class="cpre-foot"><button class="cday-browse-rest" data-eatport="venice">Browse all Venice restaurants &#8594;</button></div>';
+    if (guide) h += referenceHtml('venice-pre', guide);
+    h += '</div>'; // body
+    h += '</div>'; // cday
+    return h;
+  }
+
   function renderCruiseSchedule() {
     var el = document.getElementById('cruise-schedule');
     if (!el) return;
@@ -7110,7 +7171,15 @@
     var today = todayISO();
 
     var html = '';
+    var preRendered = false;
     CRUISE_PORTS.forEach(function (p) {
+      if (p.type === 'pre') {
+        if (!preRendered) {
+          preRendered = true;
+          html += veniceChapterHtml(CRUISE_PORTS.filter(function (x) { return x.type === 'pre'; }));
+        }
+        return;
+      }
       var d = new Date(p.date + 'T12:00:00');
       var dow = days[d.getDay()], mon = months[d.getMonth()], day = d.getDate();
       var portSlug = (p.label || '').split(/[,(]/)[0].trim().toLowerCase();
