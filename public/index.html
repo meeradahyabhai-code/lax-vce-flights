@@ -8830,7 +8830,7 @@
       (plan.window ? '<div class="yd-sub">' + escHtml(plan.window) + '</div>' : '') + rows + '</div>';
   }
 
-  var restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false };
+  var restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false, recommended: false };
   var restView = 'list';
   var restMapInstance = null;
   function destroyRestMap() { if (restMapInstance) { try { restMapInstance.remove(); } catch (e) {} restMapInstance = null; } }
@@ -8897,6 +8897,7 @@
       if (restFilters.veg && !(r.veg_options || r.fully_veg)) return false;
       if (restFilters.michelin && !r.michelin) return false;
       if (restFilters.saved && !isSaved(r.id)) return false;
+      if (restFilters.recommended && !recsFor(r.id).length) return false;
       return true;
     });
   }
@@ -8912,11 +8913,12 @@
     });
     cuisines.sort();
     var prices = ['€', '€€', '€€€', '€€€€'].filter(function (p) { return rows.some(function (r) { return r.price === p; }); });
-    var activeCount = (restFilters.cuisine ? 1 : 0) + (restFilters.price ? 1 : 0) + (restFilters.veg ? 1 : 0) + (restFilters.michelin ? 1 : 0) + (restFilters.saved ? 1 : 0);
+    var activeCount = (restFilters.cuisine ? 1 : 0) + (restFilters.price ? 1 : 0) + (restFilters.veg ? 1 : 0) + (restFilters.michelin ? 1 : 0) + (restFilters.saved ? 1 : 0) + (restFilters.recommended ? 1 : 0);
     function group(label, inner) { return inner ? '<div class="rfilter-group"><div class="rfilter-glabel">' + label + '</div><div class="rfilter-chips">' + inner + '</div></div>' : ''; }
     var cuisineChips = cuisines.map(function (c) { return rChip('cuisine', c, c, restFilters.cuisine === c); }).join('');
     var priceChips = prices.map(function (p) { return rChip('price', p, p, restFilters.price === p); }).join('');
-    var more = rChip('veg', '1', 'Vegetarian', restFilters.veg) +
+    var more = ((rows.some(function (r) { return recsFor(r.id).length; }) || restFilters.recommended) ? rChip('recommended', '1', 'Recommended', restFilters.recommended) : '') +
+      rChip('veg', '1', 'Vegetarian', restFilters.veg) +
       (rows.some(function (r) { return r.michelin; }) ? rChip('michelin', '1', 'Michelin', restFilters.michelin) : '') +
       ((rows.some(function (r) { return isSaved(r.id); }) || restFilters.saved) ? rChip('saved', '1', 'Saved', restFilters.saved) : '');
     var panel = group('Cuisine', cuisineChips) + group('Price', priceChips) + group('Dietary & more', more) +
@@ -8939,7 +8941,7 @@
     bar.querySelectorAll('.rest-port-pill').forEach(function (b) {
       b.addEventListener('click', function () {
         activeRestPort = b.dataset.rp;
-        restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false };  // filters are per-port
+        restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false, recommended: false };  // filters are per-port
         restFiltersOpen = false;
         // a Venice search must not bleed into Athens — clear both the answer and the typed query
         var ans = document.getElementById('rest-chat-answer');
@@ -8969,7 +8971,7 @@
 
     var allRows = currentRestRows();
     var rows = applyRestFilters(allRows);
-    var anyFilter = restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin || restFilters.saved;
+    var anyFilter = restFilters.cuisine || restFilters.price || restFilters.veg || restFilters.michelin || restFilters.saved || restFilters.recommended;
 
     var html = renderDayBlock(pk) + renderFilterBar(allRows);
     html += '<div class="rest-areahead"><div class="rest-areatitle">Restaurants near ' + label + '</div>' +
@@ -9059,7 +9061,7 @@
   // Deep-link from an Our Trip port-day card into Shop -> Restaurants for that port.
   function goToRestaurantsForPort(portKey) {
     if (portKey && REST_PORTS.indexOf(portKey) !== -1) activeRestPort = portKey;
-    restFilters = { cuisine: '', price: '', veg: false, michelin: false };
+    restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false, recommended: false };
     activeSection = 'restaurants';
     renderSectionNav();
     renderSectionContent();
@@ -9134,10 +9136,11 @@
       var chip = e.target.closest('.rfilter-chip[data-f]');
       if (chip) {
         var f = chip.getAttribute('data-f'), v = chip.getAttribute('data-v');
-        if (f === 'clear') restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false };
+        if (f === 'clear') restFilters = { cuisine: '', price: '', veg: false, michelin: false, saved: false, recommended: false };
         else if (f === 'veg') restFilters.veg = !restFilters.veg;
         else if (f === 'michelin') restFilters.michelin = !restFilters.michelin;
         else if (f === 'saved') restFilters.saved = !restFilters.saved;
+        else if (f === 'recommended') restFilters.recommended = !restFilters.recommended;
         else restFilters[f] = (restFilters[f] === v) ? '' : v;
         renderRestaurants();
         return;
