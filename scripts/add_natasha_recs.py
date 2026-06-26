@@ -13,7 +13,8 @@ if envf.exists():
         if not line or line.startswith("#") or "=" not in line: continue
         k,v=line.split("=",1); os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 sys.path.insert(0, str(ROOT))
-from scripts.curate_restaurants import _post_search, geocode_landmark, build_restaurant, SEARCH_FIELDS, PORTS, add_vibe
+from scripts.curate_restaurants import _post_search, geocode_landmark, build_restaurant, SEARCH_FIELDS, PORTS
+from restaurant_finder import enrich_rows  # fills BOTH profile + vibe (curate's add_vibe only does vibe)
 
 PORT_BY_KEY = {p["port_key"]: p for p in PORTS}
 
@@ -70,7 +71,8 @@ def main():
     out.write_text(json.dumps([{"label":l,**r} for l,r in rows], ensure_ascii=False, indent=2))
     print(f"\nBuilt {len(rows)} rows -> {out}")
     if args.vibe:
-        add_vibe([r for _,r in rows])
+        # enrich_rows fills profile + vibe (profile is required by test_profile_and_vibe_present)
+        enrich_rows([r for _,r in rows], os.environ.get("OPENAI_API_KEY"))
         out.write_text(json.dumps([{"label":l,**r} for l,r in rows], ensure_ascii=False, indent=2))
     if args.write:
         catalog=ROOT/"data"/"restaurants.json"
