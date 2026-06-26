@@ -20318,7 +20318,7 @@
       "lat": 45.4336094,
       "lng": 12.338223,
       "photo": "places/ChIJK6iBP9exfkcRkwD7q8Uwaik/photos/AaVGc3nDp7iXhGsgS0kpnMr5kuazarUe47sdXLNXNFEOM_zV8icUuN7vqDi6TVk42aQkCEq2sIlI8nTAQJubQ_FxzL1npiZJWGWia06Zp0shlbTjzw4oJZj07GGUK4A1j8FYIyVPgTt-q98FIRBp1dfs-icEJEpLMSNR5FS0gAflrm_9pd8Pd4N6RW2Sg93mhjFZv4ygZznk1o0jXjcmV_W8xCgvCUAbzogpEsbHMTwr0WmLDLREjg56n1XG2jmfsNupLs6n-PN3mV6y1v-CsoNQXQP3chqoEPUJO6-Y06c0MVZmKglsgcurLsCYnJYiOnv1aFz6X3bmKEo_GiKR8ATEHx4r1o6C1pEymgwNljXgFlI8yp6bYoExQ7S8nz2eugMaVXg1aaN3vlI1hDlY0XnGSC7fr7rEaaxhEl33iNcr68-kNawx",
-      "vibe": "At Caffè Florian, indulge in a rich espresso while basking in the neo-Baroque splendor and live orchestral serenades overlooking Piazza San Marco.",
+      "vibe": "Experience the elegance of Venice at this iconic café, where history meets modern art in a stunning setting.",
       "quotes": [
         "Verdict: 👍🏽 100% worth the experience!\n\nIf I were to describe the Florian, I’d say that it is a boutique cafe that makes you feel like you stepped in the 17th or 18th century. Open since 1720, (yes, s",
         "Caffe Florian in Venice is an experience that blends history, elegance, and exceptional hospitality. As one of the oldest cafés in the world, its legacy is felt the moment you step inside—ornate inter",
@@ -20337,7 +20337,15 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "historic coffee house",
+        "formality": "Smart casual",
+        "reservation": "Walk-in friendly",
+        "best_dishes": [],
+        "veg_note": "",
+        "popularity": "Iconic"
+      }
     },
     {
       "id": "ChIJH8kX28CxfkcRHa0JNbB7jF8",
@@ -20358,7 +20366,7 @@
       "lat": 45.4419932,
       "lng": 12.323312099999999,
       "photo": "places/ChIJH8kX28CxfkcRHa0JNbB7jF8/photos/AaVGc3m2MZhLlIcwd8XkqrmO1ECdza66_wFN4l0tSU8bJFKFtwwEq9-ZiOvAFsVAU3CEcxyR6BmtOVXWQSjo9QNTdbeYpzQkAEjnfb9PfQFFbbN9ub0eXNGCO8WhDS7VsSdhQUX2pfpWXktsfApdgiLyeFe2SHVI3PfKlt_-MK6JoGVE8sf92dYadvGd2tyIMT8yOgc5g95SXLZo_WzS7MZJODd_ZubdAX6M8HH22QZ-ceWO48BZrOe42Hw0Ndi2UrGr1poJFLbuDS2vsc3WElwweBQWY_GQm1biqiLMgsJhLPBkYprI4VZ2BcKoE-64cHYS5sHaWN0OuTwUfqtzanBQFEagy6g1276-xRuPfVrbACwSd2GzlVHkmxrF0l_z1ohtn78usE_HY3dIQ3FJ0pC9R4My_LqTPCwNFOd0YyG0xiGlmQ",
-      "vibe": "At Pasticceria Dal Mas, indulge in a delicate pistachio cornetto paired with their rich hot chocolate for a truly exquisite Venetian experience.",
+      "vibe": "This quaint cake shop offers a delightful selection of pastries perfect for a quick sweet treat in Venice.",
       "quotes": [
         "We were recommended this place by our hotel receptionist, and the hot chocolate and pistachio cornett was very yummy! We also enjoyed the chocolate croissant and tiramisu.\n\nFor three bakery goods and ",
         "I stopped by Pasticceria Dal Mas during a quick visit and, while I may not have picked the best pastry from their wide selection, I still enjoyed the the coffee, it was actually good, perfect for a qu",
@@ -20377,7 +20385,19 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "charming pastry shop",
+        "formality": "Casual",
+        "reservation": "Walk-in friendly",
+        "best_dishes": [
+          "hot chocolate",
+          "pistachio cornett",
+          "chocolate croissant"
+        ],
+        "veg_note": "",
+        "popularity": "Very popular"
+      }
     },
     {
       "id": "ChIJbzxYLdqxfkcRpSyITATpgE8",
@@ -20398,7 +20418,7 @@
       "lat": 45.4373167,
       "lng": 12.336865999999999,
       "photo": "places/ChIJbzxYLdqxfkcRpSyITATpgE8/photos/AaVGc3n2sylXAUEsxj-tqsFjyzHFdhVg70wMtnuzKgQWtNJd0BRi_rMy2utLehHYdKfotMiTISRN4YAluiPexDxgdSUxZfVl8Rq768aVCWH6EIHQqteVjLCzuXIFybpbpgWY2QH-nK8pvUWyJRj0KcTQver1imhyh1USWjeLQ3Xd8dwvyeMLSNVt_wrUmFTXG41JDfILY2VAPhL3mP6DsdTIAP8up4l24UhpyyhJ2Efck17ByVssBnIaGtlI6dGIEMoem50J8jz-rB3_XGfwdTKD7zY31lA2Eh23kzC7OHOylxUWUXl-S0cRiU9a7JAlcsxJeF0tbv7kvDGTqOzi3peFtuDDqM_vFaBQE1VYy6xX-LlhY_o3yHNOPucLxqVkz9-v6DBtFn_FqkLEdcEtxdV9s2f1iCE9cEqChynK85moTmkwUw",
-      "vibe": "Nestled in a charming alley, Ristorante Pizzeria Da Mamo invites you to savor their exquisite pasta and the remarkable octopus with pumpkin and pistachio.",
+      "vibe": "Nestled in a narrow lane, this intimate restaurant serves classic Italian dishes in a warm, candlelit atmosphere.",
       "quotes": [
         "The food here was absolutely delicious. The steak was cooked perfectly, and the sauce on it was exceptional. The pasta was honestly one of the best meals I’ve ever had, perfectly cooked and full of fl",
         "Upon reading the good reviews, I had booked a table for dinner. The place is small, but somehow it feels cozy. Service was attentive and quick. The food tasted good, when we actually ate it, but like ",
@@ -20417,7 +20437,19 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "cozy trattoria",
+        "formality": "Smart casual",
+        "reservation": "Reservation recommended",
+        "best_dishes": [
+          "steak",
+          "pasta",
+          "octopus with pumpkin and pistachio"
+        ],
+        "veg_note": "",
+        "popularity": "Very popular"
+      }
     },
     {
       "id": "ChIJd7fbStixfkcR42J6gNhq7WQ",
@@ -20438,7 +20470,7 @@
       "lat": 45.436175399999996,
       "lng": 12.3397923,
       "photo": "places/ChIJd7fbStixfkcR42J6gNhq7WQ/photos/AaVGc3lHCC3BXHSNhxq8SOIZo2dqqukpCbgaVbGOe9ffoIVU98XH2mtBo20N9rlr23VY0H1FLnrHiebFUkSCbGcFgi2j4euH8y9sCs6Mpo3Ge0gPx2fIiIjWyq1fS6cPDpQjKbiRkqn1gtCcQQX6FH_DructyDt76-YpEwIoVT0DLYoG78roOxG7Sqc6TuHix2oQfJTGw6-N04lSl_NlmWteEbOvx0fYvt9ExpiFtUhNrKgfpnlUWXWsi6zjR5IPgiv8byXG33135PryWqD7iDHqZM8fGyE64tyJx7R_gLUOfb0ZgOtqUxMFUplRzH8gYDzq3Q4xlK0O_-2xZaxSewIFfOYn0mY0fDfo9q9WW3r7EWIPshBPGQG0JBXjNVx2WVgJ7AcxiGXFRmjvZJD193dZxx33QawrjKRi5BSjLRHBeDrZ_BPb",
-      "vibe": "For a casual yet satisfying experience, indulge in the fresh pasta boxes, particularly the Chick’N’Cream, amidst the lively atmosphere of Dal Moro’s.",
+      "vibe": "This bustling take-out eatery specializes in fresh pasta boxes, perfect for a quick meal on the go.",
       "quotes": [
         "Today we got lunch at Dal Moro’s. Its a small restaurant with pasta in a box. Wow great food!!! I ordered the Chick’N’Cream and my wife ordered the Mortadella. Great big servings that I had a hard tim",
         "It’s such a great concept, horrible execution. 16 euros for a pasta and a drink for takeaway?!?! Saying you make the best carbonara but the sauce tasted like it had milk in it, how do we order and get",
@@ -20457,7 +20489,15 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "casual pasta spot",
+        "formality": "Casual",
+        "reservation": "Walk-in friendly",
+        "best_dishes": [],
+        "veg_note": "Fresh pasta options available.",
+        "popularity": "Iconic"
+      }
     },
     {
       "id": "ChIJq6mHsNmxfkcRV64qpCP2Qzw",
@@ -20478,7 +20518,7 @@
       "lat": 45.436285,
       "lng": 12.339373,
       "photo": "places/ChIJq6mHsNmxfkcRV64qpCP2Qzw/photos/AaVGc3mhmYIYTzmW-fnOhof_H3KRW7rK1fO3ICLtGVIRqmhqPwy5101MaHPYkIrIcl3vGwwctr6JRhDzT8JW5SyD0JUgzEKQ088UxGPWcwbxxmJFmhvlCW_dQVagMmR5Ni-9GTYyHSwBMIy-CDWHeQAXu1P870yOOzTyojclczwwp0SmQ1rY-oNBfFzW9nMx_z5zEBtknUY1XxrcixtaEi7TCRNBeju1f9ZqPkHaTJkJAYl5mCM5Hpjb-LgpEnUTjhziCTmN6gco5vIaTZLVAsK-8vnCS3VJEVQ0lvHq7u_d6Uyf7sL0sgcyvDXX_nhHgDYth9GBB74EqyMO-MHRDVhrPMpt9vw2ZxRa9N4zlrONAW0giZ6IFSsmmI6Njy9vcfz35PsyC0RPROEhOxgcBKHTs7vK5xN8uxQjKvRLFRukfF76UC6D",
-      "vibe": "At I Tre Mercanti, indulge in the exquisite tiramisu, particularly the classic and pistachio variations, in an elegantly curated Italian gourmet setting.",
+      "vibe": "Indulge in a variety of exquisite tiramisu flavors at this elegant shop dedicated to Italian desserts.",
       "quotes": [
         "I recently visited Tiramisù I Tre Mercanti and honestly, the tiramisu was absolutely incredible, easily one of the best I’ve ever had.\n\nIt was perfectly creamy, rich in flavour, and tasted incredibly ",
         "Absolutely phenomenal tiramisu experience. I tried both the classic tiramisu and the pistachio tiramisu, and they were hands down some of the best desserts I’ve had in Italy. What makes it even more s",
@@ -20497,7 +20537,18 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "gourmet dessert boutique",
+        "formality": "Casual",
+        "reservation": "Walk-in friendly",
+        "best_dishes": [
+          "classic tiramisu",
+          "pistachio tiramisu"
+        ],
+        "veg_note": "",
+        "popularity": "Iconic"
+      }
     },
     {
       "id": "ChIJF1f31tuxfkcRRjR7GpgldoA",
@@ -20518,7 +20569,7 @@
       "lat": 45.4377263,
       "lng": 12.337409800000001,
       "photo": "places/ChIJF1f31tuxfkcRRjR7GpgldoA/photos/AaVGc3mF05azRmzNhmDXr6IRibmfY27h54PLOZA3EveuzBmxF_wVUw3FftG7lgMRngKjTGO2lS6TG-SVprGsfRIXxSXmKlVg4u-cAtXeVb5aelowizxCSkjckDEN8kRKa3_zrte_E164JIaRJdu1qGQ_38NwiWgmWHqJYjCj85cugtym4NlJIMgkK32fEHlTS4opzE5yadoAeQ9CD8wLxTa7adWsfEqEeBp6MYQkRPu_G6xzanfUhFn_U8lL8QoX14G3xXSYeLSMgdI-YZSzrGrc34hHlokmVurrHtY2hzXyYU9J_z1ojG4hNrbp9aW6O9MkzBLuZG7erjgxpgjpYQgonMng-D1dsBvp-1IWFXYUe_OiWiRboVyogWx5qcefthhNiCqAOMwUGwgTzXVAZEqatckNfsbZeQF2NefnMPtxp8lXAzUAoNWMN1OZ0iu1jIcr",
-      "vibe": "At Suso, indulge in the exquisite Manet gelato, a harmonious blend of rich chocolate-hazelnut and pistachio cream, amidst an artistic array of flavors.",
+      "vibe": "Savor artistic gelato creations in a vibrant shop, known for its inventive flavors and friendly service.",
       "quotes": [
         "Worth the hype!!! Loved their icecream. They have many options to choose from and there is a flavor for everyone. So flavorful and stuff were nice too. If you are in the area and want to grab icecream",
         "What can I say but well worth the long, but fast line. Many differant flavors, so look up the info PRIOR to getting in the strore front. Al though they're are many places to get your gelato, this is a",
@@ -20537,7 +20588,15 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "popular gelato shop",
+        "formality": "Casual",
+        "reservation": "Walk-in friendly",
+        "best_dishes": [],
+        "veg_note": "Vegan options available.",
+        "popularity": "Iconic"
+      }
     },
     {
       "id": "ChIJidphR8uxfkcRnv8-f0exlD0",
@@ -20558,7 +20617,7 @@
       "lat": 45.427554,
       "lng": 12.319905900000002,
       "photo": "places/ChIJidphR8uxfkcRnv8-f0exlD0/photos/AaVGc3nNqmJ3Q_zEsnk2lClYHrVqF6rkkt8yF5JUvma-eWDBMLB_EsegQhZb4Gsfl-8dl2G6AP8g-_NfLxVPSyvEH4Bp-4tuoyinO_3Ln_Z9ep4Gx6cKqQf5V1wIjmG0COxOG7HcThlXcKMGWGINjVLV6cXBvxy2rwY2VWlhjuxaYlqfPnUNjlTI_NAYq5mBbYoG0l0eENyvL4kK_FdqorrzZpiifF4E-tbPaIxD9oTFI3WfSldfdlel8Z1L7exd0hJiVKFSt3h4oSvS6ZY_l6myiHAI7GF99MNTBHhk7-6v23pCYBDUq-kKu6PvyNRvms9c7AsnLJREEy3vbIig5FymUY49U-ZLWNvJARWZJp8hnYT3WCI5mPJyl_MhYA8fzEp6WnOReC3AoHQtiuIp5s0jTB9kc-sPD8uicgziYNSR2RjYVP-bAtgUVk0jy_0SIw71",
-      "vibe": "At Skyline Rooftop Bar, indulge in a carefully crafted cocktail while basking in the stunning panoramic views of Venice at sunset.",
+      "vibe": "Enjoy sweeping views of Venice while sipping cocktails at this modern rooftop bar.",
       "quotes": [
         "Excellent service, a variety of cocktails and beer.  The best thing about this bar is the view.  Fantastic sunsets and a great view of Venice.  The staff goes out of their way to make sure you have a ",
         "The sunset was lovely from the top but you do pay the price to go. It is worth doing 1 or 2 drinks and seeing the view. The vaporetto you can get is a 4.1 or 2 and then a short walk. Make sure you tim",
@@ -20577,7 +20636,15 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "panoramic rooftop bar",
+        "formality": "Smart casual",
+        "reservation": "Walk-in friendly",
+        "best_dishes": [],
+        "veg_note": "",
+        "popularity": "Very popular"
+      }
     },
     {
       "id": "ChIJBey-TNexfkcRCcVuo0bqyFA",
@@ -20598,7 +20665,7 @@
       "lat": 45.432434099999995,
       "lng": 12.337202999999999,
       "photo": "places/ChIJBey-TNexfkcRCcVuo0bqyFA/photos/AaVGc3n3q0_6OCLDRerwU154-HDQcvnolY0oi21dfE9_g8G9elCFPjXdxdMNuB1JdNxJjy_9azFTDztPYD6V8cUhhHiTLAm9SzSpiEGAxHHhuA5izLt34Rn01IFvHbEoi-JuUVmgg7ul927Z8ANh75FHdvUhrvjF9fKd_jrpw0KryVRJX6mzBWs0rRaQIXMhAEIf5ZVDlT99H4e32d6fybwSUCt84-etnPfg9-5YRbau28ryQ6MzytNDXUkL3cTlDgI5wTLKa7ms_UXLL74_43AKirwlTAe5cxPt5xZPj_7MJpo06yPbknxPglcHuFxT_VtkQ9avY8d_IZARlEbG5rzCKTxULkRXd7sIll7v5XUxYNTSuM7hiyJUbXEul0DBnsMCDIgufihzxw6l3R8MsWL-OjTYRhUNqwskiSL_xFVTwo4lsvOIwXZSO1jP-regvbz_",
-      "vibe": "At Harry's Bar, indulge in the iconic Bellini and exquisite carpaccio while basking in the understated sophistication of this legendary Venetian establishment.",
+      "vibe": "Step into a historic venue known for its Bellini cocktails and celebrity clientele, offering a unique dining experience.",
       "quotes": [
         "Average good cuisine. Medium service…. Not at all Professional Service, but some tried. The lady at the entrance looks at you like you are not really welcome… when you enter. Absolutely overpriced and",
         "Harry’s bar the infamous home of the Bellini cocktail. Sophisticated, under- stated chic.\nI booked in advance and we had a lovely corner table. The tables are very intimately close together.\nWe servic",
@@ -20617,7 +20684,18 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "legendary cocktail bar",
+        "formality": "Smart casual",
+        "reservation": "Reservation recommended",
+        "best_dishes": [
+          "bellini",
+          "carpaccio"
+        ],
+        "veg_note": "",
+        "popularity": "Iconic"
+      }
     },
     {
       "id": "ChIJiWB1GtixfkcRaJkU1NGSgM8",
@@ -20638,7 +20716,7 @@
       "lat": 45.43399600000001,
       "lng": 12.3420348,
       "photo": "places/ChIJiWB1GtixfkcRaJkU1NGSgM8/photos/AaVGc3lFkeG9YTzWxf5i2Qnl31OGpG_gJwYYzBk9ybxGir3TNZWDHu_C2xir5-4XEbKPDpv8XD270RNEOpJB03rKuCZHRe9-RD7kx3xREd7qVUVzCccEpYBKsAP77OKgL43PLI5saNyerin1xzAZAQ6Ptz638YyeO9vcDcEfTSjyEbLByQxJjT5P3fPHuq2MCgiFcnvDGmr78JttYd7QkfXDr0KfNWFtteLFSMnNpQNnPqcxHyavUcrsZaUIANLLmdyG1bAA0GsndRv-CK1A6YGZQKVfR6WbKFRr7IaqF_JcL1gfLlouUxsddam5L6HS3EX0rJsdbEawSURipJll8udHW8OYNYHY7N8uhXwJBPGQw8RPMHBNypNx4losndRdYn6TsTLNhr-P8ak5k3O_Tq2LVXdEsuR_u0cIbb0D1mH730TuO4vmMvUNH-9S0DVgFg",
-      "vibe": "At Terrazza Danieli, indulge in classic Venetian cuisine while savoring breathtaking views of the Grand Canal, ideally complemented by the exquisite risotto.",
+      "vibe": "Dine in luxury overlooking the Grand Canal, with a focus on classic Venetian cuisine in a stunning setting.",
       "quotes": [
         "The main appeal of La Danielle is its location — no doubt one of the best views of the Grand Canal in Venice. Unfortunately, the experience was far from enjoyable. The terrace has plants that attract ",
         "Nice atmosphere but not extraordinary (as we expected). The food was definitely not worth the price (from a taste point of view). The one thing we both enjoyed and was really good (as taste & presenta",
@@ -20657,7 +20735,15 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "opulent rooftop dining",
+        "formality": "Fine dining",
+        "reservation": "Reservation required",
+        "best_dishes": [],
+        "veg_note": "",
+        "popularity": "Well-loved"
+      }
     },
     {
       "id": "ChIJZaeHzxa9oRQRNpn3D5ku3pA",
@@ -20678,7 +20764,7 @@
       "lat": 37.9685626,
       "lng": 23.731443199999998,
       "photo": "places/ChIJZaeHzxa9oRQRNpn3D5ku3pA/photos/AaVGc3n8DRRJbuxiq5M-36ITWKMLFPZYH7so6-OO9qW0QOqPSXH2ksUD_gpRFrtTCpOEQIWCktT5j9K1WDk0g6ph1puRHbkCkdXqtdCBoIckexJfMQ6qb5Lbzfle3IMC3zreiN4aDsJF1boPy-wauZ397gYdWrQvG0xqZqsKlIAvMjNoKzxfbQG_ek56NdJBFlY5AuVLSYw719DT7q8DwThGUrtlMIXpaguaIuGp7uN8vgVfIiIbwsG6emKkQeREEJQh1sIeQkTHVcZ_7A0djkcC7OFDtEDN8D4796QrCFhGZ2NpZFw8rmrJHXyZ0XMzWuMHRTtZBqSgjOJTNNASR3H3hI2JtWTLwpmNtmA0j5Du7cV4p4kGyPcozb4cmC2tJT74za9PH5ZssHGA5smmX8w_f-xoULpckJLwnxtLVjZrPqkqGZ1e",
-      "vibe": "For a taste of authentic Indian cuisine, indulge in the exquisite paneer jalfrezi amidst the restaurant's warm ambiance and attentive service.",
+      "vibe": "A welcoming spot for Indian cuisine lovers, featuring hearty portions and a relaxed atmosphere.",
       "quotes": [
         "Very decent Indian restaurant with authentic Indian recipes. The food is delicious. Service is polite, not very fast but they serve everything on time. The atmosphere is ok, nothing special. The only ",
         "Excellent indian restaurant with amazing food and authentic flavors.\neverything was fresh, and thanks to sharry recommendation, the paneer jalfrezi was amazing.\nwe will definitely come back. they also",
@@ -20697,7 +20783,19 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "authentic Indian restaurant",
+        "formality": "Casual",
+        "reservation": "Walk-in friendly",
+        "best_dishes": [
+          "paneer jalfrezi",
+          "chicken madras",
+          "biryani"
+        ],
+        "veg_note": "Offers authentic Indian recipes with vegetarian options.",
+        "popularity": "Iconic"
+      }
     },
     {
       "id": "ChIJQbIIUpC9oRQRX_yHLEoJZ-o",
@@ -20718,7 +20816,7 @@
       "lat": 37.975449399999995,
       "lng": 23.731221899999998,
       "photo": "places/ChIJQbIIUpC9oRQRX_yHLEoJZ-o/photos/AaVGc3nQx86yumn6cRyiw9xPBU8NO6tDZgeyVvsp5GVo1mE1z3fUdmLq_9yG6qYo3ascRkaDHePb4JL7Lp08StQC7j1JTKZalC9qf0mnXQsm7bv2as8uhryDF4T7kzGv-nJrCStyxoFwiqYtNN2Tp5EjOonf4rKAJuZ14SExVR7UJMyYkVPQAd0tXvc8vVzAYcNNXP4ud-9OksnXAkLU-UoBjDYXdGJZkw_JTGDnfTe8U1Ebpy6N6I1gYF7ZwhmG5L-4nCpFyfeSgaUN1NAnfg6tAcRAG_w41pIS7JL4H9VFo9jns4iYsXPq3k8-KPut0ykKP3mLkahCPSEmYPugII0ZuDu-e_Afn-6xamftbi9fLfhC0AAXHhGcRTYQ1lmGHpz19QPAk2N0FSNyo_-9UhDpdnsxinLH1lr2j4pJtTHcDrXAWc0krvzjpQdDFw-fMg",
-      "vibe": "At Yogu Lab, indulge in the exquisite biscoff-flavored Greek frozen yogurt, a sublime treat that embodies the essence of authentic Greek dessert culture.",
+      "vibe": "Indulge in soft Greek frozen yogurt at this charming dessert shop, perfect for a sweet treat.",
       "quotes": [
         "OMG 😱… I mean this is by far the softest merry cream I’ve ever tasted… when they say you have to taste proper Greek Yogurt Ice cream… go no further… SIMPLY AMAZING TASTE… You definitely need to try th",
         "On a walkabout in Central Athens today,  I came across this recently opened frozen yogurt shop. 👍🙂\nI'm happy to say that the frozen yogurt I tasted & enjoyed 😋 (without topping) costs Euro 3.50 for a ",
@@ -20737,7 +20835,15 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "Greek frozen yogurt shop",
+        "formality": "Casual",
+        "reservation": "Walk-in friendly",
+        "best_dishes": [],
+        "veg_note": "Specializes in Greek yogurt, suitable for vegetarians.",
+        "popularity": "Under the radar"
+      }
     },
     {
       "id": "ChIJz0PvPdLNmRQRpuOBEnXJg2Y",
@@ -20758,7 +20864,7 @@
       "lat": 36.4186441,
       "lng": 25.4310257,
       "photo": "places/ChIJz0PvPdLNmRQRpuOBEnXJg2Y/photos/AaVGc3mWFATN23vvruIvc251M2xgCk1ab45YXS2NDoEEWR3E2e6T2Y_53tiVxg5swOiiP84dZR_3oCvc4uul57N2BszEvJ7w09Bdzg57ZBOOU8qZtSulF4WvBULqElQb3iljFt_xZbxKY1W-zKzJmaEip8PyF5qThMA3yLfXej5VceQUDahi9gOxerUrvoeNmwdgB7JTwsMmw_X4vodAheRGyg4cNkmmFtPaNydlkbV2iMPlh-aVps_EIEBbe-V18LBDD7-ldKBUeUyITpdB7CwGoKhUjzQCGwFmih5I1e0iD4Bqy8pMDuNJrPNEUVG-RoPWea4XxL1whu0aOx846FO9DU35_PsIixR8dT40GeXD5L-TmbZZZjlqVgHY83FQ1VVMc0mCK3HnUqS0LvGzoMz1ZFOf2I_SaupBA4i44D9SR1tE2ys3",
-      "vibe": "At Rastoni, indulge in the standout shrimp risotto while savoring expertly crafted cocktails against a backdrop of breathtaking sunset views.",
+      "vibe": "Relax with cocktails and stunning sunset views at this Mediterranean restaurant, ideal for a special evening.",
       "quotes": [
         "Amazing sunset views- delicious cocktails ($$) and  good food- the shrimp risotto was the standout for us. Service was attentive and friendly. It was a really special experience .",
         "I am delighted to share my experience! From the moment we stepped inside, everything was exceptional. The service was attentive and friendly, ensuring we felt welcomed throughout our visit. The food w",
@@ -20777,7 +20883,17 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "scenic Mediterranean restaurant",
+        "formality": "Smart casual",
+        "reservation": "Reservation recommended",
+        "best_dishes": [
+          "shrimp risotto"
+        ],
+        "veg_note": "",
+        "popularity": "Very popular"
+      }
     },
     {
       "id": "ChIJ04IGPyTNmRQR0AdYSxmcadk",
@@ -20798,7 +20914,7 @@
       "lat": 36.4176889,
       "lng": 25.432322300000003,
       "photo": "places/ChIJ04IGPyTNmRQR0AdYSxmcadk/photos/AaVGc3kyIEKj5pge6-FgEUkbGjMGRbrf9X426vk0biol8NWn2Xe693EgTg9gCeJJitK0eOZAdXeI8ZN2D5VGxkL-SOFKvD0NO1Cg3YSTJz8kaODq_l5OsDhkJVjQTyMSUFccCpj3kk4RPmkAbTPBuqeWtMarXR7EHs5YkJIUV8ibvS82xkGMzyIzm2Y9JJr5_38mcpwBTptOnxjJIbF8NJHseEq3PdpmBie0O_2FjQ6IwMq5JuEL7U_yDsa9QWds6MYxXXEX1keMWoKqs6r2hWcsfXbo3ceeFv0H4MI3g7bPc3WqafpaPGb_Maz2Q5gJi_OkrM38vuQLhwf19pA6G2c-Q4Xb1iEBCrSZ-qxlMILxxig7trS6HUDOoF8mX-KNhu7W72q2XvF_WWGRptvG5n2S_1DatAdsQTn8hnDKQR8c8Lb9Teo7_3g7afx5kjcGtQ",
-      "vibe": "At PitaGram Santorini, indulge in the exquisite lamb pita, a culinary masterpiece, while basking in the warmth of genuine hospitality.",
+      "vibe": "This casual eatery offers generous portions of gyros, ideal for families seeking a hearty meal in a friendly atmosphere.",
       "quotes": [
         "I had a pork skewer for €3 which was yum the meat really melted in my mouth. I wish the meat wasn’t just put on top of the chips though because it made them soggy and I wish the chips in general were ",
         "The best gyros we had in Santorini! 🇬🇷\n\nAmazing food, generous portions, and incredibly kind people. We were welcomed with warm hospitality and even received complimentary treats, which made the exper",
@@ -20817,7 +20933,18 @@
       "source_tags": [
         "google",
         "natasha-rec"
-      ]
+      ],
+      "profile": {
+        "descriptor": "casual gyro spot",
+        "formality": "Casual",
+        "reservation": "Walk-in friendly",
+        "best_dishes": [
+          "pork skewer",
+          "lamb pita"
+        ],
+        "veg_note": "",
+        "popularity": "Well-loved"
+      }
     }
   ]
 }
