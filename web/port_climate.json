@@ -1,70 +1,70 @@
 {
   "2026-06-30": {
-    "high": 93,
-    "low": 79,
-    "rain_chance": 13,
+    "high": 97,
+    "low": 77,
+    "rain_chance": 10,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-01": {
-    "high": 89,
-    "low": 76,
-    "rain_chance": 36,
+    "high": 93,
+    "low": 75,
+    "rain_chance": 49,
     "icon": "cloud",
     "source": "forecast"
   },
   "2026-07-02": {
-    "high": 85,
-    "low": 71,
-    "rain_chance": 34,
-    "icon": "cloud",
+    "high": 84,
+    "low": 69,
+    "rain_chance": 50,
+    "icon": "rain",
     "source": "forecast"
   },
   "2026-07-03": {
     "high": 84,
     "low": 73,
-    "rain_chance": 31,
-    "icon": "cloud",
+    "rain_chance": 17,
+    "icon": "sun",
     "source": "forecast"
   },
   "2026-07-04": {
-    "high": 87,
-    "low": 75,
+    "high": 90,
+    "low": 73,
     "rain_chance": 35,
     "icon": "cloud",
     "source": "forecast"
   },
   "2026-07-05": {
-    "high": 84,
-    "low": 75,
-    "rain_chance": 37,
-    "icon": "cloud",
+    "high": 83,
+    "low": 74,
+    "rain_chance": 51,
+    "icon": "rain",
     "source": "forecast"
   },
   "2026-07-07": {
     "high": 91,
-    "low": 78,
-    "rain_chance": 10,
+    "low": 74,
+    "rain_chance": 13,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-08": {
-    "high": 87,
-    "low": 73,
-    "rain_chance": 0,
+    "high": 95,
+    "low": 74,
+    "rain_chance": 2,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-09": {
     "high": 92,
-    "low": 74,
+    "low": 77,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-10": {
-    "high": 74,
-    "low": 71,
+    "high": 81,
+    "low": 72,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
