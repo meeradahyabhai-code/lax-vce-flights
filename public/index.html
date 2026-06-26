@@ -120,15 +120,6 @@
     transition: background .15s, border-color .15s, transform .1s; text-shadow: 0 1px 8px rgba(0,0,0,.3); }
   .cine-btn:hover { background: rgba(255,255,255,.24); border-color: #fff; }
   .cine-btn:active { transform: scale(.98); }
-  /* Save-trip-for-offline control on the landing hero (quiet, secondary) */
-  .offline-save { margin-top: 18px; background: none; border: none; cursor: pointer;
-    font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: .2px;
-    color: rgba(255,255,255,.82); text-shadow: 0 1px 8px rgba(0,0,0,.35);
-    display: inline-flex; align-items: center; gap: 7px; padding: 6px 4px; }
-  .offline-save:hover { color: #fff; }
-  .offline-save svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-  .offline-save.saved { color: var(--gold-light); }
-  .offline-save[disabled] { cursor: default; opacity: .9; }
   /* App-wide offline banner */
   .offline-banner { position: fixed; left: 0; right: 0; top: 0; z-index: 5000;
     transform: translateY(-100%); transition: transform .28s cubic-bezier(.22,1,.36,1);
@@ -2431,10 +2422,6 @@
         <button class="cine-btn" type="button" data-dest="shop">Shop</button>
         <button class="cine-btn" type="button" data-dest="itinerary">Our Trip</button>
       </div>
-      <button class="offline-save" id="offline-save" type="button" title="Cache the whole trip so it works without signal at sea">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span id="offline-save-label">Save trip for offline</span>
-      </button>
     </div>
   </div>
 </div>
@@ -6990,69 +6977,43 @@
     if (b) b.classList.toggle('show', !isOnline());
   }
 
-  function buildOfflineUrls() {
-    var urls = ['/', '/index.html', '/restaurants.json', '/excursions.json', '/flights.json',
-      '/hotels_venice.json', '/port_climate.json', '/audio/manifest.json',
-      '/media/sea-day-poster.jpg'];
+  // Light "essentials" cached automatically (no user action): the port hero
+  // images + pronunciation audio, on top of the shell + trip data the service
+  // worker already precaches on install. Restaurant photos (14MB) are NOT here —
+  // they cache as people browse, so we never push that much over cruise wifi.
+  function buildEssentialUrls() {
+    var urls = ['/audio/manifest.json', '/media/sea-day-poster.jpg'];
     try { if (typeof PORT_IMAGES !== 'undefined') Object.keys(PORT_IMAGES).forEach(function (slug) { urls.push('/media/' + slug + '.jpg'); }); } catch (e) {}
-    try { (RESTAURANTS || []).forEach(function (r) { if (r && r.photo_local) urls.push(r.photo_local); }); } catch (e) {}
     try { if (PHRASE_AUDIO) Object.keys(PHRASE_AUDIO).forEach(function (k) { if (PHRASE_AUDIO[k]) urls.push('/audio/' + PHRASE_AUDIO[k]); }); } catch (e) {}
     return urls.filter(function (u, i) { return urls.indexOf(u) === i; });
   }
-
-  var _saving = false;
-  function saveForOffline() {
-    if (_saving) return;
-    var btn = document.getElementById('offline-save');
-    var label = document.getElementById('offline-save-label');
-    if (!('serviceWorker' in navigator)) { showToast('Offline saving isn’t supported on this browser.'); return; }
-    if (!isOnline()) { showToast('Connect to wifi first, then save the trip for offline.'); return; }
-    _saving = true;
-    if (btn) btn.setAttribute('disabled', '1');
-    if (label) label.textContent = 'Preparing…';
-    // Make sure the data we need to enumerate (restaurant photos, audio) is loaded.
-    Promise.all([
-      (typeof loadRestaurants === 'function') ? loadRestaurants() : Promise.resolve(),
-      (typeof loadPhraseAudio === 'function') ? loadPhraseAudio() : Promise.resolve(),
-    ]).then(function () {
-      return navigator.serviceWorker.ready;
-    }).then(function (reg) {
-      var sw = reg.active || navigator.serviceWorker.controller;
-      if (!sw) { throw new Error('no active service worker'); }
-      var urls = buildOfflineUrls();
-      var onMsg = function (ev) {
-        var d = ev.data || {};
-        if (d.type === 'PRECACHE_PROGRESS' && label) {
-          var pct = d.total ? Math.round((d.done / d.total) * 100) : 0;
-          label.textContent = 'Saving… ' + pct + '%';
-        } else if (d.type === 'PRECACHE_DONE') {
-          navigator.serviceWorker.removeEventListener('message', onMsg);
-          _saving = false;
-          if (btn) { btn.removeAttribute('disabled'); btn.classList.add('saved'); }
-          if (label) label.textContent = 'Saved for offline ✓';
-          try { localStorage.setItem('dcf_offline_saved', String(d.total || urls.length)); } catch (e) {}
-        }
-      };
-      navigator.serviceWorker.addEventListener('message', onMsg);
-      sw.postMessage({ type: 'PRECACHE', urls: urls });
-    }).catch(function () {
-      _saving = false;
-      if (btn) btn.removeAttribute('disabled');
-      if (label) label.textContent = 'Save trip for offline';
-      showToast('Couldn’t save the trip. Try again on a stronger connection.');
-    });
+  // Only prefetch on a connection that can afford it — never on the ship's metered/slow wifi.
+  function connectionOkForPrefetch() {
+    if (!isOnline()) return false;
+    var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (c) {
+      if (c.saveData) return false;
+      if (c.effectiveType && /(^|\b)(slow-2g|2g)$/.test(c.effectiveType)) return false;
+    }
+    return true;
+  }
+  function autoCacheEssentials() {
+    if (!('serviceWorker' in navigator) || !connectionOkForPrefetch()) return;
+    try { if (sessionStorage.getItem('dcf_essentials_run')) return; sessionStorage.setItem('dcf_essentials_run', '1'); } catch (e) {}
+    (typeof loadPhraseAudio === 'function' ? loadPhraseAudio() : Promise.resolve())
+      .then(function () { return navigator.serviceWorker.ready; })
+      .then(function (reg) {
+        var sw = reg.active || navigator.serviceWorker.controller;
+        if (sw) sw.postMessage({ type: 'PRECACHE', urls: buildEssentialUrls() });
+      }).catch(function () {});
   }
 
   function setupOffline() {
     window.addEventListener('online', updateOnlineUI);
     window.addEventListener('offline', updateOnlineUI);
     updateOnlineUI();
-    var btn = document.getElementById('offline-save');
-    if (btn) {
-      btn.addEventListener('click', saveForOffline);
-      // Reflect a prior save across launches.
-      try { if (localStorage.getItem('dcf_offline_saved')) { btn.classList.add('saved'); var l = document.getElementById('offline-save-label'); if (l) l.textContent = 'Saved for offline ✓'; } } catch (e) {}
-    }
+    // Defer the essentials prefetch so it never competes with first paint.
+    setTimeout(autoCacheEssentials, 3000);
   }
 
   async function init() {
