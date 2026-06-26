@@ -120,6 +120,27 @@
     transition: background .15s, border-color .15s, transform .1s; text-shadow: 0 1px 8px rgba(0,0,0,.3); }
   .cine-btn:hover { background: rgba(255,255,255,.24); border-color: #fff; }
   .cine-btn:active { transform: scale(.98); }
+  /* Save-trip-for-offline control on the landing hero (quiet, secondary) */
+  .offline-save { margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: .2px;
+    color: rgba(255,255,255,.82); text-shadow: 0 1px 8px rgba(0,0,0,.35);
+    display: inline-flex; align-items: center; gap: 7px; padding: 6px 4px; }
+  .offline-save:hover { color: #fff; }
+  .offline-save svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .offline-save.saved { color: var(--gold-light); }
+  .offline-save[disabled] { cursor: default; opacity: .9; }
+  /* App-wide offline banner */
+  .offline-banner { position: fixed; left: 0; right: 0; top: 0; z-index: 5000;
+    transform: translateY(-100%); transition: transform .28s cubic-bezier(.22,1,.36,1);
+    background: var(--ink); color: #fff; font-family: var(--sans); font-size: 13px; font-weight: 500;
+    text-align: center; padding: calc(8px + env(safe-area-inset-top)) 14px 8px; letter-spacing: .2px; }
+  .offline-banner.show { transform: translateY(0); }
+  /* Transient toast (offline write attempts, etc.) */
+  .app-toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(12px);
+    z-index: 5200; background: var(--ink); color: #fff; font-family: var(--sans); font-size: 13.5px; font-weight: 500;
+    padding: 11px 16px; border-radius: 10px; max-width: 86vw; text-align: center; line-height: 1.35;
+    opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; box-shadow: 0 8px 30px rgba(0,0,0,.28); }
+  .app-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .landing-title {
     font-family: var(--serif); font-size: clamp(36px, 8vw, 56px);
     font-weight: 400; font-style: italic; color: var(--azure);
@@ -2410,9 +2431,17 @@
         <button class="cine-btn" type="button" data-dest="shop">Shop</button>
         <button class="cine-btn" type="button" data-dest="itinerary">Our Trip</button>
       </div>
+      <button class="offline-save" id="offline-save" type="button" title="Cache the whole trip so it works without signal at sea">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span id="offline-save-label">Save trip for offline</span>
+      </button>
     </div>
   </div>
 </div>
+
+<!-- Offline status banner + transient toast -->
+<div class="offline-banner" id="offline-banner">You&rsquo;re offline &middot; showing your saved trip</div>
+<div class="app-toast" id="app-toast" role="status" aria-live="polite"></div>
 
 <!-- Origin selection modal -->
 <div class="origin-modal hidden" id="origin-modal">
@@ -6939,9 +6968,97 @@
     });
   }
 
+  // ---- Offline (PWA) UX: status banner, write-guards, "Save trip for offline" ----
+  function isOnline() { return navigator.onLine !== false; }
+  var _toastTimer = null;
+  function showToast(msg) {
+    var el = document.getElementById('app-toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+    if (_toastTimer) clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(function () { el.classList.remove('show'); }, 3200);
+  }
+  // Guard a write action when offline: returns true if the action may proceed.
+  function requireOnline(msg) {
+    if (isOnline()) return true;
+    showToast(msg || 'You’re offline — reconnect to save this.');
+    return false;
+  }
+  function updateOnlineUI() {
+    var b = document.getElementById('offline-banner');
+    if (b) b.classList.toggle('show', !isOnline());
+  }
+
+  function buildOfflineUrls() {
+    var urls = ['/', '/index.html', '/restaurants.json', '/excursions.json', '/flights.json',
+      '/hotels_venice.json', '/port_climate.json', '/audio/manifest.json',
+      '/media/sea-day-poster.jpg'];
+    try { if (typeof PORT_IMAGES !== 'undefined') Object.keys(PORT_IMAGES).forEach(function (slug) { urls.push('/media/' + slug + '.jpg'); }); } catch (e) {}
+    try { (RESTAURANTS || []).forEach(function (r) { if (r && r.photo_local) urls.push(r.photo_local); }); } catch (e) {}
+    try { if (PHRASE_AUDIO) Object.keys(PHRASE_AUDIO).forEach(function (k) { if (PHRASE_AUDIO[k]) urls.push('/audio/' + PHRASE_AUDIO[k]); }); } catch (e) {}
+    return urls.filter(function (u, i) { return urls.indexOf(u) === i; });
+  }
+
+  var _saving = false;
+  function saveForOffline() {
+    if (_saving) return;
+    var btn = document.getElementById('offline-save');
+    var label = document.getElementById('offline-save-label');
+    if (!('serviceWorker' in navigator)) { showToast('Offline saving isn’t supported on this browser.'); return; }
+    if (!isOnline()) { showToast('Connect to wifi first, then save the trip for offline.'); return; }
+    _saving = true;
+    if (btn) btn.setAttribute('disabled', '1');
+    if (label) label.textContent = 'Preparing…';
+    // Make sure the data we need to enumerate (restaurant photos, audio) is loaded.
+    Promise.all([
+      (typeof loadRestaurants === 'function') ? loadRestaurants() : Promise.resolve(),
+      (typeof loadPhraseAudio === 'function') ? loadPhraseAudio() : Promise.resolve(),
+    ]).then(function () {
+      return navigator.serviceWorker.ready;
+    }).then(function (reg) {
+      var sw = reg.active || navigator.serviceWorker.controller;
+      if (!sw) { throw new Error('no active service worker'); }
+      var urls = buildOfflineUrls();
+      var onMsg = function (ev) {
+        var d = ev.data || {};
+        if (d.type === 'PRECACHE_PROGRESS' && label) {
+          var pct = d.total ? Math.round((d.done / d.total) * 100) : 0;
+          label.textContent = 'Saving… ' + pct + '%';
+        } else if (d.type === 'PRECACHE_DONE') {
+          navigator.serviceWorker.removeEventListener('message', onMsg);
+          _saving = false;
+          if (btn) { btn.removeAttribute('disabled'); btn.classList.add('saved'); }
+          if (label) label.textContent = 'Saved for offline ✓';
+          try { localStorage.setItem('dcf_offline_saved', String(d.total || urls.length)); } catch (e) {}
+        }
+      };
+      navigator.serviceWorker.addEventListener('message', onMsg);
+      sw.postMessage({ type: 'PRECACHE', urls: urls });
+    }).catch(function () {
+      _saving = false;
+      if (btn) btn.removeAttribute('disabled');
+      if (label) label.textContent = 'Save trip for offline';
+      showToast('Couldn’t save the trip. Try again on a stronger connection.');
+    });
+  }
+
+  function setupOffline() {
+    window.addEventListener('online', updateOnlineUI);
+    window.addEventListener('offline', updateOnlineUI);
+    updateOnlineUI();
+    var btn = document.getElementById('offline-save');
+    if (btn) {
+      btn.addEventListener('click', saveForOffline);
+      // Reflect a prior save across launches.
+      try { if (localStorage.getItem('dcf_offline_saved')) { btn.classList.add('saved'); var l = document.getElementById('offline-save-label'); if (l) l.textContent = 'Saved for offline ✓'; } } catch (e) {}
+    }
+  }
+
   async function init() {
     migrateIdentity();
     setupLanding();
+    setupOffline();
     setupTripPhase();
     setupOriginModal();
     setupBookModal();
@@ -7398,6 +7515,7 @@
     });
   }
   function toggleJoinR(date, id, traveler) {
+    if (!requireOnline('You’re offline — reconnect to join.')) return null;
     var rec = findRest(date, id); if (!rec) return null;
     rec.joins = rec.joins || []; var i = rec.joins.indexOf(traveler); var result;
     if (i >= 0) {
@@ -7419,6 +7537,7 @@
     });
   }
   function confirmDeleteRestaurant(rec, date) {
+    if (!requireOnline('You’re offline — reconnect to remove this.')) return;
     var ov = document.createElement('div'); ov.className = 'modal-overlay active';
     ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
       '<button class="modal-close" data-act="cancel" type="button" aria-label="Close">&times;</button>' +
@@ -7484,6 +7603,7 @@
   }
 
   function openAddRestaurantModal(date, port, portKey) {
+    if (!requireOnline('You’re offline — reconnect to add a restaurant.')) return;
     var ov = document.createElement('div'); ov.className = 'modal-overlay active';
     var me = getUserName();
     var portFirst = (port || '').split(/[,(]/)[0].trim();
@@ -7690,6 +7810,7 @@
   }
   // Returns 'joined' | 'left' | null (null = excursion couldn't be resolved, nothing changed)
   function toggleJoin(date, id, traveler) {
+    if (!requireOnline('You’re offline — reconnect to join.')) return null;
     var rec = findExc(date, id); if (!rec) return null;
     rec.joins = rec.joins || [];
     var i = rec.joins.indexOf(traveler);
@@ -7772,6 +7893,7 @@
   }
   // Guarded confirm so a tap can't wipe an excursion for the whole group by accident.
   function confirmDeleteExcursion(rec, date) {
+    if (!requireOnline('You’re offline — reconnect to remove this.')) return;
     var ov = document.createElement('div');
     ov.className = 'modal-overlay active';
     ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
@@ -7867,6 +7989,7 @@
   }
 
   function openAddExcursionModal(date, port, opts) {
+    if (!requireOnline('You’re offline — reconnect to add a tour.')) return;
     opts = opts || {};
     var noList = !!opts.noList;  // pre-cruise (Venice) tours: screenshot or manual only, no cruise-line list
     var ov = document.createElement('div');
@@ -9069,6 +9192,7 @@
   }
 
   function openRecommendModal(id) {
+    if (!requireOnline('You’re offline — reconnect to save a recommendation.')) return;
     var me = getUserName();
     if (!me) { promptName(true, function () { openRecommendModal(id); }); return; }
     var r = RESTAURANTS.filter(function (x) { return String(x.id) === String(id); })[0] || { name: 'this place' };
