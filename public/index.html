@@ -1037,6 +1037,10 @@
   .rcard-recs { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--fog); }
   .rcard-rec-line { font-family: var(--sans); font-size: 13px; color: var(--text-secondary); }
   .rcard-rec-line + .rcard-rec-line { margin-top: 3px; }
+  .rcard-rec-note { font-family: var(--sans); font-size: 12.5px; color: var(--ink); line-height: 1.4;
+    margin-top: 6px; padding: 7px 11px; background: rgba(184,149,58,.09); border-left: 2px solid var(--gold);
+    border-radius: 0 7px 7px 0; }
+  .rcard-rec-note b { color: var(--gold); font-weight: 600; }
   .rcard-expand { max-height: 0; overflow: hidden; opacity: 0; padding: 0 14px; transition: max-height .35s cubic-bezier(.22,1,.36,1), opacity .25s, padding .35s; }
   .rcard.open .rcard-expand { max-height: 1400px; opacity: 1; padding: 6px 14px 15px; border-top: 1px solid var(--fog); }
   .rcard-vibe { font-family: var(--serif); font-style: italic; font-size: 15px; line-height: 1.45; color: var(--text-primary); }
@@ -8484,6 +8488,11 @@
   // ---- Recommended (group, Supabase: restaurant_recs) ----
   var REST_RECS = {};
   function recsFor(id) { return REST_RECS[id] || []; }
+  // Curated tips that ride along with a recommendation (shown under the rec line).
+  var REC_NOTES = {
+    'ChIJd7fbStixfkcR42J6gNhq7WQ': 'Go to the fast-food (to-go) counter, not the sit-down restaurant.', // Dal Moro's
+    'ChIJq6mHsNmxfkcRV64qpCP2Qzw': 'Go early — they run out of tiramisu well before the day is done.'      // I Tre Mercanti
+  };
   function loadRestRecs() {
     return fetch(SUPABASE_URL + '/rest/v1/restaurant_recs?select=*', { headers: sbHeaders() })
       .then(function (r) { return r.ok ? r.json() : null; })
@@ -8711,7 +8720,9 @@
       '</div>' +
       (recsFor(r.id).length ? '<div class="rcard-recs">' + recsFor(r.id).map(function (x) {
         return '<div class="rcard-rec-line">' + escHtml(x.recommended_by || 'Someone') + ' recommended this to ' + escHtml(x.recommended_to || 'you') + '</div>';
-      }).join('') + '</div>' : '') +
+      }).join('') +
+        (REC_NOTES[r.id] ? '<div class="rcard-rec-note"><b>Tip</b> &middot; ' + escHtml(REC_NOTES[r.id]) + '</div>' : '') +
+      '</div>' : '') +
       '</div>';
 
     return '<div class="rcard" data-id="' + escHtml(r.id) + '">' +
