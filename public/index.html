@@ -1048,6 +1048,9 @@
   .rcard-prof b { color: var(--text-primary); font-weight: 600; }
   .rcard-dishes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
   .rcard-dish { font-family: var(--sans); font-size: 12px; background: rgba(26,58,107,.06); color: var(--azure); border-radius: 999px; padding: 4px 10px; }
+  .rcard-addr { display: flex; align-items: flex-start; gap: 7px; font-family: var(--sans); font-size: 13px;
+    color: var(--text-secondary); line-height: 1.4; margin-top: 13px; }
+  .rcard-addr svg { width: 14px; height: 14px; flex: 0 0 auto; margin-top: 1px; stroke: var(--gold); fill: none; stroke-width: 1.7; }
   .rcard-actions { display: flex; gap: 8px; margin-top: 13px; flex-wrap: wrap; }
   .rcard-btn { font-family: var(--sans); font-size: 13px; font-weight: 600; border-radius: 10px; padding: 9px 14px; cursor: pointer; border: 1px solid var(--border-strong); background: var(--bg-surface); color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
   .rcard-btn.primary { background: var(--azure); border-color: var(--azure); color: #fff; }
@@ -8649,6 +8652,24 @@
       label + ' &#8599;</a>';
   }
 
+  var PIN_SVG = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+  // Directions deep-link to the device's default maps app: Apple Maps on iOS,
+  // Google Maps elsewhere. Our id IS the Google place id, so Google gets an exact pin.
+  // The link itself works offline — it hands off to the maps app (which may have offline maps).
+  function restMapsUrl(r) {
+    var name = encodeURIComponent(r.name || 'Restaurant');
+    var isApple = /iPad|iPhone|iPod/.test(navigator.userAgent || '');
+    if (isApple) {
+      if (r.lat != null && r.lng != null) return 'https://maps.apple.com/?q=' + name + '&ll=' + r.lat + ',' + r.lng;
+      return 'https://maps.apple.com/?q=' + encodeURIComponent((r.name || '') + ' ' + (r.address || ''));
+    }
+    if (r.id && /^ChIJ/.test(r.id)) return 'https://www.google.com/maps/search/?api=1&query=' + name + '&query_place_id=' + encodeURIComponent(r.id);
+    if (r.lat != null && r.lng != null) return 'https://www.google.com/maps/search/?api=1&query=' + r.lat + ',' + r.lng;
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((r.name || '') + ' ' + (r.address || ''));
+  }
+  // Menu: the restaurant's own site (where the menu lives); fall back to its Google listing.
+  function restMenuUrl(r) { return safeUrl(r.website || r.maps_url || ''); }
+
   function michelinBadge(r) {
     if (r.michelin === 'star') {
       var m = (r.michelin_award || '').match(/(\d)/);
@@ -8712,7 +8733,10 @@
       (prof.length ? '<div class="rcard-prof">' + prof.map(escHtml).join(' &middot; ') + '</div>' : '') +
       (p.veg_note ? '<div class="rcard-prof">' + escHtml(p.veg_note) + '</div>' : '') +
       (dishes ? '<div class="rcard-dishes">' + dishes + '</div>' : '') +
+      (r.address ? '<div class="rcard-addr">' + PIN_SVG + '<span>' + escHtml(r.address) + '</span></div>' : '') +
       '<div class="rcard-actions">' + restReserveBtn(r) +
+        '<a class="rcard-btn" href="' + escHtml(restMapsUrl(r)) + '" target="_blank" rel="noopener">Directions &#8599;</a>' +
+        (restMenuUrl(r) ? '<a class="rcard-btn" href="' + escHtml(restMenuUrl(r)) + '" target="_blank" rel="noopener">Menu &#8599;</a>' : '') +
         '<a class="rcard-btn" href="https://www.tiktok.com/search?q=' +
           encodeURIComponent(r.name + ' ' + (REST_LABEL[r.port_key] || '')) +
           '" target="_blank" rel="noopener">See it on TikTok &#8599;</a>' +
