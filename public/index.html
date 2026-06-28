@@ -8737,8 +8737,8 @@
       '<div class="rcard-actions">' + restReserveBtn(r) +
         '<a class="rcard-btn" href="' + escHtml(restMapsUrl(r)) + '" target="_blank" rel="noopener">Directions &#8599;</a>' +
         (restMenuUrl(r) ? '<a class="rcard-btn" href="' + escHtml(restMenuUrl(r)) + '" target="_blank" rel="noopener">Menu &#8599;</a>' : '') +
-        '<a class="rcard-btn" href="https://www.tiktok.com/search?q=' +
-          encodeURIComponent(r.name + ' ' + (REST_LABEL[r.port_key] || '')) +
+        '<a class="rcard-btn" href="https://www.google.com/search?q=' +
+          encodeURIComponent(r.name + ' ' + (REST_LABEL[r.port_key] || '') + ' tiktok') +
           '" target="_blank" rel="noopener">See it on TikTok &#8599;</a>' +
         '<button class="rcard-btn rcard-recbtn" data-id="' + escHtml(r.id) + '">Recommended to you?</button>' +
       '</div>' +
