@@ -7023,10 +7023,37 @@
     setTimeout(autoCacheEssentials, 3000);
   }
 
+  // Auto-update: home-screen apps don't refresh when resumed from the background,
+  // so a deploy stays invisible until a manual relaunch. On resume, compare the
+  // live shell's ETag (changes every deploy, no version bookkeeping) and quietly
+  // reload if it changed. Only fires after a real background resume (>20s hidden),
+  // so it never interrupts active use, and only when online.
+  function setupAutoUpdate() {
+    var appEtag = null, hiddenAt = 0, checking = false;
+    function readTag(r) { return r.headers.get('etag') || r.headers.get('last-modified') || ''; }
+    function record() { fetch('/', { method: 'HEAD', cache: 'no-store' }).then(function (r) { appEtag = readTag(r); }).catch(function () {}); }
+    function checkForUpdate() {
+      if (checking || !isOnline()) return;
+      checking = true;
+      fetch('/', { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+        checking = false;
+        var et = readTag(r);
+        if (appEtag && et && et !== appEtag) location.reload();
+      }).catch(function () { checking = false; });
+    }
+    record();
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { hiddenAt = Date.now(); return; }
+      if (hiddenAt && Date.now() - hiddenAt > 20000) checkForUpdate();
+      if ('serviceWorker' in navigator) navigator.serviceWorker.ready.then(function (reg) { try { reg.update(); } catch (e) {} }).catch(function () {});
+    });
+  }
+
   async function init() {
     migrateIdentity();
     setupLanding();
     setupOffline();
+    setupAutoUpdate();
     setupTripPhase();
     setupOriginModal();
     setupBookModal();
