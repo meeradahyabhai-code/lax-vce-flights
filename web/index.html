@@ -296,9 +296,18 @@
   .trip-subnav-tab.active { color: var(--azure); border-bottom-color: var(--azure); }
   /* Clear the sticky trip-nav when jumping to a section */
   #itin-flights-anchor, #itin-hotels-anchor, #itin-transport-anchor,
-  #itin-packing-anchor, #itin-cruise-anchor, #itin-onboard-anchor, #itin-excursions-anchor {
+  #itin-packing-anchor, #itin-cruise-anchor, #itin-onboard-anchor, #itin-excursions-anchor,
+  #itin-rooms-anchor {
     scroll-margin-top: 140px;
   }
+  /* Room Numbers grid */
+  .rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 12px; margin-top: 16px; }
+  .room-card { background: #fff; border: 1px solid rgba(10,10,15,0.10); border-radius: 14px; padding: 14px 16px 15px; }
+  .room-card.room-mine { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+  .room-deck { font-family: var(--sans); font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .room-no { font-family: var(--serif); font-size: 30px; line-height: 1; color: var(--azure); font-weight: 600; font-variant-numeric: tabular-nums; margin: 3px 0 9px; }
+  .room-guest { font-family: var(--sans); font-size: 14px; color: #2b3340; line-height: 1.45; }
+  .room-mine-badge { display: inline-block; margin-top: 9px; font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--gold); background: rgba(184,149,58,0.10); border: 1px solid rgba(184,149,58,0.35); border-radius: 9999px; padding: 3px 10px; }
   .trip-phase-btn {
     flex: 1; border: none; cursor: pointer; white-space: nowrap;
     font-family: var(--sans); font-size: 14px; font-weight: 500;
@@ -2624,6 +2633,7 @@
       <button class="trip-subnav-tab active" data-target="itin-cruise-anchor">Days</button>
       <button class="trip-subnav-tab" data-target="itin-onboard-anchor">Helpful Links</button>
       <button class="trip-subnav-tab" data-target="itin-excursions-anchor">Tours</button>
+      <button class="trip-subnav-tab" data-target="itin-rooms-anchor">Room Numbers</button>
     </div>
   </div>
 
@@ -2714,6 +2724,15 @@
       <div class="itin-heading">Tours offered through NCL</div>
       <div class="itin-rule"></div>
       <div id="itinerary-excursions"></div>
+    </div>
+
+    <!-- Room Numbers -->
+    <div id="itin-rooms-anchor"></div>
+    <div class="itin-section">
+      <div class="itin-heading">Room Numbers</div>
+      <div class="itin-rule"></div>
+      <div class="itin-sub">Norwegian Viva &middot; who&rsquo;s in which stateroom</div>
+      <div id="rooms-list" class="rooms-grid"></div>
     </div>
   </div>
 
@@ -5539,6 +5558,7 @@
       renderOnboard();
       renderPacking();
       renderExcursions();
+      renderRooms();
       Promise.all([loadExcursions(), fetchExcursionPicks()]).then(function () { renderExcursions(); refreshMyBookingsIfActive(); });
       loadPortClimate().then(function () { renderCruiseSchedule(); renderPacking(); });
       applyTripPhase('cruise'); // opening Our Trip lands on The Cruise; the toggle still switches
@@ -8331,6 +8351,39 @@
       tip: ''
     }
   ];
+
+  // Stateroom assignments (Norwegian Viva, sail Jul 3 2026). Source: NCL booking manifest.
+  // Names match the TRAVELERS roster format so the logged-in guest's room highlights.
+  var ROOMS = [
+    { no: '10304', guests: ['Bhula Joshila P.', 'Bhula Ayush P.', 'Bhula Alayna P.', 'Bhula Piyush H.'] },
+    { no: '10308', guests: ['Dinesh Dilani', 'Dinesh Sahana', 'Dahyabhai Jayshri', 'Dahyabhai Suresh'] },
+    { no: '10312', guests: ['Dinesh Raya', 'Dinesh David', 'Dinesh Vinisha'] },
+    { no: '10326', guests: ['Patel Ameera K.', 'Kaur Sukhdeep'] },
+    { no: '10328', guests: ['Dharna Savannah', 'Patel Ronil'] },
+    { no: '10334', guests: ['Patel Damyanti', 'Chatha Sandhya'] },
+    { no: '11142', guests: ['Aceves Jonathan A.', 'Dahyabhai Meera C.'] },
+    { no: '11160', guests: ['Madhav Malvika', 'Madhav Atul P.'] },
+    { no: '11188', guests: ['Dahyabhai Nita', 'Dahyabhai Naresh'] },
+    { no: '11196', guests: ['Paredes Aceves Susana D.', 'Aceves Ezequiel'] },
+    { no: '12192', guests: ['Chhabria Philomina'] },
+    { no: '12513', guests: ['Madhav Shakeel A.'] }
+  ];
+
+  function renderRooms() {
+    var el = document.getElementById('rooms-list');
+    if (!el) return;
+    var me = (typeof getUserName === 'function') ? getUserName() : null;
+    el.innerHTML = ROOMS.map(function (r) {
+      var mine = me && r.guests.indexOf(me) !== -1;
+      var guests = r.guests.map(function (g) { return '<div class="room-guest">' + g + '</div>'; }).join('');
+      var badge = mine ? '<div class="room-mine-badge">You’re here</div>' : '';
+      return '<div class="room-card' + (mine ? ' room-mine' : '') + '">' +
+        '<div class="room-deck">Deck ' + r.no.slice(0, 2) + '</div>' +
+        '<div class="room-no">' + r.no + '</div>' +
+        guests + badge +
+        '</div>';
+    }).join('');
+  }
 
   function renderOnboard() {
     var el = document.getElementById('onboard-list');

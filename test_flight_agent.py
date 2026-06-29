@@ -1860,7 +1860,8 @@ class TestMultiCityFrontend(unittest.TestCase):
     def test_mc_heroes_config(self):
         """Heroes config should include multicity entry."""
         self.assertIn("multicity:", self.html)
-        self.assertIn('Round Trip', self.html)
+        # Hero titles all read "Flights"; the multicity entry is identified by its subtitle.
+        self.assertIn('one booking', self.html)
 
     def test_mc_route_labels(self):
         """Route labels should include multicity."""
