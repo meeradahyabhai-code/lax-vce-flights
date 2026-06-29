@@ -222,10 +222,8 @@
 
   /* ── Hero ── */
   .hero {
-    background:
-      linear-gradient(rgba(252,252,250,0.85), rgba(252,252,250,0.85)),
-      url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600') center/cover no-repeat;
-    text-align: center; padding: 100px 24px;
+    background: var(--paper);
+    text-align: center; padding: 48px 24px 28px;
     position: relative;
   }
   .hero-pill {
@@ -394,12 +392,12 @@
   .ask-ai-input::placeholder { color: #94a3b8; font-style: italic; }
   .ask-ai-btn {
     border: none; border-radius: 10px;
-    background: linear-gradient(135deg, #b044ff, #00c8ff);
-    color: #fff; font-family: var(--sans); font-size: 12px; font-weight: 500;
-    letter-spacing: 0.3px; padding: 0 16px; cursor: pointer;
+    background: var(--azure, #1a3a6b);
+    color: #fff; font-family: var(--sans); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.3px; padding: 0 18px; cursor: pointer;
     transition: filter 0.15s, opacity 0.15s;
   }
-  .ask-ai-btn:hover { filter: brightness(1.08); }
+  .ask-ai-btn:hover { filter: brightness(1.12); }
   .ask-ai-btn:disabled { opacity: 0.5; cursor: wait; }
   .ask-ai-answer {
     margin-top: 10px; padding: 14px 18px;
@@ -3850,12 +3848,7 @@
     document.getElementById('countdown-pill').style.display = '';
     document.getElementById('ask-ai').style.display = '';
     document.querySelector('.hero-rule').style.display = '';
-    hero.style.backgroundImage =
-      'linear-gradient(rgba(252,252,250,0.85), rgba(252,252,250,0.85)), ' +
-      "url('" + cfg.image + "')";
-    hero.style.backgroundPosition = 'center';
-    hero.style.backgroundSize = 'cover';
-    hero.style.backgroundRepeat = 'no-repeat';
+    hero.style.backgroundImage = 'none';
     document.querySelector('.hero-title').innerHTML = cfg.title;
     document.querySelector('.hero-subtitle').innerHTML = cfg.subtitle;
     document.getElementById('ai-briefing').style.display = '';
@@ -3987,7 +3980,7 @@
       // For multicity, don't cache the fallback — results haven't been searched yet
       if (dir === 'multicity') {
         var el2 = document.getElementById('ai-briefing-text');
-        if (summaryKey() === key) el2.innerHTML = 'Search for multi-city flights to see today\'s AI briefing.';
+        if (summaryKey() === key && activeSection === 'flights') el2.innerHTML = 'Search for multi-city flights to see today\'s AI briefing.';
         return;
       }
       summaryCache[key] = 'Flight data updated daily. Check back each morning for today\'s best picks.';
@@ -4045,11 +4038,11 @@
       var text = res.summary || FALLBACK;
       if (text !== FALLBACK) summaryCache[key] = text;
       var el = document.getElementById('ai-briefing-text');
-      if (summaryKey() === key) el.innerHTML = text;
+      if (summaryKey() === key && activeSection === 'flights') el.innerHTML = text;
     })
     .catch(function () {
       var el = document.getElementById('ai-briefing-text');
-      if (summaryKey() === key) el.innerHTML = 'Flight data updated daily. Check back each morning for today\'s best picks.';
+      if (summaryKey() === key && activeSection === 'flights') el.innerHTML = 'Flight data updated daily. Check back each morning for today\'s best picks.';
     });
   }
 
@@ -5558,12 +5551,7 @@
     document.getElementById('ask-ai').style.display = '';
     document.querySelector('.hero-rule').style.display = '';
     document.getElementById('ai-briefing').style.display = '';
-    hero.style.backgroundImage =
-      'linear-gradient(rgba(252,252,250,0.85), rgba(252,252,250,0.85)), ' +
-      "url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600')";
-    hero.style.backgroundPosition = 'center';
-    hero.style.backgroundSize = 'cover';
-    hero.style.backgroundRepeat = 'no-repeat';
+    hero.style.backgroundImage = 'none';
     var CITY_HERO_SUBTITLES = {
       venice: 'Before the cruise &mdash; Jun 30 &ndash; Jul 3',
       ravenna: 'Before the cruise &mdash; Jul 2 &ndash; 3',
