@@ -253,6 +253,18 @@
   .hero.hero-slim .hero-subtitle { font-size: 17px; margin-top: 4px; }
   .hero.hero-slim .hero-rule { margin-top: 16px; }
 
+  /* Cinematic hero band for Shop > Flights / Hotels (one filmic image moment;
+     the functional controls live on cream in #hero-below). Image + scrim set inline by JS. */
+  .hero.hero-cine { background-color: #0a111c; background-size: cover; background-position: center 55%;
+    background-repeat: no-repeat; padding: 64px 24px 48px; }
+  .hero.hero-cine .hero-title { color: #fff; text-shadow: 0 2px 30px rgba(0,0,0,0.45); margin-top: 16px; }
+  .hero.hero-cine .hero-subtitle { color: rgba(255,255,255,0.93); }
+  .hero.hero-cine .hero-rule { background: rgba(230,196,119,0.9); }
+  .hero.hero-cine .hero-pill { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.45);
+    color: #fff; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  #hero-below { max-width: 1100px; margin: 0 auto; padding: 24px 16px 0; }
+  #hero-below .direction-nav, #hero-below .origin-nav { margin-left: auto; margin-right: auto; }
+
   /* Our Trip: sticky nav wrapper (phase toggle + quick links — always on screen) */
   .trip-nav {
     position: sticky; top: 0; z-index: 30;
@@ -2502,8 +2514,16 @@
   </div>
 </div>
 
-<!-- Hero -->
+<!-- Hero (cinematic band: just the title moment) -->
 <div class="hero">
+  <div class="hero-pill" id="countdown-pill">&#128336; <span id="countdown"></span> DAYS UNTIL JULY 3, 2026</div>
+  <div class="hero-title">Flights</div>
+  <div class="hero-subtitle">First stop &middot; Venice, Italy</div>
+  <div class="hero-rule"></div>
+</div>
+
+<!-- Functional controls sit on cream, below the cinematic band -->
+<div id="hero-below">
   <div class="direction-nav" id="direction-nav">
     <button class="direction-pill active" data-dir="outbound">Outbound</button>
     <button class="direction-pill" data-dir="return">Return</button>
@@ -2515,10 +2535,6 @@
     <button class="origin-pill" data-origin="ATL">ATL</button>
     <button class="origin-pill" data-origin="YVR">YVR</button>
   </div>
-  <div class="hero-pill" id="countdown-pill">&#128336; <span id="countdown"></span> DAYS UNTIL JULY 3, 2026</div>
-  <div class="hero-title">Cruise Bound</div>
-  <div class="hero-subtitle">First stop &mdash; Venice, Italy</div>
-  <div class="hero-rule"></div>
   <div class="ai-briefing" id="ai-briefing">
     <div class="ai-briefing-label">Today's AI Briefing</div>
     <div class="ai-briefing-text" id="ai-briefing-text">
@@ -2771,19 +2787,19 @@
 
   const HEROES = {
     outbound: {
-      image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600',
-      title: 'Cruise Bound',
-      subtitle: 'First stop &mdash; Venice, Italy'
+      image: '/media/venice.jpg',
+      title: 'Flights',
+      subtitle: 'First stop &middot; Venice, Italy'
     },
     return: {
-      image: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=1600&q=80',
-      title: 'Homeward Bound',
-      subtitle: 'Last stop &mdash; Istanbul, Turkey'
+      image: '/media/istanbul.jpg',
+      title: 'Flights',
+      subtitle: 'Heading home &middot; from Istanbul, Turkey'
     },
     multicity: {
-      image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=1600',
-      title: 'Round Trip',
-      subtitle: 'Venice &amp; Istanbul &mdash; one booking'
+      image: '/media/venice.jpg',
+      title: 'Flights',
+      subtitle: 'Venice &amp; Istanbul &middot; one booking'
     }
   };
 
@@ -3841,14 +3857,21 @@
     el.classList.toggle('error', !!isError);
   }
 
-  function updateHero() {
-    var cfg = HEROES[activeDirection];
+  // Cinematic hero band: one filmic image + scrim, white serif title over it.
+  var HERO_SCRIM = 'linear-gradient(to top, rgba(10,17,28,0.82) 0%, rgba(10,17,28,0.20) 50%, rgba(10,17,28,0.42) 100%)';
+  function setCineHero(imgPath) {
     var hero = document.querySelector('.hero');
     hero.classList.remove('hero-slim');
+    hero.classList.add('hero-cine');
+    hero.style.backgroundImage = HERO_SCRIM + ", url('" + imgPath + "')";
+  }
+
+  function updateHero() {
+    var cfg = HEROES[activeDirection];
     document.getElementById('countdown-pill').style.display = '';
     document.getElementById('ask-ai').style.display = '';
     document.querySelector('.hero-rule').style.display = '';
-    hero.style.backgroundImage = 'none';
+    setCineHero(cfg.image);
     document.querySelector('.hero-title').innerHTML = cfg.title;
     document.querySelector('.hero-subtitle').innerHTML = cfg.subtitle;
     document.getElementById('ai-briefing').style.display = '';
@@ -5464,8 +5487,11 @@
     if (filtersEl) filtersEl.style.display = 'none';
     var shopChooser = document.getElementById('shop-chooser');
     var heroEl = document.querySelector('.hero');
+    var heroBelow = document.getElementById('hero-below');
     if (shopChooser) shopChooser.style.display = 'none';
     if (heroEl) heroEl.style.display = '';
+    // #hero-below (direction/origin pills + briefing + ask) only belongs on Flights/Hotels
+    if (heroBelow) heroBelow.style.display = 'none';
 
     if (activeSection === 'shop') {
       // Shop chooser: just the Flights / Hotels choice, no hero/ask box
@@ -5494,6 +5520,7 @@
 
     if (activeSection === 'hotels') {
       hotelsSection.style.display = '';
+      if (heroBelow) heroBelow.style.display = '';
       updateHeroForHotels();
       renderHotelCityNav();
       renderSmartCheckin();
@@ -5518,6 +5545,7 @@
     } else {
       // Shop Flights
       flightsSection.style.display = '';
+      if (heroBelow) heroBelow.style.display = '';
       dirNav.style.display = '';
       originNav.style.display = '';
       if (tabsEl) tabsEl.style.display = '';
@@ -5533,6 +5561,7 @@
 
   function updateHeroForItinerary() {
     var hero = document.querySelector('.hero');
+    hero.classList.remove('hero-cine');
     hero.classList.add('hero-slim');
     hero.style.backgroundImage = 'none';
     document.querySelector('.hero-title').innerHTML = 'Our Trip';
@@ -5551,11 +5580,12 @@
     document.getElementById('ask-ai').style.display = '';
     document.querySelector('.hero-rule').style.display = '';
     document.getElementById('ai-briefing').style.display = '';
-    hero.style.backgroundImage = 'none';
+    var CITY_HERO_IMAGES = { venice: '/media/venice.jpg', ravenna: '/media/ravenna.jpg', istanbul: '/media/istanbul.jpg' };
+    setCineHero(CITY_HERO_IMAGES[activeHotelCity] || '/media/venice.jpg');
     var CITY_HERO_SUBTITLES = {
-      venice: 'Before the cruise &mdash; Jun 30 &ndash; Jul 3',
-      ravenna: 'Before the cruise &mdash; Jul 2 &ndash; 3',
-      istanbul: 'Post-cruise stay &mdash; Jul 13 &ndash; 14'
+      venice: 'Before the cruise &middot; Jun 30 &ndash; Jul 3',
+      ravenna: 'Before the cruise &middot; Jul 2 &ndash; 3',
+      istanbul: 'Post-cruise stay &middot; Jul 13 &ndash; 14'
     };
     document.querySelector('.hero-title').innerHTML = hotelCityName() + ' Hotels';
     document.querySelector('.hero-subtitle').innerHTML = CITY_HERO_SUBTITLES[activeHotelCity] || '';
