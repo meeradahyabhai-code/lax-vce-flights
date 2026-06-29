@@ -489,6 +489,7 @@
   .badge-source { background: var(--azure); color: var(--fog); }
   .badge-basic { background: var(--gold); color: #fff; }
   .badge-main { background: var(--fog); color: var(--ink); }
+  .badge-score { background: var(--gold); color: var(--paper); }
   .badge-top {
     background: linear-gradient(135deg, var(--gold), var(--gold-light));
     color: #fff; font-weight: 500; padding: 3px 12px; margin-bottom: 8px;
@@ -504,13 +505,14 @@
     vertical-align: super; line-height: 0; margin-left: 1px;
   }
   .meta { font-size: 13px; font-weight: 400; color: var(--lagoon); }
-  .layover { font-size: 12px; font-weight: 400; color: #94a3b8; }
+  .layover { font-size: 12px; font-weight: 400; color: var(--text-secondary); }
 
   .price {
     font-family: var(--serif); font-size: 38px; font-weight: 600;
     color: #1a3a6b; letter-spacing: -1px; line-height: 1.1;
   }
-  .est-main { font-size: 12px; font-weight: 400; color: #94a3b8; }
+  .est-main { font-size: 12px; font-weight: 400; color: var(--text-secondary); }
+  .basic-eco-note { font-size: 12px; font-weight: 400; color: var(--text-secondary); margin-top: 2px; }
   .main-cabin-link {
     font-size: 11px; font-weight: 400; color: #1a3a6b; cursor: pointer;
     text-decoration: underline; margin-top: 2px;
@@ -536,7 +538,7 @@
   .interest-link {
     display: block; margin-top: 6px;
     font-family: var(--sans); font-size: 12px; font-weight: 400;
-    color: #2a5298; cursor: pointer; text-decoration: none;
+    color: var(--azure); cursor: pointer; text-decoration: none;
   }
   .interest-link:hover { text-decoration: underline; }
   .interest-link.has-picks {
@@ -676,7 +678,7 @@
     font-family: var(--serif); font-size: 32px; font-weight: 400;
     color: var(--ink); letter-spacing: -0.3px; padding: 28px 0 10px;
   }
-  .date-count { font-size: 12px; font-weight: 400; color: #b0b0c0; margin-left: 10px; }
+  .date-count { font-size: 12px; font-weight: 400; color: var(--text-secondary); margin-left: 10px; }
 
   /* Footer */
   .footer {
@@ -913,13 +915,14 @@
     .card-inner { flex-direction: row; gap: 10px; }
     .card-left { flex: 1; min-width: 0; max-width: 58%; }
     .card-right { text-align: right; min-width: 130px; flex-shrink: 0; }
-    .times { font-size: 28px; }
+    .times { font-size: 19px; line-height: 1.5; }
     .times .dep-time { display: block; }
     .times .arr-time { display: block; }
-    .airline-name { font-size: 16px; }
+    .day-offset { font-size: 12px; }
+    .airline-name { font-size: 15px; }
     .meta { font-size: 14px; }
     .layover { font-size: 13px; }
-    .price { font-size: 38px; }
+    .price { font-size: 26px; }
     .book-btn { display: block; width: 100%; text-align: center; margin-top: 8px; }
   }
 
@@ -1275,7 +1278,7 @@
   .hotel-points-link {
     display: block; margin-top: 6px;
     font-family: var(--sans); font-size: 12px; font-weight: 400;
-    color: #2a5298; cursor: pointer; text-decoration: none;
+    color: var(--azure); cursor: pointer; text-decoration: none;
   }
   .hotel-points-link:hover { text-decoration: underline; }
   .hotel-distance {
@@ -4627,7 +4630,7 @@
     var priceBlock = '<div class="price">$' + mainPrice.toLocaleString() + '</div>' +
       '<div class="est-main">Economy Main' + (isBig3 ? ' est.' : '') + '</div>';
     if (isBig3) {
-      priceBlock += '<div style="font-size:0.75rem;color:#999;margin-top:2px">Basic Economy: $' + basicPrice.toLocaleString() + '</div>';
+      priceBlock += '<div class="basic-eco-note">Basic Economy: $' + basicPrice.toLocaleString() + '</div>';
     }
     var fareLabel = 'Economy Main';
     var fareBadge = '<span class="badge badge-main">' + fareLabel + '</span>';
@@ -4653,7 +4656,7 @@
       '<div class="card-inner">' +
         '<div class="card-left">' +
           '<span class="airline-name">' + f.primary_airline + '</span> ' +
-          '<span class="badge" style="background:#b8953a;color:#f8f8fc;">' + scoreLabel(f.score) + '</span> ' +
+          '<span class="badge badge-score">' + scoreLabel(f.score) + '</span> ' +
           fareBadge +
           '<div class="times"><span class="dep-time">' + fmtTime(f.departure_time, getFlightTimezones().dep) +
             ' &rarr;</span> <span class="arr-time">' + fmtTime(f.arrival_time, getFlightTimezones().arr) +
