@@ -2614,7 +2614,7 @@
              placeholder="Tell me what you're craving&hellip; (e.g. romantic seafood, walkable, vegetarian)">
       <button class="rest-chat-send" id="rest-chat-send" type="button">Ask</button>
     </div>
-    <div class="rest-chat-hint">Ask in plain words &mdash; I&rsquo;ll pick from the best at this stop.</div>
+    <div class="rest-chat-hint">Ask in plain words. I&rsquo;ll pick from the best at this stop.</div>
     <div class="rest-chat-answer" id="rest-chat-answer"></div>
   </div>
   <div id="rest-results"></div>
@@ -2958,7 +2958,7 @@
         var low = n.toLowerCase();
         return toks.every(function (t) { return low.indexOf(t) !== -1; }); // order-independent
       }).slice(0, 8);
-      if (!matches.length) { results.innerHTML = '<div class="name-noresult">No match — check spelling</div>'; btn.disabled = true; return; }
+      if (!matches.length) { results.innerHTML = '<div class="name-noresult">No match. Check spelling</div>'; btn.disabled = true; return; }
       results.innerHTML = matches.map(function (n) {
         return '<button type="button" class="name-result" data-name="' + escHtml(n) + '">' + escHtml(firstNameFirst(n)) + '</button>';
       }).join('');
@@ -4212,7 +4212,7 @@
 
       // 2. Rate limit before API call
       if (!checkAskRateLimit()) {
-        showAskAnswer('Slow down — limit is 10 questions per 5 minutes.', true);
+        showAskAnswer('Slow down. Limit is 10 questions per 5 minutes.', true);
         return;
       }
 
@@ -6007,7 +6007,7 @@
       var snip = h.review_snippets[0];
       detailsContent += '<div style="margin-top:8px;padding:8px 10px;background:var(--fog);border-radius:8px;font-size:12px;color:#64748b;line-height:1.5;">' +
         '\u201c' + escHtml(snip.text.slice(0, 120)) + (snip.text.length > 120 ? '...' : '') + '\u201d' +
-        '<div style="font-size:11px;color:#94a3b8;margin-top:2px;">&mdash; ' + escHtml(snip.author) +
+        '<div style="font-size:11px;color:#94a3b8;margin-top:2px;">' + escHtml(snip.author) +
         (snip.time ? ', ' + escHtml(snip.time) : '') + '</div>' +
       '</div>';
     } else if (h.editorial_summary) {
@@ -6846,19 +6846,19 @@
     var flags = [];
     if (arriveVenice) {
       if (arriveVenice > EMBARK) {
-        flags.push('Your flight lands in Venice on ' + mbDateLabel(arriveVenice) + ', but the cruise embarks Jul 3 — double-check your dates.');
+        flags.push('Your flight lands in Venice on ' + mbDateLabel(arriveVenice) + ', but the cruise embarks Jul 3. Double-check your dates.');
       } else if (arriveVenice < EMBARK) {
         // Arrives BEFORE embarkation -> needs a place to stay until the ship sails.
         // (Landing on embark day itself needs no pre-cruise hotel, so no warning.)
         if (!venicePreCruiseHotel) {
           flags.push('You land in Venice on ' + mbDateLabel(arriveVenice) + ', but we don’t see a hotel before the cruise (it embarks Jul 3). Where are you staying those nights?');
         } else if (venicePreCruiseHotel > arriveVenice) {
-          flags.push('You land in Venice on ' + mbDateLabel(arriveVenice) + ', but your hotel doesn’t start until ' + mbDateLabel(venicePreCruiseHotel) + ' — you may be missing a night. Double-check the hotel date.');
+          flags.push('You land in Venice on ' + mbDateLabel(arriveVenice) + ', but your hotel doesn’t start until ' + mbDateLabel(venicePreCruiseHotel) + '. You may be missing a night. Double-check the hotel date.');
         }
       }
     }
     if (returnDepart && returnDepart < DISEMBARK) {
-      flags.push('Your flight home leaves on ' + mbDateLabel(returnDepart) + ', before the cruise ends in Istanbul (Jul 13) — double-check.');
+      flags.push('Your flight home leaves on ' + mbDateLabel(returnDepart) + ', before the cruise ends in Istanbul (Jul 13). Double-check.');
     }
 
     // Same day + time: order by type so you land before you check in (plane → hotel → …).
@@ -7017,7 +7017,7 @@
   // Guard a write action when offline: returns true if the action may proceed.
   function requireOnline(msg) {
     if (isOnline()) return true;
-    showToast(msg || 'You’re offline — reconnect to save this.');
+    showToast(msg || 'You’re offline. Reconnect to save this.');
     return false;
   }
   function updateOnlineUI() {
@@ -7293,7 +7293,7 @@
     h += '</div></div>'; // head-inner, head
 
     h += '<div class="cday-body">';
-    h += '<div class="cpre-intro">Open days in Venice before we sail. Most of us land June 30 &mdash; add tours and dinners to whichever day you like.</div>';
+    h += '<div class="cpre-intro">Open days in Venice before we sail. Most of us land June 30. Add tours and dinners to whichever day you like.</div>';
     pres.forEach(function (p) {
       var d = new Date(p.date + 'T12:00:00');
       h += '<div class="cpre-day">';
@@ -7551,7 +7551,7 @@
     });
   }
   function toggleJoinR(date, id, traveler) {
-    if (!requireOnline('You’re offline — reconnect to join.')) return null;
+    if (!requireOnline('You’re offline. Reconnect to join.')) return null;
     var rec = findRest(date, id); if (!rec) return null;
     rec.joins = rec.joins || []; var i = rec.joins.indexOf(traveler); var result;
     if (i >= 0) {
@@ -7573,7 +7573,7 @@
     });
   }
   function confirmDeleteRestaurant(rec, date) {
-    if (!requireOnline('You’re offline — reconnect to remove this.')) return;
+    if (!requireOnline('You’re offline. Reconnect to remove this.')) return;
     var ov = document.createElement('div'); ov.className = 'modal-overlay active';
     ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
       '<button class="modal-close" data-act="cancel" type="button" aria-label="Close">&times;</button>' +
@@ -7639,7 +7639,7 @@
   }
 
   function openAddRestaurantModal(date, port, portKey) {
-    if (!requireOnline('You’re offline — reconnect to add a restaurant.')) return;
+    if (!requireOnline('You’re offline. Reconnect to add a restaurant.')) return;
     var ov = document.createElement('div'); ov.className = 'modal-overlay active';
     var me = getUserName();
     var portFirst = (port || '').split(/[,(]/)[0].trim();
@@ -7665,7 +7665,7 @@
           '<div class="axm-ncl"><input class="modal-input axm-ncl-input" id="rxm-search" placeholder="Type a name…" autocomplete="off"><div class="axm-ncl-results" id="rxm-results" style="display:none;"></div></div>' +
         '</div>' +
         '<div class="axm-method-pane" id="rxm-pane-upload" style="display:none;">' +
-          '<label class="axm-upload" for="rxm-file"><svg class="axm-up-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><polyline points="7 9 12 4 17 9"/><path d="M5 16v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"/></svg><span class="axm-up-title">Tap to upload a screenshot</span><span class="axm-up-hint">A photo of your reservation confirmation — we’ll read the details</span><input type="file" accept="image/*" id="rxm-file" style="display:none;"></label>' +
+          '<label class="axm-upload" for="rxm-file"><svg class="axm-up-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><polyline points="7 9 12 4 17 9"/><path d="M5 16v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"/></svg><span class="axm-up-title">Tap to upload a screenshot</span><span class="axm-up-hint">A photo of your reservation confirmation. We’ll read the details</span><input type="file" accept="image/*" id="rxm-file" style="display:none;"></label>' +
           '<div class="axm-hint">Used only to fill in the form below; the image isn’t saved.</div>' +
           '<div class="axm-upstatus" id="rxm-upstatus"></div><div class="axm-loadbar" id="rxm-loadbar" style="display:none;"><div class="axm-loadbar-fill"></div></div>' +
         '</div>' +
@@ -7846,7 +7846,7 @@
   }
   // Returns 'joined' | 'left' | null (null = excursion couldn't be resolved, nothing changed)
   function toggleJoin(date, id, traveler) {
-    if (!requireOnline('You’re offline — reconnect to join.')) return null;
+    if (!requireOnline('You’re offline. Reconnect to join.')) return null;
     var rec = findExc(date, id); if (!rec) return null;
     rec.joins = rec.joins || [];
     var i = rec.joins.indexOf(traveler);
@@ -7929,14 +7929,14 @@
   }
   // Guarded confirm so a tap can't wipe an excursion for the whole group by accident.
   function confirmDeleteExcursion(rec, date) {
-    if (!requireOnline('You’re offline — reconnect to remove this.')) return;
+    if (!requireOnline('You’re offline. Reconnect to remove this.')) return;
     var ov = document.createElement('div');
     ov.className = 'modal-overlay active';
     ov.innerHTML = '<div class="modal axm" style="text-align:left;">' +
       '<button class="modal-close" data-act="cancel" type="button" aria-label="Close">&times;</button>' +
       '<div class="modal-title">Delete this excursion?</div>' +
       '<div class="modal-sub">' + escHtml(rec.title) + '</div>' +
-      '<p style="font-family:var(--sans);font-size:13px;color:var(--text-secondary);margin:10px 0 2px;line-height:1.4;">This removes it for everyone — including anyone who joined. It can’t be undone.</p>' +
+      '<p style="font-family:var(--sans);font-size:13px;color:var(--text-secondary);margin:10px 0 2px;line-height:1.4;">This removes it for everyone, including anyone who joined. It can’t be undone.</p>' +
       '<div class="axm-saveerr" id="gxdel-err"></div>' +
       '<div class="axm-foot"><button class="modal-btn" data-act="cancel" type="button">Cancel</button>' +
       '<button class="modal-btn gxdel-go" type="button" style="background:#b3261e;border-color:#b3261e;color:#fff;">Delete</button></div>' +
@@ -7962,7 +7962,7 @@
     ov.className = 'modal-overlay active';
     ov.innerHTML = '<div class="modal">' +
       '<div class="modal-title">You’re in!</div>' +
-      '<p class="modal-text">Joining here just lets the group know you’re going. It does <b>not</b> book the excursion — you’ll still need to book it yourself with Norwegian, or with whoever is organizing it.</p>' +
+      '<p class="modal-text">Joining here just lets the group know you’re going. It does <b>not</b> book the excursion. You’ll still need to book it yourself with Norwegian, or with whoever is organizing it.</p>' +
       '<button class="modal-btn modal-btn-primary" type="button">Got it</button>' +
       '</div>';
     document.body.appendChild(ov);
@@ -8025,7 +8025,7 @@
   }
 
   function openAddExcursionModal(date, port, opts) {
-    if (!requireOnline('You’re offline — reconnect to add a tour.')) return;
+    if (!requireOnline('You’re offline. Reconnect to add a tour.')) return;
     opts = opts || {};
     var noList = !!opts.noList;  // pre-cruise (Venice) tours: screenshot or manual only, no cruise-line list
     var ov = document.createElement('div');
@@ -8060,7 +8060,7 @@
           '<div class="axm-method-pane" id="pane-upload" style="display:none;">' +
             '<label class="axm-upload" for="axm-file"><svg class="axm-up-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><polyline points="7 9 12 4 17 9"/><path d="M5 16v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"/></svg>' +
               '<span class="axm-up-title">Tap to upload a screenshot</span>' +
-              '<span class="axm-up-hint">A photo of your booking confirmation — we’ll read the details for you</span>' +
+              '<span class="axm-up-hint">A photo of your booking confirmation. We’ll read the details for you</span>' +
               '<input type="file" accept="image/*" id="axm-file" style="display:none;"></label>' +
             '<div class="axm-hint">Used only to fill in the form below; the image isn’t saved.</div>' +
             '<div class="axm-upstatus" id="axm-upstatus"></div>' +
@@ -8165,8 +8165,8 @@
           if (detailsEl) detailsEl.style.display = 'none';
           saveBtn.disabled = true;
           setStep(m === 'list'
-            ? 'Next: search for your tour below and tap it — we’ll fill in the details for you.'
-            : 'Next: upload your booking screenshot — we’ll read the details for you.');
+            ? 'Next: search for your tour below and tap it. We’ll fill in the details for you.'
+            : 'Next: upload your booking screenshot. We’ll read the details for you.');
           if (m === 'list') { var s = ov.querySelector('#axm-ncl-search'); if (s) setTimeout(function () { s.focus(); }, 50); }
         }
       });
@@ -8441,7 +8441,7 @@
       }
     });
     if (!highs.length || !lows.length) return generic;
-    var s = 'Hot Mediterranean summer — highs ' + Math.min.apply(null, highs) + '–'
+    var s = 'Hot Mediterranean summer. Highs ' + Math.min.apply(null, highs) + '–'
       + Math.max.apply(null, highs) + '°F, lows ' + Math.min.apply(null, lows) + '–'
       + Math.max.apply(null, lows) + '°F, mostly sunny.';
     if (rainy && rainy.chance >= 30) {
@@ -8595,7 +8595,7 @@
   // Curated tips that ride along with a recommendation (shown under the rec line).
   var REC_NOTES = {
     'ChIJd7fbStixfkcR42J6gNhq7WQ': 'Go to the fast-food (to-go) counter, not the sit-down restaurant.', // Dal Moro's
-    'ChIJq6mHsNmxfkcRV64qpCP2Qzw': 'Go early — they run out of tiramisu well before the day is done.'      // I Tre Mercanti
+    'ChIJq6mHsNmxfkcRV64qpCP2Qzw': 'Go early. They run out of tiramisu well before the day is done.'      // I Tre Mercanti
   };
   function loadRestRecs() {
     return fetch(SUPABASE_URL + '/rest/v1/restaurant_recs?select=*', { headers: sbHeaders() })
@@ -9289,7 +9289,7 @@
   }
 
   function openRecommendModal(id) {
-    if (!requireOnline('You’re offline — reconnect to save a recommendation.')) return;
+    if (!requireOnline('You’re offline. Reconnect to save a recommendation.')) return;
     var me = getUserName();
     if (!me) { promptName(true, function () { openRecommendModal(id); }); return; }
     var r = RESTAURANTS.filter(function (x) { return String(x.id) === String(id); })[0] || { name: 'this place' };
@@ -9712,7 +9712,7 @@
     }
 
     if (!confirmedHotels.length) {
-      el.innerHTML = '<div class="itin-hotel-empty">No hotel bookings yet &mdash; click "+ Add Hotel" to get started</div>';
+      el.innerHTML = '<div class="itin-hotel-empty">No hotel bookings yet. Click "+ Add Hotel" to get started</div>';
       return;
     }
 
@@ -10528,7 +10528,7 @@
         '<div class="mc-loading-phrase" id="itinerary-phrase-' + dir + '">' + ITINERARY_PHRASES[0] + '</div>' +
       '</div>';
     } else if (parsed.length === 0) {
-      html += '<div class="cf-empty">No confirmed flights yet &mdash; be the first to add yours!</div>';
+      html += '<div class="cf-empty">No confirmed flights yet. Be the first to add yours!</div>';
     } else {
       var thDepart = dir === 'outbound' ? 'Departs' : 'Departs IST';
       var thArrive = dir === 'outbound' ? 'Arrives VCE' : 'Arrives';
