@@ -1,85 +1,85 @@
 {
   "2026-06-30": {
     "high": 82,
-    "low": 71,
+    "low": 68,
     "rain_chance": 30,
     "icon": "cloud",
     "source": "normal"
   },
   "2026-07-01": {
-    "high": 91,
-    "low": 71,
-    "rain_chance": 88,
-    "icon": "rain",
-    "source": "forecast"
+    "high": 81,
+    "low": 68,
+    "rain_chance": 30,
+    "icon": "cloud",
+    "source": "normal"
   },
   "2026-07-02": {
-    "high": 86,
-    "low": 72,
+    "high": 87,
+    "low": 73,
     "rain_chance": 73,
     "icon": "rain",
     "source": "forecast"
   },
   "2026-07-03": {
     "high": 88,
-    "low": 71,
+    "low": 72,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-04": {
-    "high": 88,
-    "low": 75,
+    "high": 89,
+    "low": 76,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-05": {
-    "high": 85,
-    "low": 71,
+    "high": 87,
+    "low": 72,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-07": {
-    "high": 92,
-    "low": 71,
+    "high": 93,
+    "low": 68,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-08": {
-    "high": 88,
-    "low": 71,
+    "high": 86,
+    "low": 68,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-09": {
     "high": 93,
-    "low": 74,
-    "rain_chance": 0,
+    "low": 76,
+    "rain_chance": 2,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-10": {
-    "high": 78,
-    "low": 71,
-    "rain_chance": 0,
+    "high": 85,
+    "low": 72,
+    "rain_chance": 2,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-12": {
-    "high": 82,
-    "low": 68,
-    "rain_chance": 10,
+    "high": 85,
+    "low": 71,
+    "rain_chance": 6,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-13": {
-    "high": 85,
-    "low": 70,
-    "rain_chance": 8,
+    "high": 89,
+    "low": 71,
+    "rain_chance": 12,
     "icon": "sun",
     "source": "forecast"
   }
