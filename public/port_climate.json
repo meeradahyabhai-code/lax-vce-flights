@@ -14,15 +14,15 @@
     "source": "normal"
   },
   "2026-07-02": {
-    "high": 87,
-    "low": 73,
-    "rain_chance": 73,
-    "icon": "rain",
-    "source": "forecast"
+    "high": 82,
+    "low": 68,
+    "rain_chance": 0,
+    "icon": "sun",
+    "source": "normal"
   },
   "2026-07-03": {
     "high": 88,
-    "low": 72,
+    "low": 67,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
@@ -35,8 +35,8 @@
     "source": "forecast"
   },
   "2026-07-05": {
-    "high": 87,
-    "low": 72,
+    "high": 86,
+    "low": 71,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
@@ -49,21 +49,21 @@
     "source": "forecast"
   },
   "2026-07-08": {
-    "high": 86,
-    "low": 68,
+    "high": 93,
+    "low": 70,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-09": {
-    "high": 93,
-    "low": 76,
-    "rain_chance": 2,
+    "high": 89,
+    "low": 79,
+    "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-10": {
-    "high": 85,
+    "high": 80,
     "low": 72,
     "rain_chance": 2,
     "icon": "sun",
@@ -71,15 +71,15 @@
   },
   "2026-07-12": {
     "high": 85,
-    "low": 71,
+    "low": 67,
     "rain_chance": 6,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-13": {
-    "high": 89,
+    "high": 82,
     "low": 71,
-    "rain_chance": 12,
+    "rain_chance": 16,
     "icon": "sun",
     "source": "forecast"
   }
