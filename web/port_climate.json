@@ -63,23 +63,23 @@
     "source": "normal"
   },
   "2026-07-10": {
-    "high": 83,
-    "low": 74,
+    "high": 82,
+    "low": 72,
     "rain_chance": 0,
     "icon": "sun",
-    "source": "forecast"
+    "source": "normal"
   },
   "2026-07-12": {
-    "high": 86,
+    "high": 85,
     "low": 66,
     "rain_chance": 0,
     "icon": "sun",
     "source": "forecast"
   },
   "2026-07-13": {
-    "high": 81,
-    "low": 70,
-    "rain_chance": 10,
+    "high": 82,
+    "low": 69,
+    "rain_chance": 13,
     "icon": "sun",
     "source": "forecast"
   }
