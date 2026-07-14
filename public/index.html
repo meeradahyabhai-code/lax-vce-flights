@@ -2790,7 +2790,9 @@
 (function () {
   'use strict';
 
-  const TRIP = new Date('2026-07-03T00:00:00');
+  const TRIP = new Date('2026-07-03T00:00:00');           // embark Venice
+  const TRIP_DISEMBARK = new Date('2026-07-13T00:00:00'); // arrive Istanbul, cruise ends
+  const TRIP_OVER = new Date('2026-07-16T00:00:00');      // after last return travel (Jul 15)
   const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwBSvTPQqbG3WZZAW3sTygBAinDOWZ4Nj-i8CHTKU_K0UfFM6LQFm8322xCNa1ufSsd/exec';
 
   const ORIGINS = {
@@ -3160,6 +3162,17 @@
     var pst = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
     pst.setHours(0,0,0,0);
     return Math.ceil((TRIP - pst) / 86400000);
+  }
+
+  // Where we are relative to the trip: before it / at sea / heading home / over.
+  // Returns { phase, days } — days is only meaningful for 'before'.
+  function tripStatus() {
+    var today = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+    today.setHours(0,0,0,0);
+    if (today < TRIP) return { phase: 'before', days: Math.ceil((TRIP - today) / 86400000) };
+    if (today < TRIP_DISEMBARK) return { phase: 'sailing', days: 0 };
+    if (today < TRIP_OVER) return { phase: 'homeward', days: 0 };
+    return { phase: 'over', days: 0 };
   }
 
   // ---- Data access (multi-origin) ----
@@ -4277,8 +4290,19 @@
 
   // ---- Render ----
   function renderCountdown() {
-    var d = daysToGo();
-    document.getElementById('countdown').textContent = d;
+    var pill = document.getElementById('countdown-pill');
+    if (!pill) return;
+    var st = tripStatus();
+    if (st.phase === 'before') {
+      pill.innerHTML = '&#128336; <span id="countdown">' + st.days + '</span> ' +
+        (st.days === 1 ? 'DAY' : 'DAYS') + ' UNTIL JULY 3, 2026';
+    } else if (st.phase === 'sailing') {
+      pill.innerHTML = '&#128674; AT SEA NOW';
+    } else if (st.phase === 'homeward') {
+      pill.innerHTML = '&#9992;&#65039; HEADING HOME';
+    } else {
+      pill.innerHTML = '&#127968; WELCOME HOME';
+    }
   }
 
   function renderTabs() {
@@ -6976,9 +7000,20 @@
     document.getElementById('landing-screen').classList.remove('hidden');
     document.getElementById('page-content').style.display = 'none';
     document.getElementById('origin-modal').classList.add('hidden');
-    var days = Math.ceil((TRIP - new Date()) / 86400000);
-    var cEl = document.getElementById('landing-countdown-days');
-    if (cEl) cEl.textContent = days > 0 ? days : 0;
+    var cEl = document.getElementById('landing-countdown');
+    if (cEl) {
+      var st = tripStatus();
+      if (st.phase === 'before') {
+        cEl.innerHTML = '<b id="landing-countdown-days">' + st.days + '</b> ' +
+          (st.days === 1 ? 'day' : 'days') + ' to go';
+      } else if (st.phase === 'sailing') {
+        cEl.textContent = 'At sea now';
+      } else if (st.phase === 'homeward') {
+        cEl.textContent = 'Heading home';
+      } else {
+        cEl.textContent = 'Welcome home';
+      }
+    }
     initCineVideo();
   }
 
