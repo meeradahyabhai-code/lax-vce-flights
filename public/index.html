@@ -233,6 +233,7 @@
     font-family: var(--sans); font-size: 10px; font-weight: 500;
     color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase;
   }
+  .pill-ic { width: 12px; height: 12px; vertical-align: -2px; margin-right: 6px; }
   .hero-title {
     font-family: var(--serif); font-size: clamp(56px, 12vw, 96px);
     font-weight: 400; font-style: italic; color: #1a3a6b;
@@ -2790,9 +2791,11 @@
 (function () {
   'use strict';
 
-  const TRIP = new Date('2026-07-03T00:00:00');           // embark Venice
-  const TRIP_DISEMBARK = new Date('2026-07-13T00:00:00'); // arrive Istanbul, cruise ends
-  const TRIP_OVER = new Date('2026-07-16T00:00:00');      // after last return travel (Jul 15)
+  const TRIP = new Date('2026-07-03T00:00:00');           // embark Venice (countdown default)
+  // Fixed cruise spine (same for everyone); trip start/end personalize to the user's flights.
+  const CRUISE_EMBARK = '2026-07-03';                     // sail from Venice
+  const CRUISE_DISEMBARK = '2026-07-13';                  // arrive Istanbul, cruise ends
+  const TRIP_OVER_DEFAULT = '2026-07-16';                 // after last return travel (Jul 15)
   const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwBSvTPQqbG3WZZAW3sTygBAinDOWZ4Nj-i8CHTKU_K0UfFM6LQFm8322xCNa1ufSsd/exec';
 
   const ORIGINS = {
@@ -3164,14 +3167,58 @@
     return Math.ceil((TRIP - pst) / 86400000);
   }
 
-  // Where we are relative to the trip: before it / at sea / heading home / over.
+  var _ymd = function (d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
+      '-' + String(d.getDate()).padStart(2, '0');
+  };
+
+  // The logged-in traveler's own trip endpoints from their entered flights:
+  // outbound departure (when they leave home) and return arrival (when they get home).
+  // Empty strings when nothing is entered -> caller falls back to the cruise defaults.
+  function getMyTripDates() {
+    var out = { outboundDepart: '', returnArrive: '' };
+    var me = (typeof getUserName === 'function') ? getUserName() : '';
+    if (!me || typeof parseConfirmedFlights !== 'function') return out;
+    var meKey = me.toLowerCase();
+    try {
+      parseConfirmedFlights('outbound').forEach(function (n) {
+        if (!n.traveler || n.traveler.toLowerCase() !== meKey) return;
+        var d = cfNormDate(n.departure_date) || cfNormDate(n.arrival_date);
+        if (d && (!out.outboundDepart || d < out.outboundDepart)) out.outboundDepart = d;
+      });
+      parseConfirmedFlights('return').forEach(function (n) {
+        if (!n.traveler || n.traveler.toLowerCase() !== meKey) return;
+        var d = cfNormDate(n.arrival_date) || cfNormDate(n.departure_date);
+        if (d && (!out.returnArrive || d > out.returnArrive)) out.returnArrive = d;
+      });
+    } catch (e) {}
+    return out;
+  }
+
+  // Where we are relative to the trip: before / heading to Venice / at sea / heading home / over.
+  // Start + over come from the user's own flights when entered, else the cruise defaults.
+  // The at-sea vs heading-home split always uses the fixed cruise dates (same for everyone).
   // Returns { phase, days } — days is only meaningful for 'before'.
   function tripStatus() {
-    var today = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
-    today.setHours(0,0,0,0);
-    if (today < TRIP) return { phase: 'before', days: Math.ceil((TRIP - today) / 86400000) };
-    if (today < TRIP_DISEMBARK) return { phase: 'sailing', days: 0 };
-    if (today < TRIP_OVER) return { phase: 'homeward', days: 0 };
+    var now = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+    now.setHours(0, 0, 0, 0);
+    var today = _ymd(now);
+
+    var dates = getMyTripDates();
+    var start = dates.outboundDepart || CRUISE_EMBARK;
+    if (start > CRUISE_EMBARK) start = CRUISE_EMBARK;   // trip can't start after the ship sails
+    var over = TRIP_OVER_DEFAULT;
+    if (dates.returnArrive) {
+      over = _ymd(new Date(new Date(dates.returnArrive + 'T00:00:00').getTime() + 86400000));
+    }
+    if (over <= CRUISE_DISEMBARK) over = TRIP_OVER_DEFAULT; // sanity guard on bad return dates
+
+    if (today < start) {
+      return { phase: 'before', days: Math.ceil((new Date(start + 'T00:00:00') - now) / 86400000) };
+    }
+    if (today < CRUISE_EMBARK) return { phase: 'preboard', days: 0 };  // flown out, not yet sailing
+    if (today < CRUISE_DISEMBARK) return { phase: 'sailing', days: 0 };
+    if (today < over) return { phase: 'homeward', days: 0 };
     return { phase: 'over', days: 0 };
   }
 
@@ -4289,19 +4336,29 @@
   }
 
   // ---- Render ----
+  // Line icons in the app's SVG style (24 viewBox, currentColor stroke) for the countdown pill.
+  var PILL_ICONS = {
+    clock: '<svg class="pill-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3.5 2"/></svg>',
+    plane: '<svg class="pill-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>',
+    ship: '<svg class="pill-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14.5h18l-1.7 4.2a2 2 0 0 1-1.9 1.3H6.6a2 2 0 0 1-1.9-1.3L3 14.5Z"/><path d="M5.5 14.5V8.5h9l3.5 6"/><path d="M9 8.5V5.5h3"/></svg>',
+    home: '<svg class="pill-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9"/><path d="M10 20v-5h4v5"/></svg>'
+  };
+
   function renderCountdown() {
     var pill = document.getElementById('countdown-pill');
     if (!pill) return;
     var st = tripStatus();
     if (st.phase === 'before') {
-      pill.innerHTML = '&#128336; <span id="countdown">' + st.days + '</span> ' +
+      pill.innerHTML = PILL_ICONS.clock + '<span id="countdown">' + st.days + '</span> ' +
         (st.days === 1 ? 'DAY' : 'DAYS') + ' UNTIL JULY 3, 2026';
+    } else if (st.phase === 'preboard') {
+      pill.innerHTML = PILL_ICONS.plane + 'HEADING TO VENICE';
     } else if (st.phase === 'sailing') {
-      pill.innerHTML = '&#128674; AT SEA NOW';
+      pill.innerHTML = PILL_ICONS.ship + 'AT SEA NOW';
     } else if (st.phase === 'homeward') {
-      pill.innerHTML = '&#9992;&#65039; HEADING HOME';
+      pill.innerHTML = PILL_ICONS.plane + 'HEADING HOME';
     } else {
-      pill.innerHTML = '&#127968; WELCOME HOME';
+      pill.innerHTML = PILL_ICONS.home + 'WELCOME HOME';
     }
   }
 
@@ -6708,6 +6765,10 @@
   // Re-render My Bookings when async data lands, but only if it's the visible phase
   function refreshMyBookingsIfActive() {
     if (activeSection === 'itinerary' && getTripPhase() === 'bookings') renderMyBookings();
+    // Confirmed-flight data feeds the countdown's personalized start/end dates,
+    // so refresh both the pill and the landing hero whenever that data changes.
+    renderCountdown();
+    renderLandingCountdown();
   }
   function renderMyBookings() {
     var el = document.getElementById('mybookings-body');
@@ -6996,24 +7057,25 @@
 
   // ---- Init ----
   // ---- Landing screen ----
+  // Big cinematic countdown on the landing hero (text only, no icons here).
+  function renderLandingCountdown() {
+    var cEl = document.getElementById('landing-countdown');
+    if (!cEl) return;
+    var st = tripStatus();
+    if (st.phase === 'before') {
+      cEl.innerHTML = '<b id="landing-countdown-days">' + st.days + '</b> ' +
+        (st.days === 1 ? 'day' : 'days') + ' to go';
+    } else if (st.phase === 'preboard') { cEl.textContent = 'Heading to Venice'; }
+    else if (st.phase === 'sailing') { cEl.textContent = 'At sea now'; }
+    else if (st.phase === 'homeward') { cEl.textContent = 'Heading home'; }
+    else { cEl.textContent = 'Welcome home'; }
+  }
+
   function showLanding() {
     document.getElementById('landing-screen').classList.remove('hidden');
     document.getElementById('page-content').style.display = 'none';
     document.getElementById('origin-modal').classList.add('hidden');
-    var cEl = document.getElementById('landing-countdown');
-    if (cEl) {
-      var st = tripStatus();
-      if (st.phase === 'before') {
-        cEl.innerHTML = '<b id="landing-countdown-days">' + st.days + '</b> ' +
-          (st.days === 1 ? 'day' : 'days') + ' to go';
-      } else if (st.phase === 'sailing') {
-        cEl.textContent = 'At sea now';
-      } else if (st.phase === 'homeward') {
-        cEl.textContent = 'Heading home';
-      } else {
-        cEl.textContent = 'Welcome home';
-      }
-    }
+    renderLandingCountdown();
     initCineVideo();
   }
 
