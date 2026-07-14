@@ -2911,6 +2911,14 @@
   function setUserName(name) {
     if (name) localStorage.setItem('veniceair_user', name);
   }
+  // DEMO ONLY, Meera's device: re-show the name picker every time the home screen
+  // appears. Gated to Meera's stored identity so no one else is affected, and it's
+  // non-destructive — her data is already on-device, so picking a name just re-sets
+  // it (no reload). Remove this to end the demo behavior.
+  function isMeeraDemo() {
+    var n = (getUserName() || '').toLowerCase();
+    return n.indexOf('dahyabhai') !== -1 && n.indexOf('meera') !== -1; // only Meera has both
+  }
   function isRosterName(name) {
     if (!name || typeof TRAVELERS === 'undefined') return false;
     for (var i = 0; i < TRAVELERS.length; i++) { if (TRAVELERS[i] === name) return true; }
@@ -7077,6 +7085,8 @@
     document.getElementById('origin-modal').classList.add('hidden');
     renderLandingCountdown();
     initCineVideo();
+    // Demo (Meera only): every visit to the home screen re-asks for the name.
+    if (isMeeraDemo()) promptName(true, function () { renderLandingCountdown(); });
   }
 
   function hideLanding() {
