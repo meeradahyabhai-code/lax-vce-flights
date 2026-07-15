@@ -3213,11 +3213,16 @@
     var today = _ymd(now);
 
     var dates = getMyTripDates();
+    var returnArrive = dates.returnArrive;
+    // DEMO-ONLY (Meera): her real return flight (Jul 13) isn't entered in the app, so
+    // hardcode it for the demo path only. No effect on other travelers or shared data.
+    if (isMeeraDemo() && !returnArrive) returnArrive = '2026-07-13';
+
     var start = dates.outboundDepart || CRUISE_EMBARK;
     if (start > CRUISE_EMBARK) start = CRUISE_EMBARK;   // trip can't start after the ship sails
     var over = TRIP_OVER_DEFAULT;
-    if (dates.returnArrive) {
-      over = _ymd(new Date(new Date(dates.returnArrive + 'T00:00:00').getTime() + 86400000));
+    if (returnArrive) {
+      over = _ymd(new Date(new Date(returnArrive + 'T00:00:00').getTime() + 86400000));
     }
     if (over <= CRUISE_DISEMBARK) over = TRIP_OVER_DEFAULT; // sanity guard on bad return dates
 
@@ -7231,7 +7236,10 @@
       return;
     }
 
-    // Always show landing screen first
+    // Always show landing screen first. Load confirmed flights now (not just on
+    // startApp) so the home countdown can personalize to the user's own flight
+    // dates; it refreshes the pill + landing when the data arrives.
+    fetchConfirmedFlights();
     showLanding();
   }
 
